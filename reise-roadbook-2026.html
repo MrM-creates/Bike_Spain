@@ -247,6 +247,23 @@
       gap: 6px;
     }
 
+    .roadbook-mode {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 160px;
+    }
+
+    .roadbook-mode strong {
+      font-size: 14px;
+      line-height: 1.1;
+    }
+
+    .roadbook-mode span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .mode-button,
     .tool-button,
     .text-link {
@@ -271,6 +288,11 @@
 
     .tool-button:hover,
     .text-link:hover { border-color: var(--accent); }
+    .tool-button.primary-button {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
     .tool-button.danger { color: #8a2f2f; }
     .tool-button.icon { width: 38px; padding: 0; font-size: 17px; }
     .planning-only[hidden] { display: none !important; }
@@ -731,7 +753,7 @@
     <section class="trip-summary" aria-label="Reiseübersicht">
       <div><strong id="summary-days">30 Tage</strong><span>24.09.–23.10.2026 · Berikon – Spanien – Berikon</span></div>
       <div><strong>ca. 5'200 km</strong><span>Hauptroute, ohne Zusatzrunden</span></div>
-      <div><strong>32 Routen geprüft</strong><span>Google Maps, Stand 1. August 2026</span></div>
+      <div><strong>Roadbook-Stand</strong><span>6. August 2026 · Routen geprüft am 1. August</span></div>
     </section>
 
     <details class="map-panel" open>
@@ -748,17 +770,20 @@
       </div>
     </details>
 
-    <section class="planning-bar" aria-label="Roadbook-Modus">
-      <div class="mode-switch" aria-label="Ansicht wählen">
-        <button class="mode-button" id="view-mode" type="button" aria-pressed="true">Roadbook</button>
-        <button class="mode-button" id="plan-mode" type="button" aria-pressed="false">Planen</button>
+    <section class="planning-bar" aria-label="Roadbook-Aktionen">
+      <div class="roadbook-mode">
+        <strong>Roadbook</strong>
+        <span>Unterwegsmodus</span>
       </div>
-      <div class="planning-actions planning-only" hidden>
-        <button class="tool-button primary-button" id="add-day" type="button">Tag hinzufügen</button>
+      <div class="planning-actions">
+        <button class="tool-button primary-button" id="refresh-roadbook" type="button">Aktualisieren</button>
         <button class="tool-button" id="export-plan" type="button">Sicherung herunterladen</button>
         <button class="tool-button" id="import-plan" type="button">Sicherung laden</button>
-        <button class="tool-button danger" id="reset-plan" type="button">Alles zurücksetzen</button>
         <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </div>
+      <div class="planning-actions planning-only" hidden>
+        <button class="tool-button" id="add-day" type="button">Tag hinzufügen</button>
+        <button class="tool-button danger" id="reset-plan" type="button">Alles zurücksetzen</button>
       </div>
       <span class="save-state" id="save-state" aria-live="polite">Originalplan</span>
     </section>
@@ -871,6 +896,7 @@
     const dateForDay = (index) => dateFormatter.format(new Date(tripStart + index * 86400000));
     const clone = (value) => JSON.parse(JSON.stringify(value));
     const statusLabels = { planned: "Geplant", changed: "Geändert", done: "Gefahren", skipped: "Ausgelassen" };
+    const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
     const list = document.querySelector("#day-list");
     const filters = document.querySelector(".filters");
     const editor = document.querySelector("#day-editor");
@@ -907,11 +933,28 @@
     };
 
     const baseline = originalDays.map((item, index) => prepareDay({ ...item, id: `original-${item.day}` }, index));
-    let state = { days: clone(baseline), mode: "view" };
+    let state = { days: clone(baseline), mode: ADMIN_MODE ? "plan" : "view" };
+
+    const savedOverlay = (savedDays = []) => {
+      const byId = new Map(savedDays.map((item) => [item.id, item]));
+      return baseline.map((item) => {
+        const saved = byId.get(item.id);
+        if (!saved) return clone(item);
+        return {
+          ...clone(item),
+          status: saved.status || item.status,
+          travelNote: saved.travelNote || ""
+        };
+      });
+    };
 
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (saved?.days?.length) state.days = saved.days.map((item, index) => prepareDay(item, index, item.custom));
+      if (saved?.days?.length) {
+        state.days = ADMIN_MODE
+          ? saved.days.map((item, index) => prepareDay(item, index, item.custom))
+          : savedOverlay(saved.days);
+      }
     } catch (_) {}
 
     const save = (message = "Automatisch gespeichert") => {
@@ -1002,9 +1045,7 @@
       list.innerHTML = "";
       renderFilters();
       document.querySelector("#summary-days").textContent = `${state.days.length} Tage`;
-      document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = state.mode !== "plan"; });
-      document.querySelector("#view-mode").setAttribute("aria-pressed", String(state.mode === "view"));
-      document.querySelector("#plan-mode").setAttribute("aria-pressed", String(state.mode === "plan"));
+      document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
 
       state.days.forEach((item, index) => {
       const article = document.createElement("article");
@@ -1086,24 +1127,38 @@
         actions.append(rest);
       }
 
-      if (state.mode === "plan") {
-        const status = document.createElement("select");
-        status.className = "status-select";
-        status.setAttribute("aria-label", `Status für Tag ${index + 1}`);
-        Object.entries(statusLabels).forEach(([value, label]) => {
-          const option = document.createElement("option");
-          option.value = value;
-          option.textContent = label;
-          option.selected = item.status === value;
-          status.append(option);
-        });
-        status.addEventListener("change", () => {
-          item.status = status.value;
-          save();
-          render();
-        });
-        actions.append(status);
+      const status = document.createElement("select");
+      status.className = "status-select";
+      status.setAttribute("aria-label", `Status für Tag ${index + 1}`);
+      Object.entries(statusLabels).forEach(([value, label]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        option.selected = item.status === value;
+        status.append(option);
+      });
+      status.addEventListener("change", () => {
+        item.status = status.value;
+        save("Status gespeichert");
+        render();
+      });
+      actions.append(status);
 
+      const noteButton = document.createElement("button");
+      noteButton.className = "tool-button";
+      noteButton.type = "button";
+      noteButton.textContent = item.travelNote ? "Notiz ändern" : "Notiz";
+      noteButton.addEventListener("click", () => {
+        const value = prompt(`Unterwegs-Notiz für Tag ${index + 1}`, item.travelNote || "");
+        if (value === null) return;
+        item.travelNote = value.trim();
+        if (item.travelNote && item.status === "planned") item.status = "changed";
+        save("Notiz gespeichert");
+        render();
+      });
+      actions.append(noteButton);
+
+      if (ADMIN_MODE) {
         const tools = document.createElement("div");
         tools.className = "day-tools";
         tools.append(
@@ -1183,9 +1238,12 @@
       render();
     });
 
-    document.querySelector("#view-mode").addEventListener("click", () => { state.mode = "view"; render(); });
-    document.querySelector("#plan-mode").addEventListener("click", () => { state.mode = "plan"; render(); });
     document.querySelector("#add-day").addEventListener("click", () => openEditor());
+    document.querySelector("#refresh-roadbook").addEventListener("click", () => {
+      const target = new URL(window.location.href);
+      target.searchParams.set("refresh", Date.now().toString());
+      window.location.href = target.toString();
+    });
 
     document.querySelector("#export-plan").addEventListener("click", () => {
       const blob = new Blob([JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), days: state.days }, null, 2)], { type: "application/json" });
