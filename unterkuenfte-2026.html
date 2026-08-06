@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f0">
+  <title>Spanienreise 2026 - Unterkünfte</title>
+  <style>
+    :root {
+      --bg: #f4f5f0;
+      --surface: #fff;
+      --text: #172019;
+      --muted: #667069;
+      --border: #d9ddd6;
+      --accent: #176b46;
+      --accent-soft: #e6f1eb;
+      --blue: #315d87;
+      --blue-soft: #e8f0f8;
+      --amber: #8b5615;
+      --amber-soft: #fff3df;
+      --radius: 8px;
+      --shadow: 0 8px 24px rgba(23, 32, 25, .08);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+    a { color: inherit; }
+    button, input { font: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(244, 245, 240, .96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+    .topbar-inner, main, footer {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar-inner {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { font-size: 16px; font-weight: 760; }
+    .nav-link {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      width: fit-content;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .nav-link:hover { border-color: var(--accent); }
+
+    main { padding: 36px 0 64px; }
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    .intro p { max-width: 690px; margin: 0; color: var(--muted); font-size: 17px; }
+    .count { color: var(--muted); font-size: 14px; white-space: nowrap; }
+
+    .principles {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin-bottom: 22px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--text);
+      color: #fff;
+    }
+    .principles div { padding: 16px 18px; border-right: 1px solid rgba(255,255,255,.16); }
+    .principles div:last-child { border-right: 0; }
+    .principles strong { display: block; margin-bottom: 3px; font-size: 15px; }
+    .principles span { color: rgba(255,255,255,.72); font-size: 13px; }
+
+    .notice {
+      margin: 0 0 22px;
+      padding: 14px 16px;
+      border: 1px solid #ecd6b5;
+      border-radius: var(--radius);
+      background: var(--amber-soft);
+      color: #67400f;
+      font-size: 14px;
+    }
+
+    .booking-plan {
+      margin: 0 0 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .booking-plan summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 54px;
+      padding: 0 16px;
+      font-size: 15px;
+      font-weight: 760;
+      cursor: pointer;
+      list-style: none;
+    }
+    .booking-plan summary::-webkit-details-marker { display: none; }
+    .booking-plan summary::after { content: "+"; color: var(--accent); font-size: 20px; }
+    .booking-plan[open] summary::after { content: "−"; }
+    .booking-plan-body { padding: 0 16px 16px; }
+    .booking-plan-intro { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .booking-levels { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--border); }
+    .booking-level { min-width: 0; padding: 14px 14px 0 0; }
+    .booking-level + .booking-level { padding-left: 14px; border-left: 1px solid var(--border); }
+    .booking-level strong { display: block; margin-bottom: 5px; font-size: 13px; }
+    .booking-level p { margin: 0; color: var(--muted); font-size: 13px; }
+    .booking-source { margin: 14px 0 0; color: var(--muted); font-size: 12px; }
+    .booking-source a { color: var(--accent); font-weight: 700; }
+
+    .airbnb-panel {
+      margin: 0 0 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      overflow: hidden;
+    }
+    .airbnb-panel summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 54px;
+      padding: 0 16px;
+      font-size: 15px;
+      font-weight: 760;
+      cursor: pointer;
+      list-style: none;
+    }
+    .airbnb-panel summary::-webkit-details-marker { display: none; }
+    .airbnb-panel summary::after { content: "+"; color: var(--accent); font-size: 20px; }
+    .airbnb-panel[open] summary::after { content: "−"; }
+    .airbnb-body { padding: 0 16px 16px; }
+    .airbnb-intro { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .airbnb-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; border-top: 1px solid var(--border); }
+    .airbnb-option { min-width: 0; padding: 14px 0; border-bottom: 1px solid var(--border); }
+    .airbnb-option h3 { margin: 0 0 4px; font-size: 15px; letter-spacing: 0; }
+    .airbnb-option p { margin: 0 0 9px; color: var(--muted); font-size: 13px; }
+    .airbnb-verdict { display: inline-flex; margin-bottom: 7px; padding: 3px 8px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); font-size: 11px; font-weight: 760; }
+    .airbnb-verdict.check { background: var(--amber-soft); color: var(--amber); }
+    .airbnb-verdict.hotel { background: #edf0ed; color: #505a53; }
+    .airbnb-link { display: inline-flex; align-items: center; min-height: 34px; padding: 0 10px; border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 12px; font-weight: 700; text-decoration: none; }
+    .airbnb-link:hover { border-color: var(--accent); }
+    .airbnb-caution { margin: 14px 0 0; color: var(--muted); font-size: 12px; }
+
+    .stays { display: grid; gap: 12px; }
+    .stay {
+      display: grid;
+      grid-template-columns: 156px minmax(0, 1fr);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+    .stay-date {
+      padding: 18px;
+      border-right: 1px solid var(--border);
+      background: #fafbf8;
+    }
+    .stay-date strong { display: block; margin-bottom: 4px; font-size: 15px; }
+    .stay-date span { color: var(--muted); font-size: 13px; }
+    .stay-content { min-width: 0; padding: 18px; }
+    .stay-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    h2 { margin: 0 0 3px; font-size: 21px; line-height: 1.2; letter-spacing: 0; }
+    .base-note { color: var(--muted); font-size: 13px; }
+    .booking-advice {
+      display: flex;
+      align-items: center;
+      width: fit-content;
+      min-height: 26px;
+      margin-top: 8px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 760;
+    }
+    .booking-advice.now { background: var(--amber-soft); color: var(--amber); }
+    .booking-advice.later { background: #edf0ed; color: #505a53; }
+    .booking-state { display: flex; gap: 6px; flex: 0 0 auto; }
+    .state-button {
+      min-height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .state-button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+    .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .hotel { min-width: 0; padding-top: 12px; border-top: 1px solid var(--border); }
+    .hotel.primary { border-top: 3px solid var(--accent); padding-top: 10px; }
+    .hotel-label { margin-bottom: 5px; color: var(--muted); font-size: 11px; font-weight: 780; text-transform: uppercase; }
+    .hotel.primary .hotel-label { color: var(--accent); }
+    .hotel h3 { margin: 0 0 6px; font-size: 16px; line-height: 1.25; letter-spacing: 0; }
+    .parking {
+      display: inline-flex;
+      align-items: center;
+      min-height: 25px;
+      margin: 0 0 8px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 760;
+    }
+    .parking.confirm { background: var(--amber-soft); color: var(--amber); }
+    .parking.private { background: var(--blue-soft); color: var(--blue); }
+    .hotel p { margin: 0 0 10px; color: var(--muted); font-size: 13px; }
+    .hotel-actions { display: flex; flex-wrap: wrap; gap: 7px; }
+    .hotel-link {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .hotel-link.primary-link { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .hotel-link:hover { border-color: var(--accent); }
+
+    .branch {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border: 1px solid #c9d7e5;
+      border-radius: var(--radius);
+      background: var(--blue-soft);
+      color: #244a70;
+      font-size: 14px;
+    }
+    footer { padding: 22px 0 40px; border-top: 1px solid var(--border); color: var(--muted); font-size: 13px; }
+
+    @media (max-width: 760px) {
+      .topbar-inner { min-height: 58px; }
+      main { padding-top: 24px; }
+      .intro { grid-template-columns: 1fr; gap: 10px; }
+      .principles { grid-template-columns: 1fr; }
+      .principles div { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.16); }
+      .principles div:last-child { border-bottom: 0; }
+      .booking-levels { grid-template-columns: 1fr; }
+      .booking-level { padding: 13px 0; }
+      .booking-level + .booking-level { padding-left: 0; border-left: 0; border-top: 1px solid var(--border); }
+      .airbnb-grid { grid-template-columns: 1fr; }
+      .stay { grid-template-columns: 1fr; }
+      .stay-date { padding: 13px 16px; border-right: 0; border-bottom: 1px solid var(--border); }
+      .stay-content { padding: 16px; }
+      .options { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .topbar-inner, main, footer { width: min(100% - 22px, 980px); }
+      .brand { font-size: 14px; }
+      h1 { font-size: 30px; }
+      .stay-head { display: block; }
+      .booking-state { margin-top: 12px; }
+      .state-button { flex: 1; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Unterkünfte · Spanienreise 2026</div>
+      <a class="nav-link" href="/">Roadbook</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div>
+        <h1>Motorradtauglich übernachten</h1>
+        <p>Eine konkrete erste Wahl und eine Alternative je Reisestopp. Entscheidend sind sichere Motorradabstellung, einfache Zufahrt und eine sinnvolle Lage zur Tagesroute.</p>
+      </div>
+      <div class="count">16 Stopps · 28 Nächte + Fähre</div>
+    </section>
+
+    <section class="principles" aria-label="Auswahlkriterien">
+      <div><strong>Motorräder zuerst</strong><span>Geschlossene Garage vor offenem Parkplatz</span></div>
+      <div><strong>Einfache Anfahrt</strong><span>Keine unnötige Altstadt- oder ZBE-Fahrt</span></div>
+      <div><strong>Reisepraktisch</strong><span>Restaurant, Stadtanschluss oder Strand in Reichweite</span></div>
+    </section>
+
+    <p class="notice"><strong>Vor jeder Buchung schriftlich bestätigen:</strong> Platz für zwei Motorräder, nachts geschlossen oder kontrolliert, reservierbar und am Anreisetag tatsächlich zugänglich. Verfügbarkeit und Preise für 2026 sind noch nicht in jedem Buchungssystem freigeschaltet.</p>
+
+    <details class="booking-plan" open>
+      <summary>Empfohlene Buchungsstrategie</summary>
+      <div class="booking-plan-body">
+        <p class="booking-plan-intro">Reservierungen dienen als Sicherheitsnetz, nicht als starres Programm. Wegen der begrenzten Auswahl mit sicherer Abstellung für zwei Motorräder ist eine reine Suche am Vorabend unnötig riskant.</p>
+        <div class="booking-levels">
+          <div class="booking-level"><strong>Jetzt reservieren</strong><p>Grenoble, beide Aufenthalte in Castelldefels, Monachil, Ronda und Zaragoza. Nur stornierbare Tarife wählen und die neue Abfahrt am 24. September berücksichtigen.</p></div>
+          <div class="booking-level"><strong>Flexibel reservieren</strong><p>Die übrigen festen Basen in den nächsten Wochen buchen. Unterwegs jeweils drei Tage voraus prüfen und nötigenfalls rechtzeitig ändern.</p></div>
+          <div class="booking-level"><strong>Später entscheiden</strong><p>Aosta oder Como erst wenige Tage vorher nach Wetter, Alpenroute und Energie definitiv festlegen.</p></div>
+        </div>
+        <p class="booking-source">Grund: Der 12. Oktober ist ein Feiertag und fällt 2026 auf einen Montag; Monachil und Ronda liegen damit im langen Wochenende. Zaragoza feiert vom 10. bis 18. Oktober die Fiestas del Pilar, und ihr kommt am letzten Festtag an. Quellen: <a href="https://www.juntadeandalucia.es/temas/trabajar/relaciones/calendario.html" target="_blank" rel="noopener">Junta de Andalucía</a> · <a href="https://zaragoza.es/sede/portal/cultura/fiestas-pilar/index" target="_blank" rel="noopener">Stadt Zaragoza</a></p>
+      </div>
+    </details>
+
+    <details class="airbnb-panel">
+      <summary>Geprüfte Airbnb-Alternativen</summary>
+      <div class="airbnb-body">
+        <p class="airbnb-intro">Airbnb lohnt sich vor allem bei zwei oder drei Nächten: mehr Platz, Küche und häufig eine Waschmaschine. Für Transfernächte bleibt ein Hotel mit Rezeption, Restaurant und bestätigter Motorradgarage meist einfacher.</p>
+        <div class="airbnb-grid">
+          <div class="airbnb-option"><h3>La Patacona · 5.–7. Oktober</h3><div class="airbnb-verdict">Sehr gute Alternative</div><p>„Stylish apartment in premium complex“, 4,81/5 bei 89 Bewertungen. Private Tiefgarage, Concierge, Waschmaschine und Strandlage. Bestätigen, dass zwei Motorräder gemeinsam auf den Platz dürfen.</p><a class="airbnb-link" href="https://www.airbnb.com/rooms/778633338606195189?check_in=2026-10-05&amp;check_out=2026-10-07&amp;adults=2" target="_blank" rel="noopener">Airbnb öffnen</a></div>
+          <div class="airbnb-option"><h3>Ronda · 11.–14. Oktober</h3><div class="airbnb-verdict">Sehr gute Alternative</div><p>„Central apartment with parking and patio“, 4,84/5 bei über 160 Bewertungen. Privater Garagenplatz im selben Gebäude, zentrale Lage und Selbst-Check-in.</p><a class="airbnb-link" href="https://www.airbnb.com/rooms/623270988540279405?check_in=2026-10-11&amp;check_out=2026-10-14&amp;adults=2" target="_blank" rel="noopener">Airbnb öffnen</a></div>
+          <div class="airbnb-option"><h3>Monachil · 8.–11. Oktober</h3><div class="airbnb-verdict check">Parkplatz genauer klären</div><p>„Terrazas de Monachil“, 4,88/5 bei 34 Bewertungen. Im Dorf, zwei Schlafzimmer und privater Parkplatz. Nicht eindeutig als geschlossene Garage beschrieben.</p><a class="airbnb-link" href="https://www.airbnb.com/rooms/20352872?check_in=2026-10-08&amp;check_out=2026-10-11&amp;adults=2" target="_blank" rel="noopener">Airbnb öffnen</a></div>
+          <div class="airbnb-option"><h3>Úbeda · 14.–16. Oktober</h3><div class="airbnb-verdict">Gute Alternative</div><p>„Downtown apartment – Plaza Andalucía“, 4,76/5 bei rund 200 Bewertungen. Private Garage und unabhängiger Zugang, wenige Gehminuten von der Altstadt.</p><a class="airbnb-link" href="https://www.airbnb.com/ubeda-spain/stays?check_in=2026-10-14&amp;check_out=2026-10-16&amp;adults=2" target="_blank" rel="noopener">Airbnb-Suche öffnen</a></div>
+          <div class="airbnb-option"><h3>Cuenca · 16.–18. Oktober</h3><div class="airbnb-verdict check">Gross, aber mit Garage</div><p>„Cuencaloft Luxurious“, private Garage und zentrale Lage. Drei Schlafzimmer sind für zwei Personen eher gross; Gesamtpreis mit dem Hotel vergleichen.</p><a class="airbnb-link" href="https://www.airbnb.com/rooms/994860958696557750?check_in=2026-10-16&amp;check_out=2026-10-18&amp;adults=2" target="_blank" rel="noopener">Airbnb öffnen</a></div>
+          <div class="airbnb-option"><h3>Altea · 7.–8. Oktober</h3><div class="airbnb-verdict check">Nur nach genauer Prüfung</div><p>„The Big Blue“, zwei Schlafzimmer und privater Parkplatz im Gebäude. Für nur eine Nacht bleibt Cap Negret vorläufig die einfachere Wahl.</p><a class="airbnb-link" href="https://www.airbnb.com/rooms/1117479450589198436?check_in=2026-10-07&amp;check_out=2026-10-08&amp;adults=2" target="_blank" rel="noopener">Airbnb öffnen</a></div>
+          <div class="airbnb-option"><h3>Castelldefels</h3><div class="airbnb-verdict hotel">Hotel vorläufig besser</div><p>Es gibt Apartments mit Privatparkplatz, aber bei den geprüften Treffern ist eine nachts geschlossene Garage für beide Motorräder nicht eindeutig belegt. Vor der Fähre ist der Hotel-Check-in zudem verlässlicher.</p><a class="airbnb-link" href="https://www.airbnb.com/castelldefels-spain/stays?check_in=2026-09-29&amp;check_out=2026-10-01&amp;adults=2" target="_blank" rel="noopener">Airbnb-Suche öffnen</a></div>
+          <div class="airbnb-option"><h3>Falset und Albarracín</h3><div class="airbnb-verdict hotel">Hotels vorläufig besser</div><p>Die gefundenen Angebote nennen überwiegend nur einen privaten oder öffentlichen Parkplatz. Die ausgewählten Hotels bieten derzeit die klarere Motorradlösung.</p></div>
+        </div>
+        <p class="airbnb-caution"><strong>Bei jedem Airbnb vor der Buchung schreiben:</strong> Wir reisen mit zwei Motorrädern. Ist der Parkplatz eine nachts geschlossene Garage? Dürfen beide Motorräder gemeinsam auf den einen Stellplatz? Ist die Zufahrt ohne Treppen, Schotter, steile Rampe oder Fahrzeuglift mit problematischen Abmessungen möglich? Verfügbarkeit, Endpreis und Stornierung sind erst nach Eingabe der Reisedaten verbindlich sichtbar.</p>
+      </div>
+    </details>
+
+    <section class="stays" aria-label="Unterkunftsvorschläge">
+      <article class="stay" data-stay="grenoble">
+        <div class="stay-date"><strong>24.–25. September</strong><span>1 Nacht</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Grenoble</h2><div class="base-note">Anreisetag · möglichst ohne Innenstadtstress</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Logis Hôtel Le Néron</h3><div class="parking">Geschlossene Motorradgarage bestätigt</div><p>Nördlich von Grenoble, kostenlose gesicherte Garage und Restaurant. Sehr einfache Weiterfahrt am nächsten Morgen.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.hotel-grenoble-nord.fr/" target="_blank" rel="noopener">Hotel öffnen</a><a class="hotel-link" href="https://www.google.com/maps/search/?api=1&query=Logis+Hotel+Le+Neron+Grenoble" target="_blank" rel="noopener">Karte</a></div></div>
+            <div class="hotel"><div class="hotel-label">Stadtnähere Alternative</div><h3>Maison Barbillon</h3><div class="parking">Überdacht · Zweiradbereich bestätigt</div><p>Privater gedeckter Parkplatz mit Bereich für Motorräder, nur sechs Autoplätze. Unbedingt vorreservieren.</p><div class="hotel-actions"><a class="hotel-link" href="https://maisonbarbillon.com/en/planning-your-stay-faq/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="sisteron">
+        <div class="stay-date"><strong>25.–26. September</strong><span>1 Nacht</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Sisteron</h2><div class="base-note">Kurze Wege · Abendessen vor Ort sinnvoll</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Hôtel Les Chênes</h3><div class="parking">Geschützte Motorradgarage bestätigt</div><p>Einfache Zufahrt, kostenloser Privatparkplatz, Motorradunterstand und Restaurant. Praktisch für eine Nacht.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.hotel-les-chenes.com/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+            <div class="hotel"><div class="hotel-label">Zentrale Alternative</div><h3>Hôtel Tivoli</h3><div class="parking">Geschlossene Tiefgarage bestätigt</div><p>Zentral in Sisteron. Eigener Motorradtarif; Plätze vorher reservieren.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.hoteltivoli-sisteron.fr/fr/hotel" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="lourmarin">
+        <div class="stay-date"><strong>26.–27. September</strong><span>1 Nacht</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Lourmarin</h2><div class="base-note">Luberon · eher genussvoll als günstig</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Le Moulin, Beaumier</h3><div class="parking">Sicherer Privatparkplatz bestätigt</div><p>Im Ort, mit privatem sicherem Parkplatz und Valet-Service. Die hochwertige, voraussichtlich teurere Lösung.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.beaumier.com/en/properties/le-moulin-hotel/faq/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+            <div class="hotel"><div class="hotel-label">Pragmatische Alternative</div><h3>Aix-en-Provence am Stadtrand</h3><div class="parking confirm">Konkretes Hotel noch wählen</div><p>Nur nutzen, wenn Lourmarin preislich oder bei der Garage nicht passt. Dann ein Hotel ausserhalb der Umweltzone mit geschlossenem Parkplatz wählen.</p></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="nimes">
+        <div class="stay-date"><strong>27.–28. September</strong><span>1 Nacht</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Nîmes</h2><div class="base-note">Nach der Camargue · keine Altstadtzufahrt nötig</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Nimotel</h3><div class="parking private">Grosser privater Parkplatz</div><p>Sehr einfache Autobahnzufahrt, 24-Stunden-Rezeption und Restaurant. Vor Buchung klären, ob die Motorräder nachts hinter einem Tor stehen.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.nimotel.com/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+            <div class="hotel"><div class="hotel-label">Garage vor Lage</div><h3>Royal Hôtel</h3><div class="parking">Öffentliche Tiefgarage direkt darunter</div><p>Maison-Carrée-Garage mit Partnertarif. Zentraler, aber die Zufahrt ist städtischer.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.royalhotel-nimes.com/en/services" target="_blank" rel="noopener">Parkinfo</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="carcassonne">
+        <div class="stay-date"><strong>28.–29. September</strong><span>1 Nacht</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Carcassonne</h2><div class="base-note">Altstadt zu Fuss, Motorräder sicher abstellen</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Hôtel Montségur</h3><div class="parking">Nachts geschlossener Parkplatz bestätigt</div><p>Privater, nachts geschlossener Parkplatz mit ausdrücklich ausgewiesener Motorradfläche auf festem Untergrund.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://hotelmontsegur.com/parking.html" target="_blank" rel="noopener">Parkinfo</a></div></div>
+            <div class="hotel"><div class="hotel-label">Alternative nahe Cité</div><h3>Hôtel Espace Cité</h3><div class="parking">Garage mit Videoüberwachung</div><p>Private Garagen und Parkplatz mit Videoüberwachung. Garagenplatz vorab reservieren.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.tourisme-carcassonne.fr/en/accomodation/hotel-espace-cite/" target="_blank" rel="noopener">Information</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="castelldefels-1">
+        <div class="stay-date"><strong>29. Sept.–1. Oktober</strong><span>2 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Castelldefels</h2><div class="base-note">Barcelona-Aussenbasis · Strand und R2-Bahn</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>ibis Barcelona Castelldefels</h3><div class="parking private">Privatparkplatz · Sicherheit bestätigen</div><p>Praktisch, nahe Bahnhof und ohne Strandtrubel. Schriftlich bestätigen lassen, dass zwei Motorräder nachts im privaten Bereich stehen.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://all.accor.com/hotel/3208/index.es.shtml" target="_blank" rel="noopener">Hotel öffnen</a><a class="hotel-link" href="https://www.google.com/maps/dir/?api=1&origin=ibis+Barcelona+Castelldefels&destination=Barcelona+Sants&travelmode=transit" target="_blank" rel="noopener">ÖV prüfen</a></div></div>
+            <div class="hotel"><div class="hotel-label">Sicherheits-Backup</div><h3>Hotel nach Wahl + Central Park</h3><div class="parking">Bewachte Garage mit Motorradplätzen</div><p>Wenn das Hotel keine befriedigende Lösung bietet: zentral gelegene, kontrollierte Garage mit Videoüberwachung und Motorradplätzen.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.centralparkcastelldefels.com/" target="_blank" rel="noopener">Garage öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="falset">
+        <div class="stay-date"><strong>1.–3. Oktober</strong><span>2 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Falset</h2><div class="base-note">Basis für die Priorat-Runde</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Hotel-Hostal Sport</h3><div class="parking private">Hoteleigener Parkplatz</div><p>Zentral, Restaurant und Parkplatz werden offiziell genannt. Vor Buchung nach geschlossenem Stellplatz für zwei Motorräder fragen.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.hotelpriorat-hostalsport.com/en/hotel-hostal-sport-your-hotel-priorat" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+            <div class="hotel"><div class="hotel-label">Apartment-Alternative</div><h3>Priorat Aparthotel</h3><div class="parking confirm">Nur nahes öffentliches Parken</div><p>Mehr Platz für zwei Nächte, aber ohne belegte sichere Motorradgarage. Nur wählen, wenn eine geschlossene Abstellung separat bestätigt wird.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.theoriginhotels.com/es/priorat-aparthotel" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="albarracin">
+        <div class="stay-date"><strong>3.–5. Oktober</strong><span>2 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Albarracín</h2><div class="base-note">Unterstadt statt enger Altstadtgassen</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Hotel Doña Blanca</h3><div class="parking">Schranke und Videoüberwachung</div><p>Privatparkplatz direkt am Haus, hinter Schranke und per Kamera überwacht. Gute Lage unterhalb der Altstadt.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.albarracindonablanca.com/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+            <div class="hotel"><div class="hotel-label">Alternative</div><h3>Hotel Albarrán</h3><div class="parking private">Privatparkplatz · reservierbar</div><p>Ebenfalls in der unteren Ortslage. Parkplatz muss vorab reserviert werden; nächtlichen Abschluss bestätigen.</p><div class="hotel-actions"><a class="hotel-link" href="https://hotelalbarran.es/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="alboraya">
+        <div class="stay-date"><strong>5.–7. Oktober</strong><span>2 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Alboraya / La Patacona</h2><div class="base-note">Valencia-Aussenbasis · Metro oder Taxi</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Olympia Hotel, Events &amp; Spa</h3><div class="parking private">Kundengarage · Details bestätigen</div><p>In Alboraya direkt bei der Metro, Valencia in etwa zehn Minuten. Nicht direkt am Meer, dafür städtetauglicher und mit ausgewiesenem Kundenparking.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.olympiahotelvalencia.com/" target="_blank" rel="noopener">Hotel öffnen</a><a class="hotel-link" href="https://www.visitvalencia.com/en/plan-your-trip-to-valencia/accommodation-valencia/olympia-hotel-events-spa" target="_blank" rel="noopener">Lageinfo</a></div></div>
+            <div class="hotel"><div class="hotel-label">Ruhige Alternative</div><h3>La Mozaira</h3><div class="parking private">Kleiner privater Parkplatz</div><p>Nur sechs Plätze im privaten Hofbereich. Ruhig und charmant, aber Platz für zwei Motorräder ausdrücklich reservieren lassen.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.lamozaira.com/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="altea">
+        <div class="stay-date"><strong>7.–8. Oktober</strong><span>1 Nacht</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Altea</h2><div class="base-note">Meerbasis · einfache Zufahrt über N-332</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Hotel Cap Negret</h3><div class="parking private">Privater überdachter Parkplatz</div><p>Direkt am Meer, gut anfahrbar, kostenloser Aussenparkplatz und reservierbarer überdachter Bereich. Nach Motorradplatz im gedeckten Bereich fragen.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.hotelcapnegret.es/servicios/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+            <div class="hotel"><div class="hotel-label">Kleinere Alternative</div><h3>Hotel Altaia</h3><div class="parking private">Privatparkplatz laut Tourismusinfo</div><p>Zentraler an der Promenade. Zufahrt und gesicherten Motorradplatz vor Buchung direkt bestätigen.</p><div class="hotel-actions"><a class="hotel-link" href="https://hotelaltaia.es/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="monachil">
+        <div class="stay-date"><strong>8.–11. Oktober</strong><span>3 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Monachil</h2><div class="base-note">Granada-Aussenbasis · Alpujarras direkt erreichbar</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>La Almunia del Valle</h3><div class="parking private">Kostenloser Hotelparkplatz</div><p>Ruhig, landschaftlich passend und mit Restaurant. Der Parkplatz ist draussen; abgeschlossenen Bereich für zwei Motorräder schriftlich klären.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.laalmuniadelvalle.com/en/service/parking-2/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+            <div class="hotel"><div class="hotel-label">Einfachere Alternative</div><h3>Hotel Rural Huerta del Laurel</h3><div class="parking confirm">Parkplatzstatus bestätigen</div><p>Im Dorf Monachil und näher an Bus, Restaurants und Ortszentrum. Eine sichere Motorradabstellung vor Buchung ausdrücklich verlangen.</p><div class="hotel-actions"><a class="hotel-link" href="https://monachil.es/donde-dormir" target="_blank" rel="noopener">Ortsübersicht</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="ronda">
+        <div class="stay-date"><strong>11.–14. Oktober</strong><span>3 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Ronda</h2><div class="base-note">Zwei Fahrtage plus Puffertag</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Hotel San Francisco</h3><div class="parking">Geschlossene Gästegarage bestätigt</div><p>Eigene geschlossene Garage nur für Gäste, Motorradtarif ausgewiesen. Zentrum zu Fuss erreichbar.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://hotelsanfrancisco-ronda.com/en/services/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+            <div class="hotel"><div class="hotel-label">Preiswerte Alternative</div><h3>Hotel Andalucía</h3><div class="parking">Motorräder innen und kostenlos</div><p>Ausdrücklich „Moto Friendly“; Motorräder können kostenlos innerhalb der Anlage abgestellt werden.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.hotel-andalucia.net/en/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="ubeda">
+        <div class="stay-date"><strong>14.–16. Oktober</strong><span>2 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Úbeda</h2><div class="base-note">Altstadt zu Fuss · Zufahrt vorher ansehen</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>La Posada Boutique Hotel</h3><div class="parking private">Privatparkplatz bestätigt</div><p>Privatparkplatz und zentrale Lage. Vor Buchung nach Tor, Nachtabschluss und Zufahrt für zwei beladene Motorräder fragen.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.laposadaubeda.es/en" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+            <div class="hotel"><div class="hotel-label">Alternative</div><h3>Hotel Rosaleda de Don Pedro</h3><div class="parking confirm">Garagenplatz direkt bestätigen</div><p>Zentrale Lage; nur wählen, wenn ein geschlossener Platz für beide Motorräder schriftlich zugesagt wird.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.hotelrosaledadonpedro.com/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="cuenca">
+        <div class="stay-date"><strong>16.–18. Oktober</strong><span>2 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Cuenca / Arcas</h2><div class="base-note">Motorradfreundliche Aussenbasis, rund 10 km vor Cuenca</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Isis de Cuenca</h3><div class="parking">Moto-Spezialist · Gelände nachts geschlossen</div><p>Explizit für Motorradreisende, Parken vor dem Zimmer und nachts geschlossenes Gelände. Restaurant vor Ort; Cuenca per Taxi oder Motorrad.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.booking.com/hotel/es/hostal-isis.html" target="_blank" rel="noopener">Unterkunft öffnen</a></div></div>
+            <div class="hotel"><div class="hotel-label">Stadt-Alternative</div><h3>Hotel Torremangana</h3><div class="parking private">Tiefgarage · Motorradberichte positiv</div><p>Stadtnäher und zu Fuss praktischer. Verbindliche Reservierung für zwei Motorräder direkt beim Hotel einholen.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.hoteltorremangana.com/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="zaragoza">
+        <div class="stay-date"><strong>18.–19. Oktober</strong><span>1 Nacht</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Zaragoza</h2><div class="base-note">Kurzer Stadtstopp · ZBE-Zufahrt beachten</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Hotel Sauce</h3><div class="parking">Geschlossene Garage · 2 Motorräder pro Platz</div><p>Sehr klare Motorradregel: zwei Motorräder teilen für insgesamt 20 Euro einen Platz in der geschlossenen Garage. Vorreservieren.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.hotelsauce.com/en/information/faqs/hotel-sauce-saragossa/parking-en/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+            <div class="hotel"><div class="hotel-label">Alternative mit direktem Zugang</div><h3>Hotel Río Arga</h3><div class="parking">Sicherer Privatparkplatz im Gebäude</div><p>Garage direkt im Hotel; Zimmer inklusive Parkplatz ist buchbar. Zufahrtsbeschreibung wegen Fussgängerzone vorher anfordern.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.hotelrioarga.es/" target="_blank" rel="noopener">Hotel öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="castelldefels-2">
+        <div class="stay-date"><strong>19.–21. Oktober</strong><span>2 Nächte</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Castelldefels · Fährenbasis</h2><div class="base-note">Letzte Nacht: frühe, direkte Hafenfahrt vorbereiten</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Dasselbe Hotel wie am 29. September</h3><div class="parking private">Bewährte Abstellung wiederverwenden</div><p>Am besten beide Castelldefels-Aufenthalte gemeinsam buchen. Am Vorabend volltanken, Gepäck montieren und Hafenzufahrt speichern.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://all.accor.com/hotel/3208/index.es.shtml" target="_blank" rel="noopener">ibis öffnen</a></div></div>
+            <div class="hotel"><div class="hotel-label">Sicherheits-Backup</div><h3>Central Park Castelldefels</h3><div class="parking">Bewachte Motorradgarage</div><p>Wie beim ersten Aufenthalt als unabhängige Garagenlösung nutzen.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.centralparkcastelldefels.com/" target="_blank" rel="noopener">Garage öffnen</a></div></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="ferry">
+        <div class="stay-date"><strong>21.–22. Oktober</strong><span>1 Nacht an Bord</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Fähre Barcelona–Genua</h2><div class="base-note">Check-in 08:30 · Abfahrt 10:30 · Ankunft 09:00</div></div><div class="booking-state"><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Bereits organisiert</div><h3>Kabine an Bord</h3><div class="parking">Motorradverladung gemäss Reederei</div><p>Eigene Zurrgurte nur mitnehmen, falls die Reederei dies verlangt. Wertsachen und Übernachtungsgepäck vor der Verladung separat bereithalten.</p></div>
+            <div class="hotel"><div class="hotel-label">Keine Hotelnacht</div><h3>Hafen Barcelona</h3><div class="parking confirm">Terminal nochmals prüfen</div><p>Am Vorabend Terminal, Einfahrt und Fahrzeit vom Hotel in Google Maps prüfen.</p></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="stay" data-stay="aosta-como">
+        <div class="stay-date"><strong>22.–23. Oktober</strong><span>1 Nacht</span></div>
+        <div class="stay-content">
+          <div class="stay-head"><div><h2>Aosta oder Como</h2><div class="base-note">Wetterabhängige Heimreise-Entscheidung nach der Fähre</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="options">
+            <div class="hotel primary"><div class="hotel-label">Aosta-Variante</div><h3>Hotel Le Pageot</h3><div class="parking">Kostenlose Tiefgarage für Motorräder</div><p>Sehr klare Motorradlösung und praktische Lage für die Heimfahrt via Grosser St. Bernhard. Kein Frühstück im Haus.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.lepageot.it/en/services-2/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+            <div class="hotel"><div class="hotel-label">Como-Variante</div><h3>Park Hotel Como</h3><div class="parking">Private Garage · reservierbar</div><p>Garage gegen Gebühr, Platz muss reserviert werden. Vor Buchung bestätigen, dass beide Motorräder einen Platz teilen dürfen.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.parkhotelcomo.it/en/faq/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="branch"><strong>Empfehlung für den letzten Abend:</strong> Aosta ist bei trockener Route über den Grossen St. Bernhard die motorradfreundlichere Wahl. Como bleibt die Schlechtwetter- oder Simplon/Gotthard-Alternative. Erst wenige Tage vorher definitiv buchen, sofern die Tarife stornierbar bleiben.</div>
+  </main>
+
+  <footer>
+    Recherche-Stand: 1. August 2026. Parkplatzangaben stammen von den verlinkten Hotel- oder Tourismus-Seiten; sie ersetzen keine individuelle Bestätigung für zwei Motorräder. Preise und Verfügbarkeit können sich ändern.
+  </footer>
+
+  <script>
+    const storageKey = "spanien-roadbook-2026-hotels-v1";
+    const state = JSON.parse(localStorage.getItem(storageKey) || "{}");
+
+    const bookingGuidance = {
+      grenoble: ["Jetzt reservieren · erste Nacht", "now"],
+      "castelldefels-1": ["Jetzt reservieren · sichere Garage", "now"],
+      monachil: ["Jetzt reservieren · langes Wochenende", "now"],
+      ronda: ["Jetzt reservieren · Feiertag 12. Oktober", "now"],
+      zaragoza: ["Jetzt reservieren · Fiestas del Pilar", "now"],
+      "castelldefels-2": ["Jetzt reservieren · Fährenanker", "now"],
+      ferry: ["Bereits gebucht", ""],
+      "aosta-como": ["Später entscheiden · wetterabhängig", "later"]
+    };
+
+    document.querySelectorAll(".stay").forEach((stay) => {
+      const id = stay.dataset.stay;
+      const current = state[id] || "";
+      const [guidance, guidanceClass] = bookingGuidance[id] || ["Flexibel reservieren · stornierbarer Tarif", ""];
+      const guidanceBadge = document.createElement("span");
+      guidanceBadge.className = `booking-advice ${guidanceClass}`.trim();
+      guidanceBadge.textContent = guidance;
+      stay.querySelector(".base-note")?.append(guidanceBadge);
+      stay.querySelectorAll(".state-button").forEach((button) => {
+        button.setAttribute("aria-pressed", String(button.dataset.state === current));
+        button.addEventListener("click", () => {
+          const next = state[id] === button.dataset.state ? "" : button.dataset.state;
+          state[id] = next;
+          localStorage.setItem(storageKey, JSON.stringify(state));
+          stay.querySelectorAll(".state-button").forEach((candidate) => {
+            candidate.setAttribute("aria-pressed", String(candidate.dataset.state === next));
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>

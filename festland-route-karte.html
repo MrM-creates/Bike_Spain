@@ -1,0 +1,233 @@
+<div id="route-map" class="route-map">
+  <style>
+    #route-map {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #172033;
+      background: #f6f2e9;
+      border: 1px solid #d7cdbb;
+      border-radius: 8px;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+    #route-map .header {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 12px;
+    }
+    #route-map h1 {
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 500;
+      margin: 0;
+    }
+    #route-map .note {
+      font-size: 13px;
+      line-height: 1.35;
+      max-width: 520px;
+      color: #4d5565;
+      margin: 0;
+    }
+    #route-map svg {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #fbfaf6;
+      border: 1px solid #ddd4c6;
+      border-radius: 6px;
+    }
+    #route-map .route-line {
+      fill: none;
+      stroke: #1f6feb;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #route-map .ferry-line {
+      fill: none;
+      stroke: #8a63d2;
+      stroke-width: 4;
+      stroke-dasharray: 10 8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #route-map .home-line {
+      fill: none;
+      stroke: #1f6feb;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #route-map .stop circle {
+      fill: #d53f3f;
+      stroke: #fbfaf6;
+      stroke-width: 2.5;
+    }
+    #route-map .stop text.num {
+      fill: #ffffff;
+      font-size: 11px;
+      font-weight: 500;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+    #route-map .stop text.label {
+      fill: #172033;
+      font-size: 12px;
+      font-weight: 500;
+      paint-order: stroke;
+      stroke: #fbfaf6;
+      stroke-width: 4px;
+      stroke-linejoin: round;
+    }
+    #route-map .water {
+      fill: #dbeaf3;
+      opacity: 0.75;
+    }
+    #route-map .landhint {
+      fill: none;
+      stroke: #c9bda8;
+      stroke-width: 1.5;
+      stroke-dasharray: 4 6;
+    }
+    #route-map .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #4d5565;
+    }
+    #route-map .legend span {
+      display: inline-flex;
+      gap: 7px;
+      align-items: center;
+    }
+    #route-map .swatch {
+      width: 28px;
+      height: 0;
+      border-top: 4px solid #1f6feb;
+      border-radius: 2px;
+    }
+    #route-map .swatch.ferry {
+      border-top-color: #8a63d2;
+      border-top-style: dashed;
+    }
+    @media (max-width: 720px) {
+      #route-map {
+        padding: 12px;
+      }
+      #route-map .header {
+        display: block;
+      }
+      #route-map .note {
+        margin-top: 8px;
+      }
+      #route-map .stop text.label {
+        font-size: 10px;
+      }
+    }
+  </style>
+
+  <div class="header">
+    <h1>Festlandroute Spanien, grober Verlauf</h1>
+    <p class="note">Schematische Karte mit nummerierten Stopps. Die Linien zeigen die Reiseabfolge, nicht die exakte Strassenfuehrung.</p>
+  </div>
+
+  <svg viewBox="0 0 1000 720" role="img" aria-label="Grobe Karte der Motorradroute von Bellikon ueber Frankreich und Spanien nach Barcelona, per Faehre nach Genua und zurueck nach Bellikon">
+    <rect class="water" x="564" y="285" width="370" height="260" rx="70"></rect>
+    <path class="landhint" d="M705 44 C620 100 601 169 621 236 C654 340 566 425 485 456 C383 496 315 577 367 661"></path>
+    <path class="landhint" d="M715 45 C797 102 820 167 786 237 C750 310 791 380 892 449"></path>
+    <path id="land-route" class="route-line"></path>
+    <path id="ferry-route" class="ferry-line"></path>
+    <path id="home-route" class="home-line"></path>
+    <g id="stops"></g>
+  </svg>
+
+  <div class="legend">
+    <span><i class="swatch"></i>Landroute</span>
+    <span><i class="swatch ferry"></i>Faehre Barcelona-Genua</span>
+    <span>Stopps: Bellikon, Lyon, Ardeche, Nimes/Uzes, Carcassonne, Barcelona, Priorat, Albarracin, Valencia, Altea, Granada, Ronda, Ubeda/Baeza, Cuenca, Zaragoza, Barcelona, Genua, Bellikon</span>
+  </div>
+
+  <script>
+    (function () {
+      const stops = [
+        { n: 1, name: "Bellikon", lat: 47.3890, lon: 8.3430, dx: -52, dy: -12 },
+        { n: 2, name: "Lyon", lat: 45.7640, lon: 4.8357, dx: -44, dy: -10 },
+        { n: 3, name: "Ardeche", lat: 44.4070, lon: 4.3940, dx: -60, dy: 6 },
+        { n: 4, name: "Nimes/Uzes", lat: 43.8367, lon: 4.3601, dx: 18, dy: 4 },
+        { n: 5, name: "Carcassonne", lat: 43.2130, lon: 2.3510, dx: -86, dy: 12 },
+        { n: 6, name: "Barcelona", lat: 41.3874, lon: 2.1686, dx: 16, dy: 2 },
+        { n: 7, name: "Priorat", lat: 41.1460, lon: 0.8200, dx: -62, dy: 6 },
+        { n: 8, name: "Albarracin", lat: 40.4070, lon: -1.4440, dx: -78, dy: -8 },
+        { n: 9, name: "Valencia", lat: 39.4699, lon: -0.3763, dx: 16, dy: 5 },
+        { n: 10, name: "Altea", lat: 38.6029, lon: -0.0450, dx: 16, dy: 5 },
+        { n: 11, name: "Granada", lat: 37.1770, lon: -3.5990, dx: -72, dy: -8 },
+        { n: 12, name: "Ronda", lat: 36.7460, lon: -5.1610, dx: -54, dy: 16 },
+        { n: 13, name: "Ubeda/Baeza", lat: 38.0110, lon: -3.3710, dx: 16, dy: -8 },
+        { n: 14, name: "Cuenca", lat: 40.0700, lon: -2.1370, dx: 16, dy: -8 },
+        { n: 15, name: "Zaragoza", lat: 41.6488, lon: -0.8891, dx: 16, dy: -6 },
+        { n: 16, name: "Barcelona", lat: 41.3874, lon: 2.1686, dx: 16, dy: 20 },
+        { n: 17, name: "Genua", lat: 44.4056, lon: 8.9463, dx: 16, dy: 0 },
+        { n: 18, name: "Bellikon", lat: 47.3890, lon: 8.3430, dx: 14, dy: 14 }
+      ];
+
+      const minLon = -5.7;
+      const maxLon = 9.5;
+      const minLat = 36.3;
+      const maxLat = 47.8;
+      const pad = 54;
+      const width = 1000;
+      const height = 720;
+
+      function project(point) {
+        const x = pad + ((point.lon - minLon) / (maxLon - minLon)) * (width - pad * 2);
+        const y = pad + ((maxLat - point.lat) / (maxLat - minLat)) * (height - pad * 2);
+        return { x, y };
+      }
+
+      function pathFor(points) {
+        return points.map((point, index) => {
+          const p = project(point);
+          return (index === 0 ? "M" : "L") + p.x.toFixed(1) + " " + p.y.toFixed(1);
+        }).join(" ");
+      }
+
+      document.getElementById("land-route").setAttribute("d", pathFor(stops.slice(0, 16)));
+      document.getElementById("ferry-route").setAttribute("d", pathFor([stops[15], stops[16]]));
+      document.getElementById("home-route").setAttribute("d", pathFor([stops[16], stops[17]]));
+
+      const group = document.getElementById("stops");
+      stops.forEach((stop) => {
+        const p = project(stop);
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "stop");
+        g.setAttribute("aria-label", stop.n + ". " + stop.name);
+
+        const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        circle.setAttribute("cx", p.x.toFixed(1));
+        circle.setAttribute("cy", p.y.toFixed(1));
+        circle.setAttribute("r", "13");
+        g.appendChild(circle);
+
+        const num = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        num.setAttribute("class", "num");
+        num.setAttribute("x", p.x.toFixed(1));
+        num.setAttribute("y", (p.y + 0.5).toFixed(1));
+        num.textContent = stop.n;
+        g.appendChild(num);
+
+        const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        label.setAttribute("class", "label");
+        label.setAttribute("x", (p.x + stop.dx).toFixed(1));
+        label.setAttribute("y", (p.y + stop.dy).toFixed(1));
+        label.textContent = stop.name;
+        g.appendChild(label);
+
+        group.appendChild(g);
+      });
+    })();
+  </script>
+</div>

@@ -1,0 +1,1229 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f5f0">
+  <title>Spanienreise 2026 - Roadbook</title>
+  <style>
+    :root {
+      --bg: #f4f5f0;
+      --surface: #ffffff;
+      --text: #172019;
+      --muted: #667069;
+      --border: #d9ddd6;
+      --accent: #176b46;
+      --accent-hover: #0f5637;
+      --accent-soft: #e6f1eb;
+      --option: #965b12;
+      --option-soft: #fff3df;
+      --rest: #315d87;
+      --rest-soft: #e8f0f8;
+      --changed: #965b12;
+      --done: #176b46;
+      --skipped: #747b76;
+      --radius: 8px;
+      --shadow: 0 8px 24px rgba(23, 32, 25, 0.08);
+      --fast: 160ms ease;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    a { color: inherit; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(244, 245, 240, 0.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar-inner,
+    main,
+    footer {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar-inner {
+      min-height: 66px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      font-weight: 760;
+      font-size: 16px;
+    }
+
+    .trip-meta {
+      color: var(--muted);
+      font-size: 14px;
+      text-align: right;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-link {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .topbar-link:hover { border-color: var(--accent); }
+
+    main { padding: 36px 0 64px; }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      max-width: 650px;
+      font-size: clamp(30px, 5vw, 46px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .intro p {
+      margin: 0;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .legend .rest-key::before { background: var(--rest); }
+
+    .trip-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      margin: 0 0 24px;
+      background: var(--text);
+      color: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .trip-summary div {
+      min-width: 0;
+      padding: 16px 18px;
+      border-right: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .trip-summary div:last-child { border-right: 0; }
+
+    .trip-summary strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 20px;
+    }
+
+    .trip-summary span {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 13px;
+    }
+
+    .glossary {
+      margin: 0 0 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .map-panel {
+      margin: 0 0 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .map-panel summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 54px;
+      padding: 0 18px;
+      font-weight: 740;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .map-panel summary::-webkit-details-marker { display: none; }
+    .map-panel summary::after { content: "+"; color: var(--accent); font-size: 20px; }
+    .map-panel[open] summary::after { content: "−"; }
+
+    .map-frame {
+      width: 100%;
+      height: min(62vh, 560px);
+      min-height: 360px;
+      display: block;
+      border: 0;
+      border-top: 1px solid var(--border);
+      background: #e7ebe7;
+    }
+
+    .map-actions {
+      display: flex;
+      justify-content: flex-end;
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .planning-bar {
+      position: sticky;
+      top: 76px;
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 16px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .mode-switch,
+    .planning-actions,
+    .day-tools {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mode-button,
+    .tool-button,
+    .text-link {
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 690;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .mode-button[aria-pressed="true"] {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    .tool-button:hover,
+    .text-link:hover { border-color: var(--accent); }
+    .tool-button.danger { color: #8a2f2f; }
+    .tool-button.icon { width: 38px; padding: 0; font-size: 17px; }
+    .planning-only[hidden] { display: none !important; }
+
+    .save-state {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .glossary summary {
+      padding: 15px 18px;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 740;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .glossary summary::-webkit-details-marker { display: none; }
+    .glossary summary::after { content: " +"; color: var(--accent); }
+    .glossary[open] summary::after { content: " −"; }
+
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 24px;
+      padding: 0 18px 16px;
+    }
+
+    .glossary-item {
+      padding: 12px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .glossary-item dt {
+      margin: 0 0 3px;
+      font-weight: 760;
+    }
+
+    .glossary-item dd {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 4px 0 18px;
+      scrollbar-width: none;
+    }
+
+    .filters::-webkit-scrollbar { display: none; }
+
+    .filter-button {
+      min-height: 42px;
+      padding: 0 15px;
+      flex: 0 0 auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      font-weight: 650;
+      cursor: pointer;
+      transition: background var(--fast), border-color var(--fast), color var(--fast);
+    }
+
+    .filter-button:hover { border-color: var(--accent); }
+
+    .filter-button[aria-pressed="true"] {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    .day-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .day {
+      display: grid;
+      grid-template-columns: 74px minmax(0, 1fr) auto;
+      gap: 18px;
+      align-items: start;
+      min-height: 118px;
+      padding: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      box-shadow: 0 1px 0 rgba(23, 32, 25, 0.02);
+    }
+
+    .day.is-rest {
+      border-color: #cddceb;
+      border-left-color: var(--rest);
+      background: #f5f8fc;
+    }
+    .day.is-skipped {
+      border-left-color: var(--skipped);
+      background: #f2f3f2;
+      opacity: 0.72;
+    }
+    .day.is-done { border-left-color: var(--done); }
+    .day.is-changed { border-left-color: var(--changed); }
+    .day.is-hidden { display: none; }
+
+    .day-number {
+      align-self: start;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .day-number strong {
+      display: block;
+      margin-top: 2px;
+      color: var(--text);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .day-date {
+      display: block;
+      margin-top: 7px;
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 720;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    .day-content { min-width: 0; }
+
+    .day h2 {
+      margin: 0 0 4px;
+      font-size: 19px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    .overnight {
+      margin: 0 0 7px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .facts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px 14px;
+      margin: 0 0 9px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 720;
+    }
+
+    .facts span + span::before {
+      content: "·";
+      margin-right: 14px;
+      color: var(--border);
+    }
+
+    .note {
+      margin: 0;
+      color: #3f4942;
+      font-size: 14px;
+    }
+
+    .route-alert {
+      margin: 11px 0 0;
+      padding: 9px 11px;
+      border-left: 3px solid var(--option);
+      background: var(--option-soft);
+      color: #71430d;
+      font-size: 13px;
+    }
+
+    .route-details {
+      margin-top: 13px;
+      border-top: 1px solid var(--border);
+    }
+
+    .route-details summary {
+      padding: 11px 0 0;
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 720;
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .route-details summary::-webkit-details-marker { display: none; }
+    .route-details summary::after { content: " +"; }
+    .route-details[open] summary::after { content: " −"; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px 20px;
+      padding: 13px 0 2px;
+    }
+
+    .detail-item strong {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .detail-item span {
+      display: block;
+      color: #303a33;
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 7px;
+      width: 210px;
+    }
+
+    .status-select {
+      width: 100%;
+      min-height: 40px;
+      padding: 0 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 690;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      width: fit-content;
+      margin-bottom: 7px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #edf0ed;
+      color: #4e5851;
+      font-size: 11px;
+      font-weight: 760;
+    }
+
+    .status-badge.changed { background: var(--option-soft); color: #7d4a0d; }
+    .status-badge.done { background: var(--accent-soft); color: var(--accent); }
+    .status-badge.skipped { background: #e4e6e4; color: #555d57; }
+
+    .travel-note {
+      margin: 10px 0 0;
+      padding-left: 10px;
+      border-left: 3px solid var(--rest);
+      color: #334b61;
+      font-size: 13px;
+    }
+
+    dialog {
+      width: min(680px, calc(100% - 24px));
+      max-height: calc(100vh - 32px);
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius);
+      box-shadow: 0 20px 70px rgba(23, 32, 25, 0.24);
+    }
+
+    dialog::backdrop { background: rgba(23, 32, 25, 0.54); }
+
+    .editor-form { display: flex; flex-direction: column; max-height: calc(100vh - 32px); }
+    .editor-header,
+    .editor-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      background: var(--surface);
+    }
+    .editor-header { border-bottom: 1px solid var(--border); }
+    .editor-footer { border-top: 1px solid var(--border); justify-content: flex-end; }
+    .editor-header h2 { margin: 0; font-size: 19px; }
+    .editor-body { overflow-y: auto; padding: 18px; background: var(--bg); }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .field { display: grid; gap: 5px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { color: #465048; font-size: 12px; font-weight: 720; }
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      border: 1px solid #cbd1cb;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+    }
+    .field textarea { min-height: 76px; resize: vertical; }
+    .check-field { display: flex; align-items: center; gap: 9px; min-height: 42px; font-size: 14px; }
+    .primary-button { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .route-link {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border: 1px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 720;
+      text-align: center;
+      text-decoration: none;
+      transition: background var(--fast), border-color var(--fast), transform var(--fast);
+    }
+
+    .route-link-content { min-width: 0; }
+
+    .route-link small {
+      display: block;
+      margin-top: 1px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 11px;
+      font-weight: 560;
+    }
+
+    .route-link:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .route-link.secondary {
+      background: var(--option-soft);
+      border-color: #e4bd83;
+      color: var(--option);
+    }
+
+    .route-link.secondary:hover { background: #ffe8c5; }
+
+    .route-link.secondary small { color: #9a6a2f; }
+
+    .route-link:focus-visible,
+    .filter-button:focus-visible {
+      outline: 3px solid rgba(23, 107, 70, 0.28);
+      outline-offset: 2px;
+    }
+
+    .rest-label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 9px 12px;
+      border-radius: var(--radius);
+      background: var(--rest-soft);
+      color: var(--rest);
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    footer {
+      padding: 22px 0 40px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 760px) {
+      .topbar-inner { min-height: 58px; }
+      .trip-meta { display: none; }
+      main { padding-top: 24px; }
+      .intro { grid-template-columns: 1fr; gap: 14px; }
+      .legend { white-space: normal; }
+      .trip-summary { grid-template-columns: 1fr; }
+      .trip-summary div { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
+      .trip-summary div:last-child { border-bottom: 0; }
+      .glossary-grid { grid-template-columns: 1fr; }
+      .day {
+        grid-template-columns: 54px minmax(0, 1fr);
+        gap: 12px;
+        padding: 16px;
+      }
+      .actions {
+        grid-column: 1 / -1;
+        width: 100%;
+        margin-top: 4px;
+      }
+      .route-link { min-height: 48px; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .planning-bar { top: 66px; align-items: stretch; flex-direction: column; }
+      .planning-actions { overflow-x: auto; padding-bottom: 1px; }
+      .save-state { display: none; }
+      .map-frame { height: 52vh; min-height: 320px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .editor-footer { flex-wrap: wrap; }
+      .editor-footer .tool-button { flex: 1 1 180px; }
+    }
+
+    @media (max-width: 420px) {
+      .topbar-inner,
+      main,
+      footer { width: min(100% - 22px, 980px); }
+      h1 { font-size: 30px; }
+      .day { grid-template-columns: 46px minmax(0, 1fr); }
+      .day-number strong { font-size: 24px; }
+      .day h2 { font-size: 17px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Spanienreise 2026</div>
+      <div class="topbar-actions">
+        <div class="trip-meta">30 Tage · 24.09.–23.10.2026 · zwei Triumph Motorräder</div>
+        <a class="topbar-link" href="/unterkuenfte">Unterkünfte</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <h1 id="page-title">Motorrad-Roadbook</h1>
+        <p>Alle Etappen, Strassen und Hinweise an einem Ort. Tagesroute prüfen und direkt in Google Maps öffnen.</p>
+      </div>
+      <div class="legend" aria-label="Legende">
+        <span>Fahrtag</span>
+        <span class="rest-key">Ruhetag</span>
+      </div>
+    </section>
+
+    <section class="trip-summary" aria-label="Reiseübersicht">
+      <div><strong id="summary-days">30 Tage</strong><span>24.09.–23.10.2026 · Berikon – Spanien – Berikon</span></div>
+      <div><strong>ca. 5'200 km</strong><span>Hauptroute, ohne Zusatzrunden</span></div>
+      <div><strong>32 Routen geprüft</strong><span>Google Maps, Stand 1. August 2026</span></div>
+    </section>
+
+    <details class="map-panel" open>
+      <summary>My Maps – ursprüngliche Gesamtkarte</summary>
+      <iframe
+        class="map-frame"
+        title="My Maps Gesamtkarte der Spanienreise"
+        src="https://www.google.com/maps/d/embed?mid=1qOQTZPuisje8TaPkSl_9rkPV1FP_HUw"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+      <div class="map-actions">
+        <a class="text-link" href="https://www.google.com/maps/d/u/0/edit?mid=1qOQTZPuisje8TaPkSl_9rkPV1FP_HUw&amp;usp=sharing" target="_blank" rel="noopener noreferrer">In My Maps öffnen ↗</a>
+      </div>
+    </details>
+
+    <section class="planning-bar" aria-label="Roadbook-Modus">
+      <div class="mode-switch" aria-label="Ansicht wählen">
+        <button class="mode-button" id="view-mode" type="button" aria-pressed="true">Roadbook</button>
+        <button class="mode-button" id="plan-mode" type="button" aria-pressed="false">Planen</button>
+      </div>
+      <div class="planning-actions planning-only" hidden>
+        <button class="tool-button primary-button" id="add-day" type="button">Tag hinzufügen</button>
+        <button class="tool-button" id="export-plan" type="button">Sicherung herunterladen</button>
+        <button class="tool-button" id="import-plan" type="button">Sicherung laden</button>
+        <button class="tool-button danger" id="reset-plan" type="button">Alles zurücksetzen</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
+      </div>
+      <span class="save-state" id="save-state" aria-live="polite">Originalplan</span>
+    </section>
+
+    <details class="glossary">
+      <summary>Begriffe einfach erklärt</summary>
+      <dl class="glossary-grid">
+        <div class="glossary-item"><dt>Crit’Air</dt><dd>Französische Umweltplakette. Sie ordnet auch Motorräder nach Abgaswerten ein und kann für die Einfahrt in französische Umweltzonen nötig sein.</dd></div>
+        <div class="glossary-item"><dt>ZBE</dt><dd>Spanische Umweltzone, ausgeschrieben „Zona de Bajas Emisiones“. Städte können die Einfahrt abhängig von Fahrzeug, Kennzeichen und lokalen Regeln beschränken.</dd></div>
+        <div class="glossary-item"><dt>Digue à la Mer</dt><dd>Schmaler Meerdeich in der Camargue. Er führt durch empfindliche Naturgebiete, ist teilweise unbefestigt und für motorisierten Verkehr gesperrt. Er gehört nicht zur Route.</dd></div>
+        <div class="glossary-item"><dt>P+R</dt><dd>Park-and-Ride: Parkplatz am Stadtrand mit Verbindung ins Zentrum. In Annecy dient er als sicher erreichbarer Ankunftspunkt statt einer engen Innenstadtzufahrt.</dd></div>
+        <div class="glossary-item"><dt>Maut</dt><dd>Gebühr für bestimmte Autobahnen, Tunnel oder Brücken. Google Maps zeigt mögliche Mautstrecken bei der Routenöffnung an.</dd></div>
+        <div class="glossary-item"><dt>Fährpuffer</dt><dd>Reservetag rund um die Fähre. Er fängt geänderte Abfahrtszeiten, Check-in, Verspätungen oder eine zusätzliche Übernachtung auf.</dd></div>
+        <div class="glossary-item"><dt>Ortsrand statt Altstadt</dt><dd>Historische Zentren haben oft enge Gassen, Zufahrtsverbote oder Pflaster. Deshalb Hotelzufahrt oder Parkplatz ausserhalb des Kerns verwenden.</dd></div>
+        <div class="glossary-item"><dt>Strassennummern</dt><dd>A/AP bezeichnet meist Autobahnen, N Nationalstrassen. D steht in Frankreich für Départementstrassen; CV, CM, CA, GR und T sind regionale spanische Strassen.</dd></div>
+        <div class="glossary-item"><dt>Motorräder und ZBE</dt><dd>Street Twin 900, Baujahr 2023, 35 kW, Euro 5; Scrambler 1200 X, Baujahr 2025, Euro 5. Beide erfüllen die Emissionsanforderungen. In Barcelona müssen die Schweizer Kennzeichen trotzdem vorab im Register für ausländische Fahrzeuge erfasst werden.</dd></div>
+      </dl>
+    </details>
+
+    <nav class="filters" aria-label="Reiseabschnitt">
+      <button class="filter-button" type="button" data-filter="all" aria-pressed="true">Alle Tage</button>
+      <button class="filter-button" type="button" data-filter="1" aria-pressed="false">Tage 1–7</button>
+      <button class="filter-button" type="button" data-filter="2" aria-pressed="false">Tage 8–14</button>
+      <button class="filter-button" type="button" data-filter="3" aria-pressed="false">Tage 15–21</button>
+      <button class="filter-button" type="button" data-filter="4" aria-pressed="false">Tage 22–28</button>
+    </nav>
+
+    <div class="day-list" id="day-list" aria-live="polite"></div>
+  </main>
+
+  <dialog id="day-editor" aria-labelledby="editor-title">
+    <form class="editor-form" id="editor-form">
+      <div class="editor-header">
+        <h2 id="editor-title">Tag bearbeiten</h2>
+        <button class="tool-button icon" type="button" id="close-editor" aria-label="Fenster schliessen" title="Schliessen">×</button>
+      </div>
+      <div class="editor-body">
+        <div class="form-grid">
+          <div class="field full"><label for="edit-title">Etappe</label><input id="edit-title" name="title" required></div>
+          <div class="field"><label for="edit-type">Art des Tages</label><input id="edit-type" name="type"></div>
+          <div class="field"><label for="edit-overnight">Übernachtung</label><input id="edit-overnight" name="overnight"></div>
+          <div class="field"><label for="edit-km">Kilometer</label><input id="edit-km" name="km" placeholder="z. B. 220 km"></div>
+          <div class="field"><label for="edit-time">Fahrzeit</label><input id="edit-time" name="time" placeholder="z. B. 3 h 30"></div>
+          <div class="field full"><label for="edit-roads">Strassen</label><input id="edit-roads" name="roads"></div>
+          <div class="field full"><label for="edit-points">Wegpunkte</label><textarea id="edit-points" name="points"></textarea></div>
+          <div class="field full"><label for="edit-note">Planungshinweis</label><textarea id="edit-note" name="note"></textarea></div>
+          <div class="field full"><label for="edit-travel-note">Unterwegs-Notiz</label><textarea id="edit-travel-note" name="travelNote" placeholder="Tatsächliche Route, Hotel, Beobachtungen …"></textarea></div>
+          <div class="field"><label for="edit-origin">Google Maps: Start</label><input id="edit-origin" name="origin"></div>
+          <div class="field"><label for="edit-destination">Google Maps: Ziel</label><input id="edit-destination" name="destination"></div>
+          <div class="field full"><label for="edit-waypoints">Google Maps: Zwischenziele, eines pro Zeile</label><textarea id="edit-waypoints" name="waypoints"></textarea></div>
+          <div class="field"><label for="edit-status">Status</label><select id="edit-status" name="status"><option value="planned">Geplant</option><option value="changed">Geändert</option><option value="done">Gefahren</option><option value="skipped">Ausgelassen</option></select></div>
+          <label class="check-field"><input id="edit-rest" name="rest" type="checkbox"> Ruhetag</label>
+        </div>
+      </div>
+      <div class="editor-footer">
+        <button class="tool-button" type="button" id="cancel-editor">Abbrechen</button>
+        <button class="tool-button" type="button" id="preview-route">Route in Google Maps prüfen ↗</button>
+        <button class="tool-button primary-button" type="submit">Tag im Roadbook speichern</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer>
+    Kilometer und Zeiten sind indikative Google-Maps-Werte ohne Pausen, geprüft am 1. August 2026. Start neu am 24. September 2026; der Altea-Flex-/Ruhetag entfällt, damit Fähre und Heimreise unverändert bleiben. Fähre Barcelona–Genua: 21. Oktober, Check-in 08:30, Abfahrt 10:30, Ankunft am 22. Oktober um 09:00. Verkehr und Sperrungen können die Route verändern; vor dem Start kurz prüfen, ob die genannten Strassen verwendet werden.
+  </footer>
+
+  <script>
+    const maps = (origin, destination, waypoints = []) => {
+      const params = new URLSearchParams({ api: "1", origin, destination, travelmode: "driving" });
+      if (waypoints.length) params.set("waypoints", waypoints.join("|"));
+      return `https://www.google.com/maps/dir/?${params.toString()}`;
+    };
+
+    const originalDays = [
+      { day: 1, title: "Berikon – Grenoble", type: "Anreise", overnight: "Grenoble", km: "404 km", time: "4 h 20", roads: "A1 und A41", points: "Direkte Route ohne Innenstadt-Zwischenziele", note: "Autobahnen nicht vermeiden. Französische Umweltplakette Crit’Air und Hotelgarage in Grenoble vorab klären.", main: maps("Berikon, Switzerland", "Grenoble, France"), alt: [{ label: "Annecy Park-and-Ride Périaz", meta: "303 km · 3 h 25", url: maps("Berikon, Switzerland", "Parking Relais Périaz, 74600 Annecy, France") }, { label: "Nur bis Chambéry", meta: "349 km · 3 h 50", url: maps("Berikon, Switzerland", "Chambéry, France") }] },
+      { day: 2, title: "Grenoble – Sisteron", type: "Route Napoléon", overnight: "Sisteron", km: "153 km", time: "3 h 05", roads: "N85", points: "Vizille · Laffrey · La Mure · Corps · Gap", note: "N85 halten; keine kleinen Seitenpässe bei schlechtem Wetter.", alert: "Google meldet derzeit eine lokale Sperrung in Gap und umfährt sie automatisch. Vor der Fahrt erneut prüfen.", main: maps("Grenoble, France", "Sisteron, France", ["Vizille, France", "Laffrey, France", "La Mure, France", "Corps, France", "Gap, France"]), alt: [{ label: "Méouge-Zusatzrunde", meta: "66 km · 1 h 35", url: maps("Sisteron, France", "Sisteron, France", ["Laragne-Montéglin, France", "Châteauneuf-de-Chabre, France", "Gorges de la Méouge, France", "Barret-sur-Méouge, France", "Châteauneuf-de-Chabre, France"]) }] },
+      { day: 3, title: "Sisteron – Lourmarin", type: "Provence / Luberon", overnight: "Lourmarin oder Aix-en-Provence", km: "119 km", time: "2 h 25", roads: "D4085/N85 und regionale Hauptstrassen", points: "Château-Arnoux · Malijai · Forcalquier · Céreste · Apt · Parkplatz Bonnieux", note: "Digne ist kein Pflichtpunkt. In Bonnieux und Lourmarin am Ortsrand parkieren.", main: maps("Sisteron, France", "Lourmarin, France", ["Château-Arnoux-Saint-Auban, France", "Malijai, France", "Forcalquier, France", "Céreste, France", "Apt, France", "Parking Bonnieux, France"]), alt: [{ label: "Variante Manosque", meta: "128 km · 2 h 35", url: maps("Sisteron, France", "Lourmarin, France", ["Château-Arnoux-Saint-Auban, France", "Forcalquier, France", "Manosque, France", "Céreste, France", "Apt, France"]) }] },
+      { day: 4, title: "Lourmarin – Camargue – Nîmes", type: "Camargue", overnight: "Nîmes oder Uzès", km: "197 km", time: "3 h 20", roads: "A54 · D570 · D38 · D58 · D979", points: "Arles · Pont de Gau · Saintes-Maries-de-la-Mer · Aigues-Mortes", note: "Nicht auf den schmalen Meerdeich Digue à la Mer fahren. Auch keine Salinenpisten, Schutzgebiets- oder Strandwege verwenden.", main: maps("Lourmarin, France", "Nîmes, France", ["Arles, France", "Parc ornithologique du Pont de Gau, France", "Saintes-Maries-de-la-Mer, France", "Aigues-Mortes, France"]) },
+      { day: 5, title: "Nîmes – Carcassonne", type: "Languedoc", overnight: "Carcassonne", km: "223 km", time: "3 h 45", roads: "D40 und regionale Hauptstrassen; A9/A61 als Schlechtwetteroption", points: "Sommières · Pézenas · Béziers · Capestang", note: "Bei Verkehr, Wind oder Regen abschnittsweise A9/A61 wählen.", main: maps("Nîmes, France", "Carcassonne, France", ["Sommières, France", "Pézenas, France", "Béziers, France", "Capestang, France"]) },
+      { day: 6, title: "Carcassonne – Castelldefels", type: "Transfer", overnight: "Castelldefels", km: "ca. 330 km", time: "ca. 3 h 45", roads: "A61 · A9 · AP-7 · B-23/C-32", points: "Direkte Hauptstrecke; Collioure separat", note: "Keine kleinen Pyrenäenpässe. Hotel nahe R2-Bahnhof und mit geschlossener Garage wählen; für Barcelona die Motorräder stehen lassen.", main: maps("Carcassonne, France", "Castelldefels, Spain"), alt: [{ label: "Via Collioure", meta: "ca. 370 km · 4 h 30", url: maps("Carcassonne, France", "Castelldefels, Spain", ["Collioure, France"]) }] },
+      { day: 7, title: "Castelldefels / Barcelona", type: "Ruhetag / Stadt optional", overnight: "Castelldefels", roads: "Keine Fahrroute", points: "Strand · R2-Bahn nach Barcelona · Wartung · sichere Garage", note: "Motorräder beim Hotel lassen. Barcelona nur besuchen, wenn Energie und Lust passen.", rest: true },
+      { day: 8, title: "Castelldefels – Falset", type: "Küste / Priorat", overnight: "Falset", km: "ca. 135 km", time: "ca. 2 h 20", roads: "C-31/C-32 · T-11 · N-420", points: "Sitges · Tarragona · Reus", note: "Küstenabschnitt bei dichtem Verkehr auslassen und direkt Richtung Tarragona/Reus fahren.", main: maps("Castelldefels, Spain", "Falset, Spain", ["Sitges, Spain", "Tarragona, Spain", "Reus, Spain"]) },
+      { day: 9, title: "Priorat-Runde", type: "Kurventag", overnight: "Falset", km: "58 km", time: "1 h 35", roads: "T-710 und asphaltierte Regionalstrassen", points: "Gratallops · La Vilella Baixa · Escaladei · Cornudella · Porrera", note: "Langsam und kurvig. Siurana nur als bewusste zusätzliche Stichstrasse.", main: maps("Falset, Spain", "Falset, Spain", ["Gratallops, Spain", "La Vilella Baixa, Spain", "Escaladei, Spain", "Cornudella de Montsant, Spain", "Porrera, Spain"]) },
+      { day: 10, title: "Falset – Albarracín", type: "Inland", overnight: "Albarracín", km: "287 km", time: "3 h 50", roads: "N-420 · A-1512", points: "Gandesa · Alcañiz · Teruel · Gea de Albarracín", note: "N-420 bis Teruel und A-1512 nach Albarracín halten. Nicht in die Altstadt routen.", main: maps("Falset, Spain", "Albarracín, Spain", ["Gandesa, Spain", "Alcañiz, Spain", "Teruel, Spain", "Gea de Albarracín, Spain"]) },
+      { day: 11, title: "Albarracín-Runde", type: "Flex / Kurventag", overnight: "Albarracín", km: "78 km", time: "1 h 30", roads: "A-1512 und markierte Regionalstrassen", points: "Orihuela del Tremedal · Bronchales · Noguera · Tramacastilla", note: "Nur fahren, wenn Google klar auf Asphalt führt; sonst Ruhetag.", main: maps("Albarracín, Spain", "Albarracín, Spain", ["Orihuela del Tremedal, Spain", "Bronchales, Spain", "Noguera de Albarracín, Spain", "Tramacastilla, Spain"]) },
+      { day: 12, title: "Albarracín – La Patacona", type: "Transfer", overnight: "La Patacona / Alboraya", km: "ca. 190 km", time: "ca. 2 h 25", roads: "A-1512 · N-234/A-23 · nördliche Stadtumfahrung", points: "Teruel · Segorbe", note: "Bei gutem Wetter N-234-Abschnitte, sonst A-23. Unterkunft mit Garage nahe Strand und guter Verbindung nach Valencia wählen.", main: maps("Albarracín, Spain", "La Patacona, Alboraya, Spain", ["Teruel, Spain", "Segorbe, Spain"]) },
+      { day: 13, title: "La Patacona / Valencia", type: "Ruhetag / Stadt optional", overnight: "La Patacona / Alboraya", roads: "Keine Fahrroute", points: "Strand · Valencia optional · Wartung · Wäsche", note: "Motorräder beim Hotel lassen und je nach Energie Strandtag oder Stadtbesuch wählen.", rest: true },
+      { day: 14, title: "La Patacona – Altea", type: "Costa-Blanca-Hinterland", overnight: "Altea", km: "ca. 200 km", time: "ca. 3 h 50", roads: "A-7 · CV-81 · CV-70", points: "Xàtiva · Bocairent · Alcoy · Guadalest", note: "Kurviger Tag. Nur eine Nacht in Altea; der frühere Altea-Flex-/Ruhetag ist gestrichen, um den späteren Start ohne Stress einzuholen.", main: maps("La Patacona, Alboraya, Spain", "Altea, Spain", ["Xàtiva, Spain", "Bocairent, Spain", "Alcoy, Spain", "Guadalest, Spain"]) },
+      { day: 16, title: "Altea – Monachil", type: "Transfer", overnight: "Monachil", km: "ca. 415 km", time: "ca. 4 h 25", roads: "A-7 · A-92N · GR-30", points: "Direkte Hauptstrecke; die Route führt an Murcia, Lorca und Guadix vorbei", note: "Granada-Zentrum vermeiden. Unterkunft in Monachil mit bestätigter Garage und einfacher Zufahrt wählen.", main: maps("Altea, Spain", "Monachil, Granada, Spain") },
+      { day: 17, title: "Monachil / Granada", type: "Ruhetag / Stadt optional", overnight: "Monachil", roads: "Keine Fahrroute", points: "Granada oder Alhambra optional · Wartung · Reserve", note: "Motorräder beim Hotel lassen und für Granada Taxi oder Bus verwenden.", rest: true },
+      { day: 18, title: "Alpujarras-Runde ab Monachil", type: "Kurventag", overnight: "Monachil", km: "ca. 150 km", time: "ca. 3 h 10", roads: "GR-30/N-323a · A-348 · A-4132", points: "Lanjarón · Órgiva · Pampaneira", note: "Pampaneira reicht als Wendepunkt; Trevélez nicht erzwingen.", alert: "Google meldet derzeit Sperrungen auf der A-348 und berechnet eine Umfahrung. Kurz vor der Reise neu prüfen.", main: maps("Monachil, Granada, Spain", "Monachil, Granada, Spain", ["Lanjarón, Spain", "Órgiva, Spain", "Pampaneira, Spain"]) },
+      { day: 19, title: "Monachil – Ronda", type: "Transfer", overnight: "Ronda", km: "ca. 200 km", time: "ca. 2 h 45", roads: "GR-30 · A-92 · A-384 · A-367", points: "Antequera · Campillos", note: "Campillos ist die verlässliche Hauptlinie. El Burgo nur trocken und ausgeruht.", main: maps("Monachil, Granada, Spain", "Ronda, Spain", ["Antequera, Spain", "Campillos, Spain"]), alt: [{ label: "Variante El Burgo", meta: "ca. 210 km · 3 h 10", url: maps("Monachil, Granada, Spain", "Ronda, Spain", ["Antequera, Spain", "El Burgo, Spain"]) }] },
+      { day: 20, title: "Grazalema-Runde", type: "Kurventag", overnight: "Ronda", km: "138 km", time: "3 h 10", roads: "A-374 · A-372 · CA-9104", points: "Grazalema · Puerto de las Palomas · Zahara · El Bosque · Ubrique", note: "CA-9104 nur offen, trocken und bei guter Sicht fahren.", main: maps("Ronda, Spain", "Ronda, Spain", ["Grazalema, Spain", "Puerto de las Palomas, Spain", "Zahara de la Sierra, Spain", "El Bosque, Spain", "Ubrique, Spain"]) },
+      { day: 20.5, title: "Ronda", type: "Wetter- und Erholungstag", overnight: "Ronda", roads: "Keine feste Fahrroute", points: "Erholung · Wäsche · Wetterreserve · optionale kurze Runde", note: "Bewusster Puffertag. Nur eine kurze Zusatzrunde fahren, wenn Wetter und Energie passen.", rest: true },
+      { day: 21, title: "Ronda – Úbeda", type: "Inland / Rückweg", overnight: "Úbeda", km: "290 km", time: "3 h 45", roads: "A-367 · A-384 · A-92 · A-44 · A-316", points: "Antequera · Jaén · Baeza", note: "Ruhiger Inlandtag; Baeza als kurzer Stopp, Úbeda als Basis.", main: maps("Ronda, Spain", "Úbeda, Spain", ["Antequera, Spain", "Jaén, Spain", "Baeza, Spain"]) },
+      { day: 22, title: "Úbeda und Baeza", type: "Ruhetag / Kultur", overnight: "Úbeda", roads: "Optional A-316", points: "Baeza", note: "Kurzer Kultur- und Puffertag.", rest: true, alt: [{ label: "Baeza-Runde", meta: "22 km · 35 min", url: maps("Úbeda, Spain", "Úbeda, Spain", ["Baeza, Spain"]) }] },
+      { day: 23, title: "Úbeda – Cuenca", type: "Inland", overnight: "Cuenca", km: "406 km", time: "4 h 55", roads: "N-322 und regionale Hauptverbindungen", points: "Alcalá del Júcar", note: "Albacete wird nicht mehr als Stadtziel angefahren. In Alcalá del Júcar am Ortsrand parkieren.", main: maps("Úbeda, Spain", "Cuenca, Spain", ["Alcalá del Júcar, Spain"]) },
+      { day: 23.5, title: "Cuenca", type: "Ruhetag / Wetterreserve", overnight: "Cuenca", roads: "Keine feste Fahrroute", points: "Altstadt · Erholung · Wetterreserve", note: "Der zusätzliche Tag entschärft den langen Vortag und hält den Rückweg zur Fähre flexibel.", rest: true },
+      { day: 24, title: "Cuenca – Zaragoza", type: "Rückverbindung", overnight: "Zaragoza", km: "291 km", time: "4 h 10", roads: "CM-210 · N-211 · A-2", points: "Molina de Aragón · Calatayud", note: "Landschaftlich, aber nicht auf kleinere Abkürzungen wechseln. Bei Wetter direkter fahren.", main: maps("Cuenca, Spain", "Zaragoza, Spain", ["Molina de Aragón, Spain", "Calatayud, Spain"]) },
+      { day: 25, title: "Zaragoza – Castelldefels", type: "Transfer", overnight: "Castelldefels", km: "ca. 335 km", time: "ca. 3 h 45", roads: "AP-2/A-2 · B-23/C-32", points: "Lleida · Montblanc", note: "Montblanc nur als kurzer Stopp. In Castelldefels Garage für zwei Nächte und frühe Abfahrt zum Fährterminal vorsehen.", main: maps("Zaragoza, Spain", "Castelldefels, Spain", ["Lleida, Spain", "Montblanc, Spain"]) },
+      { day: 26, title: "Barcelona Küste / Fährvorbereitung", type: "Reservetag für die Fähre", overnight: "Raum Barcelona, vorzugsweise Castelldefels", roads: "Keine feste Fahrroute", points: "Tanken · Verpflegung · Gepäck · Dokumente · Terminalzufahrt prüfen", note: "Motorräder stehen lassen und den Tag ruhig halten. Wecker, Check-in-Unterlagen und Zufahrt zum Terminal für den frühen nächsten Morgen vorbereiten.", rest: true },
+      { day: 26.5, title: "Fähre Barcelona – Genua", type: "Fährtag", overnight: "Kabine auf der Fähre", roads: "Direkte Zufahrt zum bestätigten Fährterminal", points: "Check-in 08:30 · Abfahrt 10:30 · zwei Motorräder · Ankunft Genua am Folgetag 09:00", note: "Frühstück und Tankstopp vorziehen. Mindestens den bestätigten Check-in-Puffer einhalten und die Terminalangabe auf dem Ticket verwenden." },
+      { day: 27, title: "Genua – Aosta oder Como", type: "Heimweg", overnight: "Aosta oder Como", km: "185–246 km", time: "2 h 15–2 h 40", roads: "Ab Genua A7/A26; Richtung Aosta A26/A5, Richtung Como A7/A9", points: "Ankunft Fähre 09:00 · Ausschiffung · direkte Autobahnroute", note: "Zeit für die Ausschiffung lassen und erst danach die Variante nach Wetter und Energie wählen.", main: maps("Genoa, Italy", "Aosta, Italy"), mainLabel: "Genua – Aosta", mainMeta: "246 km · 2 h 40", alt: [{ label: "Genua – Como", meta: "185 km · 2 h 15", url: maps("Genoa, Italy", "Como, Italy") }] },
+      { day: 28, title: "Aosta oder Como – Berikon", type: "Heimfahrt", overnight: "Berikon", km: "233–359 km", time: "ca. 3–5 h", roads: "Ab Aosta E27/A9/A1; ab Como A2", points: "Alpenquerung nach Startort und Wetter", note: "Die Como-Zeit schwankt stark mit dem Gotthardverkehr. Beide Links sind direkt und ohne Innenstadt-Zwischenziele.", main: maps("Aosta, Italy", "Berikon, Switzerland", ["Martigny, Switzerland", "Lausanne, Switzerland"]), mainLabel: "Aosta – Berikon", mainMeta: "359 km · ca. 4 h 50", alt: [{ label: "Como – Berikon", meta: "233 km · ca. 3–4 h 15", url: maps("Como, Italy", "Berikon, Switzerland") }] }
+    ];
+
+    const STORAGE_KEY = "spanien-roadbook-2026-plan-v3";
+    const tripStart = Date.UTC(2026, 8, 24);
+    const dateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
+    const dateForDay = (index) => dateFormatter.format(new Date(tripStart + index * 86400000));
+    const clone = (value) => JSON.parse(JSON.stringify(value));
+    const statusLabels = { planned: "Geplant", changed: "Geändert", done: "Gefahren", skipped: "Ausgelassen" };
+    const list = document.querySelector("#day-list");
+    const filters = document.querySelector(".filters");
+    const editor = document.querySelector("#day-editor");
+    const editorForm = document.querySelector("#editor-form");
+    let activeFilter = "all";
+    let editingIndex = -1;
+
+    const routeParts = (url) => {
+      if (!url) return { origin: "", destination: "", waypoints: [] };
+      try {
+        const params = new URL(url).searchParams;
+        return {
+          origin: params.get("origin") || "",
+          destination: params.get("destination") || "",
+          waypoints: (params.get("waypoints") || "").split("|").filter(Boolean)
+        };
+      } catch (_) {
+        return { origin: "", destination: "", waypoints: [] };
+      }
+    };
+
+    const prepareDay = (item, index, custom = false) => {
+      const route = routeParts(item.main);
+      return {
+        ...clone(item),
+        id: item.id || `${custom ? "custom" : "original"}-${item.day || index + 1}-${Date.now()}-${index}`,
+        status: item.status || "planned",
+        travelNote: item.travelNote || "",
+        origin: item.origin ?? route.origin,
+        destination: item.destination ?? route.destination,
+        waypoints: item.waypoints ?? route.waypoints,
+        custom: item.custom ?? custom
+      };
+    };
+
+    const baseline = originalDays.map((item, index) => prepareDay({ ...item, id: `original-${item.day}` }, index));
+    let state = { days: clone(baseline), mode: "view" };
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved?.days?.length) state.days = saved.days.map((item, index) => prepareDay(item, index, item.custom));
+    } catch (_) {}
+
+    const save = (message = "Automatisch gespeichert") => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ days: state.days }));
+        document.querySelector("#save-state").textContent = message;
+      } catch (_) {
+        document.querySelector("#save-state").textContent = "Lokales Speichern nicht verfügbar";
+      }
+    };
+
+    const routeLink = (label, url, secondary = false, meta = "") => {
+      const anchor = document.createElement("a");
+      anchor.className = `route-link${secondary ? " secondary" : ""}`;
+      anchor.href = url;
+      anchor.target = "_blank";
+      anchor.rel = "noopener noreferrer";
+      const content = document.createElement("span");
+      content.className = "route-link-content";
+      const title = document.createElement("span");
+      title.textContent = `${label} ↗`;
+      content.append(title);
+      if (meta) {
+        const detail = document.createElement("small");
+        detail.textContent = meta;
+        content.append(detail);
+      }
+      anchor.append(content);
+      anchor.setAttribute("aria-label", `${label} in Google Maps öffnen`);
+      return anchor;
+    };
+
+    const renderFilters = () => {
+      const weekCount = Math.max(1, Math.ceil(state.days.length / 7));
+      filters.innerHTML = "";
+      [{ value: "all", label: "Alle Tage" }, ...Array.from({ length: weekCount }, (_, index) => ({
+        value: String(index + 1),
+        label: `Tage ${index * 7 + 1}–${Math.min((index + 1) * 7, state.days.length)}`
+      }))].forEach((entry) => {
+        const button = document.createElement("button");
+        button.className = "filter-button";
+        button.type = "button";
+        button.dataset.filter = entry.value;
+        button.setAttribute("aria-pressed", String(entry.value === activeFilter));
+        button.textContent = entry.label;
+        button.addEventListener("click", () => {
+          activeFilter = entry.value;
+          render();
+          document.querySelector("main").scrollIntoView({ behavior: "smooth" });
+        });
+        filters.append(button);
+      });
+    };
+
+    const dayTool = (label, title, action, disabled = false) => {
+      const button = document.createElement("button");
+      button.className = "tool-button icon";
+      button.type = "button";
+      button.textContent = label;
+      button.title = title;
+      button.setAttribute("aria-label", title);
+      button.disabled = disabled;
+      button.addEventListener("click", action);
+      return button;
+    };
+
+    const moveDay = (index, direction) => {
+      const target = index + direction;
+      if (target < 0 || target >= state.days.length) return;
+      [state.days[index], state.days[target]] = [state.days[target], state.days[index]];
+      save();
+      render();
+    };
+
+    const resetDay = (index) => {
+      const current = state.days[index];
+      const original = baseline.find((item) => item.id === current.id);
+      if (!original) {
+        if (confirm("Diesen zusätzlich eingefügten Tag entfernen?")) state.days.splice(index, 1);
+      } else {
+        state.days[index] = clone(original);
+      }
+      save();
+      render();
+    };
+
+    const render = () => {
+      list.innerHTML = "";
+      renderFilters();
+      document.querySelector("#summary-days").textContent = `${state.days.length} Tage`;
+      document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = state.mode !== "plan"; });
+      document.querySelector("#view-mode").setAttribute("aria-pressed", String(state.mode === "view"));
+      document.querySelector("#plan-mode").setAttribute("aria-pressed", String(state.mode === "plan"));
+
+      state.days.forEach((item, index) => {
+      const article = document.createElement("article");
+      article.className = `day${item.rest ? " is-rest" : ""}${item.status !== "planned" ? ` is-${item.status}` : ""}`;
+      article.dataset.week = String(Math.ceil((index + 1) / 7));
+      if (activeFilter !== "all" && article.dataset.week !== activeFilter) article.classList.add("is-hidden");
+
+      const number = document.createElement("div");
+      number.className = "day-number";
+      number.innerHTML = `Tag <strong>${index + 1}</strong><span class="day-date">${dateForDay(index)}</span>`;
+
+      const content = document.createElement("div");
+      content.className = "day-content";
+      if (state.mode === "plan" || item.status !== "planned") {
+        const badge = document.createElement("span");
+        badge.className = `status-badge ${item.status}`;
+        badge.textContent = statusLabels[item.status] || statusLabels.planned;
+        content.append(badge);
+      }
+      const heading = document.createElement("h2");
+      heading.textContent = item.title;
+      const overnight = document.createElement("p");
+      overnight.className = "overnight";
+      overnight.textContent = `Übernachtung: ${item.overnight}`;
+      const facts = document.createElement("div");
+      facts.className = "facts";
+      [item.type, item.km, item.time].filter(Boolean).forEach((value) => {
+        const fact = document.createElement("span");
+        fact.textContent = value;
+        facts.append(fact);
+      });
+      const note = document.createElement("p");
+      note.className = "note";
+      note.textContent = item.note;
+      content.append(heading, overnight, facts, note);
+
+      if (item.travelNote) {
+        const travelNote = document.createElement("p");
+        travelNote.className = "travel-note";
+        travelNote.textContent = item.travelNote;
+        content.append(travelNote);
+      }
+
+      if (item.alert) {
+        const alert = document.createElement("p");
+        alert.className = "route-alert";
+        alert.textContent = item.alert;
+        content.append(alert);
+      }
+
+      const details = document.createElement("details");
+      details.className = "route-details";
+      const summary = document.createElement("summary");
+      summary.textContent = "Strassen und Wegpunkte";
+      const detailGrid = document.createElement("div");
+      detailGrid.className = "detail-grid";
+      [["Strassen", item.roads], ["Wegpunkte", item.points]].forEach(([label, value]) => {
+        const detailItem = document.createElement("div");
+        detailItem.className = "detail-item";
+        const detailLabel = document.createElement("strong");
+        detailLabel.textContent = label;
+        const detailValue = document.createElement("span");
+        detailValue.textContent = value;
+        detailItem.append(detailLabel, detailValue);
+        detailGrid.append(detailItem);
+      });
+      details.append(summary, detailGrid);
+      content.append(details);
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+      const currentRoute = item.origin && item.destination ? maps(item.origin, item.destination, item.waypoints || []) : item.main;
+      if (currentRoute) actions.append(routeLink(item.mainLabel || "Route öffnen", currentRoute, false, item.mainMeta || [item.km, item.time].filter(Boolean).join(" · ")));
+      (item.alt || []).forEach((option) => actions.append(routeLink(option.label, option.url, true, option.meta || "")));
+      if (!currentRoute && !(item.alt || []).length) {
+        const rest = document.createElement("span");
+        rest.className = "rest-label";
+        rest.textContent = item.type || "Ruhetag";
+        actions.append(rest);
+      }
+
+      if (state.mode === "plan") {
+        const status = document.createElement("select");
+        status.className = "status-select";
+        status.setAttribute("aria-label", `Status für Tag ${index + 1}`);
+        Object.entries(statusLabels).forEach(([value, label]) => {
+          const option = document.createElement("option");
+          option.value = value;
+          option.textContent = label;
+          option.selected = item.status === value;
+          status.append(option);
+        });
+        status.addEventListener("change", () => {
+          item.status = status.value;
+          save();
+          render();
+        });
+        actions.append(status);
+
+        const tools = document.createElement("div");
+        tools.className = "day-tools";
+        tools.append(
+          dayTool("↑", "Tag nach oben verschieben", () => moveDay(index, -1), index === 0),
+          dayTool("↓", "Tag nach unten verschieben", () => moveDay(index, 1), index === state.days.length - 1),
+          dayTool("✎", "Tag bearbeiten", () => openEditor(index)),
+          dayTool("↺", item.custom ? "Tag entfernen" : "Tag zurücksetzen", () => resetDay(index))
+        );
+        actions.append(tools);
+      }
+
+      article.append(number, content, actions);
+      list.append(article);
+      });
+    };
+
+    const setField = (name, value) => { editorForm.elements[name].value = value || ""; };
+
+    const openEditor = (index = -1) => {
+      editingIndex = index;
+      const item = index >= 0 ? state.days[index] : prepareDay({
+        title: "Neue Etappe",
+        type: "Fahrtag",
+        overnight: "",
+        roads: "",
+        points: "",
+        note: "",
+        rest: false,
+        custom: true,
+        status: "planned"
+      }, state.days.length, true);
+      document.querySelector("#editor-title").textContent = index >= 0 ? `Tag ${index + 1} bearbeiten` : "Tag hinzufügen";
+      ["title", "type", "overnight", "km", "time", "roads", "points", "note", "travelNote", "origin", "destination", "status"].forEach((name) => setField(name, item[name]));
+      setField("waypoints", (item.waypoints || []).join("\n"));
+      editorForm.elements.rest.checked = Boolean(item.rest);
+      editor.showModal();
+      editorForm.elements.title.focus();
+    };
+
+    const closeEditor = () => editor.close();
+    document.querySelector("#close-editor").addEventListener("click", closeEditor);
+    document.querySelector("#cancel-editor").addEventListener("click", closeEditor);
+    document.querySelector("#preview-route").addEventListener("click", () => {
+      const origin = editorForm.elements.origin.value.trim();
+      const destination = editorForm.elements.destination.value.trim();
+      const waypoints = editorForm.elements.waypoints.value.split("\n").map((value) => value.trim()).filter(Boolean);
+      if (editorForm.elements.rest.checked) {
+        alert("Dieser Tag ist als Ruhetag markiert. Entferne zuerst das Häkchen bei Ruhetag.");
+        return;
+      }
+      if (!origin || !destination) {
+        alert("Für eine Google-Maps-Route werden Start und Ziel benötigt.");
+        return;
+      }
+      window.open(maps(origin, destination, waypoints), "_blank", "noopener,noreferrer");
+    });
+
+    editorForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const values = Object.fromEntries(new FormData(editorForm));
+      const previous = editingIndex >= 0 ? state.days[editingIndex] : prepareDay({}, state.days.length, true);
+      const updated = {
+        ...previous,
+        ...values,
+        rest: editorForm.elements.rest.checked,
+        waypoints: values.waypoints.split("\n").map((value) => value.trim()).filter(Boolean),
+        status: values.status || (editingIndex >= 0 ? "changed" : "planned"),
+        custom: editingIndex < 0 || previous.custom
+      };
+      delete updated.mainMeta;
+      if (updated.rest) updated.main = "";
+      else if (updated.origin && updated.destination) updated.main = maps(updated.origin, updated.destination, updated.waypoints);
+      if (editingIndex >= 0) state.days[editingIndex] = updated;
+      else state.days.push(updated);
+      save("Tag im Roadbook gespeichert");
+      closeEditor();
+      render();
+    });
+
+    document.querySelector("#view-mode").addEventListener("click", () => { state.mode = "view"; render(); });
+    document.querySelector("#plan-mode").addEventListener("click", () => { state.mode = "plan"; render(); });
+    document.querySelector("#add-day").addEventListener("click", () => openEditor());
+
+    document.querySelector("#export-plan").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), days: state.days }, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "spanien-roadbook-2026-sicherung.json";
+      link.click();
+      URL.revokeObjectURL(url);
+      save("Sicherung erstellt");
+    });
+
+    document.querySelector("#import-plan").addEventListener("click", () => document.querySelector("#import-file").click());
+    document.querySelector("#import-file").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        const imported = JSON.parse(await file.text());
+        if (!Array.isArray(imported.days) || !imported.days.length) throw new Error("Ungültige Sicherung");
+        state.days = imported.days.map((item, index) => prepareDay(item, index, item.custom));
+        activeFilter = "all";
+        save("Sicherung wiederhergestellt");
+        render();
+      } catch (_) {
+        alert("Diese Datei ist keine gültige Roadbook-Sicherung.");
+      }
+      event.target.value = "";
+    });
+
+    document.querySelector("#reset-plan").addEventListener("click", () => {
+      if (!confirm("Alle Änderungen verwerfen und den ursprünglichen 30-Tage-Plan wiederherstellen?")) return;
+      state.days = clone(baseline);
+      activeFilter = "all";
+      save("Originalplan wiederhergestellt");
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

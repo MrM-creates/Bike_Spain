@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Spanienroute mit Camargue - Strassenpunkte fuer Planung</name>
+    <description><![CDATA[
+Planungs-KML fuer Google My Maps / Google Earth.
+
+Start ist Berikon AG. Die KML enthaelt Strassenpunkte und grobe Linien, damit Google Maps/My Maps die gewuenschten Korridore sichtbar macht:
+N85 Route Napoleon, Luberon, Camargue D570/D38/D58/D979, Priorat, N-420/A-1512 nach Albarracin, Valencia-Altea durchs Hinterland, Alpujarras A-348/A-4132, Grazalema A-372/CA-9104 und Rueckweg via Ubeda, Cuenca, Zaragoza.
+
+Das ist keine fertige Abbiege-Navigation. Jede Tagesetappe vor der Fahrt pruefen.
+]]></description>
+
+    <Style id="mainLine"><LineStyle><color>ff1f6feb</color><width>4</width></LineStyle></Style>
+    <Style id="camargueLine"><LineStyle><color>ff1aa184</color><width>4</width></LineStyle></Style>
+    <Style id="localLine"><LineStyle><color>ffec8b23</color><width>4</width></LineStyle></Style>
+    <Style id="ferryLine"><LineStyle><color>ff8a63d2</color><width>4</width></LineStyle></Style>
+    <Style id="stopMarker">
+      <IconStyle><scale>0.9</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href></Icon></IconStyle>
+      <LabelStyle><scale>0.72</scale></LabelStyle>
+    </Style>
+
+    <Folder>
+      <name>Hauptstopps</name>
+      <Placemark><name>01 Berikon</name><description>Start. Korrigiert: Berikon, nicht Bellikon.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>8.3722,47.3507,0</coordinates></Point></Placemark>
+      <Placemark><name>02 Grenoble</name><description>Anreise bis hier effizient ueber Autobahn/grosse Strassen.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>5.7245,45.1885,0</coordinates></Point></Placemark>
+      <Placemark><name>03 Sisteron</name><description>N85 Route Napoleon.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>5.9462,44.1984,0</coordinates></Point></Placemark>
+      <Placemark><name>04 Aix / Luberon</name><description>Provence-/Luberon-Basis.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>5.4474,43.5297,0</coordinates></Point></Placemark>
+      <Placemark><name>05 Arles</name><description>Camargue-Basis.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.6278,43.6766,0</coordinates></Point></Placemark>
+      <Placemark><name>06 Saintes-Maries-de-la-Mer</name><description>D570; keine Pisten/Schutzgebietswege.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.4290,43.4523,0</coordinates></Point></Placemark>
+      <Placemark><name>07 Aigues-Mortes</name><description>D38/D58; danach D979 Richtung Nimes.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.1906,43.5669,0</coordinates></Point></Placemark>
+      <Placemark><name>08 Nimes / Uzes</name><description>Basis nach Camargue.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.3601,43.8367,0</coordinates></Point></Placemark>
+      <Placemark><name>09 Carcassonne</name><description>Zwischenstopp Richtung Barcelona.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>2.3510,43.2130,0</coordinates></Point></Placemark>
+      <Placemark><name>10 Barcelona</name><description>Stadtstopp; Garage.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>2.1686,41.3874,0</coordinates></Point></Placemark>
+      <Placemark><name>11 Falset / Priorat</name><description>Priorat-Basis.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>0.8200,41.1460,0</coordinates></Point></Placemark>
+      <Placemark><name>12 Albarracin</name><description>A-1512 via Gea de Albarracin; nicht in Altstadt routen.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>-1.4440,40.4070,0</coordinates></Point></Placemark>
+      <Placemark><name>13 Valencia</name><description>Stadtstopp; Garage.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>-0.3763,39.4699,0</coordinates></Point></Placemark>
+      <Placemark><name>14 Altea</name><description>Costa-Blanca-Basis.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>-0.0450,38.6029,0</coordinates></Point></Placemark>
+      <Placemark><name>15 Granada</name><description>Stadtstopp; kurze Alpujarras-Runde moeglich.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>-3.5990,37.1770,0</coordinates></Point></Placemark>
+      <Placemark><name>16 Ronda</name><description>Basis fuer Grazalema-Runde.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>-5.1610,36.7460,0</coordinates></Point></Placemark>
+      <Placemark><name>17 Ubeda / Baeza</name><description>Rueckweg durch Jaen.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>-3.3710,38.0110,0</coordinates></Point></Placemark>
+      <Placemark><name>18 Cuenca</name><description>Kompakter Zwischenstopp.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>-2.1370,40.0700,0</coordinates></Point></Placemark>
+      <Placemark><name>19 Zaragoza</name><description>Rueckweg nach Barcelona.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>-0.8891,41.6488,0</coordinates></Point></Placemark>
+      <Placemark><name>20 Barcelona vor Faehre</name><description>Rueckkehr nach Barcelona.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>2.1686,41.3874,0</coordinates></Point></Placemark>
+      <Placemark><name>21 Genoa</name><description>Faehre Barcelona-Genua; symbolische Linie.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>8.9463,44.4056,0</coordinates></Point></Placemark>
+      <Placemark><name>22 Berikon</name><description>Ziel.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>8.3722,47.3507,0</coordinates></Point></Placemark>
+    </Folder>
+
+    <Folder>
+      <name>Strassenkorridore</name>
+      <Placemark>
+        <name>Berikon - Grenoble, zuegig</name>
+        <description>Autobahn/grosse Strassen: Berikon - Lausanne - Genf - Chambery - Grenoble.</description>
+        <styleUrl>#mainLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          8.3722,47.3507,0 6.6323,46.5197,0 6.1432,46.2044,0 5.9178,45.5646,0 5.7245,45.1885,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>N85 Route Napoleon: Grenoble - Sisteron</name>
+        <description>Grenoble - Vizille - Laffrey - La Mure - Corps - Gap - Sisteron.</description>
+        <styleUrl>#mainLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          5.7245,45.1885,0 5.7728,45.0787,0 5.7788,45.0252,0 5.7869,44.9033,0 5.9473,44.8176,0 6.0798,44.5596,0 5.9462,44.1984,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Sisteron - Digne - Forcalquier - Luberon/Aix</name>
+        <description>Sisteron - Malijai - Digne - Forcalquier - Manosque - Apt - Bonnieux - Lourmarin - Aix.</description>
+        <styleUrl>#mainLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          5.9462,44.1984,0 6.0301,44.0451,0 6.2356,44.0920,0 5.7796,43.9595,0 5.7869,43.8340,0 5.3965,43.8766,0 5.3075,43.8232,0 5.3639,43.7638,0 5.4474,43.5297,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Camargue: Arles - Saintes-Maries - Aigues-Mortes - Nimes</name>
+        <description>D570, D38/D58, D979. Keine Pisten/Schutzgebietswege.</description>
+        <styleUrl>#camargueLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          5.4474,43.5297,0 4.6278,43.6766,0 4.4048,43.4873,0 4.4290,43.4523,0 4.1906,43.5669,0 4.3601,43.8367,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Nimes - Carcassonne - Barcelona</name>
+        <description>Nimes - Sommieres - Pezenas - Beziers - Capestang/Minervois - Carcassonne - Collioure - Figueres - Girona - Barcelona.</description>
+        <styleUrl>#mainLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          4.3601,43.8367,0 4.0902,43.7846,0 3.4232,43.4595,0 3.2158,43.3442,0 3.0436,43.3264,0 2.3510,43.2130,0 3.0832,42.5251,0 2.9581,42.2655,0 2.8214,41.9794,0 2.1686,41.3874,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Barcelona - Priorat - Albarracin - Valencia - Altea</name>
+        <description>Barcelona - Sitges - Tarragona - Falset; Priorat; N-420 nach Teruel; A-1512 Albarracin; Valencia; Hinterlandroute nach Altea.</description>
+        <styleUrl>#mainLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          2.1686,41.3874,0 1.8237,41.2367,0 1.2445,41.1189,0 1.1055,41.1498,0 0.8200,41.1460,0 0.4387,41.0533,0 -0.1333,41.0500,0 -1.1065,40.3456,0 -1.4440,40.4070,0 -0.4884,39.8518,0 -0.3763,39.4699,0 -0.5180,38.9903,0 -0.6089,38.7661,0 -0.4736,38.6987,0 -0.1970,38.6760,0 -0.0450,38.6029,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Altea - Granada - Ronda</name>
+        <description>Transfertag via Murcia/Lorca/Guadix; Ronda via Antequera/El Burgo.</description>
+        <styleUrl>#mainLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          -0.0450,38.6029,0 -1.1307,37.9922,0 -1.7017,37.6712,0 -3.1349,37.3017,0 -3.5990,37.1770,0 -4.5612,37.0194,0 -4.9462,36.7904,0 -5.1610,36.7460,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Ronda - Ubeda - Cuenca - Zaragoza - Barcelona</name>
+        <description>Rueckweg via Antequera, Jaen, Ubeda/Baeza, Albacete, Alcala del Jucar, Cuenca, Molina de Aragon, Calatayud, Zaragoza, Montblanc.</description>
+        <styleUrl>#mainLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          -5.1610,36.7460,0 -4.5612,37.0194,0 -3.7849,37.7796,0 -3.3710,38.0110,0 -3.4681,37.9938,0 -1.8585,38.9943,0 -1.4297,39.1930,0 -2.1370,40.0700,0 -1.8871,40.8433,0 -1.6432,41.3535,0 -0.8891,41.6488,0 0.6200,41.6176,0 1.1616,41.3760,0 2.1686,41.3874,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Faehre Barcelona - Genoa</name>
+        <description>Symbolische Faehrlinie, keine Strassenroute.</description>
+        <styleUrl>#ferryLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          2.1686,41.3874,0 8.9463,44.4056,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Genoa - Berikon</name>
+        <description>Heimfahrt ab Faehre.</description>
+        <styleUrl>#mainLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          8.9463,44.4056,0 8.3722,47.3507,0
+        </coordinates></LineString>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>Lokale Runden</name>
+      <Placemark>
+        <name>Priorat-Runde ab Falset</name>
+        <description>Falset - Gratallops - La Vilella Baixa - Escaladei - Cornudella de Montsant - Porrera - Falset.</description>
+        <styleUrl>#localLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          0.8200,41.1460,0 0.7750,41.1920,0 0.7634,41.2206,0 0.8115,41.2551,0 0.9056,41.2652,0 0.8565,41.1881,0 0.8200,41.1460,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Albarracin-Runde kurz</name>
+        <description>Nur fahren, wenn Google durchgehend asphaltierte Strassen anzeigt.</description>
+        <styleUrl>#localLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          -1.4440,40.4070,0 -1.6541,40.5506,0 -1.5895,40.5110,0 -1.5978,40.4626,0 -1.5682,40.4301,0 -1.4440,40.4070,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Kurze Alpujarras-Runde</name>
+        <description>Granada - Lanjaron - Orgiva - Pampaneira - Granada. Nicht automatisch bis Trevelez verlaengern.</description>
+        <styleUrl>#localLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          -3.5990,37.1770,0 -3.4816,36.9185,0 -3.4235,36.9028,0 -3.3603,36.9407,0 -3.5990,37.1770,0
+        </coordinates></LineString>
+      </Placemark>
+      <Placemark>
+        <name>Grazalema-Runde</name>
+        <description>A-372 und CA-9104/Puerto de las Palomas nur bei gutem Wetter und offener Strasse.</description>
+        <styleUrl>#localLine</styleUrl>
+        <LineString><tessellate>1</tessellate><coordinates>
+          -5.1610,36.7460,0 -5.3656,36.7580,0 -5.4375,36.8290,0 -5.3912,36.8403,0 -5.5067,36.7584,0 -5.4460,36.6778,0 -5.1610,36.7460,0
+        </coordinates></LineString>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>

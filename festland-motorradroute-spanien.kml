@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Festland-Motorradroute Spanien - grober Verlauf</name>
+    <description><![CDATA[
+Grobe Orientierungsroute fuer eine 4-Wochen-Motorradreise:
+Bellikon - Lyon - Ardeche/Vallon-Pont-d'Arc - Nimes/Uzes - Carcassonne - Barcelona - Priorat/Falset - Albarracin - Valencia - Altea - Granada - Ronda - Ubeda/Baeza - Cuenca - Zaragoza - Barcelona - Faehre Genua - Bellikon.
+
+Hinweis: Diese KML ist eine Verlaufslinie mit nummerierten Stopps, keine turn-by-turn Navigation. Fuer die Detailplanung pro Tag Haupt- und Regionalstrassen bevorzugen, unbefestigte Strassen vermeiden und mittelalterliche Ortskerne nicht als Zielpunkt setzen.
+]]></description>
+
+    <Style id="routeLine">
+      <LineStyle>
+        <color>ff1f6feb</color>
+        <width>4</width>
+      </LineStyle>
+    </Style>
+
+    <Style id="ferryLine">
+      <LineStyle>
+        <color>ff8a63d2</color>
+        <width>4</width>
+      </LineStyle>
+    </Style>
+
+    <Style id="stopMarker">
+      <IconStyle>
+        <scale>1.0</scale>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/paddle/red-circle.png</href>
+        </Icon>
+      </IconStyle>
+      <LabelStyle>
+        <scale>0.82</scale>
+      </LabelStyle>
+    </Style>
+
+    <Folder>
+      <name>Nummerierte Stopps</name>
+      <Placemark>
+        <name>01 Bellikon</name>
+        <description>Start/Ziel. Grober Routenknoten, nicht als exakte Hoteladresse gedacht.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>8.3430,47.3890,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>02 Lyon</name>
+        <description>Stadt- und Fotostopp, Motorrad in Garage stehen lassen.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>4.8357,45.7640,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>03 Ardeche / Vallon-Pont-d'Arc</name>
+        <description>Basis fuer Gorges de l'Ardeche auf regulaeren Departementsstrassen.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>4.3940,44.4070,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>04 Nimes / Uzes</name>
+        <description>Stadtbasis Nimes oder kleinerer Standort Uzes; Pont du Gard als einfacher Ausflug.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>4.3601,43.8367,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>05 Carcassonne</name>
+        <description>Zwischenstopp vor Barcelona.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>2.3510,43.2130,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>06 Barcelona</name>
+        <description>Stadtstopp; Motorrad nicht fuer Innenstadtfahrten einplanen.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>2.1686,41.3874,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>07 Priorat / Falset</name>
+        <description>Weinregion und geschlossene Rundrouten; Siurana nur als bewusst gewaehlte Stichstrasse.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>0.8200,41.1460,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>08 Albarracin</name>
+        <description>Hoch gelegener Fotostopp; bei Navigation auf asphaltierte A-, N- und TE-Strassen achten.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>-1.4440,40.4070,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>09 Valencia</name>
+        <description>Stadt- und Fotostopp; Albufera als moeglicher Abend-Ausflug.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>-0.3763,39.4699,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>10 Altea</name>
+        <description>Basis fuer Costa Blanca und Hinterland, ohne Alicante als Stadtverkehrsschwerpunkt.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>-0.0450,38.6029,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>11 Granada</name>
+        <description>Stadt- und Fotostopp; Alpujarras nur auf den Hauptverbindungen planen.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>-3.5990,37.1770,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>12 Ronda</name>
+        <description>Basis fuer Grazalema-Runde und Fototag in Ronda.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>-5.1610,36.7460,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>13 Ubeda / Baeza</name>
+        <description>Renaissance-Staedte und logischer Rueckweg durch Jaen.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>-3.3710,38.0110,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>14 Cuenca</name>
+        <description>Kompakter Zwischenstopp auf dem Rueckweg nach Nordosten.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>-2.1370,40.0700,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>15 Zaragoza</name>
+        <description>Entlastet die lange Rueckfahrt von Cuenca nach Barcelona.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>-0.8891,41.6488,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>16 Barcelona vor Faehre</name>
+        <description>Rueckkehr nach Barcelona; Puffer fuer Faehre nach Genua.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>2.1686,41.3874,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>17 Genua</name>
+        <description>Faehre Barcelona-Genua; Fahrplan und Kabine vor Buchung pruefen.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>8.9463,44.4056,0</coordinates></Point>
+      </Placemark>
+      <Placemark>
+        <name>18 Bellikon</name>
+        <description>Heimfahrt ab Genua.</description>
+        <styleUrl>#stopMarker</styleUrl>
+        <Point><coordinates>8.3430,47.3890,0</coordinates></Point>
+      </Placemark>
+    </Folder>
+
+    <Folder>
+      <name>Grobe Verlaufslinien</name>
+      <Placemark>
+        <name>Landroute Bellikon bis Barcelona</name>
+        <styleUrl>#routeLine</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <coordinates>
+            8.3430,47.3890,0
+            4.8357,45.7640,0
+            4.3940,44.4070,0
+            4.3601,43.8367,0
+            2.3510,43.2130,0
+            2.1686,41.3874,0
+            0.8200,41.1460,0
+            -1.4440,40.4070,0
+            -0.3763,39.4699,0
+            -0.0450,38.6029,0
+            -3.5990,37.1770,0
+            -5.1610,36.7460,0
+            -3.3710,38.0110,0
+            -2.1370,40.0700,0
+            -0.8891,41.6488,0
+            2.1686,41.3874,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>Faehre Barcelona - Genua</name>
+        <description>Nur symbolische Faehrlinie, keine Strassenroute.</description>
+        <styleUrl>#ferryLine</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <coordinates>
+            2.1686,41.3874,0
+            8.9463,44.4056,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+      <Placemark>
+        <name>Heimfahrt Genua - Bellikon</name>
+        <styleUrl>#routeLine</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <coordinates>
+            8.9463,44.4056,0
+            8.3430,47.3890,0
+          </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+  </Document>
+</kml>
