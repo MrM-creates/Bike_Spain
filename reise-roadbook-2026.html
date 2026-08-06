@@ -742,7 +742,7 @@
     <section class="intro" aria-labelledby="page-title">
       <div>
         <h1 id="page-title">Motorrad-Roadbook</h1>
-        <p>Alle Etappen, Strassen und Hinweise an einem Ort. Tagesroute prüfen und direkt in Google Maps öffnen.</p>
+        <p>Geplanter Reiseverlauf mit Strassen, Hotels und Hinweisen. Aktuelle Fahrzeit, Verkehr und Sperrungen in Google Maps prüfen.</p>
       </div>
       <div class="legend" aria-label="Legende">
         <span>Fahrtag</span>
@@ -795,6 +795,7 @@
         <div class="glossary-item"><dt>ZBE</dt><dd>Spanische Umweltzone, ausgeschrieben „Zona de Bajas Emisiones“. Städte können die Einfahrt abhängig von Fahrzeug, Kennzeichen und lokalen Regeln beschränken.</dd></div>
         <div class="glossary-item"><dt>Digue à la Mer</dt><dd>Schmaler Meerdeich in der Camargue. Er führt durch empfindliche Naturgebiete, ist teilweise unbefestigt und für motorisierten Verkehr gesperrt. Er gehört nicht zur Route.</dd></div>
         <div class="glossary-item"><dt>P+R</dt><dd>Park-and-Ride: Parkplatz am Stadtrand mit Verbindung ins Zentrum. In Annecy dient er als sicher erreichbarer Ankunftspunkt statt einer engen Innenstadtzufahrt.</dd></div>
+        <div class="glossary-item"><dt>Planwerte</dt><dd>Kilometer und Fahrzeiten sind vorbereitete Orientierungswerte. Die aktuelle Realität entsteht erst beim Öffnen der Route in Google Maps.</dd></div>
         <div class="glossary-item"><dt>Maut</dt><dd>Gebühr für bestimmte Autobahnen, Tunnel oder Brücken. Google Maps zeigt mögliche Mautstrecken bei der Routenöffnung an.</dd></div>
         <div class="glossary-item"><dt>Fährpuffer</dt><dd>Reservetag rund um die Fähre. Er fängt geänderte Abfahrtszeiten, Check-in, Verspätungen oder eine zusätzliche Übernachtung auf.</dd></div>
         <div class="glossary-item"><dt>Ortsrand statt Altstadt</dt><dd>Historische Zentren haben oft enge Gassen, Zufahrtsverbote oder Pflaster. Deshalb Hotelzufahrt oder Parkplatz ausserhalb des Kerns verwenden.</dd></div>
@@ -847,7 +848,7 @@
   </dialog>
 
   <footer>
-    Kilometer und Zeiten sind indikative Google-Maps-Werte ohne Pausen, geprüft am 1. August 2026. Start neu am 24. September 2026; der Altea-Flex-/Ruhetag entfällt, damit Fähre und Heimreise unverändert bleiben. Fähre Barcelona–Genua: 21. Oktober, Check-in 08:30, Abfahrt 10:30, Ankunft am 22. Oktober um 09:00. Verkehr und Sperrungen können die Route verändern; vor dem Start kurz prüfen, ob die genannten Strassen verwendet werden.
+    Kilometer und Fahrzeiten sind Planwerte ohne Pausen, geprüft am 1. August 2026. Start neu am 24. September 2026; der Altea-Flex-/Ruhetag entfällt, damit Fähre und Heimreise unverändert bleiben. Fähre Barcelona–Genua: 21. Oktober, Check-in 08:30, Abfahrt 10:30, Ankunft am 22. Oktober um 09:00. Aktuelle Fahrzeit, Verkehr und Sperrungen immer in Google Maps prüfen.
   </footer>
 
   <script>
@@ -1072,7 +1073,11 @@
       overnight.textContent = `Übernachtung: ${item.overnight}`;
       const facts = document.createElement("div");
       facts.className = "facts";
-      [item.type, item.km, item.time].filter(Boolean).forEach((value) => {
+      [
+        item.type,
+        item.km ? `geplant: ${item.km}` : "",
+        item.time ? `geplant: ${item.time}` : ""
+      ].filter(Boolean).forEach((value) => {
         const fact = document.createElement("span");
         fact.textContent = value;
         facts.append(fact);
