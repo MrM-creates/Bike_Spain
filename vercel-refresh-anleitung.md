@@ -4,13 +4,33 @@ Stand: 06.08.2026
 
 ## Aktueller Projektstand
 
-Das Projekt ist lokal mit Vercel verknuepft. In `.vercel/project.json` sind Organisation und Projekt-ID hinterlegt. Die Datei `vercel.json` leitet die Startseite auf `reise-roadbook-2026.html` und die Unterkunftsseite auf `unterkuenfte-2026.html`.
+Das Projekt ist mit GitHub und Vercel verbunden.
+
+GitHub-Repository:
+
+- `https://github.com/MrM-creates/Bike_Spain`
+
+Die Datei `vercel.json` leitet die Startseite auf `reise-roadbook-2026.html` und die Unterkunftsseite auf `unterkuenfte-2026.html`.
 
 Die HTML-Dateien sind mit `Cache-Control: public, max-age=0, must-revalidate` konfiguriert. Das bedeutet: Nach einem neuen Deployment sollte ein normaler Refresh im Browser die aktuelle Version laden.
 
-Wichtig: Der lokale Ordner ist aktuell kein Git-Repository. Damit gibt es unterwegs vom iPad aus noch keinen automatischen Weg, lokale Dateiaenderungen direkt an Vercel zu uebergeben.
+Der lokale Ordner ist inzwischen ein Git-Repository und der Branch `main` ist mit GitHub verbunden. Vercel soll von `main` deployen.
 
-## Variante A: Einfachster Ablauf vom Desktop
+## Standardablauf ueber GitHub und Vercel
+
+Das ist der gewuenschte Ablauf fuer unterwegs:
+
+1. In der ChatGPT-App auf dem iPad einen neuen Chat starten.
+2. `unterwegs-chatgpt-planung.md` und diese Datei anhaengen.
+3. Wenn moeglich auch die aktuelle `reise-roadbook-2026.html` anhaengen oder dem Chat das GitHub-Repo nennen.
+4. Der Chat passt die Planung an.
+5. Wenn der Chat GitHub-/Codex-Zugriff hat, aktualisiert er `reise-roadbook-2026.html` und pusht auf `main`.
+6. Vercel erkennt den Push und deployed automatisch.
+7. Auf iPad/iPhone die Roadbook-Seite neu laden.
+
+Wichtig: Ein normaler ChatGPT-Chat ohne GitHub- oder Codex-Werkzeuge kann nicht selbst pushen. Dann soll er eine aktualisierte HTML-Datei oder einen Patch erzeugen, den du ueber GitHub einspielst.
+
+## Variante A: Ablauf vom Desktop
 
 Wenn du wieder am Desktop bist:
 
@@ -32,11 +52,7 @@ Danach auf dem iPad:
 
 ## Variante B: Wirklich unterwegs aktualisieren
 
-Wenn du unterwegs nur mit dem iPad arbeiten willst, sollte das Projekt in ein GitHub-Repository und dieses Repository mit Vercel verbunden werden.
-
-GitHub-Repository:
-
-- `https://github.com/MrM-creates/Bike_Spain`
+Wenn du unterwegs nur mit dem iPad arbeiten willst, ist GitHub die zentrale Quelle.
 
 Dann ist der Ablauf:
 
@@ -64,15 +80,18 @@ Fuer unterwegs ist das oft am robustesten:
 3. ChatGPT plant die naechsten Etappen als Text.
 4. Erst spaeter werden die dauerhaften Aenderungen sauber ins Roadbook uebernommen und deployed.
 
+Diese Variante ist nur fuer kleine Abweichungen gedacht. Wenn sich mehrere naechste Etappen wirklich aendern, sollte der Chat die HTML-Datei aktualisieren und ueber GitHub/Vercel neu veroeffentlichen.
+
 ## Empfehlung
 
 Fuer die Reise ist die beste Kombination:
 
 - Roadbook-App bewusst einfach halten.
 - Komplexe Umplanung in ChatGPT machen.
-- App bekommt eine Funktion `Planungstext exportieren`.
-- Vercel dient als stabile, aktualisierbare Online-Version.
-- Wenn echte iPad-Aktualisierung wichtig ist: GitHub + Vercel-Autodeploy einrichten.
+- Wenn moeglich, den neuen Chat mit GitHub-/Codex-Zugriff nutzen.
+- Der Chat aktualisiert `reise-roadbook-2026.html` und pusht nach GitHub.
+- Vercel dient als stabile, automatisch aktualisierte Online-Version.
+- App bekommt optional eine Funktion `Planungstext exportieren`.
 
 ## Spaeter sinnvoller App-Button
 

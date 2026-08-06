@@ -40,9 +40,12 @@ Fuer diese Reise reicht wahrscheinlich der bestehende Planmodus plus Sicherung i
 Der komplexe Planungsteil sollte unterwegs nicht auf dem Handy oder iPad erledigt werden. Sinnvoller ist:
 
 - Roadbook unterwegs lesen, markieren und mit Notizen pflegen.
-- Echte Umplanung als ChatGPT-Auftrag formulieren.
-- Danach die betroffenen Tage als `Geaendert` markieren und die neue Route als Unterwegs-Notiz speichern.
-- Dauerhafte Aenderungen spaeter sauber ins Roadbook einbauen und per Vercel neu deployen.
+- Echte Umplanung in einem neuen ChatGPT-Chat auf dem iPad machen.
+- `unterwegs-chatgpt-planung.md` und `vercel-refresh-anleitung.md` als Kontext anhaengen.
+- Der neue Chat passt die naechsten Etappen an.
+- Wenn der Chat GitHub-/Codex-Zugriff hat, aktualisiert er `reise-roadbook-2026.html` und pusht nach GitHub.
+- Vercel deployed danach automatisch; unterwegs reicht ein Refresh im Browser.
+- Wenn der Chat nicht pushen kann, soll er eine aktualisierte HTML-Datei oder einen Patch liefern, der manuell in GitHub eingespielt wird.
 
 Ergaenzende Dateien:
 
