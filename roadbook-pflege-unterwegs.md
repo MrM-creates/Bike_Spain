@@ -20,7 +20,7 @@ Wichtig: Lokale Speicherung ist nur ein Fallback. Der gemeinsame gueltige Stand 
 3. Beim betroffenen Tag `Ab hier planen` waehlen und den Text in ChatGPT verwenden.
 4. Standardziel: ChatGPT aktualisiert `reise-roadbook-2026.html` in `MrM-creates/Bike_Spain`, committet auf `main` und pusht.
 5. Vercel deployed danach automatisch; beide Geraete laden anschliessend denselben aktuellen Stand.
-6. `Sicherung herunterladen` und `Sicherung laden` bleiben nur Fallback fuer Sonderfaelle.
+6. `Lokale Sicherung herunterladen` und `Lokale Sicherung laden` bleiben unter `Hilfe` als Fallback fuer Sonderfaelle.
 
 ## Bessere Ausbaustufe
 

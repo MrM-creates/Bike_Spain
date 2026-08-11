@@ -451,6 +451,11 @@
       font-size: 13px;
     }
 
+    .help-actions {
+      padding: 0 16px 16px;
+      flex-wrap: wrap;
+    }
+
     .glossary-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -915,15 +920,6 @@
               <button class="tool-button" id="add-day" type="button" data-help="Fügt am Ende einen neuen Tag hinzu. Danach kann er mit Pfeilen verschoben werden.">Tag hinzufügen</button>
             </div>
           </div>
-          <div class="planning-group">
-            <span class="planning-group-label">Weitere</span>
-            <div class="planning-group-actions">
-              <button class="tool-button" id="export-plan" type="button" data-help="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter.">Sicherung herunterladen</button>
-              <button class="tool-button" id="import-plan" type="button" data-help="Lädt eine zuvor gespeicherte Roadbook-JSON-Sicherung in diesen Browser.">Sicherung laden</button>
-              <button class="tool-button danger" id="reset-plan" type="button" data-help="Lädt den unveränderten Originalplan dieser Reise als Rückfallbasis.">Originalplan laden</button>
-              <input id="import-file" type="file" accept="application/json,.json" hidden>
-            </div>
-          </div>
         </div>
       </div>
       <span class="save-state" id="save-state" aria-live="polite"></span>
@@ -957,6 +953,12 @@
         <div><strong>Planungshilfe für ChatGPT</strong><span>Erzeugt einen Prompt für die Neuplanung bis zum Fixpunkt Fähre und fordert Commit/Push nach GitHub an.</span></div>
         <div><strong>ChatGPT-Plan übernehmen</strong><span>Importiert ein JSON aus ChatGPT und ersetzt die angegebenen Tage.</span></div>
         <div><strong>Sicherung</strong><span>Fallback für Sonderfälle. Der normale gemeinsame Stand entsteht über GitHub und Vercel.</span></div>
+      </div>
+      <div class="planning-group-actions help-actions">
+        <button class="tool-button" id="export-plan" type="button" data-help="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter.">Lokale Sicherung herunterladen</button>
+        <button class="tool-button" id="import-plan" type="button" data-help="Lädt eine zuvor gespeicherte Roadbook-JSON-Sicherung in diesen Browser.">Lokale Sicherung laden</button>
+        <button class="tool-button danger" id="reset-plan" type="button" data-help="Lädt den unveränderten Originalplan dieser Reise als Rückfallbasis.">Originalplan laden</button>
+        <input id="import-file" type="file" accept="application/json,.json" hidden>
       </div>
     </details>
 
