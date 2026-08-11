@@ -1302,9 +1302,14 @@
     };
 
     const setActiveNav = (section = ADMIN_MODE ? "plan" : "drive") => {
-      navDriveButton.toggleAttribute("aria-current", section === "drive");
-      navPlanButton.toggleAttribute("aria-current", section === "plan");
-      navHelpButton.toggleAttribute("aria-current", section === "help");
+      [
+        [navDriveButton, "drive"],
+        [navPlanButton, "plan"],
+        [navHelpButton, "help"]
+      ].forEach(([button, value]) => {
+        if (section === value) button.setAttribute("aria-current", "page");
+        else button.removeAttribute("aria-current");
+      });
     };
 
     const downloadText = (filename, text, type = "text/plain") => {
