@@ -73,6 +73,13 @@
       gap: 16px;
     }
 
+    .topbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
     .brand {
       font-weight: 760;
       font-size: 16px;
@@ -111,6 +118,14 @@
     .nav-button:hover,
     .topbar-link:hover { border-color: var(--accent); }
 
+    .nav-icon {
+      width: 38px;
+      min-width: 38px;
+      justify-content: center;
+      padding: 0;
+      font-size: 17px;
+    }
+
     .topbar-context {
       display: flex;
       align-items: center;
@@ -119,6 +134,8 @@
       padding-top: 8px;
       border-top: 1px solid rgba(217, 221, 214, 0.75);
     }
+
+    .topbar-context[hidden] { display: none !important; }
 
     main { padding: 36px 0 64px; }
 
@@ -314,7 +331,8 @@
     }
     .tool-button.danger { color: #8a2f2f; }
     .tool-button.icon { width: 38px; padding: 0; font-size: 17px; }
-    .tool-button[data-help]::after {
+    .tool-button[data-help]::after,
+    .nav-button[data-help]::after {
       content: attr(data-help);
       position: absolute;
       left: 50%;
@@ -337,7 +355,8 @@
       transform: translate(-50%, 4px);
       transition: opacity var(--fast), transform var(--fast);
     }
-    .tool-button[data-help]::before {
+    .tool-button[data-help]::before,
+    .nav-button[data-help]::before {
       content: "";
       position: absolute;
       left: 50%;
@@ -353,17 +372,26 @@
     .tool-button[data-help]:hover::after,
     .tool-button[data-help]:hover::before,
     .tool-button[data-help]:focus-visible::after,
-    .tool-button[data-help]:focus-visible::before {
+    .tool-button[data-help]:focus-visible::before,
+    .nav-button[data-help]:hover::after,
+    .nav-button[data-help]:hover::before,
+    .nav-button[data-help]:focus-visible::after,
+    .nav-button[data-help]:focus-visible::before {
       opacity: 1;
       transform: translate(-50%, 0);
     }
     .tool-button[data-help]:hover::before,
-    .tool-button[data-help]:focus-visible::before { transform: translateX(-50%); }
+    .tool-button[data-help]:focus-visible::before,
+    .nav-button[data-help]:hover::before,
+    .nav-button[data-help]:focus-visible::before { transform: translateX(-50%); }
     .planning-only[hidden] { display: none !important; }
 
     .save-state {
-      color: var(--muted);
-      font-size: 12px;
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
       white-space: nowrap;
     }
 
@@ -814,6 +842,7 @@
     @media (max-width: 760px) {
       .topbar-inner { min-height: 58px; }
       .topbar-main { align-items: flex-start; flex-direction: column; gap: 8px; }
+      .topbar-menu { width: 100%; }
       .topbar-nav { width: 100%; overflow-x: auto; padding-bottom: 1px; }
       .topbar-context { align-items: stretch; flex-direction: column; }
       main { padding-top: 24px; }
@@ -866,30 +895,19 @@
     <div class="topbar-inner">
       <div class="topbar-main">
         <div class="brand">Spanienreise 2026</div>
-        <nav class="topbar-nav" aria-label="Hauptnavigation">
-          <button class="nav-button" id="nav-drive" type="button">Fahren</button>
-          <button class="nav-button" id="nav-plan" type="button">Planen</button>
-          <a class="topbar-link" href="/unterkuenfte">Unterkünfte</a>
-          <button class="nav-button" id="nav-help" type="button">Hilfe</button>
-        </nav>
+        <div class="topbar-menu">
+          <nav class="topbar-nav" aria-label="Hauptnavigation">
+            <button class="nav-button" id="nav-drive" type="button">Fahren</button>
+            <button class="nav-button" id="nav-plan" type="button">Planen</button>
+            <a class="topbar-link" href="/unterkuenfte">Unterkünfte</a>
+            <button class="nav-button" id="nav-help" type="button">Hilfe</button>
+          </nav>
+          <button class="nav-button nav-icon" id="refresh-roadbook" type="button" aria-label="Online-Stand laden" title="Online-Stand laden" data-help="Lädt die veröffentlichte Vercel-Version neu.">↻</button>
+        </div>
       </div>
-      <div class="topbar-context" aria-label="Aktionen">
+      <div class="topbar-context planning-only" aria-label="Planungsaktionen" hidden>
         <div class="planning-actions">
           <div class="planning-group">
-            <span class="planning-group-label">Fahren</span>
-            <div class="planning-group-actions">
-              <button class="tool-button primary-button" id="refresh-roadbook" type="button" data-help="Lädt die veröffentlichte Vercel-Version neu. Lokale Änderungen bleiben im Browser gespeichert.">Online-Stand laden</button>
-            </div>
-          </div>
-          <div class="planning-group">
-            <span class="planning-group-label">Sichern</span>
-            <div class="planning-group-actions">
-              <button class="tool-button" id="export-plan" type="button" data-help="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter. Wichtig für Gerätewechsel.">Sicherung herunterladen</button>
-              <button class="tool-button" id="import-plan" type="button" data-help="Lädt eine zuvor gespeicherte Roadbook-JSON-Sicherung in diesen Browser.">Sicherung laden</button>
-              <input id="import-file" type="file" accept="application/json,.json" hidden>
-            </div>
-          </div>
-          <div class="planning-group planning-only" hidden>
             <span class="planning-group-label">Planen</span>
             <div class="planning-group-actions">
               <button class="tool-button" id="planning-helper" type="button" data-help="Erstellt einen fertigen Text für ChatGPT mit aktuellem Roadbook-Ausschnitt, Regeln und Rückspiel-Anweisung.">Planungshilfe für ChatGPT</button>
@@ -897,15 +915,18 @@
               <button class="tool-button" id="add-day" type="button" data-help="Fügt am Ende einen neuen Tag hinzu. Danach kann er mit Pfeilen verschoben werden.">Tag hinzufügen</button>
             </div>
           </div>
-          <div class="planning-group planning-only" hidden>
+          <div class="planning-group">
             <span class="planning-group-label">Weitere</span>
             <div class="planning-group-actions">
-              <button class="tool-button danger" id="reset-plan" type="button" data-help="Verwirft lokale Roadbook-Änderungen in diesem Browser und stellt den ursprünglichen Plan wieder her.">Alles zurücksetzen</button>
+              <button class="tool-button" id="export-plan" type="button" data-help="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter.">Sicherung herunterladen</button>
+              <button class="tool-button" id="import-plan" type="button" data-help="Lädt eine zuvor gespeicherte Roadbook-JSON-Sicherung in diesen Browser.">Sicherung laden</button>
+              <button class="tool-button danger" id="reset-plan" type="button" data-help="Lädt den unveränderten Originalplan dieser Reise als Rückfallbasis.">Originalplan laden</button>
+              <input id="import-file" type="file" accept="application/json,.json" hidden>
             </div>
           </div>
         </div>
-        <span class="save-state" id="save-state" aria-live="polite">Originalplan</span>
       </div>
+      <span class="save-state" id="save-state" aria-live="polite"></span>
     </div>
   </header>
 
@@ -927,15 +948,15 @@
       <div><strong>Roadbook-Stand</strong><span>6. August 2026 · Routen geprüft am 1. August</span></div>
     </section>
 
-    <details class="action-help">
+    <details class="action-help" id="hilfe">
       <summary>Was bedeuten die Aktionen?</summary>
       <div class="action-help-grid">
-        <div><strong>Planungshilfe für ChatGPT</strong><span>Erzeugt einen fertigen Prompt mit aktuellem Ausschnitt, Regeln und Rückspiel-Anweisung.</span></div>
-        <div><strong>Sicherung herunterladen</strong><span>Speichert deinen aktuellen Browserstand als JSON-Datei für Backup oder Gerätewechsel.</span></div>
-        <div><strong>Sicherung laden</strong><span>Lädt eine gespeicherte Roadbook-Sicherung in diesen Browser.</span></div>
+        <div><strong>Fahren</strong><span>Ruhige Roadbook-Ansicht für unterwegs: Route öffnen, Status setzen, Notiz erfassen.</span></div>
+        <div><strong>Planen</strong><span>Aktiviert Änderungen am Reiseverlauf und bereitet den ChatGPT-/GitHub-/Vercel-Workflow vor.</span></div>
+        <div><strong>↻</strong><span>Lädt den veröffentlichten Vercel-Stand neu. Vercel ist die gemeinsame Anzeige für beide Geräte.</span></div>
+        <div><strong>Planungshilfe für ChatGPT</strong><span>Erzeugt einen Prompt für die Neuplanung bis zum Fixpunkt Fähre und fordert Commit/Push nach GitHub an.</span></div>
         <div><strong>ChatGPT-Plan übernehmen</strong><span>Importiert ein JSON aus ChatGPT und ersetzt die angegebenen Tage.</span></div>
-        <div><strong>Verlängern</strong><span>Fügt nach dem gewählten Tag einen zusätzlichen Ruhetag am Ort ein.</span></div>
-        <div><strong>Ab hier planen</strong><span>Erstellt eine Planungshilfe ab genau diesem Reisetag.</span></div>
+        <div><strong>Sicherung</strong><span>Fallback für Sonderfälle. Der normale gemeinsame Stand entsteht über GitHub und Vercel.</span></div>
       </div>
     </details>
 
@@ -1096,6 +1117,8 @@
       { day: 28, title: "Aosta oder Como – Berikon", type: "Heimfahrt", overnight: "Berikon", km: "233–359 km", time: "ca. 3–5 h", roads: "Ab Aosta E27/A9/A1; ab Como A2", points: "Alpenquerung nach Startort und Wetter", note: "Die Como-Zeit schwankt stark mit dem Gotthardverkehr. Beide Links sind direkt und ohne Innenstadt-Zwischenziele.", main: maps("Aosta, Italy", "Berikon, Switzerland", ["Martigny, Switzerland", "Lausanne, Switzerland"]), mainLabel: "Aosta – Berikon", mainMeta: "359 km · ca. 4 h 50", alt: [{ label: "Como – Berikon", meta: "233 km · ca. 3–4 h 15", url: maps("Como, Italy", "Berikon, Switzerland") }] }
     ];
 
+    const currentDays = originalDays;
+
     const STORAGE_KEY = "spanien-roadbook-2026-plan-v3";
     const tripStart = Date.UTC(2026, 8, 24);
     const dateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
@@ -1147,7 +1170,8 @@
       };
     };
 
-    const baseline = originalDays.map((item, index) => prepareDay({ ...item, id: `original-${item.day}` }, index));
+    const originalBaseline = originalDays.map((item, index) => prepareDay({ ...item, id: `original-${item.day}` }, index));
+    const baseline = currentDays.map((item, index) => prepareDay({ ...item, id: item.id || `original-${item.day || index + 1}` }, index));
     let state = { days: clone(baseline), mode: ADMIN_MODE ? "plan" : "view" };
 
     const savedOverlay = (savedDays = []) => {
@@ -1307,14 +1331,16 @@
 
     const buildPlanningPrompt = (startIndex = 0) => {
       const current = state.days[startIndex] || state.days[0];
-      const nextDays = state.days.slice(startIndex, startIndex + 5).map((item, offset) => daySummary(item, startIndex + offset));
+      const ferryIndex = state.days.findIndex((item) => item.title.toLowerCase().includes("fähre") || item.title.toLowerCase().includes("faehre"));
+      const endIndex = ferryIndex >= startIndex ? ferryIndex : Math.min(state.days.length - 1, startIndex + 4);
+      const affectedDays = state.days.slice(startIndex, endIndex + 1).map((item, offset) => daySummary(item, startIndex + offset));
       const changedDays = state.days
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.status !== "planned" || item.travelNote)
         .map(({ item, index }) => daySummary(item, index));
       const schema = {
         replaceFromDay: startIndex + 1,
-        replaceCount: nextDays.length,
+        replaceCount: affectedDays.length,
         reason: "kurz erklaeren, warum geaendert wird",
         days: [{
           title: "Startort - Zielort",
@@ -1337,7 +1363,8 @@
       return `Ich bin auf einer Motorradreise von Berikon nach Spanien und zurueck. Bitte plane pragmatisch ab Reisetag ${startIndex + 1} (${dateForDay(startIndex)}), aktuell: ${current.title}.
 
 Ziel:
-- Passe die naechsten 3 bis 5 Etappen an.
+- Passe den weiteren Reiseverlauf ab diesem Tag bis zum Fixpunkt Faehre Barcelona - Genua an.
+- Wenn die Aenderung nur eine kleine lokale Notiz betrifft, erklaere kurz, warum keine Neuplanung noetig ist.
 - Plane motorradfreundlich, ruhig und sicher, aber nicht als Calimoto-Kurvenmaximierung.
 - Nutze Google Maps als Routengeruest mit klaren Kontrollpunkten.
 - Sichere Motorradabstellung fuer zwei beladene Triumph-Motorraeder bleibt bei Unterkuenften Pflicht.
@@ -1354,15 +1381,17 @@ Fixpunkte:
 
 Aktueller Roadbook-Ausschnitt:
 \`\`\`json
-${JSON.stringify({ generatedAt: new Date().toISOString(), startDay: startIndex + 1, nextDays, changedDays }, null, 2)}
+${JSON.stringify({ generatedAt: new Date().toISOString(), startDay: startIndex + 1, affectedUntilDay: endIndex + 1, affectedDays, changedDays }, null, 2)}
 \`\`\`
 
 Arbeitsauftrag:
 1. Stelle zuerst die neue Planung als Text vor.
 2. Gib pro Tag Start, Ziel, Uebernachtungsort, Kilometer, Fahrzeit, Kontrollpunkte, Sicherheitsnotiz und Aenderung gegenueber dem Originalplan an.
-3. Danach muss die Aenderung wieder in das Roadbook zurueckfliessen:
-   - Wenn du Codex-/Datei-/GitHub-Zugriff hast: aktualisiere \`reise-roadbook-2026.html\`, committe auf \`main\` und pushe nach \`https://github.com/MrM-creates/Bike_Spain\`. Vercel deployed danach automatisch; ich lade das Roadbook anschliessend neu.
-   - Wenn du keinen Datei- oder GitHub-Zugriff hast: gib zusaetzlich ein einziges JSON nach folgendem Schema aus. Dieses JSON kann ich im Roadbook ueber "ChatGPT-Plan uebernehmen" einfuegen. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
+3. Danach muss die Aenderung in den gemeinsamen Online-Stand:
+   - Standardziel: aktualisiere im GitHub-Repository \`MrM-creates/Bike_Spain\` auf Branch \`main\` die Datei \`reise-roadbook-2026.html\`, committe und pushe.
+   - Vercel-Projekt: \`motorrad-roadbook-spanien-2026\`. Vercel deployed nach dem GitHub-Push automatisch; pruefe danach nach Moeglichkeit den Deployment-Status.
+   - Der Originalplan soll als Rueckfallbasis erhalten bleiben. Aendere in \`reise-roadbook-2026.html\` nur den aktuellen Roadbook-Plan \`currentDays\`, nicht \`originalDays\`.
+   - Nur falls \`MrM-creates/Bike_Spain\` nicht erreichbar oder nicht beschreibbar ist: gib ein einziges JSON nach folgendem Schema aus. Dieses JSON kann ich im Roadbook ueber "ChatGPT-Plan uebernehmen" einfuegen. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
 
 JSON-Schema fuer den Roadbook-Import:
 \`\`\`json
@@ -1765,12 +1794,14 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelector("#reset-plan").addEventListener("click", () => {
-      if (!confirm("Alle Änderungen verwerfen und den ursprünglichen 30-Tage-Plan wiederherstellen?")) return;
-      state.days = clone(baseline);
+      if (!confirm("Den unveränderten Originalplan dieser Reise laden? Lokale Änderungen in diesem Browser werden ersetzt.")) return;
+      state.days = clone(originalBaseline);
       activeFilter = "all";
-      save("Originalplan wiederhergestellt");
+      save("Originalplan geladen");
       render();
     });
+
+    if (window.location.hash === "#hilfe") actionHelp.open = true;
 
     render();
   </script>

@@ -56,9 +56,14 @@
       gap: 16px;
     }
     .brand { font-size: 16px; font-weight: 760; }
+    .topbar-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     .nav-link {
       min-height: 38px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       width: fit-content;
       padding: 0 12px;
@@ -69,6 +74,11 @@
       font-size: 13px;
       font-weight: 700;
       text-decoration: none;
+    }
+    .nav-link[aria-current="page"] {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
     }
     .nav-link:hover { border-color: var(--accent); }
 
@@ -312,8 +322,13 @@
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand">Unterkünfte · Spanienreise 2026</div>
-      <a class="nav-link" href="/">Roadbook</a>
+      <div class="brand">Spanienreise 2026</div>
+      <nav class="topbar-nav" aria-label="Hauptnavigation">
+        <a class="nav-link" href="/">Fahren</a>
+        <a class="nav-link" href="/?admin=1">Planen</a>
+        <a class="nav-link" href="/unterkuenfte" aria-current="page">Unterkünfte</a>
+        <a class="nav-link" href="/#hilfe">Hilfe</a>
+      </nav>
     </div>
   </header>
 

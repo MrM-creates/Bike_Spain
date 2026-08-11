@@ -11,17 +11,16 @@ Zusaetzlich gibt es im Planmodus schnelle Reise-Aktionen:
 - `Ab hier planen`: erzeugt einen fertigen ChatGPT-Planungstext fuer die naechsten Etappen.
 - `ChatGPT-Plan uebernehmen`: importiert ein strukturiertes JSON aus ChatGPT und ersetzt die betroffenen Tage im Roadbook.
 
-Wichtig: Lokale Speicherung bedeutet pro Geraet und pro Browser. Aenderungen auf dem iPhone erscheinen nicht automatisch auf dem Mac oder einem zweiten Telefon.
+Wichtig: Lokale Speicherung ist nur ein Fallback. Der gemeinsame gueltige Stand fuer beide Reisende ist die Vercel-Version, die aus GitHub `MrM-creates/Bike_Spain` deployed wird.
 
 ## Empfohlener Betrieb fuer die Reise
 
-1. Vor der Abfahrt das Roadbook auf den Geraeten oeffnen, die unterwegs genutzt werden.
-2. Nach jeder relevanten Aenderung im Planmodus `Sicherung herunterladen` verwenden.
-3. Die Sicherungsdatei in iCloud Drive, Google Drive oder einem gemeinsamen Chat ablegen.
-4. Auf einem zweiten Geraet bei Bedarf `Sicherung laden` verwenden.
-5. Hotelbuchungen zusaetzlich auf der Unterkunftsseite als `Angefragt` oder `Gebucht` markieren.
-
-Das ist die einfachste Variante ohne Server, Login oder Datenbank. Sie ist robust, solange ihr konsequent exportiert, wenn ein Geraet gewechselt wird.
+1. Roadbook unterwegs im Modus `Fahren` nutzen.
+2. Bei relevanten Aenderungen wie zusaetzlicher Nacht, ausgelassenem Tag, Wetterproblem oder Hotelproblem in den Modus `Planen` wechseln.
+3. Beim betroffenen Tag `Ab hier planen` waehlen und den Text in ChatGPT verwenden.
+4. Standardziel: ChatGPT aktualisiert `reise-roadbook-2026.html` in `MrM-creates/Bike_Spain`, committet auf `main` und pusht.
+5. Vercel deployed danach automatisch; beide Geraete laden anschliessend denselben aktuellen Stand.
+6. `Sicherung herunterladen` und `Sicherung laden` bleiben nur Fallback fuer Sonderfaelle.
 
 ## Bessere Ausbaustufe
 
@@ -40,7 +39,7 @@ Geeignete Datenquellen:
 
 ## Empfehlung
 
-Fuer diese Reise reicht wahrscheinlich der bestehende Planmodus plus Sicherung in iCloud/Google Drive. Wenn mehrere Personen gleichzeitig editieren sollen oder Hotelbuchungen automatisch auf allen Geraeten aktuell sein muessen, ist ein Google-Sheet-Backend die pragmatischste naechste Stufe.
+Fuer diese Reise ist der beste Standard nicht lokale Sicherung, sondern GitHub/Vercel als gemeinsamer Stand. Sicherungen bleiben als Notfallweg sinnvoll, sollen aber nicht der normale Reiseablauf sein.
 
 ## Planung und Vercel-Aktualisierung
 
@@ -50,10 +49,10 @@ Der komplexe Planungsteil sollte unterwegs nicht auf dem Handy oder iPad erledig
 - Echte Umplanung mit `Ab hier planen` in einem neuen ChatGPT-Chat auf dem iPad machen.
 - Bei Bedarf `unterwegs-chatgpt-planung.md` und `vercel-refresh-anleitung.md` als zusaetzlichen Kontext anhaengen.
 - Der neue Chat passt die naechsten Etappen an.
-- Wenn der Chat GitHub-/Codex-Zugriff hat, aktualisiert er `reise-roadbook-2026.html`, committet auf `main` und pusht nach GitHub.
+- Standardziel: Der Chat aktualisiert `reise-roadbook-2026.html` in `MrM-creates/Bike_Spain`, committet auf `main` und pusht nach GitHub.
 - Vercel deployed danach automatisch; unterwegs reicht ein Refresh im Browser.
-- Wenn der Chat nicht pushen kann, soll er ein Import-JSON fuer `ChatGPT-Plan uebernehmen` liefern.
-- Fuer den dauerhaften Online-Stand muss ein per JSON uebernommener Plan spaeter trotzdem in `reise-roadbook-2026.html` eingespielt und ueber GitHub/Vercel deployed werden.
+- Wenn der Chat nicht pushen kann, soll er klar sagen, dass Zugriff auf `MrM-creates/Bike_Spain` fehlt, und ein Import-JSON fuer `ChatGPT-Plan uebernehmen` liefern.
+- Fuer den gemeinsamen Online-Stand muss ein per JSON uebernommener Plan spaeter trotzdem in `reise-roadbook-2026.html` eingespielt und ueber GitHub/Vercel deployed werden.
 
 Ergaenzende Dateien:
 
