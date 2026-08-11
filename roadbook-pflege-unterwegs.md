@@ -4,6 +4,13 @@
 
 Das `reise-roadbook-2026.html` ist nicht nur eine statische Ansicht. Im Modus `Planen` koennen Tage bearbeitet, verschoben, hinzugefuegt, als gefahren/geaendert/ausgelassen markiert und mit Unterwegs-Notizen versehen werden. Die Aenderungen werden im Browser lokal gespeichert.
 
+Zusaetzlich gibt es im Planmodus schnelle Reise-Aktionen:
+
+- `Verlaengern`: fuegt nach dem aktuellen Tag einen zusaetzlichen Ruhetag am gleichen Ort ein.
+- `Auslassen`: markiert den Tag als ausgelassen und speichert eine kurze Notiz.
+- `Ab hier planen`: erzeugt einen fertigen ChatGPT-Planungstext fuer die naechsten Etappen.
+- `ChatGPT-Plan uebernehmen`: importiert ein strukturiertes JSON aus ChatGPT und ersetzt die betroffenen Tage im Roadbook.
+
 Wichtig: Lokale Speicherung bedeutet pro Geraet und pro Browser. Aenderungen auf dem iPhone erscheinen nicht automatisch auf dem Mac oder einem zweiten Telefon.
 
 ## Empfohlener Betrieb fuer die Reise
@@ -40,12 +47,13 @@ Fuer diese Reise reicht wahrscheinlich der bestehende Planmodus plus Sicherung i
 Der komplexe Planungsteil sollte unterwegs nicht auf dem Handy oder iPad erledigt werden. Sinnvoller ist:
 
 - Roadbook unterwegs lesen, markieren und mit Notizen pflegen.
-- Echte Umplanung in einem neuen ChatGPT-Chat auf dem iPad machen.
-- `unterwegs-chatgpt-planung.md` und `vercel-refresh-anleitung.md` als Kontext anhaengen.
+- Echte Umplanung mit `Ab hier planen` in einem neuen ChatGPT-Chat auf dem iPad machen.
+- Bei Bedarf `unterwegs-chatgpt-planung.md` und `vercel-refresh-anleitung.md` als zusaetzlichen Kontext anhaengen.
 - Der neue Chat passt die naechsten Etappen an.
-- Wenn der Chat GitHub-/Codex-Zugriff hat, aktualisiert er `reise-roadbook-2026.html` und pusht nach GitHub.
+- Wenn der Chat GitHub-/Codex-Zugriff hat, aktualisiert er `reise-roadbook-2026.html`, committet auf `main` und pusht nach GitHub.
 - Vercel deployed danach automatisch; unterwegs reicht ein Refresh im Browser.
-- Wenn der Chat nicht pushen kann, soll er eine aktualisierte HTML-Datei oder einen Patch liefern, der manuell in GitHub eingespielt wird.
+- Wenn der Chat nicht pushen kann, soll er ein Import-JSON fuer `ChatGPT-Plan uebernehmen` liefern.
+- Fuer den dauerhaften Online-Stand muss ein per JSON uebernommener Plan spaeter trotzdem in `reise-roadbook-2026.html` eingespielt und ueber GitHub/Vercel deployed werden.
 
 Ergaenzende Dateien:
 

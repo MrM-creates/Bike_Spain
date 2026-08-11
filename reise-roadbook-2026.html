@@ -241,11 +241,21 @@
 
     .mode-switch,
     .planning-actions,
-    .day-tools {
+    .day-tools,
+    .quick-actions {
       display: flex;
       align-items: center;
       gap: 6px;
     }
+
+    .planning-actions { flex-wrap: wrap; }
+
+    .quick-actions {
+      flex-wrap: wrap;
+      justify-content: stretch;
+    }
+
+    .quick-actions .tool-button { flex: 1 1 auto; }
 
     .roadbook-mode {
       display: flex;
@@ -605,8 +615,21 @@
       font-size: 14px;
     }
     .field textarea { min-height: 76px; resize: vertical; }
+    .field textarea.large-textarea {
+      min-height: min(52vh, 420px);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
     .check-field { display: flex; align-items: center; gap: 9px; min-height: 42px; font-size: 14px; }
     .primary-button { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    .dialog-note {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
 
     .route-link {
       min-height: 44px;
@@ -777,11 +800,13 @@
       </div>
       <div class="planning-actions">
         <button class="tool-button primary-button" id="refresh-roadbook" type="button">Online-Stand laden</button>
+        <button class="tool-button" id="planning-helper" type="button">Planungshilfe für ChatGPT</button>
         <button class="tool-button" id="export-plan" type="button">Sicherung herunterladen</button>
         <button class="tool-button" id="import-plan" type="button">Sicherung laden</button>
         <input id="import-file" type="file" accept="application/json,.json" hidden>
       </div>
       <div class="planning-actions planning-only" hidden>
+        <button class="tool-button" id="import-chatgpt-plan" type="button">ChatGPT-Plan übernehmen</button>
         <button class="tool-button" id="add-day" type="button">Tag hinzufügen</button>
         <button class="tool-button danger" id="reset-plan" type="button">Alles zurücksetzen</button>
       </div>
@@ -847,6 +872,46 @@
     </form>
   </dialog>
 
+  <dialog id="planning-helper-dialog" aria-labelledby="planning-helper-title">
+    <form class="editor-form" method="dialog">
+      <div class="editor-header">
+        <h2 id="planning-helper-title">Planungshilfe für ChatGPT</h2>
+        <button class="tool-button icon" type="button" id="close-planning-helper" aria-label="Fenster schliessen" title="Schliessen">×</button>
+      </div>
+      <div class="editor-body">
+        <p class="dialog-note">Diesen Text in einen neuen Chat kopieren. Der Chat soll zuerst planen und danach entweder das HTML aktualisieren oder JSON für den Import zurückgeben.</p>
+        <div class="field full">
+          <label for="planning-helper-output">Text für ChatGPT</label>
+          <textarea id="planning-helper-output" class="large-textarea" readonly></textarea>
+        </div>
+      </div>
+      <div class="editor-footer">
+        <button class="tool-button" type="button" id="download-planning-helper">Text herunterladen</button>
+        <button class="tool-button primary-button" type="button" id="copy-planning-helper">Text kopieren</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="chatgpt-import-dialog" aria-labelledby="chatgpt-import-title">
+    <form class="editor-form" id="chatgpt-import-form">
+      <div class="editor-header">
+        <h2 id="chatgpt-import-title">ChatGPT-Plan übernehmen</h2>
+        <button class="tool-button icon" type="button" id="close-chatgpt-import" aria-label="Fenster schliessen" title="Schliessen">×</button>
+      </div>
+      <div class="editor-body">
+        <p class="dialog-note">JSON aus ChatGPT einfügen. Das Roadbook ersetzt ab dem angegebenen Tag die gewählte Anzahl Tage und speichert den neuen Stand lokal.</p>
+        <div class="field full">
+          <label for="chatgpt-import-input">Planungs-JSON</label>
+          <textarea id="chatgpt-import-input" class="large-textarea" placeholder='{"replaceFromDay": 12, "replaceCount": 5, "days": [...]}' required></textarea>
+        </div>
+      </div>
+      <div class="editor-footer">
+        <button class="tool-button" type="button" id="cancel-chatgpt-import">Abbrechen</button>
+        <button class="tool-button primary-button" type="submit">Plan übernehmen</button>
+      </div>
+    </form>
+  </dialog>
+
   <footer>
     Kilometer und Fahrzeiten sind Planwerte ohne Pausen, geprüft am 1. August 2026. Start neu am 24. September 2026; der Altea-Flex-/Ruhetag entfällt, damit Fähre und Heimreise unverändert bleiben. Fähre Barcelona–Genua: 21. Oktober, Check-in 08:30, Abfahrt 10:30, Ankunft am 22. Oktober um 09:00. Aktuelle Fahrzeit, Verkehr und Sperrungen immer in Google Maps prüfen.
   </footer>
@@ -902,6 +967,11 @@
     const filters = document.querySelector(".filters");
     const editor = document.querySelector("#day-editor");
     const editorForm = document.querySelector("#editor-form");
+    const planningHelperDialog = document.querySelector("#planning-helper-dialog");
+    const planningHelperOutput = document.querySelector("#planning-helper-output");
+    const chatgptImportDialog = document.querySelector("#chatgpt-import-dialog");
+    const chatgptImportForm = document.querySelector("#chatgpt-import-form");
+    const chatgptImportInput = document.querySelector("#chatgpt-import-input");
     let activeFilter = "all";
     let editingIndex = -1;
 
@@ -1010,9 +1080,9 @@
       });
     };
 
-    const dayTool = (label, title, action, disabled = false) => {
+    const dayTool = (label, title, action, disabled = false, icon = true) => {
       const button = document.createElement("button");
-      button.className = "tool-button icon";
+      button.className = `tool-button${icon ? " icon" : ""}`;
       button.type = "button";
       button.textContent = label;
       button.title = title;
@@ -1039,6 +1109,193 @@
         state.days[index] = clone(original);
       }
       save();
+      render();
+    };
+
+    const downloadText = (filename, text, type = "text/plain") => {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    };
+
+    const daySummary = (item, index) => ({
+      tag: index + 1,
+      datum: dateForDay(index),
+      titel: item.title,
+      art: item.type || "",
+      uebernachtung: item.overnight || "",
+      kilometer: item.km || "",
+      fahrzeit: item.time || "",
+      strassen: item.roads || "",
+      wegpunkte: item.points || "",
+      planungshinweis: item.note || "",
+      unterwegsNotiz: item.travelNote || "",
+      status: statusLabels[item.status] || item.status || "Geplant",
+      googleMaps: {
+        start: item.origin || "",
+        ziel: item.destination || "",
+        zwischenziele: item.waypoints || []
+      }
+    });
+
+    const buildPlanningPrompt = (startIndex = 0) => {
+      const current = state.days[startIndex] || state.days[0];
+      const nextDays = state.days.slice(startIndex, startIndex + 5).map((item, offset) => daySummary(item, startIndex + offset));
+      const changedDays = state.days
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.status !== "planned" || item.travelNote)
+        .map(({ item, index }) => daySummary(item, index));
+      const schema = {
+        replaceFromDay: startIndex + 1,
+        replaceCount: nextDays.length,
+        reason: "kurz erklaeren, warum geaendert wird",
+        days: [{
+          title: "Startort - Zielort",
+          type: "Fahrtag / Ruhetag / Transfer / Kurventag",
+          overnight: "Uebernachtungsort",
+          km: "ca. 220 km",
+          time: "ca. 3 h 20",
+          roads: "wichtige Strassen",
+          points: "Kontrollpunkte als lesbarer Text",
+          note: "Sicherheits- und Planungsnotiz",
+          travelNote: "optional",
+          rest: false,
+          origin: "Google Maps Start",
+          destination: "Google Maps Ziel",
+          waypoints: ["Zwischenziel 1", "Zwischenziel 2"],
+          status: "changed"
+        }]
+      };
+
+      return `Ich bin auf einer Motorradreise von Berikon nach Spanien und zurueck. Bitte plane pragmatisch ab Reisetag ${startIndex + 1} (${dateForDay(startIndex)}), aktuell: ${current.title}.
+
+Ziel:
+- Passe die naechsten 3 bis 5 Etappen an.
+- Plane motorradfreundlich, ruhig und sicher, aber nicht als Calimoto-Kurvenmaximierung.
+- Nutze Google Maps als Routengeruest mit klaren Kontrollpunkten.
+- Sichere Motorradabstellung fuer zwei beladene Triumph-Motorraeder bleibt bei Unterkuenften Pflicht.
+
+Fixpunkte:
+- Reisezeit: 24.09. bis 23.10.2026.
+- Start und Ziel: Berikon AG.
+- Zwei Triumph Motorraeder.
+- Keine Offroad-Strecken, keine Pisten, keine Strandzufahrten, keine Waldwege.
+- Historische Ortskerne nicht direkt als Navigationsziel verwenden.
+- Bei schlechtem Wetter lieber groessere Strassen und kuerzere Etappen.
+- Faehre Barcelona - Genua bleibt fix: Check-in 21.10.2026 um 08:30, Abfahrt 10:30, Ankunft Genua 22.10.2026 um 09:00.
+- Umweltzonen/ZBE beachten: Grenoble, Barcelona, Valencia, Granada/Monachil-Umfeld, Zaragoza.
+
+Aktueller Roadbook-Ausschnitt:
+\`\`\`json
+${JSON.stringify({ generatedAt: new Date().toISOString(), startDay: startIndex + 1, nextDays, changedDays }, null, 2)}
+\`\`\`
+
+Arbeitsauftrag:
+1. Stelle zuerst die neue Planung als Text vor.
+2. Gib pro Tag Start, Ziel, Uebernachtungsort, Kilometer, Fahrzeit, Kontrollpunkte, Sicherheitsnotiz und Aenderung gegenueber dem Originalplan an.
+3. Danach muss die Aenderung wieder in das Roadbook zurueckfliessen:
+   - Wenn du Codex-/Datei-/GitHub-Zugriff hast: aktualisiere \`reise-roadbook-2026.html\`, committe auf \`main\` und pushe nach \`https://github.com/MrM-creates/Bike_Spain\`. Vercel deployed danach automatisch; ich lade das Roadbook anschliessend neu.
+   - Wenn du keinen Datei- oder GitHub-Zugriff hast: gib zusaetzlich ein einziges JSON nach folgendem Schema aus. Dieses JSON kann ich im Roadbook ueber "ChatGPT-Plan uebernehmen" einfuegen. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
+
+JSON-Schema fuer den Roadbook-Import:
+\`\`\`json
+${JSON.stringify(schema, null, 2)}
+\`\`\`
+
+Wichtig fuer das Import-JSON:
+- \`replaceFromDay\` ist die sichtbare Tagesnummer im aktuellen Roadbook.
+- \`replaceCount\` ist die Anzahl der zu ersetzenden Tage.
+- \`days\` enthaelt die neuen Tage in endgueltiger Reihenfolge.
+- Fuer Ruhetage \`rest: true\` setzen und \`origin\`, \`destination\`, \`waypoints\` leer lassen.
+- Fuer Fahrtage \`origin\`, \`destination\` und \`waypoints\` so setzen, dass daraus ein Google-Maps-Link erzeugt werden kann.
+- Verwende als \`status\` fuer geaenderte oder neue Tage \`changed\`.`;
+    };
+
+    const openPlanningHelper = (index = 0) => {
+      planningHelperOutput.value = buildPlanningPrompt(index);
+      planningHelperDialog.showModal();
+      planningHelperOutput.focus();
+      planningHelperOutput.select();
+    };
+
+    const extendStay = (index) => {
+      const current = state.days[index];
+      const place = prompt(`Wo bleibt ihr länger?`, current.overnight || current.destination || "");
+      if (place === null) return;
+      const trimmedPlace = place.trim();
+      if (!trimmedPlace) return;
+      const reason = prompt("Kurze Notiz zur Verlängerung", "Aufenthalt verlängert; Folgeetappen neu prüfen.");
+      if (reason === null) return;
+      current.status = "changed";
+      const note = reason.trim() || "Aufenthalt verlängert; Folgeetappen neu prüfen.";
+      const extraDay = prepareDay({
+        title: trimmedPlace,
+        type: "Ruhetag / Verlängerung",
+        overnight: trimmedPlace,
+        roads: "Keine feste Fahrroute",
+        points: "Erholung · Organisation · Folgeetappen prüfen",
+        note,
+        travelNote: note,
+        rest: true,
+        status: "changed",
+        custom: true
+      }, index + 1, true);
+      state.days.splice(index + 1, 0, extraDay);
+      activeFilter = "all";
+      save("Aufenthalt verlängert");
+      render();
+    };
+
+    const skipDay = (index) => {
+      const item = state.days[index];
+      const note = prompt(`Warum wird Tag ${index + 1} ausgelassen?`, item.travelNote || "Ausgelassen; Folgeplanung prüfen.");
+      if (note === null) return;
+      item.status = "skipped";
+      item.travelNote = note.trim();
+      save("Tag ausgelassen");
+      render();
+    };
+
+    const normalizeImportedDay = (item, index) => {
+      if (!item || typeof item !== "object" || !item.title) throw new Error("Ungültiger Tag im Import");
+      const imported = {
+        title: item.title,
+        type: item.type || (item.rest ? "Ruhetag" : "Fahrtag"),
+        overnight: item.overnight || "",
+        km: item.km || "",
+        time: item.time || "",
+        roads: item.roads || "",
+        points: item.points || "",
+        note: item.note || "",
+        travelNote: item.travelNote || "",
+        rest: Boolean(item.rest),
+        origin: item.origin || "",
+        destination: item.destination || "",
+        waypoints: Array.isArray(item.waypoints) ? item.waypoints.filter(Boolean) : [],
+        status: item.status || "changed",
+        custom: true
+      };
+      if (!["planned", "changed", "done", "skipped"].includes(imported.status)) imported.status = "changed";
+      if (!imported.rest && imported.origin && imported.destination) imported.main = maps(imported.origin, imported.destination, imported.waypoints);
+      return prepareDay(imported, index, true);
+    };
+
+    const applyChatgptPlan = (text) => {
+      const imported = JSON.parse(text);
+      if (!Array.isArray(imported.days) || !imported.days.length) throw new Error("Keine Tage im Import");
+      const start = Number(imported.replaceFromDay);
+      const replaceCount = Number(imported.replaceCount ?? imported.days.length);
+      if (!Number.isInteger(start) || start < 1 || start > state.days.length + 1) throw new Error("Ungültiger Starttag");
+      if (!Number.isInteger(replaceCount) || replaceCount < 0) throw new Error("Ungültige Anzahl");
+      const startIndex = start - 1;
+      const newDays = imported.days.map((item, offset) => normalizeImportedDay(item, startIndex + offset));
+      state.days.splice(startIndex, Math.min(replaceCount, state.days.length - startIndex), ...newDays);
+      activeFilter = "all";
+      save("ChatGPT-Plan übernommen");
       render();
     };
 
@@ -1164,6 +1421,15 @@
       actions.append(noteButton);
 
       if (ADMIN_MODE) {
+        const quickActions = document.createElement("div");
+        quickActions.className = "quick-actions";
+        quickActions.append(
+          dayTool("Verlängern", `Aufenthalt nach Tag ${index + 1} verlängern`, () => extendStay(index), false, false),
+          dayTool("Auslassen", `Tag ${index + 1} auslassen`, () => skipDay(index), false, false),
+          dayTool("Ab hier planen", `Planungshilfe ab Tag ${index + 1} erstellen`, () => openPlanningHelper(index), false, false)
+        );
+        actions.append(quickActions);
+
         const tools = document.createElement("div");
         tools.className = "day-tools";
         tools.append(
@@ -1244,6 +1510,47 @@
     });
 
     document.querySelector("#add-day").addEventListener("click", () => openEditor());
+    document.querySelector("#planning-helper").addEventListener("click", () => {
+      const value = prompt("Planungshilfe ab welchem sichtbaren Reisetag erstellen?", "1");
+      if (value === null) return;
+      const day = Number(value);
+      if (!Number.isInteger(day) || day < 1 || day > state.days.length) {
+        alert("Bitte eine gültige Tagesnummer eingeben.");
+        return;
+      }
+      openPlanningHelper(day - 1);
+    });
+    document.querySelector("#close-planning-helper").addEventListener("click", () => planningHelperDialog.close());
+    document.querySelector("#copy-planning-helper").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(planningHelperOutput.value);
+        save("Planungshilfe kopiert");
+      } catch (_) {
+        planningHelperOutput.focus();
+        planningHelperOutput.select();
+        save("Text markiert");
+      }
+    });
+    document.querySelector("#download-planning-helper").addEventListener("click", () => {
+      downloadText("spanien-roadbook-chatgpt-planungshilfe.txt", planningHelperOutput.value);
+      save("Planungshilfe heruntergeladen");
+    });
+    document.querySelector("#import-chatgpt-plan").addEventListener("click", () => {
+      chatgptImportInput.value = "";
+      chatgptImportDialog.showModal();
+      chatgptImportInput.focus();
+    });
+    document.querySelector("#close-chatgpt-import").addEventListener("click", () => chatgptImportDialog.close());
+    document.querySelector("#cancel-chatgpt-import").addEventListener("click", () => chatgptImportDialog.close());
+    chatgptImportForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      try {
+        applyChatgptPlan(chatgptImportInput.value);
+        chatgptImportDialog.close();
+      } catch (error) {
+        alert(`Der ChatGPT-Plan konnte nicht übernommen werden: ${error.message}`);
+      }
+    });
     document.querySelector("#refresh-roadbook").addEventListener("click", () => {
       const target = new URL(window.location.href);
       target.searchParams.set("refresh", Date.now().toString());

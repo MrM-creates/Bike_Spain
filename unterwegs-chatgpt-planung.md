@@ -11,11 +11,31 @@ Zielablauf:
 3. Diese Datei und `vercel-refresh-anleitung.md` anhaengen.
 4. Dem Chat sagen, was sich geaendert hat: Wetter, Standort, Muedigkeit, Hotelproblem oder neuer Wunsch.
 5. Der Chat passt die naechsten Etappen an.
-6. Wenn der Chat GitHub-/Codex-Zugriff hat: `reise-roadbook-2026.html` aktualisieren und nach GitHub pushen.
+6. Wenn der Chat GitHub-/Codex-Zugriff hat: `reise-roadbook-2026.html` aktualisieren, committen und nach GitHub pushen.
 7. Vercel deployed automatisch von GitHub.
 8. Roadbook auf dem iPad neu laden.
+9. Wenn der Chat keinen Datei- oder GitHub-Zugriff hat: ein JSON fuer `ChatGPT-Plan uebernehmen` im Roadbook erzeugen lassen.
 
 Wichtig: Ein normaler ChatGPT-Chat ohne GitHub- oder Codex-Werkzeuge kann nicht selbst nach GitHub pushen. In diesem Fall soll er die geaenderte HTML-Datei oder einen klaren Patch erzeugen, den du anschliessend in GitHub einspielst.
+
+## Schnellster Ablauf mit dem Roadbook
+
+Im Roadbook den Planmodus oeffnen:
+
+```text
+reise-roadbook-2026.html?admin=1
+```
+
+Dann:
+
+1. Beim betroffenen Tag `Ab hier planen` waehlen.
+2. Den erzeugten Text in ChatGPT kopieren.
+3. ChatGPT soll zuerst die neue Planung als Text klaeren.
+4. Danach muss ChatGPT eine der beiden Umsetzungen liefern:
+   - mit Codex-/GitHub-Zugriff: `reise-roadbook-2026.html` direkt aktualisieren, auf `main` committen und nach `https://github.com/MrM-creates/Bike_Spain` pushen; Vercel deployed danach automatisch.
+   - ohne Datei-/GitHub-Zugriff: ein einzelnes JSON fuer den Button `ChatGPT-Plan uebernehmen` ausgeben.
+5. Nach einem JSON-Import im Roadbook `Sicherung herunterladen` verwenden.
+6. Fuer den dauerhaften Online-Stand muss die Aenderung spaeter trotzdem wieder in `reise-roadbook-2026.html` einfliessen und ueber GitHub/Vercel deployed werden.
 
 ## Rolle von ChatGPT unterwegs
 
