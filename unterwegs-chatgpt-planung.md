@@ -11,12 +11,13 @@ Zielablauf:
 3. Diese Datei und `vercel-refresh-anleitung.md` anhaengen.
 4. Dem Chat sagen, was sich geaendert hat: Wetter, Standort, Muedigkeit, Hotelproblem oder neuer Wunsch.
 5. Der Chat passt die naechsten Etappen an.
-6. Standardziel: `reise-roadbook-2026.html` im GitHub-Repository `MrM-creates/Bike_Spain` auf Branch `main` aktualisieren, committen und pushen.
-7. Vercel-Projekt `motorrad-roadbook-spanien-2026` deployed automatisch von GitHub.
-8. Roadbook auf dem iPad neu laden.
-9. Nur falls `MrM-creates/Bike_Spain` nicht erreichbar oder nicht beschreibbar ist: ein JSON fuer `ChatGPT-Plan uebernehmen` im Roadbook erzeugen lassen.
+6. Der Chat gibt ein JSON fuer `ChatGPT-Plan uebernehmen` im Roadbook aus.
+7. Im Roadbook das JSON importieren.
+8. Im Roadbook `Online veroeffentlichen` waehlen und Publish-PIN eingeben.
+9. Die App schreibt serverseitig nach GitHub `MrM-creates/Bike_Spain`; Vercel-Projekt `motorrad-roadbook-spanien-2026` deployed danach automatisch.
+10. Roadbook auf iPad/iPhone neu laden.
 
-Wichtig: Vercel ist die gemeinsame Anzeige. GitHub `MrM-creates/Bike_Spain` ist die Quelle. Der normale unterwegs-Workflow endet deshalb mit Commit/Push nach GitHub; Vercel zieht danach automatisch nach.
+Wichtig: Vercel ist die gemeinsame Anzeige. GitHub `MrM-creates/Bike_Spain` ist die Quelle. ChatGPT plant und liefert JSON; die Roadbook-App veroeffentlicht den importierten Stand ueber eine geschuetzte Server-Funktion.
 
 ## Schnellster Ablauf mit dem Roadbook
 
@@ -31,13 +32,14 @@ Dann:
 1. Beim betroffenen Tag `Ab hier planen` waehlen.
 2. Den erzeugten Text in ChatGPT kopieren.
 3. ChatGPT soll zuerst die neue Planung als Text klaeren.
-4. Danach soll ChatGPT `reise-roadbook-2026.html` direkt aktualisieren, auf `main` committen und nach `https://github.com/MrM-creates/Bike_Spain` pushen; Vercel deployed danach automatisch.
-5. Nur falls das Repository nicht erreichbar oder nicht beschreibbar ist: ein einzelnes JSON fuer den Button `ChatGPT-Plan uebernehmen` ausgeben.
-6. Nach erfolgreichem Push Roadbook auf iPad/iPhone neu laden.
+4. Danach soll ChatGPT ein einzelnes JSON fuer den Button `ChatGPT-Plan uebernehmen` ausgeben.
+5. JSON im Roadbook importieren.
+6. `Online veroeffentlichen` waehlen, Publish-PIN eingeben und auf das automatische Vercel-Deployment warten.
+7. Roadbook auf iPad/iPhone neu laden.
 
 ## Rolle von ChatGPT unterwegs
 
-ChatGPT soll unterwegs nicht die ganze Reise frei neu erfinden, sondern ab dem betroffenen Tag pragmatisch bis zum Fixpunkt Faehre Barcelona - Genua neu ausrichten und das Roadbook-HTML aktualisieren.
+ChatGPT soll unterwegs nicht die ganze Reise frei neu erfinden, sondern ab dem betroffenen Tag pragmatisch bis zum Fixpunkt Faehre Barcelona - Genua neu ausrichten und ein Roadbook-Import-JSON liefern.
 
 Wichtig:
 
@@ -113,28 +115,23 @@ Bitte passe die naechsten 5 Etappen an. Erst klaere die neue Planung als Text. G
 - Google-Maps-Suchbegriffe oder Routenlogik
 - was gegenueber dem Originalplan geaendert wurde
 
-Danach aktualisiere, wenn du Zugriff auf Dateien/GitHub hast, die Datei `reise-roadbook-2026.html`, committe die Aenderung auf `main` und pushe nach `https://github.com/MrM-creates/Bike_Spain`.
-
-Wenn du keinen GitHub- oder Dateizugriff hast, erstelle stattdessen einen klaren Patch oder eine vollstaendige aktualisierte `reise-roadbook-2026.html`, damit ich sie manuell in GitHub einspielen kann.
+Danach gib ein einzelnes JSON fuer den Roadbook-Button `ChatGPT-Plan uebernehmen` aus. Keine Markdown-Kommentare innerhalb des JSON. Der Online-Stand wird anschliessend im Roadbook ueber `Online veroeffentlichen` aktualisiert.
 ```
 
 ## Ergebnis zurueck ins Roadbook bringen
 
-Wenn der neue Chat GitHub pushen konnte:
+Nach der ChatGPT-Antwort:
 
-1. Warten, bis Vercel den neuen Stand deployed hat.
-2. Roadbook auf dem iPad neu laden.
-3. Pruefen, ob die geaenderten Etappen sichtbar sind.
-
-Wenn der neue Chat nicht pushen konnte:
-
-1. Die ChatGPT-Antwort aufheben.
-2. Die aktualisierte HTML-Datei oder den Patch in GitHub einspielen.
-3. Warten, bis Vercel deployed.
-4. Roadbook auf dem iPad neu laden.
+1. JSON kopieren.
+2. Im Roadbook `Planen` oeffnen.
+3. `ChatGPT-Plan uebernehmen` waehlen und JSON einfuegen.
+4. Geaenderte Etappen kurz pruefen.
+5. `Online veroeffentlichen` waehlen und Publish-PIN eingeben.
+6. Warten, bis Vercel deployed.
+7. Roadbook auf iPad/iPhone neu laden.
 
 Fuer kleine spontane Abweichungen reicht weiterhin:
 
 1. Im Roadbook den betroffenen Tag als `Geaendert` markieren.
 2. Die neue Tageslogik als Unterwegs-Notiz speichern.
-3. Sicherung herunterladen.
+3. Bei Bedarf `Online veroeffentlichen` nutzen, wenn die Aenderung fuer beide sichtbar sein soll.

@@ -24,11 +24,25 @@ Das ist der gewuenschte Ablauf fuer unterwegs:
 2. `unterwegs-chatgpt-planung.md` und diese Datei anhaengen.
 3. Wenn moeglich auch die aktuelle `reise-roadbook-2026.html` anhaengen oder dem Chat das GitHub-Repo nennen.
 4. Der Chat passt die Planung an.
-5. Wenn der Chat GitHub-/Codex-Zugriff hat, aktualisiert er `reise-roadbook-2026.html` und pusht auf `main`.
-6. Vercel erkennt den Push und deployed automatisch.
-7. Auf iPad/iPhone die Roadbook-Seite neu laden.
+5. Der Chat gibt ein JSON fuer `ChatGPT-Plan uebernehmen` aus.
+6. Das JSON im Roadbook importieren.
+7. Im Roadbook `Online veroeffentlichen` waehlen und Publish-PIN eingeben.
+8. Die Vercel Server-Funktion schreibt `currentDays` nach GitHub `MrM-creates/Bike_Spain` auf `main`.
+9. Vercel erkennt den Push und deployed automatisch.
+10. Auf iPad/iPhone die Roadbook-Seite neu laden.
 
-Wichtig: Ein normaler ChatGPT-Chat ohne GitHub- oder Codex-Werkzeuge kann nicht selbst pushen. Dann soll er eine aktualisierte HTML-Datei oder einen Patch erzeugen, den du ueber GitHub einspielst.
+Wichtig: Der GitHub-Token liegt nicht im Browser, sondern als Vercel Environment Variable in der Server-Funktion.
+
+## Einmalige Einrichtung der Publish-Funktion
+
+Damit `Online veroeffentlichen` funktioniert, braucht das Vercel-Projekt Production Environment Variables:
+
+- `GITHUB_ROADBOOK_TOKEN`: GitHub Fine-grained Personal Access Token fuer `MrM-creates/Bike_Spain` mit `Contents: Read and write`.
+- `ROADBOOK_PUBLISH_SECRET`: frei gewaehlte Publish-PIN beziehungsweise Passwort fuer den Roadbook-Button.
+- Optional `GITHUB_REPO`: Standard ist `MrM-creates/Bike_Spain`.
+- Optional `GITHUB_BRANCH`: Standard ist `main`.
+
+Nach dem Setzen oder Aendern dieser Variablen muss Vercel einmal neu deployen. Den GitHub-Token nie in ChatGPT, im Browser oder in die HTML-Datei kopieren.
 
 ## Variante A: Ablauf vom Desktop
 
@@ -52,14 +66,15 @@ Danach auf dem iPad:
 
 ## Variante B: Wirklich unterwegs aktualisieren
 
-Wenn du unterwegs nur mit dem iPad arbeiten willst, ist GitHub die zentrale Quelle.
+Wenn du unterwegs nur mit dem iPad arbeiten willst, ist die Roadbook-App der Schreibweg nach GitHub.
 
 Dann ist der Ablauf:
 
-1. Roadbook-Dateien in GitHub bearbeiten oder ersetzen.
-2. Aenderung auf dem Branch `main` speichern.
-3. Vercel deployt automatisch.
-4. Roadbook auf dem iPad refreshen.
+1. ChatGPT erzeugt ein Import-JSON.
+2. Roadbook importiert das JSON.
+3. `Online veroeffentlichen` schreibt nach GitHub.
+4. Vercel deployt automatisch.
+5. Roadbook auf dem iPad refreshen.
 
 Das ist die beste Loesung, wenn du ohne Desktop aktualisieren willst.
 
@@ -80,7 +95,7 @@ Fuer unterwegs ist das oft am robustesten:
 3. ChatGPT plant die naechsten Etappen als Text.
 4. Erst spaeter werden die dauerhaften Aenderungen sauber ins Roadbook uebernommen und deployed.
 
-Diese Variante ist nur fuer kleine Abweichungen gedacht. Wenn sich mehrere naechste Etappen wirklich aendern, sollte der Chat die HTML-Datei aktualisieren und ueber GitHub/Vercel neu veroeffentlichen.
+Diese Variante ist nur fuer kleine Abweichungen gedacht. Wenn sich mehrere naechste Etappen wirklich aendern, sollte der Chat ein Import-JSON liefern; die Roadbook-App veroeffentlicht den neuen Stand danach ueber GitHub/Vercel.
 
 ## Empfehlung
 
@@ -88,14 +103,13 @@ Fuer die Reise ist die beste Kombination:
 
 - Roadbook-App bewusst einfach halten.
 - Komplexe Umplanung in ChatGPT machen.
-- Wenn moeglich, den neuen Chat mit GitHub-/Codex-Zugriff nutzen.
-- Der Chat aktualisiert `reise-roadbook-2026.html` und pusht nach GitHub.
+- ChatGPT liefert JSON, nicht den Deployment-Schritt.
+- Die Roadbook-App veroeffentlicht per geschuetzter Server-Funktion nach GitHub.
 - Vercel dient als stabile, automatisch aktualisierte Online-Version.
-- App bekommt optional eine Funktion `Planungstext exportieren`.
 
-## Spaeter sinnvoller App-Button
+## Planungshilfe im Roadbook
 
-Ein Button `Planungshilfe exportieren` sollte einen fertigen Text erzeugen mit:
+Der Button `Planungshilfe für ChatGPT` erzeugt einen fertigen Text mit:
 
 - aktuellem Tag,
 - den naechsten 5 Etappen,
@@ -104,4 +118,4 @@ Ein Button `Planungshilfe exportieren` sollte einen fertigen Text erzeugen mit:
 - Unterkunftsstatus,
 - euren Sicherheitsregeln.
 
-Diesen Text kannst du unterwegs in ChatGPT einfuegen. Nach der Antwort markierst du die betroffenen Tage im Roadbook als `Geaendert` und speicherst die neue Logik als Notiz.
+Diesen Text kannst du unterwegs in ChatGPT einfuegen. Nach der Antwort importierst du das JSON ueber `ChatGPT-Plan uebernehmen` und veroeffentlichst den Stand mit `Online veroeffentlichen`.

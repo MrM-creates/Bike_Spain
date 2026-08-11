@@ -917,6 +917,7 @@
             <div class="planning-group-actions">
               <button class="tool-button" id="planning-helper" type="button" data-help="Erstellt einen fertigen Text für ChatGPT mit aktuellem Roadbook-Ausschnitt, Regeln und Rückspiel-Anweisung.">Planungshilfe für ChatGPT</button>
               <button class="tool-button" id="import-chatgpt-plan" type="button" data-help="Fügt ein JSON aus ChatGPT ein und ersetzt die angegebenen Tage im Roadbook.">ChatGPT-Plan übernehmen</button>
+              <button class="tool-button primary-button" id="publish-roadbook" type="button" data-help="Veröffentlicht den aktuellen Plan nach GitHub. Vercel deployed danach automatisch.">Online veröffentlichen</button>
               <button class="tool-button" id="add-day" type="button" data-help="Fügt am Ende einen neuen Tag hinzu. Danach kann er mit Pfeilen verschoben werden.">Tag hinzufügen</button>
             </div>
           </div>
@@ -950,8 +951,9 @@
         <div><strong>Fahren</strong><span>Ruhige Roadbook-Ansicht für unterwegs: Route öffnen, Status setzen, Notiz erfassen.</span></div>
         <div><strong>Planen</strong><span>Aktiviert Änderungen am Reiseverlauf und bereitet den ChatGPT-/GitHub-/Vercel-Workflow vor.</span></div>
         <div><strong>↻</strong><span>Lädt den veröffentlichten Vercel-Stand neu. Vercel ist die gemeinsame Anzeige für beide Geräte.</span></div>
-        <div><strong>Planungshilfe für ChatGPT</strong><span>Erzeugt einen Prompt für die Neuplanung bis zum Fixpunkt Fähre und fordert Commit/Push nach GitHub an.</span></div>
+        <div><strong>Planungshilfe für ChatGPT</strong><span>Erzeugt einen Prompt für die Neuplanung bis zum Fixpunkt Fähre und fordert ein Import-JSON an.</span></div>
         <div><strong>ChatGPT-Plan übernehmen</strong><span>Importiert ein JSON aus ChatGPT und ersetzt die angegebenen Tage.</span></div>
+        <div><strong>Online veröffentlichen</strong><span>Schreibt den aktuellen Plan serverseitig nach GitHub. Vercel deployed danach automatisch.</span></div>
         <div><strong>Sicherung</strong><span>Fallback für Sonderfälle. Der normale gemeinsame Stand entsteht über GitHub und Vercel.</span></div>
       </div>
       <div class="planning-group-actions help-actions">
@@ -1042,7 +1044,7 @@
         <button class="tool-button icon" type="button" id="close-planning-helper" aria-label="Fenster schliessen" title="Schliessen">×</button>
       </div>
       <div class="editor-body">
-        <p class="dialog-note">Diesen Text in einen neuen Chat kopieren. Der Chat soll zuerst planen und danach entweder das HTML aktualisieren oder JSON für den Import zurückgeben.</p>
+        <p class="dialog-note">Diesen Text in einen neuen Chat kopieren. Der Chat soll zuerst planen und danach JSON für den Import zurückgeben. Veröffentlicht wird danach hier im Roadbook.</p>
         <div class="field full">
           <label for="planning-helper-output">Text für ChatGPT</label>
           <textarea id="planning-helper-output" class="large-textarea" readonly></textarea>
@@ -1062,7 +1064,7 @@
         <button class="tool-button icon" type="button" id="close-chatgpt-import" aria-label="Fenster schliessen" title="Schliessen">×</button>
       </div>
       <div class="editor-body">
-        <p class="dialog-note">JSON aus ChatGPT einfügen. Das Roadbook ersetzt ab dem angegebenen Tag die gewählte Anzahl Tage und speichert den neuen Stand lokal.</p>
+        <p class="dialog-note">JSON aus ChatGPT einfügen. Das Roadbook ersetzt ab dem angegebenen Tag die gewählte Anzahl Tage. Danach mit „Online veröffentlichen“ nach GitHub/Vercel bringen.</p>
         <div class="field full">
           <label for="chatgpt-import-input">Planungs-JSON</label>
           <textarea id="chatgpt-import-input" class="large-textarea" placeholder='{"replaceFromDay": 12, "replaceCount": 5, "days": [...]}' required></textarea>
@@ -1412,11 +1414,10 @@ ${JSON.stringify({ generatedAt: new Date().toISOString(), startDay: startIndex +
 Arbeitsauftrag:
 1. Stelle zuerst die neue Planung als Text vor.
 2. Gib pro Tag Start, Ziel, Uebernachtungsort, Kilometer, Fahrzeit, Kontrollpunkte, Sicherheitsnotiz und Aenderung gegenueber dem Originalplan an.
-3. Danach muss die Aenderung in den gemeinsamen Online-Stand:
-   - Standardziel: aktualisiere im GitHub-Repository \`MrM-creates/Bike_Spain\` auf Branch \`main\` die Datei \`reise-roadbook-2026.html\`, committe und pushe.
-   - Vercel-Projekt: \`motorrad-roadbook-spanien-2026\`. Vercel deployed nach dem GitHub-Push automatisch; pruefe danach nach Moeglichkeit den Deployment-Status.
-   - Der Originalplan soll als Rueckfallbasis erhalten bleiben. Aendere in \`reise-roadbook-2026.html\` nur den aktuellen Roadbook-Plan \`currentDays\`, nicht \`originalDays\`.
-   - Nur falls \`MrM-creates/Bike_Spain\` nicht erreichbar oder nicht beschreibbar ist: gib ein einziges JSON nach folgendem Schema aus. Dieses JSON kann ich im Roadbook ueber "ChatGPT-Plan uebernehmen" einfuegen. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
+3. Danach gib ein einziges JSON nach folgendem Schema aus. Dieses JSON fuege ich im Roadbook ueber "ChatGPT-Plan uebernehmen" ein.
+4. Nach dem Import veroeffentliche ich den Stand im Roadbook mit "Online veroeffentlichen". Die App schreibt dann serverseitig nach GitHub \`MrM-creates/Bike_Spain\`; Vercel-Projekt \`motorrad-roadbook-spanien-2026\` deployed automatisch.
+5. Der Originalplan soll als Rueckfallbasis erhalten bleiben. Das JSON beschreibt nur den aktuellen Roadbook-Plan, nicht den Originalplan.
+6. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
 
 JSON-Schema fuer den Roadbook-Import:
 \`\`\`json
@@ -1515,6 +1516,31 @@ Wichtig fuer das Import-JSON:
       activeFilter = "all";
       save("ChatGPT-Plan übernommen");
       render();
+    };
+
+    const publishRoadbook = async () => {
+      const secret = prompt("Publish-PIN eingeben");
+      if (secret === null) return;
+      const reason = prompt("Kurzer Grund für die Veröffentlichung", "Roadbook unterwegs aktualisiert");
+      if (reason === null) return;
+      save("Veröffentliche online ...");
+      try {
+        const response = await fetch("/api/publish-roadbook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ secret, reason, days: state.days })
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
+        save("Online veröffentlicht");
+        alert(`Online veröffentlicht. Commit: ${result.commit || "unbekannt"}\\nVercel deployed jetzt automatisch.`);
+        const target = new URL(window.location.href);
+        target.searchParams.set("refresh", result.commit || Date.now().toString());
+        window.location.href = target.toString();
+      } catch (error) {
+        save("Veröffentlichung fehlgeschlagen");
+        alert(`Online-Veröffentlichung fehlgeschlagen: ${error.message}`);
+      }
     };
 
     const render = () => {
@@ -1769,6 +1795,7 @@ Wichtig fuer das Import-JSON:
       chatgptImportDialog.showModal();
       chatgptImportInput.focus();
     });
+    document.querySelector("#publish-roadbook").addEventListener("click", publishRoadbook);
     document.querySelector("#close-chatgpt-import").addEventListener("click", () => chatgptImportDialog.close());
     document.querySelector("#cancel-chatgpt-import").addEventListener("click", () => chatgptImportDialog.close());
     chatgptImportForm.addEventListener("submit", (event) => {
