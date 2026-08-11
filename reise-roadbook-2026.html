@@ -941,7 +941,7 @@
     <section class="trip-summary" aria-label="Reiseübersicht">
       <div><strong id="summary-days">30 Tage</strong><span>24.09.–23.10.2026 · Berikon – Spanien – Berikon</span></div>
       <div><strong>ca. 5'200 km</strong><span>Hauptroute, ohne Zusatzrunden</span></div>
-      <div><strong>Roadbook-Stand</strong><span>6. August 2026 · Routen geprüft am 1. August</span></div>
+      <div><strong>Roadbook-Stand</strong><span>11. August 2026 · Routen geprüft am 1. August</span></div>
     </section>
 
     <details class="action-help" id="hilfe">
@@ -1119,9 +1119,19 @@
       { day: 28, title: "Aosta oder Como – Berikon", type: "Heimfahrt", overnight: "Berikon", km: "233–359 km", time: "ca. 3–5 h", roads: "Ab Aosta E27/A9/A1; ab Como A2", points: "Alpenquerung nach Startort und Wetter", note: "Die Como-Zeit schwankt stark mit dem Gotthardverkehr. Beide Links sind direkt und ohne Innenstadt-Zwischenziele.", main: maps("Aosta, Italy", "Berikon, Switzerland", ["Martigny, Switzerland", "Lausanne, Switzerland"]), mainLabel: "Aosta – Berikon", mainMeta: "359 km · ca. 4 h 50", alt: [{ label: "Como – Berikon", meta: "233 km · ca. 3–4 h 15", url: maps("Como, Italy", "Berikon, Switzerland") }] }
     ];
 
-    const currentDays = originalDays;
+    const currentDays = [
+      ...originalDays.slice(0, 20),
+      { id: "current-21-ronda-extra", day: 20.75, title: "Ronda", type: "Ruhetag", overnight: "Ronda", roads: "Keine feste Fahrroute", points: "Erholung · Organisation · Wetter prüfen · Folgeetappen vorbereiten", note: "Zweiter ruhiger Tag in Ronda. Motorräder möglichst in der gesicherten Unterkunftsgarage lassen. Der zusätzliche Aufenthalt wird durch den Wegfall des separaten Fährvorbereitungstags kompensiert.", travelNote: "Aufenthalt in Ronda verlängert.", rest: true, status: "changed" },
+      { id: "current-22-ronda-ubeda", day: 21, title: "Ronda – Úbeda", type: "Fahrtag", overnight: "Úbeda", km: "ca. 290 km", time: "ca. 3 h 45", roads: "A-367 · A-384 · A-92 · A-44 · A-316", points: "Antequera · Jaén · Baeza", note: "Ruhiger Inlandtag auf gut ausgebauten Hauptstrassen. Antequera und Jaén dienen als Kontrollpunkte, Baeza nur als kurzer Stopp. In Úbeda Unterkunft mit gesicherter Abstellung wählen; nicht direkt in den historischen Kern navigieren.", origin: "Ronda, Spain", destination: "Úbeda, Spain", waypoints: ["Antequera, Spain", "Jaén, Spain", "Baeza, Spain"], status: "changed" },
+      { id: "current-23-ubeda-baeza", day: 22, title: "Úbeda und Baeza", type: "Ruhetag", overnight: "Úbeda", roads: "Optional A-316", points: "Úbeda · Baeza", note: "Kultur- und Puffertag beibehalten. Motorräder in der gesicherten Hotelgarage lassen. Baeza bei Bedarf als kurze, einfache Ausfahrt; historische Zentren nicht direkt als Navigationsziel verwenden.", rest: true, status: "changed" },
+      { id: "current-24-ubeda-cuenca", day: 23, title: "Úbeda – Cuenca", type: "Fahrtag", overnight: "Cuenca", km: "ca. 325 km", time: "ca. 4 h 20", roads: "A-32/N-322 · Raum Albacete · N-320", points: "Alcaraz · Albacete-Umfahrung", note: "Direkter als der bisherige Umweg über Alcalá del Júcar. Albacete nur über Hauptverbindungen beziehungsweise Umfahrung passieren und nicht als Innenstadtziel verwenden. Keine kleinen Abkürzungen. In Cuenca Unterkunft mit sicherer Garage und einfacher Zufahrt ausserhalb des historischen Kerns bevorzugen.", origin: "Úbeda, Spain", destination: "Cuenca, Spain", waypoints: ["Alcaraz, Spain"], status: "changed" },
+      { id: "current-25-cuenca-rest", day: 23.5, title: "Cuenca", type: "Ruhetag", overnight: "Cuenca", roads: "Keine feste Fahrroute", points: "Erholung · Altstadt optional · Wetterreserve", note: "Der Reservetag bleibt sinnvoll und gibt Wetterpuffer vor den letzten beiden Fahrtagen. Motorräder in der gesicherten Unterkunft lassen; Altstadt zu Fuss, per Taxi oder lokalem Verkehr besuchen statt hineinzufahren.", rest: true, status: "changed" },
+      { id: "current-26-cuenca-zaragoza", day: 24, title: "Cuenca – Zaragoza", type: "Fahrtag", overnight: "Zaragoza", km: "ca. 290 km", time: "ca. 4 h 10", roads: "CM-210 · N-211 · A-2", points: "Molina de Aragón · Calatayud", note: "Landschaftliche, aber kontrollierbare Inlandroute. Keine kleinen Abkürzungen zwischen Cuenca und Molina de Aragón. Bei Regen, Kälte oder schlechter Sicht frühzeitig auf die schnellere Hauptverbindung wechseln. Zaragoza-ZBE beachten und Unterkunft mit sicherer Motorradabstellung sowie einfacher Zufahrt wählen.", origin: "Cuenca, Spain", destination: "Zaragoza, Spain", waypoints: ["Molina de Aragón, Spain", "Calatayud, Spain"], status: "changed" },
+      { id: "current-27-zaragoza-castelldefels", day: 25, title: "Zaragoza – Castelldefels", type: "Transfer", overnight: "Castelldefels", km: "ca. 335 km", time: "ca. 3 h 45", roads: "AP-2/A-2 · B-23/C-32", points: "Lleida · Montblanc", note: "Letzte Fahretappe vor der Fähre. Lleida als klaren Kontrollpunkt verwenden; Montblanc nur bei gutem Wetter und genügend Zeit kurz anfahren. In Castelldefels zwingend Unterkunft mit sicherer Garage für beide beladenen Motorräder. Noch am Abend volltanken, Verpflegung und Dokumente vorbereiten und die Terminalangabe auf dem Fährticket kontrollieren. Am 21.10.2026 früh direkt zum bestätigten Fährterminal fahren; Check-in 08:30.", origin: "Zaragoza, Spain", destination: "Castelldefels, Spain", waypoints: ["Lleida, Spain", "Montblanc, Spain"], status: "changed" },
+      ...originalDays.slice(27)
+    ];
 
-    const STORAGE_KEY = "spanien-roadbook-2026-plan-v3";
+    const STORAGE_KEY = "spanien-roadbook-2026-plan-v4";
     const tripStart = Date.UTC(2026, 8, 24);
     const dateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
     const dateForDay = (index) => dateFormatter.format(new Date(tripStart + index * 86400000));
