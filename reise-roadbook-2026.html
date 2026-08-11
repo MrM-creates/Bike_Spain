@@ -72,18 +72,13 @@
       font-size: 16px;
     }
 
-    .trip-meta {
-      color: var(--muted);
-      font-size: 14px;
-      text-align: right;
-    }
-
-    .topbar-actions {
+    .topbar-nav {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 6px;
     }
 
+    .nav-button,
     .topbar-link {
       min-height: 38px;
       display: inline-flex;
@@ -93,11 +88,21 @@
       border-radius: 6px;
       background: var(--surface);
       color: var(--text);
+      font: inherit;
       font-size: 13px;
       font-weight: 700;
       text-decoration: none;
+      cursor: pointer;
     }
 
+    .nav-button[aria-current="page"],
+    .topbar-link[aria-current="page"] {
+      background: var(--text);
+      border-color: var(--text);
+      color: #fff;
+    }
+
+    .nav-button:hover,
     .topbar-link:hover { border-color: var(--accent); }
 
     main { padding: 36px 0 64px; }
@@ -827,7 +832,8 @@
 
     @media (max-width: 760px) {
       .topbar-inner { min-height: 58px; }
-      .trip-meta { display: none; }
+      .topbar-inner { align-items: flex-start; flex-direction: column; padding: 10px 0; }
+      .topbar-nav { width: 100%; overflow-x: auto; padding-bottom: 1px; }
       main { padding-top: 24px; }
       .intro { grid-template-columns: 1fr; gap: 14px; }
       .legend { white-space: normal; }
@@ -878,10 +884,12 @@
   <header class="topbar">
     <div class="topbar-inner">
       <div class="brand">Spanienreise 2026</div>
-      <div class="topbar-actions">
-        <div class="trip-meta">30 Tage · 24.09.–23.10.2026 · zwei Triumph Motorräder</div>
+      <nav class="topbar-nav" aria-label="Hauptnavigation">
+        <button class="nav-button" id="nav-drive" type="button">Fahren</button>
+        <button class="nav-button" id="nav-plan" type="button">Planen</button>
         <a class="topbar-link" href="/unterkuenfte">Unterkünfte</a>
-      </div>
+        <button class="nav-button" id="nav-help" type="button">Hilfe</button>
+      </nav>
     </div>
   </header>
 
@@ -1128,6 +1136,10 @@
     const chatgptImportForm = document.querySelector("#chatgpt-import-form");
     const chatgptImportInput = document.querySelector("#chatgpt-import-input");
     const adminModeButton = document.querySelector("#open-admin-mode");
+    const navDriveButton = document.querySelector("#nav-drive");
+    const navPlanButton = document.querySelector("#nav-plan");
+    const navHelpButton = document.querySelector("#nav-help");
+    const actionHelp = document.querySelector(".action-help");
     let activeFilter = "all";
     let editingIndex = -1;
 
@@ -1278,6 +1290,13 @@
       }
       save();
       render();
+    };
+
+    const navigateMode = (admin) => {
+      const target = new URL(window.location.href);
+      if (admin) target.searchParams.set("admin", "1");
+      else target.searchParams.delete("admin");
+      window.location.href = target.toString();
     };
 
     const downloadText = (filename, text, type = "text/plain") => {
@@ -1473,6 +1492,13 @@ Wichtig fuer das Import-JSON:
       document.querySelector("#summary-days").textContent = `${state.days.length} Tage`;
       document.querySelector("#roadbook-mode-label").textContent = ADMIN_MODE ? "Planmodus aktiv" : "Unterwegsmodus";
       adminModeButton.hidden = ADMIN_MODE;
+      if (ADMIN_MODE) {
+        navDriveButton.removeAttribute("aria-current");
+        navPlanButton.setAttribute("aria-current", "page");
+      } else {
+        navDriveButton.setAttribute("aria-current", "page");
+        navPlanButton.removeAttribute("aria-current");
+      }
       document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
 
       state.days.forEach((item, index) => {
@@ -1683,11 +1709,13 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelector("#add-day").addEventListener("click", () => openEditor());
-    adminModeButton.addEventListener("click", () => {
-      const target = new URL(window.location.href);
-      target.searchParams.set("admin", "1");
-      window.location.href = target.toString();
+    navDriveButton.addEventListener("click", () => navigateMode(false));
+    navPlanButton.addEventListener("click", () => navigateMode(true));
+    navHelpButton.addEventListener("click", () => {
+      actionHelp.open = true;
+      actionHelp.scrollIntoView({ behavior: "smooth", block: "start" });
     });
+    adminModeButton.addEventListener("click", () => navigateMode(true));
     document.querySelector("#planning-helper").addEventListener("click", () => {
       const value = prompt("Planungshilfe ab welchem sichtbaren Reisetag erstellen?", "1");
       if (value === null) return;
