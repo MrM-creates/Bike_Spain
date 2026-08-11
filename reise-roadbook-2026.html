@@ -785,17 +785,17 @@
         <span id="roadbook-mode-label">Unterwegsmodus</span>
       </div>
       <div class="planning-actions">
-        <button class="tool-button primary-button" id="refresh-roadbook" type="button">Online-Stand laden</button>
-        <button class="tool-button" id="open-admin-mode" type="button">Planmodus öffnen</button>
-        <button class="tool-button" id="planning-helper" type="button">Planungshilfe für ChatGPT</button>
-        <button class="tool-button" id="export-plan" type="button">Sicherung herunterladen</button>
-        <button class="tool-button" id="import-plan" type="button">Sicherung laden</button>
+        <button class="tool-button primary-button" id="refresh-roadbook" type="button" title="Lädt die veröffentlichte Vercel-Version neu. Lokale Änderungen bleiben im Browser gespeichert.">Online-Stand laden</button>
+        <button class="tool-button" id="open-admin-mode" type="button" title="Aktiviert Bearbeitungsfunktionen wie Verlängern, Auslassen, Import und Tag hinzufügen.">Planmodus öffnen</button>
+        <button class="tool-button" id="planning-helper" type="button" title="Erstellt einen fertigen Text für ChatGPT mit aktuellem Roadbook-Ausschnitt, Regeln und Rückspiel-Anweisung.">Planungshilfe für ChatGPT</button>
+        <button class="tool-button" id="export-plan" type="button" title="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter. Wichtig für Gerätewechsel.">Sicherung herunterladen</button>
+        <button class="tool-button" id="import-plan" type="button" title="Lädt eine zuvor gespeicherte Roadbook-JSON-Sicherung in diesen Browser.">Sicherung laden</button>
         <input id="import-file" type="file" accept="application/json,.json" hidden>
       </div>
       <div class="planning-actions planning-only" hidden>
-        <button class="tool-button" id="import-chatgpt-plan" type="button">ChatGPT-Plan übernehmen</button>
-        <button class="tool-button" id="add-day" type="button">Tag hinzufügen</button>
-        <button class="tool-button danger" id="reset-plan" type="button">Alles zurücksetzen</button>
+        <button class="tool-button" id="import-chatgpt-plan" type="button" title="Fügt ein JSON aus ChatGPT ein und ersetzt die angegebenen Tage im Roadbook.">ChatGPT-Plan übernehmen</button>
+        <button class="tool-button" id="add-day" type="button" title="Fügt am Ende einen neuen Tag hinzu. Danach kann er mit Pfeilen verschoben werden.">Tag hinzufügen</button>
+        <button class="tool-button danger" id="reset-plan" type="button" title="Verwirft lokale Roadbook-Änderungen in diesem Browser und stellt den ursprünglichen Plan wieder her.">Alles zurücksetzen</button>
       </div>
       <span class="save-state" id="save-state" aria-live="polite">Originalplan</span>
     </section>
@@ -1396,6 +1396,7 @@ Wichtig fuer das Import-JSON:
       const status = document.createElement("select");
       status.className = "status-select";
       status.setAttribute("aria-label", `Status für Tag ${index + 1}`);
+      status.title = "Markiert den Tag als geplant, geändert, gefahren oder ausgelassen. Speichert nur lokal in diesem Browser.";
       Object.entries(statusLabels).forEach(([value, label]) => {
         const option = document.createElement("option");
         option.value = value;
@@ -1414,6 +1415,7 @@ Wichtig fuer das Import-JSON:
       noteButton.className = "tool-button";
       noteButton.type = "button";
       noteButton.textContent = item.travelNote ? "Notiz ändern" : "Notiz";
+      noteButton.title = "Speichert eine kurze Unterwegs-Notiz zu diesem Tag. Bei neuen Notizen wird der Tag als geändert markiert.";
       noteButton.addEventListener("click", () => {
         const value = prompt(`Unterwegs-Notiz für Tag ${index + 1}`, item.travelNote || "");
         if (value === null) return;
@@ -1428,9 +1430,9 @@ Wichtig fuer das Import-JSON:
         const quickActions = document.createElement("div");
         quickActions.className = "quick-actions";
         quickActions.append(
-          dayTool("Verlängern", `Aufenthalt nach Tag ${index + 1} verlängern`, () => extendStay(index), false, false),
-          dayTool("Auslassen", `Tag ${index + 1} auslassen`, () => skipDay(index), false, false),
-          dayTool("Ab hier planen", `Planungshilfe ab Tag ${index + 1} erstellen`, () => openPlanningHelper(index), false, false)
+          dayTool("Verlängern", `Fügt nach Tag ${index + 1} einen zusätzlichen Ruhetag am gewählten Ort ein.`, () => extendStay(index), false, false),
+          dayTool("Auslassen", `Markiert Tag ${index + 1} als ausgelassen und speichert den Grund als Notiz.`, () => skipDay(index), false, false),
+          dayTool("Ab hier planen", `Erstellt eine ChatGPT-Planungshilfe ab Tag ${index + 1} mit den nächsten Etappen und Import-Anweisung.`, () => openPlanningHelper(index), false, false)
         );
         actions.append(quickActions);
 
