@@ -1345,15 +1345,16 @@
     const buildPlanningPrompt = (startIndex = 0) => {
       const current = state.days[startIndex] || state.days[0];
       const ferryIndex = state.days.findIndex((item) => item.title.toLowerCase().includes("fähre") || item.title.toLowerCase().includes("faehre"));
-      const endIndex = ferryIndex >= startIndex ? ferryIndex : Math.min(state.days.length - 1, startIndex + 4);
-      const affectedDays = state.days.slice(startIndex, endIndex + 1).map((item, offset) => daySummary(item, startIndex + offset));
+      const endIndex = ferryIndex > startIndex ? ferryIndex - 1 : Math.min(state.days.length - 1, startIndex + 4);
+      const planningDays = state.days.slice(startIndex, endIndex + 1).map((item, offset) => daySummary(item, startIndex + offset));
+      const fixedAnchor = ferryIndex >= 0 ? daySummary(state.days[ferryIndex], ferryIndex) : null;
       const changedDays = state.days
         .map((item, index) => ({ item, index }))
         .filter(({ item }) => item.status !== "planned" || item.travelNote)
         .map(({ item, index }) => daySummary(item, index));
       const schema = {
         replaceFromDay: startIndex + 1,
-        replaceCount: affectedDays.length,
+        replaceCount: planningDays.length,
         reason: "kurz erklaeren, warum geaendert wird",
         days: [{
           title: "Startort - Zielort",
@@ -1376,7 +1377,8 @@
       return `Ich bin auf einer Motorradreise von Berikon nach Spanien und zurueck. Bitte plane pragmatisch ab Reisetag ${startIndex + 1} (${dateForDay(startIndex)}), aktuell: ${current.title}.
 
 Ziel:
-- Passe den weiteren Reiseverlauf ab diesem Tag bis zum Fixpunkt Faehre Barcelona - Genua an.
+- Passe den weiteren Reiseverlauf ab diesem Tag bis zum Tag vor dem Fixpunkt Faehre Barcelona - Genua an.
+- Die Faehre selbst ist ein Fixpunkt und darf nicht ersetzt oder verschoben werden.
 - Wenn die Aenderung nur eine kleine lokale Notiz betrifft, erklaere kurz, warum keine Neuplanung noetig ist.
 - Plane motorradfreundlich, ruhig und sicher, aber nicht als Calimoto-Kurvenmaximierung.
 - Nutze Google Maps als Routengeruest mit klaren Kontrollpunkten.
@@ -1394,7 +1396,7 @@ Fixpunkte:
 
 Aktueller Roadbook-Ausschnitt:
 \`\`\`json
-${JSON.stringify({ generatedAt: new Date().toISOString(), startDay: startIndex + 1, affectedUntilDay: endIndex + 1, affectedDays, changedDays }, null, 2)}
+${JSON.stringify({ generatedAt: new Date().toISOString(), startDay: startIndex + 1, planningUntilDay: endIndex + 1, planningDays, fixedAnchor, changedDays }, null, 2)}
 \`\`\`
 
 Arbeitsauftrag:
@@ -1413,8 +1415,9 @@ ${JSON.stringify(schema, null, 2)}
 
 Wichtig fuer das Import-JSON:
 - \`replaceFromDay\` ist die sichtbare Tagesnummer im aktuellen Roadbook.
-- \`replaceCount\` ist die Anzahl der zu ersetzenden Tage.
+- \`replaceCount\` ist die Anzahl der zu ersetzenden Tage vor dem Fixpunkt.
 - \`days\` enthaelt die neuen Tage in endgueltiger Reihenfolge.
+- Die Faehre Barcelona - Genua aus \`fixedAnchor\` nicht in \`days\` aufnehmen und nicht ersetzen.
 - Fuer Ruhetage \`rest: true\` setzen und \`origin\`, \`destination\`, \`waypoints\` leer lassen.
 - Fuer Fahrtage \`origin\`, \`destination\` und \`waypoints\` so setzen, dass daraus ein Google-Maps-Link erzeugt werden kann.
 - Verwende als \`status\` fuer geaenderte oder neue Tage \`changed\`.`;
