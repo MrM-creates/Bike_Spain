@@ -61,6 +61,12 @@
 
     .topbar-inner {
       min-height: 66px;
+      display: grid;
+      gap: 8px;
+      padding: 10px 0;
+    }
+
+    .topbar-main {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -104,6 +110,15 @@
 
     .nav-button:hover,
     .topbar-link:hover { border-color: var(--accent); }
+
+    .topbar-context {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(217, 221, 214, 0.75);
+    }
 
     main { padding: 36px 0 64px; }
 
@@ -227,23 +242,6 @@
       border-top: 1px solid var(--border);
     }
 
-    .planning-bar {
-      position: sticky;
-      top: 76px;
-      z-index: 8;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 0 0 16px;
-      padding: 10px;
-      background: rgba(255, 255, 255, 0.96);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-    }
-
     .mode-switch,
     .planning-actions,
     .planning-group-actions,
@@ -283,23 +281,6 @@
     }
 
     .quick-actions .tool-button { flex: 1 1 auto; }
-
-    .roadbook-mode {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 160px;
-    }
-
-    .roadbook-mode strong {
-      font-size: 14px;
-      line-height: 1.1;
-    }
-
-    .roadbook-mode span {
-      color: var(--muted);
-      font-size: 12px;
-    }
 
     .mode-button,
     .tool-button,
@@ -832,8 +813,9 @@
 
     @media (max-width: 760px) {
       .topbar-inner { min-height: 58px; }
-      .topbar-inner { align-items: flex-start; flex-direction: column; padding: 10px 0; }
+      .topbar-main { align-items: flex-start; flex-direction: column; gap: 8px; }
       .topbar-nav { width: 100%; overflow-x: auto; padding-bottom: 1px; }
+      .topbar-context { align-items: stretch; flex-direction: column; }
       main { padding-top: 24px; }
       .intro { grid-template-columns: 1fr; gap: 14px; }
       .legend { white-space: normal; }
@@ -854,7 +836,6 @@
       }
       .route-link { min-height: 48px; }
       .detail-grid { grid-template-columns: 1fr; }
-      .planning-bar { top: 66px; align-items: stretch; flex-direction: column; }
       .planning-actions { overflow-x: auto; padding-bottom: 1px; }
       .save-state { display: none; }
       .map-frame { height: 52vh; min-height: 320px; }
@@ -883,13 +864,48 @@
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand">Spanienreise 2026</div>
-      <nav class="topbar-nav" aria-label="Hauptnavigation">
-        <button class="nav-button" id="nav-drive" type="button">Fahren</button>
-        <button class="nav-button" id="nav-plan" type="button">Planen</button>
-        <a class="topbar-link" href="/unterkuenfte">Unterkünfte</a>
-        <button class="nav-button" id="nav-help" type="button">Hilfe</button>
-      </nav>
+      <div class="topbar-main">
+        <div class="brand">Spanienreise 2026</div>
+        <nav class="topbar-nav" aria-label="Hauptnavigation">
+          <button class="nav-button" id="nav-drive" type="button">Fahren</button>
+          <button class="nav-button" id="nav-plan" type="button">Planen</button>
+          <a class="topbar-link" href="/unterkuenfte">Unterkünfte</a>
+          <button class="nav-button" id="nav-help" type="button">Hilfe</button>
+        </nav>
+      </div>
+      <div class="topbar-context" aria-label="Aktionen">
+        <div class="planning-actions">
+          <div class="planning-group">
+            <span class="planning-group-label">Fahren</span>
+            <div class="planning-group-actions">
+              <button class="tool-button primary-button" id="refresh-roadbook" type="button" data-help="Lädt die veröffentlichte Vercel-Version neu. Lokale Änderungen bleiben im Browser gespeichert.">Online-Stand laden</button>
+            </div>
+          </div>
+          <div class="planning-group">
+            <span class="planning-group-label">Sichern</span>
+            <div class="planning-group-actions">
+              <button class="tool-button" id="export-plan" type="button" data-help="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter. Wichtig für Gerätewechsel.">Sicherung herunterladen</button>
+              <button class="tool-button" id="import-plan" type="button" data-help="Lädt eine zuvor gespeicherte Roadbook-JSON-Sicherung in diesen Browser.">Sicherung laden</button>
+              <input id="import-file" type="file" accept="application/json,.json" hidden>
+            </div>
+          </div>
+          <div class="planning-group planning-only" hidden>
+            <span class="planning-group-label">Planen</span>
+            <div class="planning-group-actions">
+              <button class="tool-button" id="planning-helper" type="button" data-help="Erstellt einen fertigen Text für ChatGPT mit aktuellem Roadbook-Ausschnitt, Regeln und Rückspiel-Anweisung.">Planungshilfe für ChatGPT</button>
+              <button class="tool-button" id="import-chatgpt-plan" type="button" data-help="Fügt ein JSON aus ChatGPT ein und ersetzt die angegebenen Tage im Roadbook.">ChatGPT-Plan übernehmen</button>
+              <button class="tool-button" id="add-day" type="button" data-help="Fügt am Ende einen neuen Tag hinzu. Danach kann er mit Pfeilen verschoben werden.">Tag hinzufügen</button>
+            </div>
+          </div>
+          <div class="planning-group planning-only" hidden>
+            <span class="planning-group-label">Weitere</span>
+            <div class="planning-group-actions">
+              <button class="tool-button danger" id="reset-plan" type="button" data-help="Verwirft lokale Roadbook-Änderungen in diesem Browser und stellt den ursprünglichen Plan wieder her.">Alles zurücksetzen</button>
+            </div>
+          </div>
+        </div>
+        <span class="save-state" id="save-state" aria-live="polite">Originalplan</span>
+      </div>
     </div>
   </header>
 
@@ -909,45 +925,6 @@
       <div><strong id="summary-days">30 Tage</strong><span>24.09.–23.10.2026 · Berikon – Spanien – Berikon</span></div>
       <div><strong>ca. 5'200 km</strong><span>Hauptroute, ohne Zusatzrunden</span></div>
       <div><strong>Roadbook-Stand</strong><span>6. August 2026 · Routen geprüft am 1. August</span></div>
-    </section>
-
-    <section class="planning-bar" aria-label="Roadbook-Aktionen">
-      <div class="roadbook-mode">
-        <strong>Roadbook</strong>
-        <span id="roadbook-mode-label">Unterwegsmodus</span>
-      </div>
-      <div class="planning-actions">
-        <div class="planning-group">
-          <span class="planning-group-label">Aktualisieren</span>
-          <div class="planning-group-actions">
-            <button class="tool-button primary-button" id="refresh-roadbook" type="button" data-help="Lädt die veröffentlichte Vercel-Version neu. Lokale Änderungen bleiben im Browser gespeichert.">Online-Stand laden</button>
-          </div>
-        </div>
-        <div class="planning-group">
-          <span class="planning-group-label">Sichern</span>
-          <div class="planning-group-actions">
-            <button class="tool-button" id="export-plan" type="button" data-help="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter. Wichtig für Gerätewechsel.">Sicherung herunterladen</button>
-            <button class="tool-button" id="import-plan" type="button" data-help="Lädt eine zuvor gespeicherte Roadbook-JSON-Sicherung in diesen Browser.">Sicherung laden</button>
-            <input id="import-file" type="file" accept="application/json,.json" hidden>
-          </div>
-        </div>
-        <div class="planning-group">
-          <span class="planning-group-label">Planen</span>
-          <div class="planning-group-actions">
-            <button class="tool-button" id="open-admin-mode" type="button" data-help="Aktiviert Bearbeitungsfunktionen wie Verlängern, Auslassen, Import und Tag hinzufügen.">Planmodus öffnen</button>
-            <button class="tool-button" id="planning-helper" type="button" data-help="Erstellt einen fertigen Text für ChatGPT mit aktuellem Roadbook-Ausschnitt, Regeln und Rückspiel-Anweisung.">Planungshilfe für ChatGPT</button>
-            <button class="tool-button planning-only" id="import-chatgpt-plan" type="button" data-help="Fügt ein JSON aus ChatGPT ein und ersetzt die angegebenen Tage im Roadbook." hidden>ChatGPT-Plan übernehmen</button>
-            <button class="tool-button planning-only" id="add-day" type="button" data-help="Fügt am Ende einen neuen Tag hinzu. Danach kann er mit Pfeilen verschoben werden." hidden>Tag hinzufügen</button>
-          </div>
-        </div>
-        <div class="planning-group planning-only" hidden>
-          <span class="planning-group-label">Weitere</span>
-          <div class="planning-group-actions">
-            <button class="tool-button danger" id="reset-plan" type="button" data-help="Verwirft lokale Roadbook-Änderungen in diesem Browser und stellt den ursprünglichen Plan wieder her.">Alles zurücksetzen</button>
-          </div>
-        </div>
-      </div>
-      <span class="save-state" id="save-state" aria-live="polite">Originalplan</span>
     </section>
 
     <details class="action-help">
@@ -1135,7 +1112,6 @@
     const chatgptImportDialog = document.querySelector("#chatgpt-import-dialog");
     const chatgptImportForm = document.querySelector("#chatgpt-import-form");
     const chatgptImportInput = document.querySelector("#chatgpt-import-input");
-    const adminModeButton = document.querySelector("#open-admin-mode");
     const navDriveButton = document.querySelector("#nav-drive");
     const navPlanButton = document.querySelector("#nav-plan");
     const navHelpButton = document.querySelector("#nav-help");
@@ -1490,8 +1466,6 @@ Wichtig fuer das Import-JSON:
       list.innerHTML = "";
       renderFilters();
       document.querySelector("#summary-days").textContent = `${state.days.length} Tage`;
-      document.querySelector("#roadbook-mode-label").textContent = ADMIN_MODE ? "Planmodus aktiv" : "Unterwegsmodus";
-      adminModeButton.hidden = ADMIN_MODE;
       if (ADMIN_MODE) {
         navDriveButton.removeAttribute("aria-current");
         navPlanButton.setAttribute("aria-current", "page");
@@ -1715,7 +1689,6 @@ Wichtig fuer das Import-JSON:
       actionHelp.open = true;
       actionHelp.scrollIntoView({ behavior: "smooth", block: "start" });
     });
-    adminModeButton.addEventListener("click", () => navigateMode(true));
     document.querySelector("#planning-helper").addEventListener("click", () => {
       const value = prompt("Planungshilfe ab welchem sichtbaren Reisetag erstellen?", "1");
       if (value === null) return;
