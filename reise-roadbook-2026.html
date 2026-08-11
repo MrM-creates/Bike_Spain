@@ -945,7 +945,7 @@
     </section>
 
     <details class="action-help" id="hilfe">
-      <summary>Was bedeuten die Aktionen?</summary>
+      <summary>Hilfe</summary>
       <div class="action-help-grid">
         <div><strong>Fahren</strong><span>Ruhige Roadbook-Ansicht für unterwegs: Route öffnen, Status setzen, Notiz erfassen.</span></div>
         <div><strong>Planen</strong><span>Aktiviert Änderungen am Reiseverlauf und bereitet den ChatGPT-/GitHub-/Vercel-Workflow vor.</span></div>
@@ -1301,6 +1301,12 @@
       window.location.href = target.toString();
     };
 
+    const setActiveNav = (section = ADMIN_MODE ? "plan" : "drive") => {
+      navDriveButton.toggleAttribute("aria-current", section === "drive");
+      navPlanButton.toggleAttribute("aria-current", section === "plan");
+      navHelpButton.toggleAttribute("aria-current", section === "help");
+    };
+
     const downloadText = (filename, text, type = "text/plain") => {
       const blob = new Blob([text], { type });
       const url = URL.createObjectURL(blob);
@@ -1497,13 +1503,7 @@ Wichtig fuer das Import-JSON:
       list.innerHTML = "";
       renderFilters();
       document.querySelector("#summary-days").textContent = `${state.days.length} Tage`;
-      if (ADMIN_MODE) {
-        navDriveButton.removeAttribute("aria-current");
-        navPlanButton.setAttribute("aria-current", "page");
-      } else {
-        navDriveButton.setAttribute("aria-current", "page");
-        navPlanButton.removeAttribute("aria-current");
-      }
+      setActiveNav();
       document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
 
       state.days.forEach((item, index) => {
@@ -1717,6 +1717,7 @@ Wichtig fuer das Import-JSON:
     navDriveButton.addEventListener("click", () => navigateMode(false));
     navPlanButton.addEventListener("click", () => navigateMode(true));
     navHelpButton.addEventListener("click", () => {
+      setActiveNav("help");
       actionHelp.open = true;
       actionHelp.scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -1803,9 +1804,12 @@ Wichtig fuer das Import-JSON:
       render();
     });
 
-    if (window.location.hash === "#hilfe") actionHelp.open = true;
-
     render();
+
+    if (window.location.hash === "#hilfe") {
+      actionHelp.open = true;
+      setActiveNav("help");
+    }
   </script>
 </body>
 </html>
