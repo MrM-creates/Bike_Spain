@@ -782,10 +782,11 @@
     <section class="planning-bar" aria-label="Roadbook-Aktionen">
       <div class="roadbook-mode">
         <strong>Roadbook</strong>
-        <span>Unterwegsmodus</span>
+        <span id="roadbook-mode-label">Unterwegsmodus</span>
       </div>
       <div class="planning-actions">
         <button class="tool-button primary-button" id="refresh-roadbook" type="button">Online-Stand laden</button>
+        <button class="tool-button" id="open-admin-mode" type="button">Planmodus öffnen</button>
         <button class="tool-button" id="planning-helper" type="button">Planungshilfe für ChatGPT</button>
         <button class="tool-button" id="export-plan" type="button">Sicherung herunterladen</button>
         <button class="tool-button" id="import-plan" type="button">Sicherung laden</button>
@@ -972,6 +973,7 @@
     const chatgptImportDialog = document.querySelector("#chatgpt-import-dialog");
     const chatgptImportForm = document.querySelector("#chatgpt-import-form");
     const chatgptImportInput = document.querySelector("#chatgpt-import-input");
+    const adminModeButton = document.querySelector("#open-admin-mode");
     let activeFilter = "all";
     let editingIndex = -1;
 
@@ -1303,6 +1305,8 @@ Wichtig fuer das Import-JSON:
       list.innerHTML = "";
       renderFilters();
       document.querySelector("#summary-days").textContent = `${state.days.length} Tage`;
+      document.querySelector("#roadbook-mode-label").textContent = ADMIN_MODE ? "Planmodus aktiv" : "Unterwegsmodus";
+      adminModeButton.hidden = ADMIN_MODE;
       document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
 
       state.days.forEach((item, index) => {
@@ -1510,6 +1514,11 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelector("#add-day").addEventListener("click", () => openEditor());
+    adminModeButton.addEventListener("click", () => {
+      const target = new URL(window.location.href);
+      target.searchParams.set("admin", "1");
+      window.location.href = target.toString();
+    });
     document.querySelector("#planning-helper").addEventListener("click", () => {
       const value = prompt("Planungshilfe ab welchem sichtbaren Reisetag erstellen?", "1");
       if (value === null) return;
