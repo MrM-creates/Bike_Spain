@@ -211,6 +211,15 @@ const placesMatch = (left, right) => {
   return smaller.size > 0 && Array.from(smaller).every((token) => larger.has(token));
 };
 
+const contiguousPlaceNights = (days, startIndex, place) => {
+  let nights = 0;
+  for (let index = startIndex; index < days.length; index += 1) {
+    if (!placesMatch(days[index]?.overnight, place)) break;
+    nights += 1;
+  }
+  return nights;
+};
+
 const assignAccommodationSlots = (expected, current) => {
   const unused = new Set(current.map((stay) => stay.id).filter(Boolean));
   const assigned = expected.map((stay) => {
@@ -326,32 +335,63 @@ module.exports = async (request, response) => {
       nights: Math.max(0, Math.min(7, Number(payload.change?.nights) || 0)),
       instruction: cleanText(payload.change?.instruction, 1200)
     };
+    const currentPlaceNights = placeBased ? contiguousPlaceNights(currentDays, placeIndex, requestedPlace) : null;
+    const targetPlaceNights = requestedType === "extend"
+      ? currentPlaceNights + change.nights
+      : (requestedType === "shorten" ? Math.max(0, currentPlaceNights - change.nights) : null);
+    const requestedChange = {
+      ...change,
+      currentNightsAtPlace: currentPlaceNights,
+      targetNightsAtPlace: targetPlaceNights
+    };
 
     const routeStartedAt = Date.now();
-    const routePlan = await createStructuredResponse({
+    const routeInstructions = `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. Bei Verlaengern oder Verkuerzen ist targetNightsAtPlace eine harte Vorgabe fuer die gesamte Anzahl aufeinanderfolgender Uebernachtungen am gewuenschten Ort; nights bezeichnet nur die hinzukommenden oder wegfallenden Naechte. Zusaetzliche Aufenthaltsnaechte muessen vor der Faehre durch Weglassen optionaler Rundfahrten oder Reservetage, Zusammenlegen oder direktere Etappen ausgeglichen werden. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`;
+    const routeInput = {
+      requestedChange,
+      replaceFromDay: startDay,
+      replaceCount,
+      fixedFerry: { day: ferryIndex + 1, date: FERRY_DATE, checkIn: "08:30", dayData: currentDays[ferryIndex] },
+      currentSegment: currentDays.slice(startIndex, ferryIndex)
+    };
+    const requestRoutePlan = (input, instructions = routeInstructions) => createStructuredResponse({
       name: "roadbook_route_draft",
       schema: routeSchema,
-      instructions: `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. Zusaetzliche Aufenthaltsnaechte muessen vor der Faehre durch Weglassen optionaler Rundfahrten oder Reservetage, Zusammenlegen oder direktere Etappen ausgeglichen werden. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`,
-      input: JSON.stringify({
-        requestedChange: change,
-        replaceFromDay: startDay,
-        replaceCount,
-        fixedFerry: { day: ferryIndex + 1, date: FERRY_DATE, checkIn: "08:30", dayData: currentDays[ferryIndex] },
-        currentSegment: currentDays.slice(startIndex, ferryIndex)
-      })
+      instructions,
+      input: JSON.stringify(input)
     });
+    const assembleDraftDays = (plan) => {
+      if (plan.replaceFromDay !== startDay || plan.replaceCount !== replaceCount || plan.days.length !== replaceCount) {
+        throw new Error(`ChatGPT hat ${plan.days.length} statt ${replaceCount} benötigten Tagen geliefert.`);
+      }
+      const days = [
+        ...currentDays.slice(0, startIndex),
+        ...plan.days.map(normalizeInputDay),
+        ...currentDays.slice(ferryIndex)
+      ];
+      const draftFerryIndex = ferryIndexOf(days);
+      if (days.length !== currentDays.length || draftFerryIndex !== ferryIndex || isoForDay(draftFerryIndex) !== FERRY_DATE) {
+        throw new Error("Der Routenvorschlag verletzt den festen Fährtermin.");
+      }
+      return days;
+    };
 
-    if (routePlan.replaceFromDay !== startDay || routePlan.replaceCount !== replaceCount || routePlan.days.length !== replaceCount) {
-      throw new Error(`ChatGPT hat ${routePlan.days.length} statt ${replaceCount} benötigten Tagen geliefert.`);
-    }
-    const draftDays = [
-      ...currentDays.slice(0, startIndex),
-      ...routePlan.days.map(normalizeInputDay),
-      ...currentDays.slice(ferryIndex)
-    ];
-    const draftFerryIndex = ferryIndexOf(draftDays);
-    if (draftDays.length !== currentDays.length || draftFerryIndex !== ferryIndex || isoForDay(draftFerryIndex) !== FERRY_DATE) {
-      throw new Error("Der Routenvorschlag verletzt den festen Fährtermin.");
+    let routePlan = await requestRoutePlan(routeInput);
+    let draftDays = assembleDraftDays(routePlan);
+    if (targetPlaceNights !== null) {
+      let actualNights = contiguousPlaceNights(draftDays, placeIndex, requestedPlace);
+      if (actualNights !== targetPlaceNights) {
+        routePlan = await requestRoutePlan({
+          ...routeInput,
+          previousInvalidPlan: routePlan,
+          correction: `Der vorherige Vorschlag enthielt ${actualNights} statt exakt ${targetPlaceNights} aufeinanderfolgende Uebernachtungen in ${requestedPlace}. Korrigiere dies und halte alle anderen Vorgaben ein.`
+        }, `${routeInstructions} Der vorherige Vorschlag hat die harte Zielzahl der Uebernachtungen verletzt. Korrigiere ihn exakt; targetNightsAtPlace darf weder ueber- noch unterschritten werden.`);
+        draftDays = assembleDraftDays(routePlan);
+        actualNights = contiguousPlaceNights(draftDays, placeIndex, requestedPlace);
+        if (actualNights !== targetPlaceNights) {
+          throw new Error(`Der Entwurf enthält ${actualNights} statt exakt ${targetPlaceNights} Nächten in ${requestedPlace}. Der aktuelle Plan wurde nicht verändert.`);
+        }
+      }
     }
     console.log(JSON.stringify({ level: "info", message: "route draft completed", ms: Date.now() - routeStartedAt, replaceCount }));
 
