@@ -382,6 +382,18 @@
       font-size: 14px;
     }
     .field textarea { min-height: 76px; resize: vertical; }
+    .field textarea.large-textarea {
+      min-height: min(52vh, 420px);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+    .dialog-note {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
     .field-hint { margin: 0; color: var(--muted); font-size: 12px; }
     .schedule-control {
       grid-column: 1 / -1;
@@ -495,6 +507,8 @@
         </nav>
       </div>
       <div class="topbar-context edit-only" hidden>
+        <button class="tool-button" id="accommodation-helper" type="button">Planungshilfe für ChatGPT</button>
+        <button class="tool-button" id="import-accommodations" type="button">ChatGPT-Unterkünfte übernehmen</button>
         <button class="tool-button primary-button" id="publish-accommodations" type="button">Online veröffentlichen</button>
         <a class="tool-button" href="/unterkuenfte">Fertig</a>
       </div>
@@ -521,7 +535,7 @@
 
     <p class="notice"><strong>Vor jeder Buchung schriftlich bestätigen:</strong> Platz für zwei Motorräder, nachts geschlossen oder kontrolliert, reservierbar und am Anreisetag tatsächlich zugänglich. Verfügbarkeit und Preise für 2026 sind noch nicht in jedem Buchungssystem freigeschaltet.</p>
 
-    <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Eine geänderte Nacht kann im Bearbeitungsmodus alle folgenden Unterkünfte bis zur fixen Fähre automatisch verschieben. Wenn ein Konflikt mit der Fähre angezeigt wird, Roadbook-Verlauf neu planen oder vorher eine Nacht streichen.</p>
+    <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Die Route ist führend. Eine geänderte Nacht kann alle folgenden Unterkünfte bis zur fixen Fähre automatisch verschieben. Bei grösseren Routenänderungen erstellt die Planungshilfe aus dem aktuellen Roadbook ein ChatGPT-Briefing für neue Unterkünfte.</p>
 
     <details class="booking-plan">
       <summary>Empfohlene Buchungsstrategie</summary>
@@ -790,6 +804,46 @@
     </form>
   </dialog>
 
+  <dialog id="accommodation-helper-dialog" aria-labelledby="accommodation-helper-title">
+    <form class="editor-form" method="dialog">
+      <div class="editor-header">
+        <h2 id="accommodation-helper-title">Planungshilfe für ChatGPT</h2>
+        <button class="tool-button" type="button" id="close-accommodation-helper" aria-label="Fenster schliessen">Schliessen</button>
+      </div>
+      <div class="editor-body">
+        <p class="dialog-note">Diesen Text in ChatGPT kopieren. Der Chat soll die Unterkünfte entlang des aktuellen Roadbooks planen und danach JSON für den Import zurückgeben.</p>
+        <div class="field">
+          <label for="accommodation-helper-output">Text für ChatGPT</label>
+          <textarea id="accommodation-helper-output" class="large-textarea" readonly></textarea>
+        </div>
+      </div>
+      <div class="editor-footer">
+        <button class="tool-button" type="button" id="download-accommodation-helper">Text herunterladen</button>
+        <button class="tool-button primary-button" type="button" id="copy-accommodation-helper">Text kopieren</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="accommodation-import-dialog" aria-labelledby="accommodation-import-title">
+    <form class="editor-form" id="accommodation-import-form">
+      <div class="editor-header">
+        <h2 id="accommodation-import-title">ChatGPT-Unterkünfte übernehmen</h2>
+        <button class="tool-button" type="button" id="close-accommodation-import" aria-label="Fenster schliessen">Schliessen</button>
+      </div>
+      <div class="editor-body">
+        <p class="dialog-note">JSON aus ChatGPT einfügen. Die bestehenden Stopps werden anhand von <code>id</code>, <code>day</code> oder Reihenfolge aktualisiert. Danach mit „Online veröffentlichen“ nach GitHub/Vercel bringen.</p>
+        <div class="field">
+          <label for="accommodation-import-input">Unterkunfts-JSON</label>
+          <textarea id="accommodation-import-input" class="large-textarea" placeholder='{"reason":"Route angepasst","stays":[...]}' required></textarea>
+        </div>
+      </div>
+      <div class="editor-footer">
+        <button class="tool-button" type="button" id="cancel-accommodation-import">Abbrechen</button>
+        <button class="tool-button primary-button" type="submit">Übernehmen</button>
+      </div>
+    </form>
+  </dialog>
+
   <script>
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
     const storageKey = "spanien-roadbook-2026-hotels-v2";
@@ -860,6 +914,163 @@
         nights: nightLabel(nights, id)
       };
     };
+    const routeDateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
+    const routeStart = Date.UTC(2026, 8, 24);
+    const routeDateForDay = (index) => routeDateFormatter.format(new Date(routeStart + index * dayMs));
+
+    const extractArrayLiteral = (text, marker) => {
+      const markerIndex = text.indexOf(marker);
+      if (markerIndex < 0) return "";
+      const start = text.indexOf("[", markerIndex);
+      if (start < 0) return "";
+      let depth = 0;
+      let inString = false;
+      let quote = "";
+      let escaped = false;
+      for (let index = start; index < text.length; index += 1) {
+        const char = text[index];
+        if (inString) {
+          if (escaped) escaped = false;
+          else if (char === "\\") escaped = true;
+          else if (char === quote) inString = false;
+          continue;
+        }
+        if (char === "\"" || char === "'") {
+          inString = true;
+          quote = char;
+        } else if (char === "[") {
+          depth += 1;
+        } else if (char === "]") {
+          depth -= 1;
+          if (depth === 0) return text.slice(start, index + 1);
+        }
+      }
+      return "";
+    };
+
+    const readLocalRoadbookDays = () => {
+      const key = Object.keys(localStorage)
+        .filter((candidate) => candidate.startsWith("spanien-roadbook-2026-plan-"))
+        .sort()
+        .pop();
+      if (!key) return null;
+      try {
+        const saved = JSON.parse(localStorage.getItem(key) || "{}");
+        return Array.isArray(saved.days) && saved.days.length ? saved.days : null;
+      } catch (_) {
+        return null;
+      }
+    };
+
+    const fetchPublishedRoadbookDays = async () => {
+      const response = await fetch("/", { cache: "no-store" });
+      const html = await response.text();
+      const literal = extractArrayLiteral(html, "const currentDays = ");
+      if (!literal) throw new Error("Roadbook-Daten wurden nicht gefunden.");
+      return JSON.parse(literal);
+    };
+
+    const loadRoadbookDays = async () => readLocalRoadbookDays() || fetchPublishedRoadbookDays();
+
+    const routeSummary = (days) => days.map((item, index) => ({
+      day: index + 1,
+      date: routeDateForDay(index),
+      title: item.title || "",
+      type: item.type || "",
+      overnight: item.overnight || "",
+      km: item.km || "",
+      time: item.time || "",
+      roads: item.roads || "",
+      points: item.points || "",
+      note: item.note || "",
+      status: item.status || "planned"
+    }));
+
+    const accommodationSummary = () => stayOrder().map((id, index) => {
+      const stay = document.querySelector(`.stay[data-stay="${id}"]`);
+      const schedule = staySchedule(id);
+      const data = state[id] || {};
+      return {
+        id,
+        sequence: index + 1,
+        title: data.title || stay?.dataset.baseTitle || "",
+        startDate: schedule.startDate,
+        endDate: schedule.endDate,
+        nightCount: schedule.nightCount,
+        booking: data.booking || "",
+        currentFirstChoice: data.firstChoice || "",
+        currentAlternative: data.alternative || "",
+        currentNote: data.note || "",
+        baselineNote: data.baseNote || stay?.dataset.baseNote || ""
+      };
+    });
+
+    const buildAccommodationPrompt = async () => {
+      const days = await loadRoadbookDays();
+      const ferry = routeSummary(days).find((day) => day.title.toLowerCase().includes("fähre") || day.title.toLowerCase().includes("faehre"));
+      const schema = {
+        reason: "kurz erklaeren, warum Unterkuenfte geaendert werden",
+        stays: [{
+          id: "sisteron",
+          day: 2,
+          title: "Sisteron",
+          startDate: "2026-09-25",
+          endDate: "2026-09-27",
+          nightCount: 2,
+          booking: "",
+          firstChoice: "konkrete erste Wahl mit Garage",
+          alternative: "konkrete Alternative",
+          note: "Was ist zu tun, z. B. Buchung verlaengern, neu suchen, bestehende Buchung stornieren",
+          hideBaseline: false
+        }]
+      };
+
+      return `Ich bin auf einer Motorradreise von Berikon nach Spanien und zurueck. Die Route ist fuehrend; die Unterkuenfte muessen dem aktuellen Roadbook folgen.
+
+Ziel:
+- Plane oder aktualisiere die Unterkuenfte entlang des aktuellen Roadbooks.
+- Sichere Motorradabstellung fuer zwei beladene Triumph-Motorraeder ist Pflicht.
+- Bevorzuge einfache Zufahrt, keine engen Altstadt- oder ZBE-Ziele, stornierbare Tarife und pragmatische Lagen zur Tagesroute.
+- Wenn sich nur Daten verschoben haben, nenne klar, welche bestehenden Buchungen verlaengert, verschoben oder storniert werden muessen.
+- Wenn sich Route oder Uebernachtungsorte stark geaendert haben, schlage neue konkrete Unterkuenfte vor.
+- Die Faehre Barcelona - Genua ist fix und darf nicht verschoben werden.
+- Wenn ein Unterkunftsplan mit der Faehre kollidiert, weise klar darauf hin und schlage vor, wo eine Nacht gestrichen oder die Route neu geplant werden muss.
+
+Fixpunkt:
+- Faehre Barcelona - Genua: Check-in 21.10.2026 um 08:30, Abfahrt 10:30, Ankunft Genua 22.10.2026 um 09:00.
+${ferry ? `- Aktueller Roadbook-Faehrtag: Tag ${ferry.day}, ${ferry.date}, ${ferry.title}.` : ""}
+
+Aktuelles Roadbook:
+\`\`\`json
+${JSON.stringify(routeSummary(days), null, 2)}
+\`\`\`
+
+Aktueller Unterkunftsstand:
+\`\`\`json
+${JSON.stringify(accommodationSummary(), null, 2)}
+\`\`\`
+
+Arbeitsauftrag:
+1. Stelle zuerst als Text dar, welche Unterkuenfte betroffen sind und warum.
+2. Gib pro betroffener Nacht eine konkrete Empfehlung: bestehende Buchung behalten/verlaengern/aendern/stornieren oder neue Unterkunft suchen.
+3. Danach gib ein einziges JSON nach folgendem Schema aus. Dieses JSON fuege ich in der Unterkunftsseite ueber "ChatGPT-Unterkuenfte uebernehmen" ein.
+4. Nach dem Import veroeffentliche ich den Stand mit "Online veroeffentlichen". Die App schreibt dann serverseitig nach GitHub \`MrM-creates/Bike_Spain\`; Vercel-Projekt \`motorrad-roadbook-spanien-2026\` deployed automatisch.
+5. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
+
+JSON-Schema fuer den Unterkunftsimport:
+\`\`\`json
+${JSON.stringify(schema, null, 2)}
+\`\`\`
+
+Wichtig fuer das Import-JSON:
+- Nutze \`id\`, wenn sie im aktuellen Unterkunftsstand existiert.
+- Wenn \`id\` fehlt, ordnet die App nach \`day\` oder Reihenfolge zu.
+- \`startDate\` und \`endDate\` muessen ISO-Daten sein: YYYY-MM-DD.
+- \`nightCount\` ist die Anzahl Naechte zwischen Anreise und Abreise.
+- \`booking\` darf leer, \`asked\` oder \`booked\` sein.
+- Setze \`hideBaseline: true\`, wenn die alten Hotelvorschlaege wegen neuer Route oder anderem Ort nicht mehr passen.
+- Bearbeite nur relevante Stopps; unveraenderte Unterkuenfte muessen nicht im JSON stehen.`;
+    };
 
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
@@ -868,9 +1079,24 @@
 
     const stayEditor = document.querySelector("#stay-editor");
     const stayEditorForm = document.querySelector("#stay-editor-form");
+    const accommodationHelperDialog = document.querySelector("#accommodation-helper-dialog");
+    const accommodationHelperOutput = document.querySelector("#accommodation-helper-output");
+    const accommodationImportDialog = document.querySelector("#accommodation-import-dialog");
+    const accommodationImportForm = document.querySelector("#accommodation-import-form");
+    const accommodationImportInput = document.querySelector("#accommodation-import-input");
 
     const saveState = () => {
       localStorage.setItem(storageKey, JSON.stringify(state));
+    };
+
+    const downloadText = (filename, text, type = "text/plain") => {
+      const blob = new Blob([text], { type });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
     };
 
     const getStayBaseline = (stay) => ({
@@ -928,6 +1154,9 @@
       }
       note.textContent = data.note || "";
       note.hidden = !data.note;
+
+      const options = stay.querySelector(".options");
+      if (options) options.hidden = data.hideBaseline === true || data.hideBaseline === "true";
 
       let warning = stay.querySelector(".schedule-warning");
       if (!warning) {
@@ -1033,6 +1262,52 @@
       });
     };
 
+    const targetStayId = (item, index) => {
+      const ids = stayOrder();
+      if (item.id && ids.includes(String(item.id))) return String(item.id);
+      const day = Number(item.day);
+      if (Number.isInteger(day) && ids[day - 1]) return ids[day - 1];
+      return ids[index] || "";
+    };
+
+    const normalizeImportedStay = (item, id) => {
+      if (!item || typeof item !== "object") throw new Error("Ungültiger Unterkunftseintrag");
+      const previous = staySchedule(id);
+      const startDate = String(item.startDate || previous.startDate || "").trim();
+      if (!startDate) throw new Error(`Anreise fehlt bei ${id}`);
+      const nightCount = Math.max(1, Number(item.nightCount) || (item.endDate ? diffDays(startDate, item.endDate) : previous.nightCount || 1));
+      const schedule = scheduleFields(id, startDate, nightCount);
+      const output = {
+        ...schedule,
+        title: item.title || "",
+        baseNote: item.baseNote || "",
+        booking: item.booking || "",
+        firstChoice: item.firstChoice || "",
+        alternative: item.alternative || "",
+        note: item.note || "",
+        hideBaseline: item.hideBaseline ? "true" : ""
+      };
+      if (!["", "asked", "booked"].includes(output.booking)) output.booking = "";
+      return Object.fromEntries(
+        Object.entries(output)
+          .map(([key, value]) => [key, String(value || "").trim()])
+          .filter(([, value]) => value)
+      );
+    };
+
+    const applyAccommodationImport = (text) => {
+      const imported = JSON.parse(text);
+      const stays = Array.isArray(imported) ? imported : imported.stays;
+      if (!Array.isArray(stays) || !stays.length) throw new Error("Keine Unterkünfte im Import gefunden.");
+      stays.forEach((item, index) => {
+        const id = targetStayId(item, index);
+        if (!id) throw new Error(`Kein passender Unterkunftsstopp für Eintrag ${index + 1}`);
+        mergeStayState(id, normalizeImportedStay(item, id));
+      });
+      saveState();
+      document.querySelectorAll(".stay").forEach(applyStay);
+    };
+
     stayEditorForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const values = Object.fromEntries(new FormData(stayEditorForm));
@@ -1053,6 +1328,44 @@
       saveState();
       document.querySelectorAll(".stay").forEach(applyStay);
       stayEditor.close();
+    });
+
+    document.querySelector("#accommodation-helper")?.addEventListener("click", async () => {
+      accommodationHelperOutput.value = "Roadbook wird gelesen ...";
+      accommodationHelperDialog.showModal();
+      try {
+        accommodationHelperOutput.value = await buildAccommodationPrompt();
+        accommodationHelperOutput.focus();
+        accommodationHelperOutput.select();
+      } catch (error) {
+        accommodationHelperOutput.value = `Planungshilfe konnte nicht erstellt werden: ${error.message}`;
+      }
+    });
+    document.querySelector("#close-accommodation-helper")?.addEventListener("click", () => accommodationHelperDialog.close());
+    document.querySelector("#copy-accommodation-helper")?.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(accommodationHelperOutput.value);
+      document.querySelector("#copy-accommodation-helper").textContent = "Kopiert";
+      setTimeout(() => { document.querySelector("#copy-accommodation-helper").textContent = "Text kopieren"; }, 1400);
+    });
+    document.querySelector("#download-accommodation-helper")?.addEventListener("click", () => {
+      downloadText("spanien-roadbook-unterkuenfte-chatgpt-planungshilfe.txt", accommodationHelperOutput.value);
+    });
+    document.querySelector("#import-accommodations")?.addEventListener("click", () => {
+      accommodationImportInput.value = "";
+      accommodationImportDialog.showModal();
+      accommodationImportInput.focus();
+    });
+    document.querySelector("#close-accommodation-import")?.addEventListener("click", () => accommodationImportDialog.close());
+    document.querySelector("#cancel-accommodation-import")?.addEventListener("click", () => accommodationImportDialog.close());
+    accommodationImportForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      try {
+        applyAccommodationImport(accommodationImportInput.value);
+        accommodationImportDialog.close();
+        alert("ChatGPT-Unterkünfte übernommen. Danach bei Bedarf online veröffentlichen.");
+      } catch (error) {
+        alert(`Import fehlgeschlagen: ${error.message}`);
+      }
     });
 
     document.querySelector("#publish-accommodations")?.addEventListener("click", async () => {
