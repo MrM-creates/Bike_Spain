@@ -105,7 +105,7 @@ const createStructuredResponse = async ({ instructions, input, schema, name, web
     store: false,
     instructions,
     input,
-    reasoning: { effort: "medium" },
+    reasoning: { effort: "low" },
     text: {
       verbosity: "low",
       format: { type: "json_schema", name, strict: true, schema }
@@ -249,6 +249,29 @@ const normalizeStayState = (stays, allIds) => {
   return state;
 };
 
+const preservedStay = (expected, current) => {
+  const datesChanged = expected.startDate !== current.startDate || expected.endDate !== current.endDate;
+  const longer = expected.startDate === current.startDate && expected.nightCount > Number(current.nightCount || 0);
+  return {
+    id: expected.slotId,
+    title: expected.title,
+    startDate: expected.startDate,
+    endDate: expected.endDate,
+    nightCount: expected.nightCount,
+    booking: cleanText(current.booking, 30),
+    firstChoice: cleanText(current.currentFirstChoice, 240),
+    firstChoiceUrl: cleanText(current.currentFirstChoiceUrl, 500),
+    alternative: cleanText(current.currentAlternative, 240),
+    alternativeUrl: cleanText(current.currentAlternativeUrl, 500),
+    note: datesChanged
+      ? `Verfügbarkeit für ${expected.startDate} bis ${expected.endDate} prüfen${current.booking ? "; bestehende Buchung entsprechend anpassen" : ""}.`
+      : cleanText(current.currentNote, 500),
+    baseNote: "",
+    hideBaseline: false,
+    action: !datesChanged ? "behalten" : (longer ? "verlaengern" : (current.booking ? "umbuchen" : "pruefen"))
+  };
+};
+
 module.exports = async (request, response) => {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
@@ -257,6 +280,8 @@ module.exports = async (request, response) => {
   }
 
   try {
+    const startedAt = Date.now();
+    console.log(JSON.stringify({ level: "info", message: "plan draft started" }));
     const payload = await readBody(request);
     const submittedSecret = cleanText(payload.secret, 200);
     const configuredSecret = cleanText(process.env.ROADBOOK_PUBLISH_SECRET, 200);
@@ -294,6 +319,7 @@ module.exports = async (request, response) => {
       instruction: cleanText(payload.change?.instruction, 1200)
     };
 
+    const routeStartedAt = Date.now();
     const routePlan = await createStructuredResponse({
       name: "roadbook_route_draft",
       schema: routeSchema,
@@ -319,47 +345,66 @@ module.exports = async (request, response) => {
     if (draftDays.length !== currentDays.length || draftFerryIndex !== ferryIndex || isoForDay(draftFerryIndex) !== FERRY_DATE) {
       throw new Error("Der Routenvorschlag verletzt den festen Fährtermin.");
     }
+    console.log(JSON.stringify({ level: "info", message: "route draft completed", ms: Date.now() - routeStartedAt, replaceCount }));
 
     const expected = expectedStays(draftDays);
     const accommodationContext = Array.isArray(payload.accommodations) ? payload.accommodations.slice(0, 30) : [];
     const allSlotIds = accommodationContext.map((stay) => cleanText(stay.id, 80)).filter(Boolean);
     if (expected.length > allSlotIds.length) throw new Error("Der Entwurf benötigt mehr Unterkunftsstopps als die aktuelle Unterkunftsliste aufnehmen kann.");
     const slotPlan = assignAccommodationSlots(expected, accommodationContext);
-
-    const accommodationPlan = await createStructuredResponse({
-      name: "roadbook_accommodation_draft",
-      schema: accommodationSchema,
-      web: true,
-      instructions: `Du planst die Unterkuenfte als zwingende Folge eines bereits validierten Motorrad-Roadbooks. Gib fuer jeden erwarteten Uebernachtungsblock genau einen Eintrag in gleicher Reihenfolge aus und verwende dafuer die bereitgestellte slotId. Erhalte gebuchte Unterkuenfte, wenn Ort und Datum passen. Wenn eine gebuchte Unterkunft geaendert, verlaengert oder storniert werden muesste, setze den passenden action-Wert und nenne das deutlich in note und openItems; behaupte nie, eine Buchung sei automatisch geaendert. Suche nur fuer neue oder unpassende Stopps konkrete erste Wahl und Alternative und liefere fuer beide einen direkten HTTPS-Link zur offiziellen Unterkunftsseite oder einer serioesen Buchungsseite. Wichtig sind sichere Abstellung fuer zwei beladene Motorraeder, einfache asphaltierte Zufahrt, keine problematische Altstadt- oder ZBE-Zufahrt und moeglichst stornierbare Tarife. Verfuegbarkeit und Preis gelten immer als zu pruefen. Gib ausschliesslich das strukturierte Ergebnis aus.`,
-      input: JSON.stringify({
-        expectedStays: slotPlan.assigned,
-        currentAccommodations: accommodationContext,
-        routeChanges: routePlan.summary
-      })
+    const currentById = new Map(accommodationContext.map((stay) => [stay.id, stay]));
+    const researchStays = slotPlan.assigned.filter((stay) => {
+      const current = currentById.get(stay.slotId) || {};
+      return stay.slotId !== "ferry" && (!placesMatch(stay.title, current.title) || !current.currentFirstChoice);
     });
-    if (accommodationPlan.stays.length !== expected.length) {
-      throw new Error(`ChatGPT hat ${accommodationPlan.stays.length} statt ${expected.length} Unterkunftsstopps geliefert.`);
-    }
-    accommodationPlan.stays.forEach((stay, index) => {
-      const expectedStay = expected[index];
-      if (stay.id !== slotPlan.assigned[index].slotId || stay.startDate !== expectedStay.startDate || stay.endDate !== expectedStay.endDate || stay.nightCount !== expectedStay.nightCount) {
-        throw new Error(`Unterkunftsstopp ${index + 1} stimmt nicht mit dem Roadbook überein.`);
+    let researched = { summary: [], stays: [], openItems: [] };
+    if (researchStays.length) {
+      const accommodationStartedAt = Date.now();
+      researched = await createStructuredResponse({
+        name: "roadbook_accommodation_draft",
+        schema: accommodationSchema,
+        web: true,
+        instructions: `Du planst nur die neuen oder unpassenden Unterkuenfte eines bereits validierten Motorrad-Roadbooks. Gib fuer jeden bereitgestellten Uebernachtungsblock genau einen Eintrag in gleicher Reihenfolge aus und verwende dafuer die bereitgestellte slotId. Suche eine konkrete erste Wahl und Alternative und liefere fuer beide einen direkten HTTPS-Link zur offiziellen Unterkunftsseite oder einer serioesen Buchungsseite. Wichtig sind sichere Abstellung fuer zwei beladene Motorraeder, einfache asphaltierte Zufahrt, keine problematische Altstadt- oder ZBE-Zufahrt und moeglichst stornierbare Tarife. Verfuegbarkeit und Preis gelten immer als zu pruefen. Gib ausschliesslich das strukturierte Ergebnis aus.`,
+        input: JSON.stringify({ expectedStays: researchStays, routeChanges: routePlan.summary })
+      });
+      console.log(JSON.stringify({ level: "info", message: "hotel research completed", ms: Date.now() - accommodationStartedAt, count: researchStays.length }));
+      if (researched.stays.length !== researchStays.length) {
+        throw new Error(`ChatGPT hat ${researched.stays.length} statt ${researchStays.length} neuen Unterkunftsstopps geliefert.`);
       }
+    }
+    const researchedById = new Map(researched.stays.map((stay) => [stay.id, stay]));
+    const accommodationStays = slotPlan.assigned.map((stay, index) => {
+      const researchedStay = researchedById.get(stay.slotId);
+      if (researchedStay) {
+        if (researchedStay.startDate !== stay.startDate || researchedStay.endDate !== stay.endDate || researchedStay.nightCount !== stay.nightCount) {
+          throw new Error(`Unterkunftsstopp ${index + 1} stimmt nicht mit dem Roadbook überein.`);
+        }
+        return researchedStay;
+      }
+      return preservedStay(stay, currentById.get(stay.slotId) || {});
     });
+    const accommodationOpenItems = accommodationStays
+      .filter((stay) => stay.action !== "behalten")
+      .map((stay) => `${stay.title}: ${stay.note}`);
+    const accommodationSummary = researchStays.length
+      ? [`Unterkünfte an die neue Route angepasst; ${researchStays.length} neue Stopps recherchiert.`, ...researched.summary]
+      : ["Bestehende Unterkunftsvorschläge übernommen und auf die neuen Reisedaten abgestimmt."];
 
     json(response, 200, {
       ok: true,
       draft: {
         createdAt: new Date().toISOString(),
         request: change,
-        summary: [...routePlan.summary, ...accommodationPlan.summary],
+        summary: [...routePlan.summary, ...accommodationSummary],
         decision: routePlan.decision,
-        openItems: [...routePlan.openItems, ...accommodationPlan.openItems],
+        openItems: [...routePlan.openItems, ...accommodationOpenItems, ...researched.openItems],
         days: draftDays,
-        accommodations: normalizeStayState(accommodationPlan.stays, allSlotIds)
+        accommodations: normalizeStayState(accommodationStays, allSlotIds)
       }
     });
+    console.log(JSON.stringify({ level: "info", message: "plan draft completed", ms: Date.now() - startedAt, researchedHotels: researchStays.length }));
   } catch (error) {
+    console.error(JSON.stringify({ level: "error", message: "plan draft failed", error: error.message || String(error) }));
     json(response, error.status || 500, { error: error.message || "Der Entwurf konnte nicht erstellt werden." });
   }
 };

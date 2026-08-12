@@ -2266,7 +2266,7 @@
       try {
         const accommodations = await loadAccommodationContext();
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 115000);
+        const timeout = setTimeout(() => controller.abort(), 240000);
         const response = await fetch("/api/create-plan-draft", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
