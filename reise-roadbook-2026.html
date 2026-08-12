@@ -87,6 +87,16 @@
       white-space: nowrap;
     }
 
+    .brand-block { min-width: 0; }
+    .planning-version {
+      display: block;
+      margin-top: 1px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
     .topbar-nav {
       display: flex;
       align-items: center;
@@ -1034,8 +1044,9 @@
       footer { width: min(100% - 22px, 980px); }
       .brand { font-size: 15px; }
       h1 { font-size: 30px; }
-      .day { grid-template-columns: 46px minmax(0, 1fr); }
+      .day { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
       .day-number strong { font-size: 24px; }
+      .day-date { font-size: 10px; }
       .day h2 { font-size: 17px; }
     }
 
@@ -1049,7 +1060,10 @@
   <header class="topbar">
     <div class="topbar-inner">
       <div class="topbar-main">
-        <div class="brand">Motorrad-Roadbook</div>
+        <div class="brand-block">
+          <div class="brand">Motorrad-Roadbook</div>
+          <span class="planning-version" id="planning-version"></span>
+        </div>
         <div class="topbar-menu">
           <nav class="topbar-nav" aria-label="Hauptnavigation">
             <button class="nav-button" id="nav-drive" type="button">Fahren</button>
@@ -1867,6 +1881,16 @@
     const dateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
     const dateForDay = (index) => dateFormatter.format(new Date(tripStart + index * 86400000));
     const clone = (value) => JSON.parse(JSON.stringify(value));
+    const planningVersionFormatter = new Intl.DateTimeFormat("de-CH", {
+      day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
+      timeZone: "Europe/Zurich"
+    });
+    const showPlanningVersion = (version = PUBLISHED_VERSION) => {
+      const date = new Date(version);
+      document.querySelector("#planning-version").textContent = Number.isNaN(date.getTime())
+        ? "Stand der Planung: unbekannt"
+        : `Stand der Planung: ${planningVersionFormatter.format(date)}`;
+    };
     const isFerryDay = (item = {}) => {
       const title = String(item.title || "").toLowerCase();
       const type = String(item.type || "").toLowerCase();
@@ -2301,6 +2325,7 @@
         if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
         currentPlanDays = clone(state.days);
         publishNotice = "Plan aktualisiert";
+        showPlanningVersion(result.version);
         render();
         alert("Plan aktualisiert.");
       } catch (error) {
@@ -2342,6 +2367,7 @@
         localStorage.removeItem(DRAFT_KEY);
         draft = null;
         publishNotice = "Plan aktualisiert";
+        showPlanningVersion(result.version);
         render();
         alert("Plan aktualisiert.");
       } catch (error) {
@@ -3058,6 +3084,7 @@ Wichtig fuer das Import-JSON:
       createOriginalDraft().catch((error) => alert(`Originalplan konnte nicht geladen werden: ${error.message}`));
     });
 
+    showPlanningVersion();
     render();
 
     if (window.location.hash === "#hilfe") {
