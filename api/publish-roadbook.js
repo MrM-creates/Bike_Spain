@@ -116,7 +116,9 @@ module.exports = async (request, response) => {
     }
 
     const payload = await readBody(request);
-    if (payload.secret !== process.env.ROADBOOK_PUBLISH_SECRET) {
+    const submittedSecret = String(payload.secret || "").trim();
+    const configuredSecret = String(process.env.ROADBOOK_PUBLISH_SECRET || "").trim();
+    if (submittedSecret !== configuredSecret) {
       json(response, 401, { error: "Publish-PIN ist falsch." });
       return;
     }
