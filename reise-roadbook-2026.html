@@ -1133,7 +1133,7 @@
       <div class="planning-group-actions help-actions">
         <button class="tool-button" id="export-plan" type="button" data-help="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter.">Lokale Sicherung herunterladen</button>
         <button class="tool-button" id="import-plan" type="button" data-help="Lädt eine zuvor gespeicherte Roadbook-JSON-Sicherung in diesen Browser.">Lokale Sicherung laden</button>
-        <button class="tool-button danger" id="reset-plan" type="button" data-help="Lädt den unveränderten Originalplan dieser Reise als Rückfallbasis.">Originalplan laden</button>
+        <button class="tool-button danger" id="reset-plan" type="button" data-help="Lädt Route und Unterkünfte des unveränderten Originalplans als Entwurf. Aktiv wird er erst nach deiner Veröffentlichung.">Originalplan als Entwurf</button>
         <input id="import-file" type="file" accept="application/json,.json" hidden>
       </div>
       <details>
@@ -1237,13 +1237,14 @@
               <option value="skip">Etappe oder Ausflug auslassen</option>
               <option value="reroute">Ab hier neu planen</option>
               <option value="free">Andere Änderung</option>
+              <option value="restore-original">Originalplan wiederherstellen</option>
             </select>
           </div>
           <div class="field" id="change-start-day-field" hidden>
             <label for="change-start-day">Ab Reisetag</label>
             <input id="change-start-day" name="startDay" type="number" min="1" max="27" value="1">
           </div>
-          <div class="field">
+          <div class="field" id="change-place-field">
             <label for="change-place">Ort oder Etappe</label>
             <input id="change-place" name="place" placeholder="z. B. Sisteron">
           </div>
@@ -1251,7 +1252,7 @@
             <label for="change-nights" id="change-nights-label">Zusätzliche Nächte</label>
             <input id="change-nights" name="nights" type="number" min="0" max="7" value="1">
           </div>
-          <div class="field full">
+          <div class="field full" id="change-instruction-field">
             <label for="change-instruction">Was ist euch wichtig?</label>
             <textarea id="change-instruction" name="instruction" placeholder="z. B. Wir möchten zwei zusätzliche Nächte bleiben. Optionale Rundfahrten dürfen entfallen, lange Fahrtage möglichst vermeiden."></textarea>
           </div>
@@ -1861,11 +1862,16 @@
     const DRAFT_KEY = "spanien-roadbook-2026-draft-v1";
     const SESSION_PIN_KEY = "spanien-roadbook-2026-publish-pin";
     const ACCOMMODATION_REVIEW_KEY = "spanien-roadbook-2026-accommodation-review-v1";
-    const ACCOMMODATION_STORAGE_KEY = "spanien-roadbook-2026-hotels-v2";
+    const accommodationStorageKey = (version = PUBLISHED_VERSION) => `spanien-roadbook-2026-hotels-${version}`;
     const tripStart = Date.UTC(2026, 8, 24);
     const dateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
     const dateForDay = (index) => dateFormatter.format(new Date(tripStart + index * 86400000));
     const clone = (value) => JSON.parse(JSON.stringify(value));
+    const isFerryDay = (item = {}) => {
+      const title = String(item.title || "").toLowerCase();
+      const type = String(item.type || "").toLowerCase();
+      return type.includes("fährtag") || type.includes("faehrtag") || ((title.includes("fähre") || title.includes("faehre")) && !title.includes("vorbereitung"));
+    };
     const statusLabels = { planned: "Geplant", changed: "Geändert", done: "Gefahren", skipped: "Ausgelassen" };
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
     const ADVANCED_MODE = new URLSearchParams(window.location.search).get("advanced") === "1";
@@ -1971,7 +1977,7 @@
     };
 
     const routeAccommodationImpact = () => {
-      const ferryIndex = state.days.findIndex((item) => item.title.toLowerCase().includes("fähre") || item.title.toLowerCase().includes("faehre"));
+      const ferryIndex = state.days.findIndex(isFerryDay);
       const lastIndex = ferryIndex >= 0 ? ferryIndex : state.days.length - 1;
       const changed = state.days
         .slice(0, lastIndex + 1)
@@ -2026,7 +2032,7 @@
 
     const clearLocalAccommodations = () => {
       try {
-        localStorage.removeItem(ACCOMMODATION_STORAGE_KEY);
+        localStorage.removeItem(accommodationStorageKey());
       } catch (_) {}
     };
 
@@ -2046,7 +2052,7 @@
       try { return JSON.parse(match[1]); } catch (_) { return fallback; }
     };
 
-    const loadAccommodationContext = async () => {
+    const loadAccommodationContext = async ({ original = false } = {}) => {
       const response = await fetch(`/unterkuenfte-2026.html?context=${Date.now()}`, { cache: "no-store" });
       if (!response.ok) throw new Error("Der aktuelle Unterkunftsstand konnte nicht geladen werden.");
       const html = await response.text();
@@ -2056,11 +2062,13 @@
       const schedule = parseEmbeddedJson(scriptText, /const baseSchedule = ([\s\S]*?);\s*const scheduleById/, []);
       const scheduleById = new Map(schedule.map(([id, startDate, endDate]) => [id, { startDate, endDate }]));
       let local = {};
-      try { local = JSON.parse(localStorage.getItem(ACCOMMODATION_STORAGE_KEY) || "{}"); } catch (_) {}
-      const draftState = draft?.accommodations || {};
+      if (!original) {
+        try { local = JSON.parse(localStorage.getItem(accommodationStorageKey()) || "{}"); } catch (_) {}
+      }
+      const draftState = original ? {} : (draft?.accommodations || {});
       return Array.from(documentCopy.querySelectorAll(".stay")).map((stay) => {
         const id = stay.dataset.stay;
-        const data = { ...(published[id] || {}), ...(local[id] || {}), ...(draftState[id] || {}) };
+        const data = original ? {} : { ...(published[id] || {}), ...(local[id] || {}), ...(draftState[id] || {}) };
         const baseSchedule = scheduleById.get(id) || {};
         const hotels = Array.from(stay.querySelectorAll(".hotel")).map((hotel) => ({
           name: hotel.querySelector("h3")?.textContent.trim() || "",
@@ -2073,7 +2081,9 @@
           title: data.title || stay.querySelector("h2")?.textContent.trim() || "",
           startDate: data.startDate || baseSchedule.startDate || "",
           endDate: data.endDate || baseSchedule.endDate || "",
-          nightCount: Number(data.nightCount) || 1,
+          nightCount: Number(data.nightCount) || (baseSchedule.startDate && baseSchedule.endDate
+            ? Math.max(1, Math.round((Date.parse(baseSchedule.endDate) - Date.parse(baseSchedule.startDate)) / 86400000))
+            : 1),
           booking: data.booking || "",
           currentFirstChoice: data.firstChoice || hotels[0]?.name || "",
           currentFirstChoiceUrl: data.firstChoiceUrl || hotels[0]?.url || "",
@@ -2085,6 +2095,39 @@
       });
     };
 
+    const createOriginalDraft = async () => {
+      const accommodations = await loadAccommodationContext({ original: true });
+      const accommodationState = Object.fromEntries(accommodations.map((stay) => [stay.id, {
+        startDate: stay.startDate,
+        endDate: stay.endDate,
+        nightCount: stay.nightCount,
+        title: stay.title,
+        firstChoice: stay.currentFirstChoice,
+        firstChoiceUrl: stay.currentFirstChoiceUrl,
+        alternative: stay.currentAlternative,
+        alternativeUrl: stay.currentAlternativeUrl
+      }]));
+      draft = {
+        createdAt: new Date().toISOString(),
+        baseVersion: PUBLISHED_VERSION,
+        request: { type: "restore-original" },
+        decision: "Originalplan wiederherstellen",
+        summary: [
+          "Die unveränderte Originalroute und die ursprüngliche Unterkunftskette werden wiederhergestellt.",
+          "Der aktuell veröffentlichte Plan bleibt aktiv, bis du diesen Entwurf übernimmst und veröffentlichst."
+        ],
+        openItems: ["Bestehende Buchungen und Verfügbarkeiten für die ursprünglichen Reisedaten prüfen."],
+        days: clone(originalBaseline),
+        accommodations: accommodationState
+      };
+      state.days = clone(originalBaseline);
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      activeFilter = "all";
+      planChangeDialog.close();
+      render();
+      workflow.scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+
     const renderWorkflow = () => {
       const hasDraft = Boolean(draft?.days?.length);
       const hasTravelUpdates = !hasDraft && state.days.some((item, index) => {
@@ -2094,8 +2137,11 @@
       const pending = hasDraft || hasTravelUpdates;
       workflow.hidden = !pending && !publishNotice;
       workflow.classList.toggle("is-draft", pending);
-      workflowBadge.textContent = hasDraft ? "Entwurf" : (hasTravelUpdates ? "Lokale Änderung" : "Veröffentlicht");
-      workflowTitle.textContent = pending ? "Noch nicht veröffentlicht" : "Online-Stand wird aktualisiert";
+      const justPublished = Boolean(publishNotice) && !pending;
+      workflowBadge.hidden = justPublished;
+      workflowText.hidden = justPublished;
+      workflowBadge.textContent = hasDraft ? "Entwurf" : "Lokale Änderung";
+      workflowTitle.textContent = justPublished ? "Plan aktualisiert" : "Noch nicht veröffentlicht";
       workflowText.textContent = hasDraft
         ? "Route und Unterkünfte wurden gemeinsam neu geplant. Prüfe die Änderungen, bevor du sie veröffentlichst."
         : (hasTravelUpdates
@@ -2112,7 +2158,12 @@
       publishButton.textContent = hasDraft ? "Änderungen übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen";
       draftDetails.hidden = !hasDraft;
       if (pending) accommodationImpact.hidden = true;
-      if (!hasDraft) return;
+      if (!hasDraft) {
+        draftDecision.textContent = "";
+        draftSummary.replaceChildren();
+        draftOpen.replaceChildren();
+        return;
+      }
       const cleanDraftText = (text) => String(text || "")
         .replace(/\b1 neue Stopps\b/gi, "1 neuer Stopp")
         .trim();
@@ -2249,9 +2300,9 @@
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
         currentPlanDays = clone(state.days);
-        publishNotice = "Veröffentlicht · Vercel aktualisiert den Online-Stand";
+        publishNotice = "Plan aktualisiert";
         render();
-        alert(`Unterwegs-Stand veröffentlicht.\nCommit: ${result.commit || "unbekannt"}`);
+        alert("Plan aktualisiert.");
       } catch (error) {
         if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
         alert(`Veröffentlichung fehlgeschlagen: ${error.message}`);
@@ -2286,13 +2337,13 @@
         currentPlanDays = clone(draft.days);
         state.days = clone(draft.days);
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ days: state.days }));
-        localStorage.setItem(ACCOMMODATION_STORAGE_KEY, JSON.stringify(draft.accommodations || {}));
+        localStorage.setItem(accommodationStorageKey(result.version || PUBLISHED_VERSION), JSON.stringify(draft.accommodations || {}));
         localStorage.removeItem(ACCOMMODATION_REVIEW_KEY);
         localStorage.removeItem(DRAFT_KEY);
         draft = null;
-        publishNotice = "Veröffentlicht · Vercel aktualisiert den Online-Stand";
+        publishNotice = "Plan aktualisiert";
         render();
-        alert(`Neuer Gesamtplan veröffentlicht.\nCommit: ${result.commit || "unbekannt"}\nRoute und Unterkünfte wurden gemeinsam gespeichert.`);
+        alert("Plan aktualisiert.");
       } catch (error) {
         if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
         alert(`Veröffentlichung fehlgeschlagen: ${error.message}`);
@@ -2441,7 +2492,7 @@
 
     const buildPlanningPrompt = (startIndex = 0, requestedChange = null) => {
       const current = state.days[startIndex] || state.days[0];
-      const ferryIndex = state.days.findIndex((item) => item.title.toLowerCase().includes("fähre") || item.title.toLowerCase().includes("faehre"));
+      const ferryIndex = state.days.findIndex(isFerryDay);
       const endIndex = ferryIndex > startIndex ? ferryIndex - 1 : Math.min(state.days.length - 1, startIndex + 4);
       const planningDays = state.days.slice(startIndex, endIndex + 1).map((item, offset) => daySummary(item, startIndex + offset));
       const fixedAnchor = ferryIndex >= 0 ? daySummary(state.days[ferryIndex], ferryIndex) : null;
@@ -2603,7 +2654,7 @@ Wichtig fuer das Import-JSON:
       if (!Number.isInteger(replaceCount) || replaceCount < 0) throw new Error("Ungültige Anzahl");
       const startIndex = start - 1;
       const newDays = imported.days.map((item, offset) => normalizeImportedDay(item, startIndex + offset));
-      const ferryIndex = state.days.findIndex((item) => item.title.toLowerCase().includes("fähre") || item.title.toLowerCase().includes("faehre"));
+      const ferryIndex = state.days.findIndex(isFerryDay);
       if (ferryIndex >= 0 && startIndex <= ferryIndex) {
         if (startIndex + replaceCount > ferryIndex) throw new Error("Der Fixpunkt Fähre darf nicht ersetzt werden");
         if (newDays.length !== replaceCount) {
@@ -2945,6 +2996,10 @@ Wichtig fuer das Import-JSON:
     planChangeForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const values = Object.fromEntries(new FormData(planChangeForm));
+      if (values.type === "restore-original") {
+        createOriginalDraft().catch((error) => alert(`Originalplan konnte nicht geladen werden: ${error.message}`));
+        return;
+      }
       createDraft({
         type: values.type,
         startDay: Number(values.startDay),
@@ -2957,8 +3012,15 @@ Wichtig fuer das Import-JSON:
       const type = planChangeForm.elements.type.value;
       const nightsField = document.querySelector("#change-nights-field");
       const startDayField = document.querySelector("#change-start-day-field");
+      const placeField = document.querySelector("#change-place-field");
+      const instructionField = document.querySelector("#change-instruction-field");
+      const submit = document.querySelector("#create-suggestions");
+      const restoring = type === "restore-original";
       nightsField.hidden = !["extend", "shorten"].includes(type);
       startDayField.hidden = !["reroute", "free"].includes(type);
+      placeField.hidden = restoring;
+      instructionField.hidden = restoring;
+      submit.textContent = restoring ? "Originalplan als Entwurf laden" : "Vorschläge erstellen";
       document.querySelector("#change-nights-label").textContent = type === "shorten" ? "Weniger Nächte" : "Zusätzliche Nächte";
     });
 
@@ -2992,13 +3054,8 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelector("#reset-plan").addEventListener("click", () => {
-      if (!confirm("Den unveränderten Originalplan dieser Reise laden? Lokale Änderungen in diesem Browser werden ersetzt.")) return;
-      state.days = clone(originalBaseline);
-      activeFilter = "all";
-      clearAccommodationReview();
-      clearLocalAccommodations();
-      save("Originalplan geladen");
-      render();
+      if (!confirm("Den Originalplan als Entwurf laden? Der aktuelle Plan bleibt bis zur Veröffentlichung aktiv.")) return;
+      createOriginalDraft().catch((error) => alert(`Originalplan konnte nicht geladen werden: ${error.message}`));
     });
 
     render();

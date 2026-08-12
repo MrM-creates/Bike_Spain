@@ -894,7 +894,8 @@
 
   <script>
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
-    const storageKey = "spanien-roadbook-2026-hotels-v2";
+    const PUBLISHED_VERSION = "2026-08-12T15:43:15.999Z";
+    const storageKey = `spanien-roadbook-2026-hotels-${PUBLISHED_VERSION}`;
     const accommodationReviewKey = "spanien-roadbook-2026-accommodation-review-v1";
     const draftKey = "spanien-roadbook-2026-draft-v1";
     const publishedAccommodationState = {
@@ -1160,6 +1161,11 @@
     const routeStart = Date.UTC(2026, 8, 24);
     const routeDateForDay = (index) => routeDateFormatter.format(new Date(routeStart + index * dayMs));
     const routeIsoForDay = (index) => isoDate(new Date(routeStart + index * dayMs));
+    const isFerryDay = (item = {}) => {
+      const title = String(item.title || "").toLowerCase();
+      const type = String(item.type || "").toLowerCase();
+      return type.includes("fährtag") || type.includes("faehrtag") || ((title.includes("fähre") || title.includes("faehre")) && !title.includes("vorbereitung"));
+    };
     const normalizePlaceParts = (value) => String(value || "")
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -1229,7 +1235,7 @@
       return JSON.parse(literal);
     };
 
-    const loadRoadbookDays = async () => readLocalRoadbookDays() || fetchPublishedRoadbookDays();
+    const loadRoadbookDays = async () => activeDraft?.days || fetchPublishedRoadbookDays();
 
     const routeSummary = (days) => days.map((item, index) => ({
       day: index + 1,
@@ -1246,7 +1252,7 @@
     }));
 
     const expectedStaysFromRoute = (days) => {
-      const ferryIndex = days.findIndex((item) => (item.title || "").toLowerCase().includes("fähre") || (item.title || "").toLowerCase().includes("faehre"));
+      const ferryIndex = days.findIndex(isFerryDay);
       const endIndex = ferryIndex >= 0 ? Math.min(days.length - 1, ferryIndex + 1) : days.length - 1;
       const blocks = [];
       for (let index = 0; index <= endIndex; index += 1) {
@@ -1338,7 +1344,7 @@
 
     const buildAccommodationPrompt = async () => {
       const days = await loadRoadbookDays();
-      const ferry = routeSummary(days).find((day) => day.title.toLowerCase().includes("fähre") || day.title.toLowerCase().includes("faehre"));
+      const ferry = routeSummary(days).find(isFerryDay);
       const expectedStays = expectedStaysFromRoute(days);
       const schema = {
         reason: "kurz erklaeren, warum Unterkuenfte geaendert werden",

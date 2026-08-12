@@ -13,6 +13,8 @@ Die Vercel-Version ist der gemeinsame Reiseplan fuer beide Reisenden. GitHub `Mr
 5. Bei Bedarf `Entwurf aendern` oder `Entwurf verwerfen` waehlen.
 6. Mit `Aenderungen uebernehmen & veroeffentlichen` Route und Unterkuenfte gemeinsam publizieren.
 
+Danach bestaetigt die App den Abschluss mit `Plan aktualisiert`. `Plan aendern` verwendet beim naechsten Mal immer den aktuell veroeffentlichten Plan als Ausgangspunkt.
+
 Die App haelt die Faehre am 21.10.2026 fix und behaelt 30 Reisetage. Eine Verlaengerung macht den Plan daher nicht laenger, sondern muss vor der Faehre kompensiert werden. ChatGPT schlaegt den sinnvollsten Ausgleich vor; der User entscheidet mit der Freigabe des Entwurfs.
 
 ## Unterkuenfte
@@ -29,4 +31,4 @@ Status und Tagesnotizen koennen weiterhin direkt beim Reisetag erfasst werden. S
 
 ## Hilfe und Sicherungen
 
-Unter `Hilfe` liegen der unveraenderte Originalplan, lokale Sicherungen und der manuelle ChatGPT-/JSON-Ablauf. Sie sind Rueckfallwege, nicht der normale Planungsprozess.
+Unter `Hilfe` liegen der unveraenderte Originalplan, lokale Sicherungen und der manuelle ChatGPT-/JSON-Ablauf. `Originalplan als Entwurf` stellt Route und Unterkuenfte gemeinsam zur Pruefung bereit. Erst `Aenderungen uebernehmen & veroeffentlichen` macht ihn zum gemeinsamen Online-Plan.

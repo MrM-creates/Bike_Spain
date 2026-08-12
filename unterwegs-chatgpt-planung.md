@@ -32,7 +32,7 @@ Solange der Entwurf nicht veroeffentlicht wurde, bleibt der aktuelle Online-Plan
 
 - `Aktueller Plan`: der derzeit gemeinsame und veroeffentlichte Reiseplan.
 - `Entwurf`: ein lokal sichtbarer Vorschlag, der noch nicht online gilt.
-- `Originalplan laden`: technische Rueckfallbasis unter `Hilfe`; ersetzt nicht automatisch den gemeinsamen Online-Stand.
+- `Originalplan als Entwurf`: stellt die unveraenderte Originalroute und ihre Unterkunftskette zur Pruefung bereit. Der gemeinsame Online-Stand aendert sich erst nach der Veroeffentlichung.
 
 ## Notfallweg
 

@@ -223,7 +223,11 @@ module.exports = async (request, response) => {
     const files = [{ path: ROADBOOK_PATH, content: updatedRoadbookHtml }];
     if (accommodations) {
       const accommodationHtml = Buffer.from(currentAccommodations.content, "base64").toString("utf8");
-      files.push({ path: ACCOMMODATIONS_PATH, content: replacePublishedAccommodationState(accommodationHtml, accommodations) });
+      const updatedAccommodationHtml = bumpPublishedVersion(
+        replacePublishedAccommodationState(accommodationHtml, accommodations),
+        nextVersion
+      );
+      files.push({ path: ACCOMMODATIONS_PATH, content: updatedAccommodationHtml });
     }
     const result = await createCommit({ repo, branch, message, files });
 
