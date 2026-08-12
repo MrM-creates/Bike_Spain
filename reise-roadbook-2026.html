@@ -1189,9 +1189,9 @@
               <option value="free">Andere Änderung</option>
             </select>
           </div>
-          <div class="field">
+          <div class="field" id="change-start-day-field" hidden>
             <label for="change-start-day">Ab Reisetag</label>
-            <input id="change-start-day" name="startDay" type="number" min="1" max="27" value="1" required>
+            <input id="change-start-day" name="startDay" type="number" min="1" max="27" value="1">
           </div>
           <div class="field">
             <label for="change-place">Ort oder Etappe</label>
@@ -2985,7 +2985,9 @@ Wichtig fuer das Import-JSON:
     planChangeForm.elements.type.addEventListener("change", () => {
       const type = planChangeForm.elements.type.value;
       const nightsField = document.querySelector("#change-nights-field");
+      const startDayField = document.querySelector("#change-start-day-field");
       nightsField.hidden = !["extend", "shorten"].includes(type);
+      startDayField.hidden = !["reroute", "free"].includes(type);
       document.querySelector("#change-nights-label").textContent = type === "shorten" ? "Weniger Nächte" : "Zusätzliche Nächte";
     });
 

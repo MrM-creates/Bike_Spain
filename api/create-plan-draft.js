@@ -130,9 +130,28 @@ const createStructuredResponse = async ({ instructions, input, schema, name, web
   return JSON.parse(responseText(body));
 };
 
-const ferryIndexOf = (days) => days.findIndex((day) => /f(a|ä)hre/i.test(
-  [day?.title, day?.type, day?.overnight].filter(Boolean).join(" ")
-));
+const ferryIndexOf = (days) => days.findIndex((day) => {
+  const title = cleanText(day?.title, 180);
+  const type = cleanText(day?.type, 100);
+  const overnight = cleanText(day?.overnight, 160);
+  return /^f(a|ä)hre\b/i.test(title)
+    || /^f(a|ä)hr(tag)?$/i.test(type)
+    || /kabine auf der f(a|ä)hre/i.test(overnight);
+});
+
+const placeIndexOf = (days, place) => {
+  const target = placeKey(place);
+  if (!target) return -1;
+  const exactOvernight = days.findIndex((day) => placeKey(day.overnight) === target);
+  if (exactOvernight >= 0) return exactOvernight;
+  const exactTitle = days.findIndex((day) => placeKey(day.title) === target);
+  if (exactTitle >= 0) return exactTitle;
+  return days.findIndex((day) => {
+    const overnight = placeKey(day.overnight);
+    const title = placeKey(day.title);
+    return overnight.includes(target) || title.includes(target);
+  });
+};
 
 const normalizeInputDay = (day) => ({
   title: cleanText(day?.title, 180),
@@ -161,7 +180,7 @@ const expectedStays = (days) => {
     const startDate = isoForDay(index);
     const endDate = isoForDay(index + 1);
     const previous = blocks[blocks.length - 1];
-    if (previous && previous.title === overnight && previous.endDate === startDate) {
+    if (previous && placesMatch(previous.title, overnight) && previous.endDate === startDate) {
       previous.endDate = endDate;
       previous.nightCount += 1;
     } else {
@@ -177,6 +196,12 @@ const placeKey = (value) => cleanText(value, 200)
   .toLowerCase()
   .replace(/[^a-z0-9]+/g, " ")
   .trim();
+
+const placesMatch = (left, right) => {
+  const a = placeKey(left);
+  const b = placeKey(right);
+  return Boolean(a && b && (a === b || a.includes(b) || b.includes(a)));
+};
 
 const assignAccommodationSlots = (expected, current) => {
   const unused = new Set(current.map((stay) => stay.id).filter(Boolean));
@@ -245,7 +270,14 @@ module.exports = async (request, response) => {
     const ferryIndex = ferryIndexOf(currentDays);
     if (ferryIndex < 0 || isoForDay(ferryIndex) !== FERRY_DATE) throw new Error("Der feste Fährtermin am 21.10.2026 wurde im aktuellen Plan nicht gefunden.");
 
-    const startDay = Math.max(1, Math.min(ferryIndex, Number(payload.change?.startDay) || 1));
+    const requestedType = cleanText(payload.change?.type, 80);
+    const requestedPlace = cleanText(payload.change?.place, 160);
+    const placeBased = ["extend", "shorten", "skip"].includes(requestedType);
+    const placeIndex = placeBased ? placeIndexOf(currentDays.slice(0, ferryIndex), requestedPlace) : -1;
+    if (placeBased && placeIndex < 0) throw new Error(`Ort oder Etappe „${requestedPlace || "unbekannt"}“ wurde im aktuellen Plan nicht gefunden.`);
+    const startDay = placeBased
+      ? placeIndex + 1
+      : Math.max(1, Math.min(ferryIndex, Number(payload.change?.startDay) || 1));
     const startIndex = startDay - 1;
     const replaceCount = ferryIndex - startIndex;
     const changeTypes = {
@@ -256,8 +288,8 @@ module.exports = async (request, response) => {
       free: "Andere Aenderung"
     };
     const change = {
-      type: changeTypes[payload.change?.type] || cleanText(payload.change?.type, 80),
-      place: cleanText(payload.change?.place, 160),
+      type: changeTypes[requestedType] || requestedType,
+      place: requestedPlace,
       nights: Math.max(0, Math.min(7, Number(payload.change?.nights) || 0)),
       instruction: cleanText(payload.change?.instruction, 1200)
     };
