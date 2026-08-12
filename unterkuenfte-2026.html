@@ -525,9 +525,9 @@
         </nav>
       </div>
       <div class="topbar-context edit-only" hidden>
-        <button class="tool-button" id="accommodation-helper" type="button">Planungshilfe für ChatGPT</button>
-        <button class="tool-button" id="import-accommodations" type="button">ChatGPT-Unterkünfte übernehmen</button>
-        <button class="tool-button primary-button" id="publish-accommodations" type="button">Online veröffentlichen</button>
+        <button class="tool-button primary-button" id="accommodation-helper" type="button">Aus Roadbook planen</button>
+        <button class="tool-button" id="import-accommodations" type="button">Unterkunftsplan übernehmen</button>
+        <button class="tool-button" id="publish-accommodations" type="button">Online veröffentlichen</button>
         <a class="tool-button" href="/unterkuenfte">Fertig</a>
       </div>
     </div>
@@ -541,7 +541,7 @@
       </div>
       <div class="intro-actions">
         <span class="count">16 Stopps · 28 Nächte + Fähre</span>
-        <a class="tool-button" href="/unterkuenfte?admin=1">Unterkünfte bearbeiten</a>
+        <a class="tool-button" href="/unterkuenfte?admin=1">Unterkünfte planen</a>
       </div>
     </section>
 
@@ -553,13 +553,13 @@
 
     <p class="notice"><strong>Vor jeder Buchung schriftlich bestätigen:</strong> Platz für zwei Motorräder, nachts geschlossen oder kontrolliert, reservierbar und am Anreisetag tatsächlich zugänglich. Verfügbarkeit und Preise für 2026 sind noch nicht in jedem Buchungssystem freigeschaltet.</p>
 
-    <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Die Route ist führend. Eine geänderte Nacht kann alle folgenden Unterkünfte bis zur fixen Fähre automatisch verschieben. Bei grösseren Routenänderungen erstellt die Planungshilfe aus dem aktuellen Roadbook ein ChatGPT-Briefing für neue Unterkünfte.</p>
+    <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Die Route ist führend. Wenn sich das Roadbook ändert, sollte ChatGPT die Unterkunftskette ab der ersten Abweichung bis zur fixen Fähre neu berechnen. Einzelbearbeitung ist nur für Buchungsstatus, Notizen oder kleine Hotelwechsel gedacht.</p>
 
     <section class="route-impact" id="route-impact" hidden aria-live="polite">
       <div><strong id="route-impact-title">Roadbook geändert</strong><span id="route-impact-text">Die Unterkunftsplanung sollte mit dem aktuellen Roadbook abgeglichen werden.</span></div>
       <div class="route-impact-actions">
         <a class="tool-button" href="/unterkuenfte?admin=1">Bearbeiten</a>
-        <button class="tool-button primary-button edit-only" id="route-impact-helper" type="button" hidden>Planungshilfe starten</button>
+        <button class="tool-button primary-button edit-only" id="route-impact-helper" type="button" hidden>Unterkünfte neu planen</button>
       </div>
     </section>
 
@@ -837,7 +837,7 @@
         <button class="tool-button" type="button" id="close-accommodation-helper" aria-label="Fenster schliessen">Schliessen</button>
       </div>
       <div class="editor-body">
-        <p class="dialog-note">Diesen Text in ChatGPT kopieren. Der Chat soll die Unterkünfte entlang des aktuellen Roadbooks planen und danach JSON für den Import zurückgeben.</p>
+        <p class="dialog-note">Diesen Text in ChatGPT kopieren. Der Chat soll die Unterkunftskette aus dem aktuellen Roadbook neu ableiten und danach JSON für den Import zurückgeben.</p>
         <div class="field">
           <label for="accommodation-helper-output">Text für ChatGPT</label>
           <textarea id="accommodation-helper-output" class="large-textarea" readonly></textarea>
@@ -853,7 +853,7 @@
   <dialog id="accommodation-import-dialog" aria-labelledby="accommodation-import-title">
     <form class="editor-form" id="accommodation-import-form">
       <div class="editor-header">
-        <h2 id="accommodation-import-title">ChatGPT-Unterkünfte übernehmen</h2>
+        <h2 id="accommodation-import-title">Unterkunftsplan übernehmen</h2>
         <button class="tool-button" type="button" id="close-accommodation-import" aria-label="Fenster schliessen">Schliessen</button>
       </div>
       <div class="editor-body">
@@ -1118,6 +1118,7 @@
     const buildAccommodationPrompt = async () => {
       const days = await loadRoadbookDays();
       const ferry = routeSummary(days).find((day) => day.title.toLowerCase().includes("fähre") || day.title.toLowerCase().includes("faehre"));
+      const expectedStays = expectedStaysFromRoute(days);
       const schema = {
         reason: "kurz erklaeren, warum Unterkuenfte geaendert werden",
         stays: [{
@@ -1138,7 +1139,8 @@
       return `Ich bin auf einer Motorradreise von Berikon nach Spanien und zurueck. Die Route ist fuehrend; die Unterkuenfte muessen dem aktuellen Roadbook folgen.
 
 Ziel:
-- Plane oder aktualisiere die Unterkuenfte entlang des aktuellen Roadbooks.
+- Plane oder aktualisiere die komplette Unterkunftskette entlang des aktuellen Roadbooks.
+- Wenn Route und Unterkuenfte auseinanderlaufen, plane ab der ersten Abweichung alle folgenden Stopps bis zur fixen Faehre neu.
 - Sichere Motorradabstellung fuer zwei beladene Triumph-Motorraeder ist Pflicht.
 - Bevorzuge einfache Zufahrt, keine engen Altstadt- oder ZBE-Ziele, stornierbare Tarife und pragmatische Lagen zur Tagesroute.
 - Wenn sich nur Daten verschoben haben, nenne klar, welche bestehenden Buchungen verlaengert, verschoben oder storniert werden muessen.
@@ -1155,17 +1157,24 @@ Aktuelles Roadbook:
 ${JSON.stringify(routeSummary(days), null, 2)}
 \`\`\`
 
+Erwartete Uebernachtungsbloecke aus dem aktuellen Roadbook:
+\`\`\`json
+${JSON.stringify(expectedStays, null, 2)}
+\`\`\`
+
 Aktueller Unterkunftsstand:
 \`\`\`json
 ${JSON.stringify(accommodationSummary(), null, 2)}
 \`\`\`
 
 Arbeitsauftrag:
-1. Stelle zuerst als Text dar, welche Unterkuenfte betroffen sind und warum.
-2. Gib pro betroffener Nacht eine konkrete Empfehlung: bestehende Buchung behalten/verlaengern/aendern/stornieren oder neue Unterkunft suchen.
-3. Danach gib ein einziges JSON nach folgendem Schema aus. Dieses JSON fuege ich in der Unterkunftsseite ueber "ChatGPT-Unterkuenfte uebernehmen" ein.
-4. Nach dem Import veroeffentliche ich den Stand mit "Online veroeffentlichen". Die App schreibt dann serverseitig nach GitHub \`MrM-creates/Bike_Spain\`; Vercel-Projekt \`motorrad-roadbook-spanien-2026\` deployed automatisch.
-5. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
+1. Vergleiche zuerst "Erwartete Uebernachtungsbloecke" mit "Aktueller Unterkunftsstand".
+2. Stelle als Text dar, ab welchem Stopp die Unterkunftskette neu geplant werden muss und warum.
+3. Gib pro betroffenem Stopp eine konkrete Empfehlung: bestehende Buchung behalten/verlaengern/aendern/stornieren oder neue Unterkunft suchen.
+4. Danach gib ein einziges JSON nach folgendem Schema aus. Dieses JSON fuege ich in der Unterkunftsseite ueber "Unterkunftsplan uebernehmen" ein.
+5. Das JSON muss alle Stopps ab der ersten Abweichung bis einschliesslich letzter Unterkunft vor der Faehre enthalten. Liefere keine reine Teilkorrektur, wenn dadurch spaetere Stopps weiter falsch bleiben.
+6. Nach dem Import veroeffentliche ich den Stand mit "Online veroeffentlichen". Die App schreibt dann serverseitig nach GitHub \`MrM-creates/Bike_Spain\`; Vercel-Projekt \`motorrad-roadbook-spanien-2026\` deployed automatisch.
+7. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
 
 JSON-Schema fuer den Unterkunftsimport:
 \`\`\`json
@@ -1179,7 +1188,8 @@ Wichtig fuer das Import-JSON:
 - \`nightCount\` ist die Anzahl Naechte zwischen Anreise und Abreise.
 - \`booking\` darf leer, \`asked\` oder \`booked\` sein.
 - Setze \`hideBaseline: true\`, wenn die alten Hotelvorschlaege wegen neuer Route oder anderem Ort nicht mehr passen.
-- Bearbeite nur relevante Stopps; unveraenderte Unterkuenfte muessen nicht im JSON stehen.`;
+- Wenn ab einer Abweichung neu geplant wird, muessen alle folgenden betroffenen Stopps bis zur Faehre im JSON stehen, auch wenn einzelne Orte gleich bleiben aber andere Daten bekommen.
+- Unveraenderte Stopps vor der ersten Abweichung muessen nicht im JSON stehen.`;
     };
 
     try {
@@ -1482,7 +1492,7 @@ Wichtig fuer das Import-JSON:
       try {
         applyAccommodationImport(accommodationImportInput.value);
         accommodationImportDialog.close();
-        alert("ChatGPT-Unterkünfte übernommen. Danach bei Bedarf online veröffentlichen.");
+        alert("Unterkunftsplan übernommen. Danach bei Bedarf online veröffentlichen.");
       } catch (error) {
         alert(`Import fehlgeschlagen: ${error.message}`);
       }
