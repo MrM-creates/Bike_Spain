@@ -50,6 +50,11 @@
     }
     .topbar-inner {
       min-height: 68px;
+      display: grid;
+      gap: 8px;
+      padding: 10px 0;
+    }
+    .topbar-main {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -81,6 +86,15 @@
       color: #fff;
     }
     .nav-link:hover { border-color: var(--accent); }
+    .topbar-context {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(217, 221, 214, .75);
+    }
+    .topbar-context[hidden] { display: none !important; }
 
     main { padding: 36px 0 64px; }
     .intro {
@@ -98,6 +112,12 @@
     }
     .intro p { max-width: 690px; margin: 0; color: var(--muted); font-size: 17px; }
     .count { color: var(--muted); font-size: 14px; white-space: nowrap; }
+    .intro-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 8px;
+    }
 
     .principles {
       display: grid;
@@ -253,6 +273,107 @@
       cursor: pointer;
     }
     .state-button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+    .edit-stay {
+      min-height: 34px;
+      padding: 0 10px;
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 760;
+      cursor: pointer;
+    }
+    .stay-note {
+      margin: 12px 0 0;
+      padding: 10px 12px;
+      border-left: 3px solid var(--blue);
+      background: var(--blue-soft);
+      color: #244a70;
+      font-size: 13px;
+    }
+    .custom-hotels {
+      display: grid;
+      gap: 8px;
+      margin: 12px 0 0;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fafbf8;
+    }
+    .custom-hotels div { min-width: 0; }
+    .custom-hotels strong {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+    .custom-hotels span {
+      display: block;
+      color: var(--text);
+      font-size: 13px;
+    }
+
+    .tool-button {
+      min-height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .tool-button.primary-button { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    dialog {
+      width: min(640px, calc(100% - 24px));
+      max-height: calc(100vh - 32px);
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius);
+      box-shadow: 0 20px 70px rgba(23, 32, 25, .24);
+    }
+    dialog::backdrop { background: rgba(23, 32, 25, .54); }
+    .editor-form { display: flex; flex-direction: column; max-height: calc(100vh - 32px); }
+    .editor-header,
+    .editor-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 18px;
+      background: var(--surface);
+    }
+    .editor-header { border-bottom: 1px solid var(--border); }
+    .editor-footer { border-top: 1px solid var(--border); justify-content: flex-end; }
+    .editor-header h2 { margin: 0; font-size: 19px; }
+    .editor-body { overflow-y: auto; padding: 18px; background: var(--bg); }
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .field { display: grid; gap: 5px; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { color: #465048; font-size: 12px; font-weight: 720; }
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      min-height: 42px;
+      padding: 9px 10px;
+      border: 1px solid #cbd1cb;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+    }
+    .field textarea { min-height: 76px; resize: vertical; }
 
     .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     .hotel { min-width: 0; padding-top: 12px; border-top: 1px solid var(--border); }
@@ -305,10 +426,14 @@
     @media (max-width: 760px) {
       .topbar-inner { min-height: 58px; }
       .topbar-inner { align-items: stretch; flex-direction: column; justify-content: center; padding: 10px 0; }
+      .topbar-main { align-items: stretch; flex-direction: column; gap: 8px; }
       .topbar-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
       .nav-link { justify-content: center; width: 100%; min-width: 0; padding: 0 8px; font-size: 12px; }
+      .topbar-context { align-items: stretch; flex-direction: column; }
+      .tool-button { min-height: 44px; }
       main { padding-top: 24px; }
       .intro { grid-template-columns: 1fr; gap: 10px; }
+      .intro-actions { justify-content: flex-start; }
       .principles { grid-template-columns: 1fr; }
       .principles div { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.16); }
       .principles div:last-child { border-bottom: 0; }
@@ -326,21 +451,32 @@
       .brand { font-size: 15px; }
       h1 { font-size: 30px; }
       .stay-head { display: block; }
-      .booking-state { margin-top: 12px; }
+      .booking-state { flex-wrap: wrap; margin-top: 12px; }
       .state-button { flex: 1; }
+      .edit-stay { flex: 1 1 100%; min-height: 38px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .editor-footer { flex-wrap: wrap; }
+      .editor-footer .tool-button { flex: 1 1 160px; }
     }
   </style>
 </head>
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand">Motorrad-Roadbook</div>
-      <nav class="topbar-nav" aria-label="Hauptnavigation">
-        <a class="nav-link" href="/">Fahren</a>
-        <a class="nav-link" href="/?admin=1">Planen</a>
-        <a class="nav-link" href="/unterkuenfte" aria-current="page">Unterkünfte</a>
-        <a class="nav-link" href="/#hilfe">Hilfe</a>
-      </nav>
+      <div class="topbar-main">
+        <div class="brand">Motorrad-Roadbook</div>
+        <nav class="topbar-nav" aria-label="Hauptnavigation">
+          <a class="nav-link" href="/">Fahren</a>
+          <a class="nav-link" href="/?admin=1">Planen</a>
+          <a class="nav-link" href="/unterkuenfte" aria-current="page">Unterkünfte</a>
+          <a class="nav-link" href="/#hilfe">Hilfe</a>
+        </nav>
+      </div>
+      <div class="topbar-context edit-only" hidden>
+        <button class="tool-button primary-button" id="publish-accommodations" type="button">Online veröffentlichen</button>
+        <a class="tool-button" href="/unterkuenfte">Fertig</a>
+      </div>
     </div>
   </header>
 
@@ -350,7 +486,10 @@
         <h1>Motorradtauglich übernachten</h1>
         <p>Eine konkrete erste Wahl und eine Alternative je Reisestopp. Entscheidend sind sichere Motorradabstellung, einfache Zufahrt und eine sinnvolle Lage zur Tagesroute.</p>
       </div>
-      <div class="count">16 Stopps · 28 Nächte + Fähre</div>
+      <div class="intro-actions">
+        <span class="count">16 Stopps · 28 Nächte + Fähre</span>
+        <a class="tool-button" href="/unterkuenfte?admin=1">Unterkünfte bearbeiten</a>
+      </div>
     </section>
 
     <section class="principles" aria-label="Auswahlkriterien">
@@ -601,9 +740,104 @@
     Recherche-Stand: 1. August 2026. Parkplatzangaben stammen von den verlinkten Hotel- oder Tourismus-Seiten; sie ersetzen keine individuelle Bestätigung für zwei Motorräder. Preise und Verfügbarkeit können sich ändern.
   </footer>
 
+  <dialog id="stay-editor" aria-labelledby="stay-editor-title">
+    <form class="editor-form" id="stay-editor-form">
+      <div class="editor-header">
+        <h2 id="stay-editor-title">Unterkunft bearbeiten</h2>
+        <button class="tool-button" type="button" id="close-stay-editor" aria-label="Fenster schliessen">Schliessen</button>
+      </div>
+      <div class="editor-body">
+        <div class="form-grid">
+          <div class="field"><label for="edit-date">Datum</label><input id="edit-date" name="date"></div>
+          <div class="field"><label for="edit-nights">Nächte</label><input id="edit-nights" name="nights"></div>
+          <div class="field full"><label for="edit-title">Ort / Stopp</label><input id="edit-title" name="title"></div>
+          <div class="field full"><label for="edit-base-note">Basisnotiz</label><input id="edit-base-note" name="baseNote"></div>
+          <div class="field"><label for="edit-booking">Status</label><select id="edit-booking" name="booking"><option value="">Offen</option><option value="asked">Angefragt</option><option value="booked">Gebucht</option></select></div>
+          <div class="field full"><label for="edit-first-choice">Aktuelle erste Wahl</label><input id="edit-first-choice" name="firstChoice" placeholder="z. B. Hotelname oder Airbnb"></div>
+          <div class="field full"><label for="edit-alternative">Aktuelle Alternative</label><input id="edit-alternative" name="alternative"></div>
+          <div class="field full"><label for="edit-note">Unterkunftsnotiz</label><textarea id="edit-note" name="note" placeholder="z. B. zusätzliche Nacht, Hotelwechsel, Garage bestätigt, Buchungsnummer ..."></textarea></div>
+        </div>
+      </div>
+      <div class="editor-footer">
+        <button class="tool-button" type="button" id="cancel-stay-editor">Abbrechen</button>
+        <button class="tool-button primary-button" type="submit">Speichern</button>
+      </div>
+    </form>
+  </dialog>
+
   <script>
-    const storageKey = "spanien-roadbook-2026-hotels-v1";
-    const state = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
+    const storageKey = "spanien-roadbook-2026-hotels-v2";
+    const publishedAccommodationState = {};
+    let state = { ...publishedAccommodationState };
+    let editingStayId = "";
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+      if (saved && typeof saved === "object") state = { ...state, ...saved };
+    } catch (_) {}
+
+    const stayEditor = document.querySelector("#stay-editor");
+    const stayEditorForm = document.querySelector("#stay-editor-form");
+
+    const saveState = () => {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    };
+
+    const getStayBaseline = (stay) => ({
+      date: stay.querySelector(".stay-date strong")?.textContent.trim() || "",
+      nights: stay.querySelector(".stay-date span")?.textContent.trim() || "",
+      title: stay.querySelector("h2")?.textContent.trim() || "",
+      baseNote: stay.querySelector(".base-note")?.childNodes[0]?.textContent.trim() || "",
+      booking: state[stay.dataset.stay]?.booking || "",
+      firstChoice: "",
+      alternative: "",
+      note: ""
+    });
+
+    const applyStay = (stay) => {
+      const id = stay.dataset.stay;
+      const data = state[id] || {};
+      const date = data.date || stay.dataset.baseDate;
+      const nights = data.nights || stay.dataset.baseNights;
+      const title = data.title || stay.dataset.baseTitle;
+      const baseNote = data.baseNote || stay.dataset.baseNote;
+      stay.querySelector(".stay-date strong").textContent = date;
+      stay.querySelector(".stay-date span").textContent = nights;
+      stay.querySelector("h2").textContent = title;
+      const baseNoteElement = stay.querySelector(".base-note");
+      const guidance = baseNoteElement.querySelector(".booking-advice");
+      baseNoteElement.textContent = baseNote;
+      if (guidance) baseNoteElement.append(guidance);
+
+      let customHotels = stay.querySelector(".custom-hotels");
+      if (!customHotels) {
+        customHotels = document.createElement("div");
+        customHotels.className = "custom-hotels";
+        stay.querySelector(".options").before(customHotels);
+      }
+      customHotels.innerHTML = "";
+      [["Aktuelle erste Wahl", data.firstChoice], ["Aktuelle Alternative", data.alternative]].forEach(([label, value]) => {
+        if (!value) return;
+        const item = document.createElement("div");
+        const strong = document.createElement("strong");
+        strong.textContent = label;
+        const span = document.createElement("span");
+        span.textContent = value;
+        item.append(strong, span);
+        customHotels.append(item);
+      });
+      customHotels.hidden = !customHotels.children.length;
+
+      let note = stay.querySelector(".stay-note");
+      if (!note) {
+        note = document.createElement("p");
+        note.className = "stay-note";
+        stay.querySelector(".options").before(note);
+      }
+      note.textContent = data.note || "";
+      note.hidden = !data.note;
+    };
 
     const bookingGuidance = {
       grenoble: ["Jetzt reservieren · erste Nacht", "now"],
@@ -616,9 +850,24 @@
       "aosta-como": ["Später entscheiden · wetterabhängig", "later"]
     };
 
+    const openStayEditor = (stay) => {
+      editingStayId = stay.dataset.stay;
+      const data = { ...getStayBaseline(stay), ...(state[editingStayId] || {}) };
+      Object.entries(data).forEach(([key, value]) => {
+        if (stayEditorForm.elements[key]) stayEditorForm.elements[key].value = value || "";
+      });
+      document.querySelector("#stay-editor-title").textContent = `${data.title || "Unterkunft"} bearbeiten`;
+      stayEditor.showModal();
+      stayEditorForm.elements.date.focus();
+    };
+
     document.querySelectorAll(".stay").forEach((stay) => {
       const id = stay.dataset.stay;
-      const current = state[id] || "";
+      const current = state[id]?.booking || "";
+      stay.dataset.baseDate = stay.querySelector(".stay-date strong")?.textContent.trim() || "";
+      stay.dataset.baseNights = stay.querySelector(".stay-date span")?.textContent.trim() || "";
+      stay.dataset.baseTitle = stay.querySelector("h2")?.textContent.trim() || "";
+      stay.dataset.baseNote = stay.querySelector(".base-note")?.textContent.trim() || "";
       const [guidance, guidanceClass] = bookingGuidance[id] || ["Flexibel reservieren · stornierbarer Tarif", ""];
       const guidanceBadge = document.createElement("span");
       guidanceBadge.className = `booking-advice ${guidanceClass}`.trim();
@@ -627,14 +876,64 @@
       stay.querySelectorAll(".state-button").forEach((button) => {
         button.setAttribute("aria-pressed", String(button.dataset.state === current));
         button.addEventListener("click", () => {
-          const next = state[id] === button.dataset.state ? "" : button.dataset.state;
-          state[id] = next;
-          localStorage.setItem(storageKey, JSON.stringify(state));
+          const next = state[id]?.booking === button.dataset.state ? "" : button.dataset.state;
+          state[id] = { ...(state[id] || {}), booking: next };
+          if (!next) delete state[id].booking;
+          if (!Object.keys(state[id]).length) delete state[id];
+          saveState();
           stay.querySelectorAll(".state-button").forEach((candidate) => {
             candidate.setAttribute("aria-pressed", String(candidate.dataset.state === next));
           });
         });
       });
+      if (ADMIN_MODE) {
+        const editButton = document.createElement("button");
+        editButton.className = "edit-stay";
+        editButton.type = "button";
+        editButton.textContent = "Bearbeiten";
+        editButton.addEventListener("click", () => openStayEditor(stay));
+        stay.querySelector(".booking-state")?.append(editButton);
+      }
+      applyStay(stay);
+    });
+
+    document.querySelectorAll(".edit-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
+    document.querySelector("#close-stay-editor").addEventListener("click", () => stayEditor.close());
+    document.querySelector("#cancel-stay-editor").addEventListener("click", () => stayEditor.close());
+    stayEditorForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const values = Object.fromEntries(new FormData(stayEditorForm));
+      state[editingStayId] = Object.fromEntries(
+        Object.entries(values)
+          .map(([key, value]) => [key, String(value || "").trim()])
+          .filter(([, value]) => value)
+      );
+      if (!Object.keys(state[editingStayId]).length) delete state[editingStayId];
+      saveState();
+      applyStay(document.querySelector(`.stay[data-stay="${editingStayId}"]`));
+      stayEditor.close();
+    });
+
+    document.querySelector("#publish-accommodations")?.addEventListener("click", async () => {
+      const secret = prompt("Publish-PIN eingeben");
+      if (secret === null) return;
+      const reason = prompt("Kurzer Grund für die Veröffentlichung", "Unterkünfte unterwegs aktualisiert");
+      if (reason === null) return;
+      try {
+        const response = await fetch("/api/publish-accommodations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ secret, reason, accommodations: state })
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
+        alert(`Unterkünfte veröffentlicht.\nCommit: ${result.commit || "unbekannt"}\nVercel deployed jetzt automatisch.`);
+        const target = new URL(window.location.href);
+        target.searchParams.set("refresh", result.commit || Date.now().toString());
+        window.location.href = target.toString();
+      } catch (error) {
+        alert(`Online-Veröffentlichung fehlgeschlagen: ${error.message}`);
+      }
     });
   </script>
 </body>
