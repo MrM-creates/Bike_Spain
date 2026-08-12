@@ -1,6 +1,7 @@
 const DEFAULT_REPO = "MrM-creates/Bike_Spain";
 const DEFAULT_BRANCH = "main";
 const ROADBOOK_PATH = "reise-roadbook-2026.html";
+const ACCOMMODATIONS_PATH = "unterkuenfte-2026.html";
 
 const json = (response, status, body) => {
   response.statusCode = status;
@@ -58,6 +59,28 @@ const normalizeDay = (day) => {
   return output;
 };
 
+const normalizeAccommodationEntry = (entry) => {
+  const allowed = ["booking", "date", "nights", "startDate", "endDate", "nightCount", "title", "baseNote", "firstChoice", "firstChoiceUrl", "alternative", "alternativeUrl", "note", "hideBaseline", "inactive"];
+  const output = {};
+  allowed.forEach((key) => {
+    if (entry?.[key] !== undefined && entry[key] !== null) {
+      const value = String(entry[key]).trim();
+      if (value) output[key] = value;
+    }
+  });
+  if (output.booking && !["asked", "booked"].includes(output.booking)) delete output.booking;
+  return output;
+};
+
+const normalizeAccommodationState = (input) => {
+  if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("Unterkunftsdaten muessen ein Objekt sein.");
+  return Object.fromEntries(
+    Object.entries(input)
+      .map(([key, value]) => [String(key).trim(), normalizeAccommodationEntry(value)])
+      .filter(([key, value]) => key && Object.keys(value).length)
+  );
+};
+
 const findArrayEnd = (source, startIndex) => {
   let depth = 0;
   let quote = "";
@@ -102,6 +125,54 @@ const bumpStorageKey = (html) => {
   );
 };
 
+const publishedVersion = (html) => html.match(/const PUBLISHED_VERSION = "([^"]+)";/)?.[1] || "legacy";
+
+const bumpPublishedVersion = (html, version) => {
+  const statement = `const PUBLISHED_VERSION = "${version}";`;
+  if (/const PUBLISHED_VERSION = "[^"]+";/.test(html)) {
+    return html.replace(/const PUBLISHED_VERSION = "[^"]+";/, statement);
+  }
+  return html.replace(/(const STORAGE_KEY = "[^"]+";)/, `${statement}\n    $1`);
+};
+
+const replacePublishedAccommodationState = (html, state) => {
+  const marker = "const publishedAccommodationState = ";
+  const start = html.indexOf(marker);
+  if (start < 0) throw new Error("publishedAccommodationState wurde nicht gefunden.");
+  const statementEnd = html.indexOf(";\n", start);
+  if (statementEnd < 0) throw new Error("publishedAccommodationState konnte nicht vollstaendig gelesen werden.");
+  const serialized = JSON.stringify(state, null, 6).replace(/\n/g, "\n    ");
+  return `${html.slice(0, start)}const publishedAccommodationState = ${serialized};${html.slice(statementEnd + 1)}`;
+};
+
+const createCommit = async ({ repo, branch, message, files }) => {
+  const refPath = `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`;
+  const ref = await githubRequest(refPath);
+  const headSha = ref.object.sha;
+  const headCommit = await githubRequest(`/repos/${repo}/git/commits/${headSha}`);
+  const treeItems = [];
+  for (const file of files) {
+    const blob = await githubRequest(`/repos/${repo}/git/blobs`, {
+      method: "POST",
+      body: JSON.stringify({ content: file.content, encoding: "utf-8" })
+    });
+    treeItems.push({ path: file.path, mode: "100644", type: "blob", sha: blob.sha });
+  }
+  const tree = await githubRequest(`/repos/${repo}/git/trees`, {
+    method: "POST",
+    body: JSON.stringify({ base_tree: headCommit.tree.sha, tree: treeItems })
+  });
+  const commit = await githubRequest(`/repos/${repo}/git/commits`, {
+    method: "POST",
+    body: JSON.stringify({ message, tree: tree.sha, parents: [headSha] })
+  });
+  await githubRequest(`/repos/${repo}/git/refs/heads/${encodeURIComponent(branch)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ sha: commit.sha, force: false })
+  });
+  return commit;
+};
+
 module.exports = async (request, response) => {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
@@ -129,35 +200,41 @@ module.exports = async (request, response) => {
     }
 
     const days = payload.days.map(normalizeDay);
+    const accommodations = payload.accommodations ? normalizeAccommodationState(payload.accommodations) : null;
     const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
     const branch = process.env.GITHUB_BRANCH || DEFAULT_BRANCH;
-    const encodedPath = encodeURIComponent(ROADBOOK_PATH);
-    const contentPath = `/repos/${repo}/contents/${encodedPath}`;
-    const current = await githubRequest(`${contentPath}?ref=${encodeURIComponent(branch)}`);
-    const html = Buffer.from(current.content, "base64").toString("utf8");
-    const updatedHtml = bumpStorageKey(replaceCurrentDays(html, days));
+    const [currentRoadbook, currentAccommodations] = await Promise.all([
+      githubRequest(`/repos/${repo}/contents/${encodeURIComponent(ROADBOOK_PATH)}?ref=${encodeURIComponent(branch)}`),
+      accommodations ? githubRequest(`/repos/${repo}/contents/${encodeURIComponent(ACCOMMODATIONS_PATH)}?ref=${encodeURIComponent(branch)}`) : null
+    ]);
+    const roadbookHtml = Buffer.from(currentRoadbook.content, "base64").toString("utf8");
+    const currentVersion = publishedVersion(roadbookHtml);
+    if (payload.baseVersion && String(payload.baseVersion) !== currentVersion) {
+      json(response, 409, { error: "Der Online-Plan wurde inzwischen geändert. Lade den aktuellen Stand und erstelle den Entwurf erneut." });
+      return;
+    }
+    const nextVersion = new Date().toISOString();
+    const updatedRoadbookHtml = bumpPublishedVersion(bumpStorageKey(replaceCurrentDays(roadbookHtml, days)), nextVersion);
 
     const message = payload.reason
       ? `Update roadbook plan: ${String(payload.reason).slice(0, 140)}`
       : "Update roadbook plan";
 
-    const result = await githubRequest(contentPath, {
-      method: "PUT",
-      body: JSON.stringify({
-        message,
-        content: Buffer.from(updatedHtml, "utf8").toString("base64"),
-        sha: current.sha,
-        branch
-      })
-    });
+    const files = [{ path: ROADBOOK_PATH, content: updatedRoadbookHtml }];
+    if (accommodations) {
+      const accommodationHtml = Buffer.from(currentAccommodations.content, "base64").toString("utf8");
+      files.push({ path: ACCOMMODATIONS_PATH, content: replacePublishedAccommodationState(accommodationHtml, accommodations) });
+    }
+    const result = await createCommit({ repo, branch, message, files });
 
     json(response, 200, {
       ok: true,
-      commit: result.commit?.sha || null,
+      commit: result.sha || null,
       message,
       branch,
       repo,
-      path: ROADBOOK_PATH
+      paths: files.map((file) => file.path),
+      version: nextVersion
     });
   } catch (error) {
     json(response, error.status || 500, {

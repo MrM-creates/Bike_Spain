@@ -167,6 +167,10 @@
     .route-impact[hidden] { display: none !important; }
     .route-impact strong { display: block; margin-bottom: 3px; color: #553509; }
     .route-impact-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    #plan-view-state { border-color: #c9d7e5; background: var(--blue-soft); color: #244a70; }
+    #plan-view-state strong { color: #244a70; }
+    #plan-view-state.draft-state { border-color: #ecd6b5; background: var(--amber-soft); color: #67400f; }
+    #plan-view-state.draft-state strong { color: #553509; }
 
     .booking-plan {
       margin: 0 0 22px;
@@ -329,6 +333,14 @@
       display: block;
       color: var(--text);
       font-size: 13px;
+    }
+    .custom-hotels a {
+      display: inline-block;
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 720;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
     }
     .schedule-warning {
       margin: 12px 0 0;
@@ -519,12 +531,12 @@
         <div class="brand">Motorrad-Roadbook</div>
         <nav class="topbar-nav" aria-label="Hauptnavigation">
           <a class="nav-link" href="/">Fahren</a>
-          <a class="nav-link" href="/?admin=1">Planen</a>
+          <a class="nav-link" href="/?admin=1#plan-aendern">Plan ändern</a>
           <a class="nav-link" href="/unterkuenfte" aria-current="page">Unterkünfte</a>
           <a class="nav-link" href="/#hilfe">Hilfe</a>
         </nav>
       </div>
-      <div class="topbar-context edit-only" hidden>
+      <div class="topbar-context" hidden>
         <button class="tool-button primary-button" id="accommodation-helper" type="button">Aus Roadbook planen</button>
         <button class="tool-button" id="import-accommodations" type="button">Unterkunftsplan übernehmen</button>
         <button class="tool-button" id="publish-accommodations" type="button">Online veröffentlichen</button>
@@ -542,7 +554,14 @@
       </div>
       <div class="intro-actions">
         <span class="count">16 Stopps · 28 Nächte + Fähre</span>
-        <a class="tool-button" href="/unterkuenfte?admin=1">Unterkünfte planen</a>
+        <a class="tool-button" href="/?admin=1#plan-aendern">Plan ändern</a>
+      </div>
+    </section>
+
+    <section class="route-impact" id="plan-view-state" aria-live="polite">
+      <div><strong id="plan-view-state-title">Aktueller Plan</strong><span id="plan-view-state-text">Diese Unterkünfte gehören zum gemeinsamen Online-Plan.</span></div>
+      <div class="route-impact-actions">
+        <a class="tool-button" id="plan-view-state-link" href="/">Zum Roadbook</a>
       </div>
     </section>
 
@@ -820,7 +839,9 @@
           <div class="field full"><label for="edit-base-note">Basisnotiz</label><input id="edit-base-note" name="baseNote"></div>
           <div class="field"><label for="edit-booking">Status</label><select id="edit-booking" name="booking"><option value="">Offen</option><option value="asked">Angefragt</option><option value="booked">Gebucht</option></select></div>
           <div class="field full"><label for="edit-first-choice">Aktuelle erste Wahl</label><input id="edit-first-choice" name="firstChoice" placeholder="z. B. Hotelname oder Airbnb"></div>
+          <div class="field full"><label for="edit-first-choice-url">Link zur ersten Wahl</label><input id="edit-first-choice-url" name="firstChoiceUrl" type="url" placeholder="https://..."></div>
           <div class="field full"><label for="edit-alternative">Aktuelle Alternative</label><input id="edit-alternative" name="alternative"></div>
+          <div class="field full"><label for="edit-alternative-url">Link zur Alternative</label><input id="edit-alternative-url" name="alternativeUrl" type="url" placeholder="https://..."></div>
           <div class="field full"><label for="edit-note">Unterkunftsnotiz</label><textarea id="edit-note" name="note" placeholder="z. B. zusätzliche Nacht, Hotelwechsel, Garage bestätigt, Buchungsnummer ..."></textarea></div>
         </div>
       </div>
@@ -875,8 +896,10 @@
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
     const storageKey = "spanien-roadbook-2026-hotels-v2";
     const accommodationReviewKey = "spanien-roadbook-2026-accommodation-review-v1";
+    const draftKey = "spanien-roadbook-2026-draft-v1";
     const publishedAccommodationState = {};
     let state = { ...publishedAccommodationState };
+    let activeDraft = null;
     let editingStayId = "";
     const dayMs = 86400000;
     const fixedStayId = "ferry";
@@ -1069,7 +1092,9 @@
         nightCount: schedule.nightCount,
         booking: data.booking || "",
         currentFirstChoice: data.firstChoice || "",
+        currentFirstChoiceUrl: data.firstChoiceUrl || "",
         currentAlternative: data.alternative || "",
+        currentAlternativeUrl: data.alternativeUrl || "",
         currentNote: data.note || "",
         baselineNote: data.baseNote || stay?.dataset.baseNote || ""
       };
@@ -1095,6 +1120,10 @@
     };
 
     const updateRouteImpact = async () => {
+      if (activeDraft) {
+        routeImpact.hidden = true;
+        return;
+      }
       const review = localReview();
       let mismatches = [];
       try {
@@ -1131,7 +1160,9 @@
           nightCount: 2,
           booking: "",
           firstChoice: "konkrete erste Wahl mit Garage",
+          firstChoiceUrl: "https://hotel.example/",
           alternative: "konkrete Alternative",
+          alternativeUrl: "https://alternative.example/",
           note: "Was ist zu tun, z. B. Buchung verlaengern, neu suchen, bestehende Buchung stornieren",
           hideBaseline: false
         }]
@@ -1197,6 +1228,13 @@ Wichtig fuer das Import-JSON:
       const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
       if (saved && typeof saved === "object") state = { ...state, ...saved };
     } catch (_) {}
+    try {
+      const savedDraft = JSON.parse(localStorage.getItem(draftKey) || "null");
+      if (savedDraft?.days?.length && savedDraft?.accommodations) {
+        activeDraft = savedDraft;
+        state = { ...state, ...savedDraft.accommodations };
+      }
+    } catch (_) {}
 
     const stayEditor = document.querySelector("#stay-editor");
     const stayEditorForm = document.querySelector("#stay-editor-form");
@@ -1239,13 +1277,26 @@ Wichtig fuer das Import-JSON:
       baseNote: stay.querySelector(".base-note")?.childNodes[0]?.textContent.trim() || "",
       booking: state[stay.dataset.stay]?.booking || "",
       firstChoice: "",
+      firstChoiceUrl: "",
       alternative: "",
+      alternativeUrl: "",
       note: ""
     });
+
+    const safeExternalUrl = (value) => {
+      try {
+        const url = new URL(String(value || ""));
+        return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+      } catch (_) {
+        return "";
+      }
+    };
 
     const applyStay = (stay) => {
       const id = stay.dataset.stay;
       const data = state[id] || {};
+      stay.hidden = data.inactive === true || data.inactive === "true";
+      if (stay.hidden) return;
       const schedule = staySchedule(id);
       const date = data.date || dateRangeLabel(schedule.startDate, schedule.endDate);
       const nights = data.nights || nightLabel(schedule.nightCount, id);
@@ -1266,14 +1317,23 @@ Wichtig fuer das Import-JSON:
         stay.querySelector(".options").before(customHotels);
       }
       customHotels.innerHTML = "";
-      [["Aktuelle erste Wahl", data.firstChoice], ["Aktuelle Alternative", data.alternative]].forEach(([label, value]) => {
+      [
+        ["Aktuelle erste Wahl", data.firstChoice, data.firstChoiceUrl],
+        ["Aktuelle Alternative", data.alternative, data.alternativeUrl]
+      ].forEach(([label, value, url]) => {
         if (!value) return;
         const item = document.createElement("div");
         const strong = document.createElement("strong");
         strong.textContent = label;
-        const span = document.createElement("span");
-        span.textContent = value;
-        item.append(strong, span);
+        const safeUrl = safeExternalUrl(url);
+        const detail = safeUrl ? document.createElement("a") : document.createElement("span");
+        detail.textContent = value;
+        if (safeUrl) {
+          detail.href = safeUrl;
+          detail.target = "_blank";
+          detail.rel = "noopener noreferrer";
+        }
+        item.append(strong, detail);
         customHotels.append(item);
       });
       customHotels.hidden = !customHotels.children.length;
@@ -1372,6 +1432,14 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelectorAll(".edit-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
+    if (activeDraft) {
+      document.querySelector("#plan-view-state").classList.add("draft-state");
+      document.querySelector("#plan-view-state-title").textContent = "Entwurf";
+      document.querySelector("#plan-view-state-text").textContent = "Diese Unterkünfte gehören zum noch nicht veröffentlichten Routenvorschlag.";
+      document.querySelector("#plan-view-state-link").textContent = "Entwurf prüfen";
+      document.querySelector("#plan-view-state-link").href = "/?admin=1";
+      document.querySelector("#route-impact").hidden = true;
+    }
     updateRouteImpact();
     document.querySelector("#close-stay-editor").addEventListener("click", () => stayEditor.close());
     document.querySelector("#cancel-stay-editor").addEventListener("click", () => stayEditor.close());
@@ -1416,7 +1484,9 @@ Wichtig fuer das Import-JSON:
         baseNote: item.baseNote || "",
         booking: item.booking || "",
         firstChoice: item.firstChoice || "",
+        firstChoiceUrl: item.firstChoiceUrl || "",
         alternative: item.alternative || "",
+        alternativeUrl: item.alternativeUrl || "",
         note: item.note || "",
         hideBaseline: item.hideBaseline ? "true" : ""
       };

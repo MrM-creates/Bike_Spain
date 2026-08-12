@@ -183,6 +183,60 @@
 
     .legend .rest-key::before { background: var(--rest); }
 
+    .plan-workflow {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 18px;
+      margin: 0 0 20px;
+      padding: 16px 18px;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 1px 0 rgba(23, 32, 25, 0.03);
+    }
+
+    .plan-workflow.is-draft {
+      border-left-color: var(--option);
+      background: #fffdf8;
+    }
+
+    .plan-state-line { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+    .plan-state-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 25px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 780;
+    }
+    .is-draft .plan-state-badge { background: var(--option-soft); color: #7d4a0d; }
+    .plan-workflow h2 { margin: 0; font-size: 17px; }
+    .plan-workflow p { margin: 0; color: var(--muted); font-size: 13px; }
+    .plan-workflow-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 7px; }
+
+    .draft-details {
+      grid-column: 1 / -1;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .draft-details[hidden] { display: none; }
+    .draft-decision { margin: 0 0 10px !important; color: var(--text) !important; font-weight: 700; }
+    .draft-summary { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
+    .draft-summary li { position: relative; padding-left: 18px; color: #3f4942; font-size: 13px; }
+    .draft-summary li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+    .draft-open { margin-top: 12px; padding: 10px 12px; background: var(--option-soft); color: #71430d; font-size: 13px; }
+
+    .change-form { display: grid; gap: 14px; }
+    .change-form .form-grid { align-items: end; }
+    .planning-progress { margin: 12px 0 0; color: var(--accent); font-size: 13px; font-weight: 700; }
+    .planning-progress[hidden] { display: none; }
+    .legacy-planning { display: none !important; }
+
     .glossary {
       margin: 0 0 20px;
       background: var(--surface);
@@ -884,6 +938,9 @@
       .topbar-context { align-items: stretch; flex-direction: column; }
       main { padding-top: 24px; }
       .intro { grid-template-columns: 1fr; gap: 14px; }
+      .plan-workflow { grid-template-columns: 1fr; align-items: stretch; }
+      .plan-workflow-actions { justify-content: stretch; }
+      .plan-workflow-actions .tool-button { flex: 1 1 170px; min-height: 44px; height: auto; }
       .accommodation-impact { align-items: flex-start; flex-direction: column; }
       .legend { white-space: normal; }
       .glossary-grid { grid-template-columns: 1fr; }
@@ -950,22 +1007,22 @@
         <div class="topbar-menu">
           <nav class="topbar-nav" aria-label="Hauptnavigation">
             <button class="nav-button" id="nav-drive" type="button">Fahren</button>
-            <button class="nav-button" id="nav-plan" type="button">Planen</button>
+            <button class="nav-button" id="nav-plan" type="button">Plan ändern</button>
             <a class="topbar-link" href="/unterkuenfte">Unterkünfte</a>
             <button class="nav-button" id="nav-help" type="button">Hilfe</button>
           </nav>
           <button class="nav-button nav-icon" id="refresh-roadbook" type="button" aria-label="Online-Stand laden" title="Online-Stand laden" data-help="Lädt die veröffentlichte Vercel-Version neu.">↻</button>
         </div>
       </div>
-      <div class="topbar-context planning-only" aria-label="Planungsaktionen" hidden>
+      <div class="topbar-context legacy-planning" aria-label="Erweiterte Planungsaktionen" hidden>
         <div class="planning-actions">
           <div class="planning-group">
             <span class="planning-group-label">Planen</span>
             <div class="planning-group-actions">
-              <button class="tool-button" id="planning-helper" type="button" data-help="Erstellt einen fertigen Text für ChatGPT mit aktuellem Roadbook-Ausschnitt, Regeln und Rückspiel-Anweisung.">Planungshilfe für ChatGPT</button>
-              <button class="tool-button" id="import-chatgpt-plan" type="button" data-help="Fügt ein JSON aus ChatGPT ein und ersetzt die angegebenen Tage im Roadbook.">ChatGPT-Plan übernehmen</button>
-              <button class="tool-button primary-button" id="publish-roadbook" type="button" data-help="Veröffentlicht den aktuellen Plan nach GitHub. Vercel deployed danach automatisch.">Online veröffentlichen</button>
-              <button class="tool-button" id="add-day" type="button" data-help="Fügt am Ende einen neuen Tag hinzu. Danach kann er mit Pfeilen verschoben werden.">Tag hinzufügen</button>
+              <button class="tool-button" id="planning-helper" type="button">Planungshilfe für ChatGPT</button>
+              <button class="tool-button" id="import-chatgpt-plan" type="button">ChatGPT-Plan übernehmen</button>
+              <button class="tool-button primary-button" id="publish-roadbook" type="button">Online veröffentlichen</button>
+              <button class="tool-button" id="add-day" type="button">Tag hinzufügen</button>
             </div>
           </div>
         </div>
@@ -986,6 +1043,26 @@
       </div>
     </section>
 
+    <section class="plan-workflow" id="plan-workflow" aria-live="polite">
+      <div>
+        <div class="plan-state-line">
+          <span class="plan-state-badge" id="plan-state-badge">Aktueller Plan</span>
+          <h2 id="plan-workflow-title">Gemeinsamer Online-Stand</h2>
+        </div>
+        <p id="plan-workflow-text">Route und Unterkünfte bilden einen zusammenhängenden Reiseplan.</p>
+      </div>
+      <div class="plan-workflow-actions">
+        <button class="tool-button primary-button" id="start-plan-change" type="button">Plan ändern</button>
+        <button class="tool-button" id="discard-draft" type="button" hidden>Entwurf verwerfen</button>
+        <button class="tool-button primary-button" id="publish-draft" type="button" hidden>Änderungen übernehmen &amp; veröffentlichen</button>
+      </div>
+      <div class="draft-details" id="draft-details" hidden>
+        <p class="draft-decision" id="draft-decision"></p>
+        <ul class="draft-summary" id="draft-summary"></ul>
+        <div class="draft-open" id="draft-open" hidden></div>
+      </div>
+    </section>
+
     <section class="accommodation-impact" id="accommodation-impact" hidden aria-live="polite">
       <div><strong>Unterkünfte prüfen</strong><span id="accommodation-impact-text">Der Roadbook-Verlauf wurde geändert. Bitte Unterkunftsplanung aktualisieren.</span></div>
       <a href="/unterkuenfte?admin=1">Unterkünfte planen</a>
@@ -995,11 +1072,11 @@
       <summary>Hilfe</summary>
       <div class="action-help-grid">
         <div><strong>Fahren</strong><span>Ruhige Roadbook-Ansicht für unterwegs: Route öffnen, Status setzen, Notiz erfassen.</span></div>
-        <div><strong>Planen</strong><span>Aktiviert Änderungen am Reiseverlauf und bereitet den ChatGPT-/GitHub-/Vercel-Workflow vor.</span></div>
+        <div><strong>Plan ändern</strong><span>Beschreibt eine Änderung. ChatGPT erstellt daraus Route und Unterkünfte als prüfbaren Entwurf.</span></div>
         <div><strong>↻</strong><span>Lädt den veröffentlichten Vercel-Stand neu. Vercel ist die gemeinsame Anzeige für beide Geräte.</span></div>
-        <div><strong>Planungshilfe für ChatGPT</strong><span>Erzeugt einen Prompt für die Neuplanung bis zum Fixpunkt Fähre und fordert ein Import-JSON an.</span></div>
-        <div><strong>ChatGPT-Plan übernehmen</strong><span>Importiert ein JSON aus ChatGPT und ersetzt die angegebenen Tage.</span></div>
-        <div><strong>Online veröffentlichen</strong><span>Schreibt den aktuellen Plan serverseitig nach GitHub. Vercel deployed danach automatisch.</span></div>
+        <div><strong>Entwurf</strong><span>Zeigt vorgeschlagene Änderungen, ohne den aktuellen Online-Plan zu überschreiben.</span></div>
+        <div><strong>Übernehmen &amp; veröffentlichen</strong><span>Veröffentlicht Route und Unterkünfte gemeinsam. Vercel aktualisiert danach den Online-Stand.</span></div>
+        <div><strong>Unterwegs-Stand</strong><span>Veröffentlicht geänderte Tagesstatus und Notizen, damit beide Geräte denselben Stand sehen.</span></div>
         <div><strong>Sicherung</strong><span>Fallback für Sonderfälle. Der normale gemeinsame Stand entsteht über GitHub und Vercel.</span></div>
       </div>
       <div class="planning-group-actions help-actions">
@@ -1008,6 +1085,13 @@
         <button class="tool-button danger" id="reset-plan" type="button" data-help="Lädt den unveränderten Originalplan dieser Reise als Rückfallbasis.">Originalplan laden</button>
         <input id="import-file" type="file" accept="application/json,.json" hidden>
       </div>
+      <details>
+        <summary>Technischer Notfallweg</summary>
+        <div class="planning-group-actions help-actions">
+          <button class="tool-button" id="legacy-planning-helper" type="button">ChatGPT-Text erstellen</button>
+          <button class="tool-button" id="legacy-import-plan" type="button">JSON manuell übernehmen</button>
+        </div>
+      </details>
     </details>
 
     <details class="map-panel">
@@ -1079,6 +1163,53 @@
         <button class="tool-button" type="button" id="cancel-editor">Abbrechen</button>
         <button class="tool-button" type="button" id="preview-route">Route in Google Maps prüfen ↗</button>
         <button class="tool-button primary-button" type="submit">Tag im Roadbook speichern</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="plan-change-dialog" aria-labelledby="plan-change-title">
+    <form class="editor-form change-form" id="plan-change-form">
+      <div class="editor-header">
+        <div>
+          <h2 id="plan-change-title">Plan ändern</h2>
+          <p class="dialog-note">ChatGPT plant zuerst die Route und daraus anschließend die Unterkünfte.</p>
+        </div>
+        <button class="tool-button icon" type="button" id="close-plan-change" aria-label="Fenster schliessen" title="Schliessen">×</button>
+      </div>
+      <div class="editor-body">
+        <div class="form-grid">
+          <div class="field">
+            <label for="change-type">Was soll sich ändern?</label>
+            <select id="change-type" name="type" required>
+              <option value="extend">Aufenthalt verlängern</option>
+              <option value="shorten">Aufenthalt verkürzen</option>
+              <option value="skip">Etappe oder Ausflug auslassen</option>
+              <option value="reroute">Ab hier neu planen</option>
+              <option value="free">Andere Änderung</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="change-start-day">Ab Reisetag</label>
+            <input id="change-start-day" name="startDay" type="number" min="1" max="27" value="1" required>
+          </div>
+          <div class="field">
+            <label for="change-place">Ort oder Etappe</label>
+            <input id="change-place" name="place" placeholder="z. B. Sisteron">
+          </div>
+          <div class="field" id="change-nights-field">
+            <label for="change-nights" id="change-nights-label">Zusätzliche Nächte</label>
+            <input id="change-nights" name="nights" type="number" min="0" max="7" value="1">
+          </div>
+          <div class="field full">
+            <label for="change-instruction">Was ist euch wichtig?</label>
+            <textarea id="change-instruction" name="instruction" placeholder="z. B. Wir möchten zwei zusätzliche Nächte bleiben. Optionale Rundfahrten dürfen entfallen, lange Fahrtage möglichst vermeiden."></textarea>
+          </div>
+        </div>
+        <p class="planning-progress" id="planning-progress" hidden>ChatGPT erstellt Route und Unterkünfte. Das kann einen Moment dauern.</p>
+      </div>
+      <div class="editor-footer">
+        <button class="tool-button" type="button" id="cancel-plan-change">Abbrechen</button>
+        <button class="tool-button primary-button" type="submit" id="create-suggestions">Vorschläge erstellen</button>
       </div>
     </form>
   </dialog>
@@ -1801,7 +1932,10 @@
           }
     ];
 
+    const PUBLISHED_VERSION = "2026-08-12T13:20:00.000Z";
     const STORAGE_KEY = "spanien-roadbook-2026-plan-202608120741";
+    const DRAFT_KEY = "spanien-roadbook-2026-draft-v1";
+    const SESSION_PIN_KEY = "spanien-roadbook-2026-publish-pin";
     const ACCOMMODATION_REVIEW_KEY = "spanien-roadbook-2026-accommodation-review-v1";
     const ACCOMMODATION_STORAGE_KEY = "spanien-roadbook-2026-hotels-v2";
     const tripStart = Date.UTC(2026, 8, 24);
@@ -1810,6 +1944,7 @@
     const clone = (value) => JSON.parse(JSON.stringify(value));
     const statusLabels = { planned: "Geplant", changed: "Geändert", done: "Gefahren", skipped: "Ausgelassen" };
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
+    const ADVANCED_MODE = new URLSearchParams(window.location.search).get("advanced") === "1";
     const list = document.querySelector("#day-list");
     const filters = document.querySelector(".filters");
     const editor = document.querySelector("#day-editor");
@@ -1825,8 +1960,21 @@
     const actionHelp = document.querySelector(".action-help");
     const accommodationImpact = document.querySelector("#accommodation-impact");
     const accommodationImpactText = document.querySelector("#accommodation-impact-text");
+    const planChangeDialog = document.querySelector("#plan-change-dialog");
+    const planChangeForm = document.querySelector("#plan-change-form");
+    const workflow = document.querySelector("#plan-workflow");
+    const workflowBadge = document.querySelector("#plan-state-badge");
+    const workflowTitle = document.querySelector("#plan-workflow-title");
+    const workflowText = document.querySelector("#plan-workflow-text");
+    const draftDetails = document.querySelector("#draft-details");
+    const draftDecision = document.querySelector("#draft-decision");
+    const draftSummary = document.querySelector("#draft-summary");
+    const draftOpen = document.querySelector("#draft-open");
     let activeFilter = "all";
     let editingIndex = -1;
+    let draft = null;
+    let currentPlanDays = [];
+    let publishNotice = "";
 
     const routeParts = (url) => {
       if (!url) return { origin: "", destination: "", waypoints: [] };
@@ -1879,6 +2027,15 @@
         state.days = ADMIN_MODE
           ? saved.days.map((item, index) => prepareDay(item, index, item.custom))
           : savedOverlay(saved.days);
+      }
+    } catch (_) {}
+
+    currentPlanDays = clone(baseline);
+    try {
+      const savedDraft = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
+      if (savedDraft?.days?.length === currentPlanDays.length) {
+        draft = savedDraft;
+        state.days = savedDraft.days.map((item, index) => prepareDay(item, index, item.custom));
       }
     } catch (_) {}
 
@@ -1949,6 +2106,234 @@
       try {
         localStorage.removeItem(ACCOMMODATION_STORAGE_KEY);
       } catch (_) {}
+    };
+
+    const getPublishPin = () => {
+      const saved = sessionStorage.getItem(SESSION_PIN_KEY);
+      if (saved) return saved;
+      const value = prompt("Publish-PIN eingeben");
+      if (value === null) return "";
+      const pin = value.trim();
+      if (pin) sessionStorage.setItem(SESSION_PIN_KEY, pin);
+      return pin;
+    };
+
+    const parseEmbeddedJson = (source, pattern, fallback) => {
+      const match = source.match(pattern);
+      if (!match) return fallback;
+      try { return JSON.parse(match[1]); } catch (_) { return fallback; }
+    };
+
+    const loadAccommodationContext = async () => {
+      const response = await fetch(`/unterkuenfte-2026.html?context=${Date.now()}`, { cache: "no-store" });
+      if (!response.ok) throw new Error("Der aktuelle Unterkunftsstand konnte nicht geladen werden.");
+      const html = await response.text();
+      const documentCopy = new DOMParser().parseFromString(html, "text/html");
+      const scriptText = Array.from(documentCopy.scripts).map((script) => script.textContent).join("\n");
+      const published = parseEmbeddedJson(scriptText, /const publishedAccommodationState = ([\s\S]*?);\s*let state/, {});
+      const schedule = parseEmbeddedJson(scriptText, /const baseSchedule = ([\s\S]*?);\s*const scheduleById/, []);
+      const scheduleById = new Map(schedule.map(([id, startDate, endDate]) => [id, { startDate, endDate }]));
+      let local = {};
+      try { local = JSON.parse(localStorage.getItem(ACCOMMODATION_STORAGE_KEY) || "{}"); } catch (_) {}
+      const draftState = draft?.accommodations || {};
+      return Array.from(documentCopy.querySelectorAll(".stay")).map((stay) => {
+        const id = stay.dataset.stay;
+        const data = { ...(published[id] || {}), ...(local[id] || {}), ...(draftState[id] || {}) };
+        const baseSchedule = scheduleById.get(id) || {};
+        const hotels = Array.from(stay.querySelectorAll(".hotel")).map((hotel) => ({
+          name: hotel.querySelector("h3")?.textContent.trim() || "",
+          parking: hotel.querySelector(".parking")?.textContent.trim() || "",
+          note: hotel.querySelector("p")?.textContent.trim() || "",
+          url: hotel.querySelector("a")?.href || ""
+        }));
+        return {
+          id,
+          title: data.title || stay.querySelector("h2")?.textContent.trim() || "",
+          startDate: data.startDate || baseSchedule.startDate || "",
+          endDate: data.endDate || baseSchedule.endDate || "",
+          nightCount: Number(data.nightCount) || 1,
+          booking: data.booking || "",
+          currentFirstChoice: data.firstChoice || hotels[0]?.name || "",
+          currentFirstChoiceUrl: data.firstChoiceUrl || hotels[0]?.url || "",
+          currentAlternative: data.alternative || hotels[1]?.name || "",
+          currentAlternativeUrl: data.alternativeUrl || hotels[1]?.url || "",
+          currentNote: data.note || "",
+          baselineHotels: hotels
+        };
+      });
+    };
+
+    const renderWorkflow = () => {
+      const hasDraft = Boolean(draft?.days?.length);
+      const hasTravelUpdates = !hasDraft && state.days.some((item, index) => {
+        const published = currentPlanDays[index] || {};
+        return item.status !== published.status || (item.travelNote || "") !== (published.travelNote || "");
+      });
+      const pending = hasDraft || hasTravelUpdates;
+      workflow.classList.toggle("is-draft", pending);
+      workflowBadge.textContent = hasDraft ? "Entwurf" : (hasTravelUpdates ? "Lokale Änderung" : "Aktueller Plan");
+      workflowTitle.textContent = pending ? "Noch nicht veröffentlicht" : (publishNotice || "Gemeinsamer Online-Stand");
+      workflowText.textContent = hasDraft
+        ? "Route und Unterkünfte wurden gemeinsam neu geplant. Prüfe die Änderungen, bevor du sie veröffentlichst."
+        : (hasTravelUpdates
+          ? "Tagesstatus oder Notizen wurden auf diesem Gerät geändert."
+          : "Route und Unterkünfte bilden einen zusammenhängenden Reiseplan.");
+      const startButton = document.querySelector("#start-plan-change");
+      const discardButton = document.querySelector("#discard-draft");
+      const publishButton = document.querySelector("#publish-draft");
+      startButton.hidden = hasTravelUpdates;
+      startButton.textContent = hasDraft ? "Entwurf ändern" : "Plan ändern";
+      discardButton.hidden = !pending;
+      discardButton.textContent = hasDraft ? "Entwurf verwerfen" : "Lokale Änderung verwerfen";
+      publishButton.hidden = !pending;
+      publishButton.textContent = hasDraft ? "Änderungen übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen";
+      draftDetails.hidden = !hasDraft;
+      if (pending) accommodationImpact.hidden = true;
+      if (!hasDraft) return;
+      draftDecision.textContent = draft.decision || "Vorgeschlagene Anpassung";
+      draftSummary.innerHTML = "";
+      (draft.summary || []).forEach((text) => {
+        const item = document.createElement("li");
+        item.textContent = text;
+        draftSummary.append(item);
+      });
+      const openItems = (draft.openItems || []).filter(Boolean);
+      draftOpen.hidden = !openItems.length;
+      draftOpen.textContent = openItems.length ? `Noch zu prüfen: ${openItems.join(" · ")}` : "";
+    };
+
+    const openPlanChange = (startDay = 1) => {
+      planChangeForm.elements.startDay.value = Math.max(1, Number(startDay) || 1);
+      document.querySelector("#planning-progress").hidden = true;
+      document.querySelector("#create-suggestions").disabled = false;
+      planChangeDialog.showModal();
+      planChangeForm.elements.type.focus();
+    };
+
+    const createDraft = async (change) => {
+      const secret = getPublishPin();
+      if (!secret) return;
+      const progress = document.querySelector("#planning-progress");
+      const submit = document.querySelector("#create-suggestions");
+      progress.hidden = false;
+      submit.disabled = true;
+      try {
+        const accommodations = await loadAccommodationContext();
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 115000);
+        const response = await fetch("/api/create-plan-draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({ secret, change, days: state.days, accommodations })
+        });
+        clearTimeout(timeout);
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || "Der Entwurf konnte nicht erstellt werden.");
+        draft = { ...result.draft, baseVersion: draft?.baseVersion || PUBLISHED_VERSION };
+        state.days = draft.days.map((item, index) => prepareDay(item, index, item.custom));
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        activeFilter = "all";
+        planChangeDialog.close();
+        render();
+        workflow.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (error) {
+        if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
+        progress.textContent = error.name === "AbortError"
+          ? "Die Planung hat zu lange gedauert. Der aktuelle Plan wurde nicht verändert."
+          : `Der Entwurf konnte nicht erstellt werden: ${error.message}`;
+      } finally {
+        submit.disabled = false;
+      }
+    };
+
+    const discardDraft = () => {
+      const message = draft
+        ? "Diesen Entwurf verwerfen und wieder den aktuellen Online-Plan anzeigen?"
+        : "Lokale Status- und Notizänderungen verwerfen?";
+      if (!confirm(message)) return;
+      if (draft) {
+        draft = null;
+        localStorage.removeItem(DRAFT_KEY);
+      }
+      state.days = clone(currentPlanDays);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ days: state.days }));
+      activeFilter = "all";
+      render();
+    };
+
+    const publishTravelUpdates = async () => {
+      const secret = getPublishPin();
+      if (!secret) return;
+      if (!confirm("Tagesstatus und Notizen als gemeinsamen Online-Stand veröffentlichen?")) return;
+      const button = document.querySelector("#publish-draft");
+      button.disabled = true;
+      button.textContent = "Wird veröffentlicht ...";
+      try {
+        const response = await fetch("/api/publish-roadbook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            secret,
+            reason: "Unterwegs-Status und Notizen aktualisiert",
+            days: state.days,
+            baseVersion: PUBLISHED_VERSION
+          })
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
+        currentPlanDays = clone(state.days);
+        publishNotice = "Veröffentlicht · Vercel aktualisiert den Online-Stand";
+        render();
+        alert(`Unterwegs-Stand veröffentlicht.\nCommit: ${result.commit || "unbekannt"}`);
+      } catch (error) {
+        if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
+        alert(`Veröffentlichung fehlgeschlagen: ${error.message}`);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Unterwegs-Stand veröffentlichen";
+      }
+    };
+
+    const publishDraft = async () => {
+      if (!draft) return;
+      const secret = getPublishPin();
+      if (!secret) return;
+      if (!confirm("Route und Unterkünfte gemeinsam als neuen Online-Plan veröffentlichen?")) return;
+      const button = document.querySelector("#publish-draft");
+      button.disabled = true;
+      button.textContent = "Wird veröffentlicht ...";
+      try {
+        const response = await fetch("/api/publish-roadbook", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            secret,
+            reason: draft.decision || "Reiseplan angepasst",
+            days: draft.days,
+            accommodations: draft.accommodations,
+            baseVersion: draft.baseVersion
+          })
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
+        currentPlanDays = clone(draft.days);
+        state.days = clone(draft.days);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ days: state.days }));
+        localStorage.setItem(ACCOMMODATION_STORAGE_KEY, JSON.stringify(draft.accommodations || {}));
+        localStorage.removeItem(ACCOMMODATION_REVIEW_KEY);
+        localStorage.removeItem(DRAFT_KEY);
+        draft = null;
+        publishNotice = "Veröffentlicht · Vercel aktualisiert den Online-Stand";
+        render();
+        alert(`Neuer Gesamtplan veröffentlicht.\nCommit: ${result.commit || "unbekannt"}\nRoute und Unterkünfte wurden gemeinsam gespeichert.`);
+      } catch (error) {
+        if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
+        alert(`Veröffentlichung fehlgeschlagen: ${error.message}`);
+      } finally {
+        button.disabled = false;
+        button.textContent = "Änderungen übernehmen & veröffentlichen";
+      }
     };
 
     const routeLink = (label, url, secondary = false, meta = "") => {
@@ -2296,6 +2681,7 @@ Wichtig fuer das Import-JSON:
       renderFilters();
       setActiveNav();
       showAccommodationImpact();
+      renderWorkflow();
       document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
 
       state.days.forEach((item, index) => {
@@ -2416,7 +2802,7 @@ Wichtig fuer das Import-JSON:
       });
       actions.append(actionGroup("Unterwegs", [status, noteButton]));
 
-      if (ADMIN_MODE) {
+      if (ADMIN_MODE && ADVANCED_MODE) {
         const quickActions = document.createElement("div");
         quickActions.className = "quick-actions";
         quickActions.append(
@@ -2508,7 +2894,15 @@ Wichtig fuer das Import-JSON:
 
     document.querySelector("#add-day").addEventListener("click", () => openEditor());
     navDriveButton.addEventListener("click", () => navigateMode(false));
-    navPlanButton.addEventListener("click", () => navigateMode(true));
+    navPlanButton.addEventListener("click", () => {
+      if (ADMIN_MODE) openPlanChange();
+      else {
+        const target = new URL(window.location.href);
+        target.searchParams.set("admin", "1");
+        target.hash = "plan-aendern";
+        window.location.href = target.toString();
+      }
+    });
     navHelpButton.addEventListener("click", () => {
       setActiveNav("help");
       actionHelp.open = true;
@@ -2545,6 +2939,8 @@ Wichtig fuer das Import-JSON:
       chatgptImportInput.focus();
     });
     document.querySelector("#publish-roadbook").addEventListener("click", publishRoadbook);
+    document.querySelector("#legacy-planning-helper").addEventListener("click", () => document.querySelector("#planning-helper").click());
+    document.querySelector("#legacy-import-plan").addEventListener("click", () => document.querySelector("#import-chatgpt-plan").click());
     document.querySelector("#close-chatgpt-import").addEventListener("click", () => chatgptImportDialog.close());
     document.querySelector("#cancel-chatgpt-import").addEventListener("click", () => chatgptImportDialog.close());
     chatgptImportForm.addEventListener("submit", (event) => {
@@ -2560,6 +2956,37 @@ Wichtig fuer das Import-JSON:
       const target = new URL(window.location.href);
       target.searchParams.set("refresh", Date.now().toString());
       window.location.href = target.toString();
+    });
+
+    document.querySelector("#start-plan-change").addEventListener("click", () => {
+      if (ADMIN_MODE) openPlanChange();
+      else {
+        const target = new URL(window.location.href);
+        target.searchParams.set("admin", "1");
+        target.hash = "plan-aendern";
+        window.location.href = target.toString();
+      }
+    });
+    document.querySelector("#discard-draft").addEventListener("click", discardDraft);
+    document.querySelector("#publish-draft").addEventListener("click", () => draft ? publishDraft() : publishTravelUpdates());
+    document.querySelector("#close-plan-change").addEventListener("click", () => planChangeDialog.close());
+    document.querySelector("#cancel-plan-change").addEventListener("click", () => planChangeDialog.close());
+    planChangeForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const values = Object.fromEntries(new FormData(planChangeForm));
+      createDraft({
+        type: values.type,
+        startDay: Number(values.startDay),
+        place: String(values.place || "").trim(),
+        nights: Number(values.nights) || 0,
+        instruction: String(values.instruction || "").trim()
+      });
+    });
+    planChangeForm.elements.type.addEventListener("change", () => {
+      const type = planChangeForm.elements.type.value;
+      const nightsField = document.querySelector("#change-nights-field");
+      nightsField.hidden = !["extend", "shorten"].includes(type);
+      document.querySelector("#change-nights-label").textContent = type === "shorten" ? "Weniger Nächte" : "Zusätzliche Nächte";
     });
 
     document.querySelector("#export-plan").addEventListener("click", () => {
@@ -2606,6 +3033,10 @@ Wichtig fuer das Import-JSON:
     if (window.location.hash === "#hilfe") {
       actionHelp.open = true;
       setActiveNav("help");
+    }
+    if (window.location.hash === "#plan-aendern" && ADMIN_MODE) {
+      history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+      openPlanChange();
     }
   </script>
 </body>
