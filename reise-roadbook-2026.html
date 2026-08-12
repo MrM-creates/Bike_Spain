@@ -1373,6 +1373,8 @@
 
     const currentDays = [
           {
+                "id": "original-1",
+                "day": 1,
                 "title": "Berikon – Grenoble",
                 "type": "Anreise",
                 "overnight": "Grenoble",
@@ -1381,13 +1383,27 @@
                 "roads": "A1 und A41",
                 "points": "Direkte Route ohne Innenstadt-Zwischenziele",
                 "note": "Autobahnen nicht vermeiden. Französische Umweltplakette Crit’Air und Hotelgarage in Grenoble vorab klären.",
-                "rest": false,
                 "origin": "Berikon, Switzerland",
                 "destination": "Grenoble, France",
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false,
+                "alt": [
+                      {
+                            "label": "Annecy Park-and-Ride Périaz",
+                            "meta": "303 km · 3 h 25",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=Berikon%2C+Switzerland&destination=Parking+Relais+P%C3%A9riaz%2C+74600+Annecy%2C+France&travelmode=driving"
+                      },
+                      {
+                            "label": "Nur bis Chambéry",
+                            "meta": "349 km · 3 h 50",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=Berikon%2C+Switzerland&destination=Chamb%C3%A9ry%2C+France&travelmode=driving"
+                      }
+                ]
           },
           {
+                "id": "original-2",
+                "day": 2,
                 "title": "Grenoble – Sisteron",
                 "type": "Route Napoléon",
                 "overnight": "Sisteron",
@@ -1396,7 +1412,7 @@
                 "roads": "N85",
                 "points": "Vizille · Laffrey · La Mure · Corps · Gap",
                 "note": "N85 halten; keine kleinen Seitenpässe bei schlechtem Wetter.",
-                "rest": false,
+                "alert": "Google meldet derzeit eine lokale Sperrung in Gap und umfährt sie automatisch. Vor der Fahrt erneut prüfen.",
                 "origin": "Grenoble, France",
                 "destination": "Sisteron, France",
                 "waypoints": [
@@ -1406,20 +1422,19 @@
                       "Corps, France",
                       "Gap, France"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false,
+                "alt": [
+                      {
+                            "label": "Méouge-Zusatzrunde",
+                            "meta": "66 km · 1 h 35",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=Sisteron%2C+France&destination=Sisteron%2C+France&travelmode=driving&waypoints=Laragne-Mont%C3%A9glin%2C+France%7CCh%C3%A2teauneuf-de-Chabre%2C+France%7CGorges+de+la+M%C3%A9ouge%2C+France%7CBarret-sur-M%C3%A9ouge%2C+France%7CCh%C3%A2teauneuf-de-Chabre%2C+France"
+                      }
+                ]
           },
           {
-                "title": "Sisteron Aufenthalt",
-                "type": "Ruhetag / Umgebung optional",
-                "overnight": "Sisteron",
-                "roads": "Keine feste Fahrroute",
-                "points": "Erholung · kleiner Spaziergang · kurze Ausfahrt optional",
-                "note": "Motorräder möglichst stehen lassen oder nur kurze, übersichtliche Strecken fahren. Kein Zwangsprogramm – einfach ankommen, pflegen, waschen, ausruhen.",
-                "rest": true,
-                "waypoints": [],
-                "status": "planned"
-          },
-          {
+                "id": "original-3",
+                "day": 3,
                 "title": "Sisteron – Lourmarin",
                 "type": "Provence / Luberon",
                 "overnight": "Lourmarin oder Aix-en-Provence",
@@ -1428,7 +1443,6 @@
                 "roads": "D4085/N85 und regionale Hauptstrassen",
                 "points": "Château-Arnoux · Malijai · Forcalquier · Céreste · Apt · Parkplatz Bonnieux",
                 "note": "Digne ist kein Pflichtpunkt. In Bonnieux und Lourmarin am Ortsrand parkieren.",
-                "rest": false,
                 "origin": "Sisteron, France",
                 "destination": "Lourmarin, France",
                 "waypoints": [
@@ -1439,9 +1453,19 @@
                       "Apt, France",
                       "Parking Bonnieux, France"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false,
+                "alt": [
+                      {
+                            "label": "Variante Manosque",
+                            "meta": "128 km · 2 h 35",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=Sisteron%2C+France&destination=Lourmarin%2C+France&travelmode=driving&waypoints=Ch%C3%A2teau-Arnoux-Saint-Auban%2C+France%7CForcalquier%2C+France%7CManosque%2C+France%7CC%C3%A9reste%2C+France%7CApt%2C+France"
+                      }
+                ]
           },
           {
+                "id": "original-4",
+                "day": 4,
                 "title": "Lourmarin – Camargue – Nîmes",
                 "type": "Camargue",
                 "overnight": "Nîmes oder Uzès",
@@ -1450,7 +1474,6 @@
                 "roads": "A54 · D570 · D38 · D58 · D979",
                 "points": "Arles · Pont de Gau · Saintes-Maries-de-la-Mer · Aigues-Mortes",
                 "note": "Nicht auf den schmalen Meerdeich Digue à la Mer fahren. Auch keine Salinenpisten, Schutzgebiets- oder Strandwege verwenden.",
-                "rest": false,
                 "origin": "Lourmarin, France",
                 "destination": "Nîmes, France",
                 "waypoints": [
@@ -1459,9 +1482,12 @@
                       "Saintes-Maries-de-la-Mer, France",
                       "Aigues-Mortes, France"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-5",
+                "day": 5,
                 "title": "Nîmes – Carcassonne",
                 "type": "Languedoc",
                 "overnight": "Carcassonne",
@@ -1470,7 +1496,6 @@
                 "roads": "D40 und regionale Hauptstrassen; A9/A61 als Schlechtwetteroption",
                 "points": "Sommières · Pézenas · Béziers · Capestang",
                 "note": "Bei Verkehr, Wind oder Regen abschnittsweise A9/A61 wählen.",
-                "rest": false,
                 "origin": "Nîmes, France",
                 "destination": "Carcassonne, France",
                 "waypoints": [
@@ -1479,9 +1504,12 @@
                       "Béziers, France",
                       "Capestang, France"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-6",
+                "day": 6,
                 "title": "Carcassonne – Castelldefels",
                 "type": "Transfer",
                 "overnight": "Castelldefels",
@@ -1490,13 +1518,22 @@
                 "roads": "A61 · A9 · AP-7 · B-23/C-32",
                 "points": "Direkte Hauptstrecke; Collioure separat",
                 "note": "Keine kleinen Pyrenäenpässe. Hotel nahe R2-Bahnhof und mit geschlossener Garage wählen; für Barcelona die Motorräder stehen lassen.",
-                "rest": false,
                 "origin": "Carcassonne, France",
                 "destination": "Castelldefels, Spain",
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false,
+                "alt": [
+                      {
+                            "label": "Via Collioure",
+                            "meta": "ca. 370 km · 4 h 30",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=Carcassonne%2C+France&destination=Castelldefels%2C+Spain&travelmode=driving&waypoints=Collioure%2C+France"
+                      }
+                ]
           },
           {
+                "id": "original-7",
+                "day": 7,
                 "title": "Castelldefels / Barcelona",
                 "type": "Ruhetag / Stadt optional",
                 "overnight": "Castelldefels",
@@ -1505,9 +1542,12 @@
                 "note": "Motorräder beim Hotel lassen. Barcelona nur besuchen, wenn Energie und Lust passen.",
                 "rest": true,
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-8",
+                "day": 8,
                 "title": "Castelldefels – Falset",
                 "type": "Küste / Priorat",
                 "overnight": "Falset",
@@ -1516,7 +1556,6 @@
                 "roads": "C-31/C-32 · T-11 · N-420",
                 "points": "Sitges · Tarragona · Reus",
                 "note": "Küstenabschnitt bei dichtem Verkehr auslassen und direkt Richtung Tarragona/Reus fahren.",
-                "rest": false,
                 "origin": "Castelldefels, Spain",
                 "destination": "Falset, Spain",
                 "waypoints": [
@@ -1524,9 +1563,12 @@
                       "Tarragona, Spain",
                       "Reus, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-9",
+                "day": 9,
                 "title": "Priorat-Runde",
                 "type": "Kurventag",
                 "overnight": "Falset",
@@ -1535,7 +1577,6 @@
                 "roads": "T-710 und asphaltierte Regionalstrassen",
                 "points": "Gratallops · La Vilella Baixa · Escaladei · Cornudella · Porrera",
                 "note": "Langsam und kurvig. Siurana nur als bewusste zusätzliche Stichstrasse.",
-                "rest": false,
                 "origin": "Falset, Spain",
                 "destination": "Falset, Spain",
                 "waypoints": [
@@ -1545,9 +1586,12 @@
                       "Cornudella de Montsant, Spain",
                       "Porrera, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-10",
+                "day": 10,
                 "title": "Falset – Albarracín",
                 "type": "Inland",
                 "overnight": "Albarracín",
@@ -1556,7 +1600,6 @@
                 "roads": "N-420 · A-1512",
                 "points": "Gandesa · Alcañiz · Teruel · Gea de Albarracín",
                 "note": "N-420 bis Teruel und A-1512 nach Albarracín halten. Nicht in die Altstadt routen.",
-                "rest": false,
                 "origin": "Falset, Spain",
                 "destination": "Albarracín, Spain",
                 "waypoints": [
@@ -1565,9 +1608,12 @@
                       "Teruel, Spain",
                       "Gea de Albarracín, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-11",
+                "day": 11,
                 "title": "Albarracín-Runde",
                 "type": "Flex / Kurventag",
                 "overnight": "Albarracín",
@@ -1576,7 +1622,6 @@
                 "roads": "A-1512 und markierte Regionalstrassen",
                 "points": "Orihuela del Tremedal · Bronchales · Noguera · Tramacastilla",
                 "note": "Nur fahren, wenn Google klar auf Asphalt führt; sonst Ruhetag.",
-                "rest": false,
                 "origin": "Albarracín, Spain",
                 "destination": "Albarracín, Spain",
                 "waypoints": [
@@ -1585,9 +1630,12 @@
                       "Noguera de Albarracín, Spain",
                       "Tramacastilla, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-12",
+                "day": 12,
                 "title": "Albarracín – La Patacona",
                 "type": "Transfer",
                 "overnight": "La Patacona / Alboraya",
@@ -1596,16 +1644,18 @@
                 "roads": "A-1512 · N-234/A-23 · nördliche Stadtumfahrung",
                 "points": "Teruel · Segorbe",
                 "note": "Bei gutem Wetter N-234-Abschnitte, sonst A-23. Unterkunft mit Garage nahe Strand und guter Verbindung nach Valencia wählen.",
-                "rest": false,
                 "origin": "Albarracín, Spain",
                 "destination": "La Patacona, Alboraya, Spain",
                 "waypoints": [
                       "Teruel, Spain",
                       "Segorbe, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-13",
+                "day": 13,
                 "title": "La Patacona / Valencia",
                 "type": "Ruhetag / Stadt optional",
                 "overnight": "La Patacona / Alboraya",
@@ -1614,9 +1664,12 @@
                 "note": "Motorräder beim Hotel lassen und je nach Energie Strandtag oder Stadtbesuch wählen.",
                 "rest": true,
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-14",
+                "day": 14,
                 "title": "La Patacona – Altea",
                 "type": "Costa-Blanca-Hinterland",
                 "overnight": "Altea",
@@ -1625,7 +1678,6 @@
                 "roads": "A-7 · CV-81 · CV-70",
                 "points": "Xàtiva · Bocairent · Alcoy · Guadalest",
                 "note": "Kurviger Tag. Nur eine Nacht in Altea; der frühere Altea-Flex-/Ruhetag ist gestrichen, um den späteren Start ohne Stress einzuholen.",
-                "rest": false,
                 "origin": "La Patacona, Alboraya, Spain",
                 "destination": "Altea, Spain",
                 "waypoints": [
@@ -1634,9 +1686,12 @@
                       "Alcoy, Spain",
                       "Guadalest, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-16",
+                "day": 16,
                 "title": "Altea – Monachil",
                 "type": "Transfer",
                 "overnight": "Monachil",
@@ -1645,13 +1700,15 @@
                 "roads": "A-7 · A-92N · GR-30",
                 "points": "Direkte Hauptstrecke; die Route führt an Murcia, Lorca und Guadix vorbei",
                 "note": "Granada-Zentrum vermeiden. Unterkunft in Monachil mit bestätigter Garage und einfacher Zufahrt wählen.",
-                "rest": false,
                 "origin": "Altea, Spain",
                 "destination": "Monachil, Granada, Spain",
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-17",
+                "day": 17,
                 "title": "Monachil / Granada",
                 "type": "Ruhetag / Stadt optional",
                 "overnight": "Monachil",
@@ -1660,9 +1717,12 @@
                 "note": "Motorräder beim Hotel lassen und für Granada Taxi oder Bus verwenden.",
                 "rest": true,
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-18",
+                "day": 18,
                 "title": "Alpujarras-Runde ab Monachil",
                 "type": "Kurventag",
                 "overnight": "Monachil",
@@ -1671,7 +1731,7 @@
                 "roads": "GR-30/N-323a · A-348 · A-4132",
                 "points": "Lanjarón · Órgiva · Pampaneira",
                 "note": "Pampaneira reicht als Wendepunkt; Trevélez nicht erzwingen.",
-                "rest": false,
+                "alert": "Google meldet derzeit Sperrungen auf der A-348 und berechnet eine Umfahrung. Kurz vor der Reise neu prüfen.",
                 "origin": "Monachil, Granada, Spain",
                 "destination": "Monachil, Granada, Spain",
                 "waypoints": [
@@ -1679,9 +1739,12 @@
                       "Órgiva, Spain",
                       "Pampaneira, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-19",
+                "day": 19,
                 "title": "Monachil – Ronda",
                 "type": "Transfer",
                 "overnight": "Ronda",
@@ -1690,16 +1753,25 @@
                 "roads": "GR-30 · A-92 · A-384 · A-367",
                 "points": "Antequera · Campillos",
                 "note": "Campillos ist die verlässliche Hauptlinie. El Burgo nur trocken und ausgeruht.",
-                "rest": false,
                 "origin": "Monachil, Granada, Spain",
                 "destination": "Ronda, Spain",
                 "waypoints": [
                       "Antequera, Spain",
                       "Campillos, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false,
+                "alt": [
+                      {
+                            "label": "Variante El Burgo",
+                            "meta": "ca. 210 km · 3 h 10",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=Monachil%2C+Granada%2C+Spain&destination=Ronda%2C+Spain&travelmode=driving&waypoints=Antequera%2C+Spain%7CEl+Burgo%2C+Spain"
+                      }
+                ]
           },
           {
+                "id": "original-20",
+                "day": 20,
                 "title": "Grazalema-Runde",
                 "type": "Kurventag",
                 "overnight": "Ronda",
@@ -1708,7 +1780,6 @@
                 "roads": "A-374 · A-372 · CA-9104",
                 "points": "Grazalema · Puerto de las Palomas · Zahara · El Bosque · Ubrique",
                 "note": "CA-9104 nur offen, trocken und bei guter Sicht fahren.",
-                "rest": false,
                 "origin": "Ronda, Spain",
                 "destination": "Ronda, Spain",
                 "waypoints": [
@@ -1718,9 +1789,12 @@
                       "El Bosque, Spain",
                       "Ubrique, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-20.5",
+                "day": 20.5,
                 "title": "Ronda",
                 "type": "Wetter- und Erholungstag",
                 "overnight": "Ronda",
@@ -1729,9 +1803,12 @@
                 "note": "Bewusster Puffertag. Nur eine kurze Zusatzrunde fahren, wenn Wetter und Energie passen.",
                 "rest": true,
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-21",
+                "day": 21,
                 "title": "Ronda – Úbeda",
                 "type": "Inland / Rückweg",
                 "overnight": "Úbeda",
@@ -1740,7 +1817,6 @@
                 "roads": "A-367 · A-384 · A-92 · A-44 · A-316",
                 "points": "Antequera · Jaén · Baeza",
                 "note": "Ruhiger Inlandtag; Baeza als kurzer Stopp, Úbeda als Basis.",
-                "rest": false,
                 "origin": "Ronda, Spain",
                 "destination": "Úbeda, Spain",
                 "waypoints": [
@@ -1748,9 +1824,12 @@
                       "Jaén, Spain",
                       "Baeza, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-22",
+                "day": 22,
                 "title": "Úbeda und Baeza",
                 "type": "Ruhetag / Kultur",
                 "overnight": "Úbeda",
@@ -1759,9 +1838,19 @@
                 "note": "Kurzer Kultur- und Puffertag.",
                 "rest": true,
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false,
+                "alt": [
+                      {
+                            "label": "Baeza-Runde",
+                            "meta": "22 km · 35 min",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=%C3%9Abeda%2C+Spain&destination=%C3%9Abeda%2C+Spain&travelmode=driving&waypoints=Baeza%2C+Spain"
+                      }
+                ]
           },
           {
+                "id": "original-23",
+                "day": 23,
                 "title": "Úbeda – Cuenca",
                 "type": "Inland",
                 "overnight": "Cuenca",
@@ -1770,15 +1859,17 @@
                 "roads": "N-322 und regionale Hauptverbindungen",
                 "points": "Alcalá del Júcar",
                 "note": "Albacete wird nicht mehr als Stadtziel angefahren. In Alcalá del Júcar am Ortsrand parkieren.",
-                "rest": false,
                 "origin": "Úbeda, Spain",
                 "destination": "Cuenca, Spain",
                 "waypoints": [
                       "Alcalá del Júcar, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-23.5",
+                "day": 23.5,
                 "title": "Cuenca",
                 "type": "Ruhetag / Wetterreserve",
                 "overnight": "Cuenca",
@@ -1787,9 +1878,12 @@
                 "note": "Der zusätzliche Tag entschärft den langen Vortag und hält den Rückweg zur Fähre flexibel.",
                 "rest": true,
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-24",
+                "day": 24,
                 "title": "Cuenca – Zaragoza",
                 "type": "Rückverbindung",
                 "overnight": "Zaragoza",
@@ -1798,16 +1892,18 @@
                 "roads": "CM-210 · N-211 · A-2",
                 "points": "Molina de Aragón · Calatayud",
                 "note": "Landschaftlich, aber nicht auf kleinere Abkürzungen wechseln. Bei Wetter direkter fahren.",
-                "rest": false,
                 "origin": "Cuenca, Spain",
                 "destination": "Zaragoza, Spain",
                 "waypoints": [
                       "Molina de Aragón, Spain",
                       "Calatayud, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-25",
+                "day": 25,
                 "title": "Zaragoza – Castelldefels",
                 "type": "Transfer",
                 "overnight": "Castelldefels",
@@ -1815,28 +1911,46 @@
                 "time": "ca. 3 h 45",
                 "roads": "AP-2/A-2 · B-23/C-32",
                 "points": "Lleida · Montblanc",
-                "note": "Montblanc nur als kurzer Stopp. In Castelldefels Garage für die Nacht und frühe, direkte Abfahrt zum Fährterminal am nächsten Morgen vorsehen (Tanken, Verpflegung und Dokumente bereits am Abend vorbereiten).",
-                "rest": false,
+                "note": "Montblanc nur als kurzer Stopp. In Castelldefels Garage für zwei Nächte und frühe Abfahrt zum Fährterminal vorsehen.",
                 "origin": "Zaragoza, Spain",
                 "destination": "Castelldefels, Spain",
                 "waypoints": [
                       "Lleida, Spain",
                       "Montblanc, Spain"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-26",
+                "day": 26,
+                "title": "Barcelona Küste / Fährvorbereitung",
+                "type": "Reservetag für die Fähre",
+                "overnight": "Raum Barcelona, vorzugsweise Castelldefels",
+                "roads": "Keine feste Fahrroute",
+                "points": "Tanken · Verpflegung · Gepäck · Dokumente · Terminalzufahrt prüfen",
+                "note": "Motorräder stehen lassen und den Tag ruhig halten. Wecker, Check-in-Unterlagen und Zufahrt zum Terminal für den frühen nächsten Morgen vorbereiten.",
+                "rest": true,
+                "waypoints": [],
+                "status": "planned",
+                "custom": false
+          },
+          {
+                "id": "original-26.5",
+                "day": 26.5,
                 "title": "Fähre Barcelona – Genua",
                 "type": "Fährtag",
                 "overnight": "Kabine auf der Fähre",
                 "roads": "Direkte Zufahrt zum bestätigten Fährterminal",
                 "points": "Check-in 08:30 · Abfahrt 10:30 · zwei Motorräder · Ankunft Genua am Folgetag 09:00",
                 "note": "Frühstück und Tankstopp vorziehen. Mindestens den bestätigten Check-in-Puffer einhalten und die Terminalangabe auf dem Ticket verwenden.",
-                "rest": false,
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false
           },
           {
+                "id": "original-27",
+                "day": 27,
                 "title": "Genua – Aosta oder Como",
                 "type": "Heimweg",
                 "overnight": "Aosta oder Como",
@@ -1845,13 +1959,24 @@
                 "roads": "Ab Genua A7/A26; Richtung Aosta A26/A5, Richtung Como A7/A9",
                 "points": "Ankunft Fähre 09:00 · Ausschiffung · direkte Autobahnroute",
                 "note": "Zeit für die Ausschiffung lassen und erst danach die Variante nach Wetter und Energie wählen.",
-                "rest": false,
                 "origin": "Genoa, Italy",
                 "destination": "Aosta, Italy",
                 "waypoints": [],
-                "status": "planned"
+                "status": "planned",
+                "custom": false,
+                "mainLabel": "Genua – Aosta",
+                "mainMeta": "246 km · 2 h 40",
+                "alt": [
+                      {
+                            "label": "Genua – Como",
+                            "meta": "185 km · 2 h 15",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=Genoa%2C+Italy&destination=Como%2C+Italy&travelmode=driving"
+                      }
+                ]
           },
           {
+                "id": "original-28",
+                "day": 28,
                 "title": "Aosta oder Como – Berikon",
                 "type": "Heimfahrt",
                 "overnight": "Berikon",
@@ -1860,20 +1985,29 @@
                 "roads": "Ab Aosta E27/A9/A1; ab Como A2",
                 "points": "Alpenquerung nach Startort und Wetter",
                 "note": "Die Como-Zeit schwankt stark mit dem Gotthardverkehr. Beide Links sind direkt und ohne Innenstadt-Zwischenziele.",
-                "rest": false,
                 "origin": "Aosta, Italy",
                 "destination": "Berikon, Switzerland",
                 "waypoints": [
                       "Martigny, Switzerland",
                       "Lausanne, Switzerland"
                 ],
-                "status": "planned"
+                "status": "planned",
+                "custom": false,
+                "mainLabel": "Aosta – Berikon",
+                "mainMeta": "359 km · ca. 4 h 50",
+                "alt": [
+                      {
+                            "label": "Como – Berikon",
+                            "meta": "233 km · ca. 3–4 h 15",
+                            "url": "https://www.google.com/maps/dir/?api=1&origin=Como%2C+Italy&destination=Berikon%2C+Switzerland&travelmode=driving"
+                      }
+                ]
           }
     ];
 
-    const PUBLISHED_VERSION = "2026-08-12T16:22:28.685Z";
+    const PUBLISHED_VERSION = "2026-08-12T16:32:07.603Z";
     let currentPublishedVersion = PUBLISHED_VERSION;
-    const STORAGE_KEY = "spanien-roadbook-2026-plan-202608121622";
+    const STORAGE_KEY = "spanien-roadbook-2026-plan-202608121632";
     const DRAFT_KEY = "spanien-roadbook-2026-draft-v1";
     const SESSION_PIN_KEY = "spanien-roadbook-2026-publish-pin";
     const ACCOMMODATION_REVIEW_KEY = "spanien-roadbook-2026-accommodation-review-v1";
