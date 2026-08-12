@@ -28,6 +28,7 @@
     }
 
     * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
 
     html { scroll-behavior: smooth; }
 
@@ -1043,7 +1044,7 @@
       </div>
     </section>
 
-    <section class="plan-workflow" id="plan-workflow" aria-live="polite">
+    <section class="plan-workflow" id="plan-workflow" aria-live="polite" hidden>
       <div>
         <div class="plan-state-line">
           <span class="plan-state-badge" id="plan-state-badge">Aktueller Plan</span>
@@ -2168,18 +2169,19 @@
         return item.status !== published.status || (item.travelNote || "") !== (published.travelNote || "");
       });
       const pending = hasDraft || hasTravelUpdates;
+      workflow.hidden = !pending && !publishNotice;
       workflow.classList.toggle("is-draft", pending);
-      workflowBadge.textContent = hasDraft ? "Entwurf" : (hasTravelUpdates ? "Lokale Änderung" : "Aktueller Plan");
-      workflowTitle.textContent = pending ? "Noch nicht veröffentlicht" : (publishNotice || "Gemeinsamer Online-Stand");
+      workflowBadge.textContent = hasDraft ? "Entwurf" : (hasTravelUpdates ? "Lokale Änderung" : "Veröffentlicht");
+      workflowTitle.textContent = pending ? "Noch nicht veröffentlicht" : "Online-Stand wird aktualisiert";
       workflowText.textContent = hasDraft
         ? "Route und Unterkünfte wurden gemeinsam neu geplant. Prüfe die Änderungen, bevor du sie veröffentlichst."
         : (hasTravelUpdates
           ? "Tagesstatus oder Notizen wurden auf diesem Gerät geändert."
-          : "Route und Unterkünfte bilden einen zusammenhängenden Reiseplan.");
+          : publishNotice);
       const startButton = document.querySelector("#start-plan-change");
       const discardButton = document.querySelector("#discard-draft");
       const publishButton = document.querySelector("#publish-draft");
-      startButton.hidden = hasTravelUpdates;
+      startButton.hidden = hasTravelUpdates || Boolean(publishNotice);
       startButton.textContent = hasDraft ? "Entwurf ändern" : "Plan ändern";
       discardButton.hidden = !pending;
       discardButton.textContent = hasDraft ? "Entwurf verwerfen" : "Lokale Änderung verwerfen";
