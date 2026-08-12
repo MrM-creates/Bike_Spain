@@ -230,8 +230,11 @@
     .draft-summary { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
     .draft-summary li { position: relative; padding-left: 18px; color: #3f4942; font-size: 13px; }
     .draft-summary li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+    .draft-review-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; margin-top: 14px; }
+    .draft-review-actions > span { margin-right: 2px; color: var(--muted); font-size: 12px; font-weight: 720; }
     .draft-open { margin-top: 12px; padding: 12px 14px; background: var(--option-soft); color: #71430d; font-size: 13px; }
     .draft-open strong { display: block; margin-bottom: 7px; }
+    .draft-open > p { margin: 0 0 8px; color: #71430d; }
     .draft-open ul { display: grid; gap: 5px; margin: 0; padding-left: 18px; }
     .draft-open details { margin-top: 8px; }
     .draft-open summary { cursor: pointer; font-weight: 720; }
@@ -1094,6 +1097,11 @@
       <div class="draft-details" id="draft-details" hidden>
         <p class="draft-decision" id="draft-decision"></p>
         <ul class="draft-summary" id="draft-summary"></ul>
+        <div class="draft-review-actions">
+          <span>Entwurf prüfen</span>
+          <button class="tool-button" id="review-draft-route" type="button">Route unten ansehen</button>
+          <a class="tool-button" href="/unterkuenfte">Unterkünfte ansehen</a>
+        </div>
         <div class="draft-open" id="draft-open" hidden></div>
       </div>
     </section>
@@ -2223,7 +2231,7 @@
       const discardButton = document.querySelector("#discard-draft");
       const publishButton = document.querySelector("#publish-draft");
       startButton.hidden = hasTravelUpdates || Boolean(publishNotice);
-      startButton.textContent = hasDraft ? "Entwurf ändern" : "Plan ändern";
+      startButton.textContent = hasDraft ? "Planungswunsch ändern" : "Plan ändern";
       discardButton.hidden = !pending;
       discardButton.textContent = hasDraft ? "Entwurf verwerfen" : "Lokale Änderung verwerfen";
       publishButton.hidden = !pending;
@@ -2247,7 +2255,9 @@
       draftOpen.innerHTML = "";
       if (openItems.length) {
         const heading = document.createElement("strong");
-        heading.textContent = `Noch zu prüfen (${openItems.length})`;
+        heading.textContent = `Vor der Veröffentlichung klären (${openItems.length})`;
+        const explanation = document.createElement("p");
+        explanation.textContent = "Das sind praktische Buchungs- und Verfügbarkeitsaufgaben, keine Fehler im Reiseplan.";
         const addList = (items, parent) => {
           const list = document.createElement("ul");
           items.forEach((text) => {
@@ -2257,7 +2267,7 @@
           });
           parent.append(list);
         };
-        draftOpen.append(heading);
+        draftOpen.append(heading, explanation);
         addList(openItems.slice(0, 4), draftOpen);
         if (openItems.length > 4) {
           const more = document.createElement("details");
@@ -3051,6 +3061,11 @@ Wichtig fuer das Import-JSON:
     });
     document.querySelector("#discard-draft").addEventListener("click", discardDraft);
     document.querySelector("#publish-draft").addEventListener("click", () => draft ? publishDraft() : publishTravelUpdates());
+    document.querySelector("#review-draft-route").addEventListener("click", () => {
+      activeFilter = "all";
+      render();
+      list.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
     document.querySelector("#close-plan-change").addEventListener("click", () => planChangeDialog.close());
     document.querySelector("#cancel-plan-change").addEventListener("click", () => planChangeDialog.close());
     planChangeForm.addEventListener("submit", (event) => {
