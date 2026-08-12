@@ -230,7 +230,12 @@
     .draft-summary { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; }
     .draft-summary li { position: relative; padding-left: 18px; color: #3f4942; font-size: 13px; }
     .draft-summary li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
-    .draft-open { margin-top: 12px; padding: 10px 12px; background: var(--option-soft); color: #71430d; font-size: 13px; }
+    .draft-open { margin-top: 12px; padding: 12px 14px; background: var(--option-soft); color: #71430d; font-size: 13px; }
+    .draft-open strong { display: block; margin-bottom: 7px; }
+    .draft-open ul { display: grid; gap: 5px; margin: 0; padding-left: 18px; }
+    .draft-open details { margin-top: 8px; }
+    .draft-open summary { cursor: pointer; font-weight: 720; }
+    .draft-open details ul { margin-top: 7px; }
 
     .change-form { display: grid; gap: 14px; }
     .change-form .form-grid { align-items: end; }
@@ -2226,16 +2231,43 @@
       draftDetails.hidden = !hasDraft;
       if (pending) accommodationImpact.hidden = true;
       if (!hasDraft) return;
-      draftDecision.textContent = draft.decision || "Vorgeschlagene Anpassung";
+      const cleanDraftText = (text) => String(text || "")
+        .replace(/\b1 neue Stopps\b/gi, "1 neuer Stopp")
+        .trim();
+      const decision = cleanDraftText(draft.decision);
+      draftDecision.textContent = /^(accepted|approved|ok)$/i.test(decision) ? "Vorgeschlagene Planänderung" : (decision || "Vorgeschlagene Planänderung");
       draftSummary.innerHTML = "";
       (draft.summary || []).forEach((text) => {
         const item = document.createElement("li");
-        item.textContent = text;
+        item.textContent = cleanDraftText(text);
         draftSummary.append(item);
       });
       const openItems = (draft.openItems || []).filter(Boolean);
       draftOpen.hidden = !openItems.length;
-      draftOpen.textContent = openItems.length ? `Noch zu prüfen: ${openItems.join(" · ")}` : "";
+      draftOpen.innerHTML = "";
+      if (openItems.length) {
+        const heading = document.createElement("strong");
+        heading.textContent = `Noch zu prüfen (${openItems.length})`;
+        const addList = (items, parent) => {
+          const list = document.createElement("ul");
+          items.forEach((text) => {
+            const item = document.createElement("li");
+            item.textContent = cleanDraftText(text);
+            list.append(item);
+          });
+          parent.append(list);
+        };
+        draftOpen.append(heading);
+        addList(openItems.slice(0, 4), draftOpen);
+        if (openItems.length > 4) {
+          const more = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.textContent = `${openItems.length - 4} weitere anzeigen`;
+          more.append(summary);
+          addList(openItems.slice(4), more);
+          draftOpen.append(more);
+        }
+      }
     };
 
     const openPlanChange = (startDay = 1) => {

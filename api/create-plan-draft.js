@@ -200,7 +200,15 @@ const placeKey = (value) => cleanText(value, 200)
 const placesMatch = (left, right) => {
   const a = placeKey(left);
   const b = placeKey(right);
-  return Boolean(a && b && (a === b || a.includes(b) || b.includes(a)));
+  if (!a || !b) return false;
+  if (a === b || a.includes(b) || b.includes(a)) return true;
+  const ignored = new Set(["oder", "raum", "vorzugsweise"]);
+  const tokens = (value) => new Set(value.split(" ").filter((token) => token.length >= 4 && !ignored.has(token)));
+  const aTokens = tokens(a);
+  const bTokens = tokens(b);
+  const smaller = aTokens.size <= bTokens.size ? aTokens : bTokens;
+  const larger = smaller === aTokens ? bTokens : aTokens;
+  return smaller.size > 0 && Array.from(smaller).every((token) => larger.has(token));
 };
 
 const assignAccommodationSlots = (expected, current) => {
@@ -386,8 +394,9 @@ module.exports = async (request, response) => {
     const accommodationOpenItems = accommodationStays
       .filter((stay) => stay.action !== "behalten")
       .map((stay) => `${stay.title}: ${stay.note}`);
+    const researchedLabel = researchStays.length === 1 ? "1 neuer Stopp" : `${researchStays.length} neue Stopps`;
     const accommodationSummary = researchStays.length
-      ? [`Unterkünfte an die neue Route angepasst; ${researchStays.length} neue Stopps recherchiert.`, ...researched.summary]
+      ? [`Unterkünfte an die neue Route angepasst; ${researchedLabel} recherchiert.`, ...researched.summary]
       : ["Bestehende Unterkunftsvorschläge übernommen und auf die neuen Reisedaten abgestimmt."];
 
     json(response, 200, {
@@ -396,7 +405,9 @@ module.exports = async (request, response) => {
         createdAt: new Date().toISOString(),
         request: change,
         summary: [...routePlan.summary, ...accommodationSummary],
-        decision: routePlan.decision,
+        decision: /^(accepted|approved|ok)$/i.test(cleanText(routePlan.decision, 200))
+          ? "Vorgeschlagene Planänderung"
+          : routePlan.decision,
         openItems: [...routePlan.openItems, ...accommodationOpenItems, ...researched.openItems],
         days: draftDays,
         accommodations: normalizeStayState(accommodationStays, allSlotIds)
