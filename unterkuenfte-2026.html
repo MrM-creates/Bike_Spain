@@ -556,7 +556,7 @@
     <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Die Route ist führend. Eine geänderte Nacht kann alle folgenden Unterkünfte bis zur fixen Fähre automatisch verschieben. Bei grösseren Routenänderungen erstellt die Planungshilfe aus dem aktuellen Roadbook ein ChatGPT-Briefing für neue Unterkünfte.</p>
 
     <section class="route-impact" id="route-impact" hidden aria-live="polite">
-      <div><strong>Roadbook geändert</strong><span id="route-impact-text">Die Unterkunftsplanung sollte mit dem aktuellen Roadbook abgeglichen werden.</span></div>
+      <div><strong id="route-impact-title">Roadbook geändert</strong><span id="route-impact-text">Die Unterkunftsplanung sollte mit dem aktuellen Roadbook abgeglichen werden.</span></div>
       <div class="route-impact-actions">
         <a class="tool-button" href="/unterkuenfte?admin=1">Bearbeiten</a>
         <button class="tool-button primary-button edit-only" id="route-impact-helper" type="button" hidden>Planungshilfe starten</button>
@@ -1104,9 +1104,11 @@
       if (!visible) return;
       if (mismatches.length) {
         const first = mismatches[0];
+        routeImpactTitle.textContent = review ? "Roadbook geändert" : "Unterkünfte noch offen";
         routeImpactText.textContent = `${mismatches.length} Übernachtungsblöcke passen nicht eindeutig zum aktuellen Roadbook. Erste Abweichung: Tag ${first.day}, ${first.overnight}, ${first.startDate} bis ${first.endDate}.`;
       } else {
         const changed = review.changed?.length || 0;
+        routeImpactTitle.textContent = "Roadbook geändert";
         routeImpactText.textContent = changed
           ? `${changed} geänderte Roadbook-Tage können Unterkünfte betreffen. Bitte mit der Planungshilfe abgleichen.`
           : "Das Roadbook wurde geändert. Bitte Unterkunftsplanung mit der Route abgleichen.";
@@ -1193,6 +1195,7 @@ Wichtig fuer das Import-JSON:
     const accommodationImportForm = document.querySelector("#accommodation-import-form");
     const accommodationImportInput = document.querySelector("#accommodation-import-input");
     const routeImpact = document.querySelector("#route-impact");
+    const routeImpactTitle = document.querySelector("#route-impact-title");
     const routeImpactText = document.querySelector("#route-impact-text");
 
     const saveState = () => {
