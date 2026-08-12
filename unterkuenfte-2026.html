@@ -911,12 +911,16 @@
       day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
       timeZone: "Europe/Zurich"
     });
-    const planningVersionDate = new Date(PUBLISHED_VERSION);
-    document.querySelector("#planning-version").textContent = Number.isNaN(planningVersionDate.getTime())
-      ? "Stand der Planung: unbekannt"
-      : `Stand der Planung: ${planningVersionFormatter.format(planningVersionDate)}`;
+    const showPlanningVersion = (version = PUBLISHED_VERSION) => {
+      const date = new Date(version);
+      document.querySelector("#planning-version").textContent = Number.isNaN(date.getTime())
+        ? "Stand der Planung: unbekannt"
+        : `Stand der Planung: ${planningVersionFormatter.format(date)}`;
+    };
+    showPlanningVersion();
     const storageKey = `spanien-roadbook-2026-hotels-${PUBLISHED_VERSION}`;
     const accommodationReviewKey = "spanien-roadbook-2026-accommodation-review-v1";
+    const accommodationHandoffKey = "spanien-roadbook-2026-accommodation-handoff-v1";
     const draftKey = "spanien-roadbook-2026-draft-v1";
     const publishedAccommodationState = {
           "grenoble": {
@@ -1113,6 +1117,17 @@
           }
     };
     let state = { ...publishedAccommodationState };
+    let accommodationHandoff = null;
+    try {
+      const savedHandoff = JSON.parse(localStorage.getItem(accommodationHandoffKey) || "null");
+      if (savedHandoff?.version > PUBLISHED_VERSION && savedHandoff.accommodations && typeof savedHandoff.accommodations === "object") {
+        accommodationHandoff = savedHandoff;
+      } else if (savedHandoff) {
+        localStorage.removeItem(accommodationHandoffKey);
+      }
+    } catch (_) {
+      localStorage.removeItem(accommodationHandoffKey);
+    }
     let activeDraft = null;
     let editingStayId = "";
     const dayMs = 86400000;
@@ -1447,6 +1462,10 @@ Wichtig fuer das Import-JSON:
       const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
       if (saved && typeof saved === "object") state = { ...state, ...saved };
     } catch (_) {}
+    if (accommodationHandoff) {
+      state = { ...state, ...accommodationHandoff.accommodations };
+      showPlanningVersion(accommodationHandoff.version);
+    }
     try {
       const savedDraft = JSON.parse(localStorage.getItem(draftKey) || "null");
       if (savedDraft?.days?.length && savedDraft?.accommodations) {
