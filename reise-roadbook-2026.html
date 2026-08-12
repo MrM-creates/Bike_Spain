@@ -1803,6 +1803,7 @@
 
     const STORAGE_KEY = "spanien-roadbook-2026-plan-202608120741";
     const ACCOMMODATION_REVIEW_KEY = "spanien-roadbook-2026-accommodation-review-v1";
+    const ACCOMMODATION_STORAGE_KEY = "spanien-roadbook-2026-hotels-v2";
     const tripStart = Date.UTC(2026, 8, 24);
     const dateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
     const dateForDay = (index) => dateFormatter.format(new Date(tripStart + index * 86400000));
@@ -1942,6 +1943,12 @@
         localStorage.removeItem(ACCOMMODATION_REVIEW_KEY);
       } catch (_) {}
       showAccommodationImpact();
+    };
+
+    const clearLocalAccommodations = () => {
+      try {
+        localStorage.removeItem(ACCOMMODATION_STORAGE_KEY);
+      } catch (_) {}
     };
 
     const routeLink = (label, url, secondary = false, meta = "") => {
@@ -2579,6 +2586,7 @@ Wichtig fuer das Import-JSON:
       state.days = clone(originalBaseline);
       activeFilter = "all";
       clearAccommodationReview();
+      clearLocalAccommodations();
       save("Originalplan geladen");
       render();
     });
