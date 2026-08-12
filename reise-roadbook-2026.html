@@ -602,6 +602,36 @@
       font-size: 13px;
     }
 
+    .accommodation-impact {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin: 0 0 18px;
+      padding: 12px 14px;
+      border: 1px solid #ecd6b5;
+      border-radius: var(--radius);
+      background: var(--option-soft);
+      color: #71430d;
+      font-size: 14px;
+    }
+    .accommodation-impact[hidden] { display: none !important; }
+    .accommodation-impact strong { display: block; margin-bottom: 2px; color: #553509; }
+    .accommodation-impact a {
+      flex: 0 0 auto;
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      padding: 0 10px;
+      border: 1px solid #d7a95f;
+      border-radius: 6px;
+      background: #fffaf2;
+      color: #553509;
+      font-size: 12px;
+      font-weight: 760;
+      text-decoration: none;
+    }
+
     .route-details {
       margin-top: 13px;
       border-top: 1px solid var(--border);
@@ -854,6 +884,7 @@
       .topbar-context { align-items: stretch; flex-direction: column; }
       main { padding-top: 24px; }
       .intro { grid-template-columns: 1fr; gap: 14px; }
+      .accommodation-impact { align-items: flex-start; flex-direction: column; }
       .legend { white-space: normal; }
       .glossary-grid { grid-template-columns: 1fr; }
       .action-help-grid { grid-template-columns: 1fr; }
@@ -953,6 +984,11 @@
         <span>Fahrtag</span>
         <span class="rest-key">Ruhetag</span>
       </div>
+    </section>
+
+    <section class="accommodation-impact" id="accommodation-impact" hidden aria-live="polite">
+      <div><strong>Unterkünfte prüfen</strong><span id="accommodation-impact-text">Der Roadbook-Verlauf wurde geändert. Bitte Unterkunftsplanung aktualisieren.</span></div>
+      <a href="/unterkuenfte?admin=1">Unterkünfte planen</a>
     </section>
 
     <details class="action-help" id="hilfe">
@@ -1766,6 +1802,7 @@
     ];
 
     const STORAGE_KEY = "spanien-roadbook-2026-plan-202608120741";
+    const ACCOMMODATION_REVIEW_KEY = "spanien-roadbook-2026-accommodation-review-v1";
     const tripStart = Date.UTC(2026, 8, 24);
     const dateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
     const dateForDay = (index) => dateFormatter.format(new Date(tripStart + index * 86400000));
@@ -1785,6 +1822,8 @@
     const navPlanButton = document.querySelector("#nav-plan");
     const navHelpButton = document.querySelector("#nav-help");
     const actionHelp = document.querySelector(".action-help");
+    const accommodationImpact = document.querySelector("#accommodation-impact");
+    const accommodationImpactText = document.querySelector("#accommodation-impact-text");
     let activeFilter = "all";
     let editingIndex = -1;
 
@@ -1849,6 +1888,53 @@
       } catch (_) {
         document.querySelector("#save-state").textContent = "Lokales Speichern nicht verfügbar";
       }
+    };
+
+    const routeAccommodationImpact = () => {
+      const ferryIndex = state.days.findIndex((item) => item.title.toLowerCase().includes("fähre") || item.title.toLowerCase().includes("faehre"));
+      const lastIndex = ferryIndex >= 0 ? ferryIndex : state.days.length - 1;
+      const changed = state.days
+        .slice(0, lastIndex + 1)
+        .map((item, index) => ({ item, index }))
+        .filter(({ item }) => item.status !== "planned" || item.custom || item.travelNote)
+        .map(({ item, index }) => ({
+          day: index + 1,
+          date: dateForDay(index),
+          title: item.title || "",
+          overnight: item.overnight || "",
+          status: item.status || "planned"
+        }));
+      return { ferryDay: ferryIndex >= 0 ? ferryIndex + 1 : null, changed };
+    };
+
+    const accommodationReviewText = (review) => {
+      const count = review?.changed?.length || 0;
+      if (!count) return "Der Roadbook-Verlauf wurde geändert. Bitte Unterkunftsplanung aktualisieren.";
+      const first = review.changed[0];
+      return `${count} geänderte Roadbook-Tage betreffen mögliche Hotelnächte. Start: Tag ${first.day}, ${first.date}, ${first.overnight || first.title}.`;
+    };
+
+    const showAccommodationImpact = () => {
+      let review = null;
+      try {
+        review = JSON.parse(localStorage.getItem(ACCOMMODATION_REVIEW_KEY) || "null");
+      } catch (_) {}
+      const visible = Boolean(review?.needsReview);
+      accommodationImpact.hidden = !visible;
+      if (visible) accommodationImpactText.textContent = accommodationReviewText(review);
+    };
+
+    const markAccommodationReview = (reason) => {
+      const review = {
+        needsReview: true,
+        reason,
+        updatedAt: new Date().toISOString(),
+        ...routeAccommodationImpact()
+      };
+      try {
+        localStorage.setItem(ACCOMMODATION_REVIEW_KEY, JSON.stringify(review));
+      } catch (_) {}
+      showAccommodationImpact();
     };
 
     const routeLink = (label, url, secondary = false, meta = "") => {
@@ -1922,6 +2008,7 @@
       const target = index + direction;
       if (target < 0 || target >= state.days.length) return;
       [state.days[index], state.days[target]] = [state.days[target], state.days[index]];
+      markAccommodationReview(`Tag ${index + 1} verschoben`);
       save();
       render();
     };
@@ -1934,6 +2021,7 @@
       } else {
         state.days[index] = clone(original);
       }
+      markAccommodationReview(`Tag ${index + 1} zurückgesetzt`);
       save();
       render();
     };
@@ -2098,6 +2186,7 @@ Wichtig fuer das Import-JSON:
       }, index + 1, true);
       state.days.splice(index + 1, 0, extraDay);
       activeFilter = "all";
+      markAccommodationReview(`Aufenthalt bei Tag ${index + 1} verlängert`);
       save("Aufenthalt verlängert");
       render();
     };
@@ -2108,6 +2197,7 @@ Wichtig fuer das Import-JSON:
       if (note === null) return;
       item.status = "skipped";
       item.travelNote = note.trim();
+      markAccommodationReview(`Tag ${index + 1} ausgelassen`);
       save("Tag ausgelassen");
       render();
     };
@@ -2147,6 +2237,7 @@ Wichtig fuer das Import-JSON:
       const newDays = imported.days.map((item, offset) => normalizeImportedDay(item, startIndex + offset));
       state.days.splice(startIndex, Math.min(replaceCount, state.days.length - startIndex), ...newDays);
       activeFilter = "all";
+      markAccommodationReview(`ChatGPT-Plan ab Tag ${start} übernommen`);
       save("ChatGPT-Plan übernommen");
       render();
     };
@@ -2180,6 +2271,7 @@ Wichtig fuer das Import-JSON:
       list.innerHTML = "";
       renderFilters();
       setActiveNav();
+      showAccommodationImpact();
       document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
 
       state.days.forEach((item, index) => {
@@ -2384,6 +2476,7 @@ Wichtig fuer das Import-JSON:
       else if (updated.origin && updated.destination) updated.main = maps(updated.origin, updated.destination, updated.waypoints);
       if (editingIndex >= 0) state.days[editingIndex] = updated;
       else state.days.push(updated);
+      markAccommodationReview(editingIndex >= 0 ? `Tag ${editingIndex + 1} bearbeitet` : "Tag hinzugefügt");
       save("Tag im Roadbook gespeichert");
       closeEditor();
       render();
@@ -2465,6 +2558,7 @@ Wichtig fuer das Import-JSON:
         if (!Array.isArray(imported.days) || !imported.days.length) throw new Error("Ungültige Sicherung");
         state.days = imported.days.map((item, index) => prepareDay(item, index, item.custom));
         activeFilter = "all";
+        markAccommodationReview("Roadbook-Sicherung geladen");
         save("Sicherung wiederhergestellt");
         render();
       } catch (_) {
@@ -2477,6 +2571,7 @@ Wichtig fuer das Import-JSON:
       if (!confirm("Den unveränderten Originalplan dieser Reise laden? Lokale Änderungen in diesem Browser werden ersetzt.")) return;
       state.days = clone(originalBaseline);
       activeFilter = "all";
+      markAccommodationReview("Originalplan geladen");
       save("Originalplan geladen");
       render();
     });

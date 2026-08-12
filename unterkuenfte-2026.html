@@ -151,6 +151,22 @@
       color: #244a70;
       font-size: 14px;
     }
+    .route-impact {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      margin: 0 0 22px;
+      padding: 14px 16px;
+      border: 1px solid #ecd6b5;
+      border-radius: var(--radius);
+      background: var(--amber-soft);
+      color: #67400f;
+      font-size: 14px;
+    }
+    .route-impact[hidden] { display: none !important; }
+    .route-impact strong { display: block; margin-bottom: 3px; color: #553509; }
+    .route-impact-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
 
     .booking-plan {
       margin: 0 0 22px;
@@ -467,6 +483,8 @@
       main { padding-top: 24px; }
       .intro { grid-template-columns: 1fr; gap: 10px; }
       .intro-actions { justify-content: flex-start; }
+      .route-impact { grid-template-columns: 1fr; }
+      .route-impact-actions { justify-content: flex-start; }
       .principles { grid-template-columns: 1fr; }
       .principles div { border-right: 0; border-bottom: 1px solid rgba(255,255,255,.16); }
       .principles div:last-child { border-bottom: 0; }
@@ -536,6 +554,14 @@
     <p class="notice"><strong>Vor jeder Buchung schriftlich bestätigen:</strong> Platz für zwei Motorräder, nachts geschlossen oder kontrolliert, reservierbar und am Anreisetag tatsächlich zugänglich. Verfügbarkeit und Preise für 2026 sind noch nicht in jedem Buchungssystem freigeschaltet.</p>
 
     <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Die Route ist führend. Eine geänderte Nacht kann alle folgenden Unterkünfte bis zur fixen Fähre automatisch verschieben. Bei grösseren Routenänderungen erstellt die Planungshilfe aus dem aktuellen Roadbook ein ChatGPT-Briefing für neue Unterkünfte.</p>
+
+    <section class="route-impact" id="route-impact" hidden aria-live="polite">
+      <div><strong>Roadbook geändert</strong><span id="route-impact-text">Die Unterkunftsplanung sollte mit dem aktuellen Roadbook abgeglichen werden.</span></div>
+      <div class="route-impact-actions">
+        <a class="tool-button" href="/unterkuenfte?admin=1">Bearbeiten</a>
+        <button class="tool-button primary-button edit-only" id="route-impact-helper" type="button" hidden>Planungshilfe starten</button>
+      </div>
+    </section>
 
     <details class="booking-plan">
       <summary>Empfohlene Buchungsstrategie</summary>
@@ -847,6 +873,7 @@
   <script>
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
     const storageKey = "spanien-roadbook-2026-hotels-v2";
+    const accommodationReviewKey = "spanien-roadbook-2026-accommodation-review-v1";
     const publishedAccommodationState = {};
     let state = { ...publishedAccommodationState };
     let editingStayId = "";
@@ -917,6 +944,23 @@
     const routeDateFormatter = new Intl.DateTimeFormat("de-CH", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" });
     const routeStart = Date.UTC(2026, 8, 24);
     const routeDateForDay = (index) => routeDateFormatter.format(new Date(routeStart + index * dayMs));
+    const routeIsoForDay = (index) => isoDate(new Date(routeStart + index * dayMs));
+    const normalizePlaceParts = (value) => String(value || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .split(/\s+oder\s+|\/|,|·/)
+      .map((part) => part.replace(/[^a-z0-9]+/g, " ").trim())
+      .filter(Boolean);
+    const normalizePlace = (value) => normalizePlaceParts(value)[0] || "";
+    const placesMatch = (expected, actual) => {
+      const leftParts = normalizePlaceParts(expected);
+      const rightParts = normalizePlaceParts(actual);
+      const leftJoined = leftParts.join(" ");
+      const rightJoined = rightParts.join(" ");
+      if ((leftJoined.includes("fahre") || leftJoined.includes("kabine")) && rightJoined.includes("fahre")) return true;
+      return leftParts.some((left) => rightParts.some((right) => left && right && (left.includes(right) || right.includes(left))));
+    };
 
     const extractArrayLiteral = (text, marker) => {
       const markerIndex = text.indexOf(marker);
@@ -986,6 +1030,31 @@
       status: item.status || "planned"
     }));
 
+    const expectedStaysFromRoute = (days) => {
+      const ferryIndex = days.findIndex((item) => (item.title || "").toLowerCase().includes("fähre") || (item.title || "").toLowerCase().includes("faehre"));
+      const endIndex = ferryIndex >= 0 ? Math.min(days.length - 1, ferryIndex + 1) : days.length - 1;
+      const blocks = [];
+      for (let index = 0; index <= endIndex; index += 1) {
+        const overnight = days[index]?.overnight || "";
+        if (!overnight || normalizePlace(overnight) === "berikon") continue;
+        const last = blocks[blocks.length - 1];
+        if (last && placesMatch(overnight, last.overnight) && last.endDate === routeIsoForDay(index)) {
+          last.endDate = routeIsoForDay(index + 1);
+          last.nightCount += 1;
+        } else {
+          blocks.push({
+            day: index + 1,
+            date: routeDateForDay(index),
+            overnight,
+            startDate: routeIsoForDay(index),
+            endDate: routeIsoForDay(index + 1),
+            nightCount: 1
+          });
+        }
+      }
+      return blocks;
+    };
+
     const accommodationSummary = () => stayOrder().map((id, index) => {
       const stay = document.querySelector(`.stay[data-stay="${id}"]`);
       const schedule = staySchedule(id);
@@ -1004,6 +1073,45 @@
         baselineNote: data.baseNote || stay?.dataset.baseNote || ""
       };
     });
+
+    const localReview = () => {
+      try {
+        const review = JSON.parse(localStorage.getItem(accommodationReviewKey) || "null");
+        return review?.needsReview ? review : null;
+      } catch (_) {
+        return null;
+      }
+    };
+
+    const routeAccommodationMismatches = async () => {
+      const days = await loadRoadbookDays();
+      const expected = expectedStaysFromRoute(days);
+      const current = accommodationSummary();
+      return expected.filter((block) => {
+        const exact = current.some((stay) => placesMatch(block.overnight, stay.title) && stay.startDate === block.startDate && stay.endDate === block.endDate);
+        return !exact;
+      });
+    };
+
+    const updateRouteImpact = async () => {
+      const review = localReview();
+      let mismatches = [];
+      try {
+        mismatches = await routeAccommodationMismatches();
+      } catch (_) {}
+      const visible = Boolean(review || mismatches.length);
+      routeImpact.hidden = !visible;
+      if (!visible) return;
+      if (mismatches.length) {
+        const first = mismatches[0];
+        routeImpactText.textContent = `${mismatches.length} Übernachtungsblöcke passen nicht eindeutig zum aktuellen Roadbook. Erste Abweichung: Tag ${first.day}, ${first.overnight}, ${first.startDate} bis ${first.endDate}.`;
+      } else {
+        const changed = review.changed?.length || 0;
+        routeImpactText.textContent = changed
+          ? `${changed} geänderte Roadbook-Tage können Unterkünfte betreffen. Bitte mit der Planungshilfe abgleichen.`
+          : "Das Roadbook wurde geändert. Bitte Unterkunftsplanung mit der Route abgleichen.";
+      }
+    };
 
     const buildAccommodationPrompt = async () => {
       const days = await loadRoadbookDays();
@@ -1084,6 +1192,8 @@ Wichtig fuer das Import-JSON:
     const accommodationImportDialog = document.querySelector("#accommodation-import-dialog");
     const accommodationImportForm = document.querySelector("#accommodation-import-form");
     const accommodationImportInput = document.querySelector("#accommodation-import-input");
+    const routeImpact = document.querySelector("#route-impact");
+    const routeImpactText = document.querySelector("#route-impact-text");
 
     const saveState = () => {
       localStorage.setItem(storageKey, JSON.stringify(state));
@@ -1240,6 +1350,7 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelectorAll(".edit-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
+    updateRouteImpact();
     document.querySelector("#close-stay-editor").addEventListener("click", () => stayEditor.close());
     document.querySelector("#cancel-stay-editor").addEventListener("click", () => stayEditor.close());
     const mergeStayState = (id, values) => {
@@ -1305,7 +1416,9 @@ Wichtig fuer das Import-JSON:
         mergeStayState(id, normalizeImportedStay(item, id));
       });
       saveState();
+      localStorage.removeItem(accommodationReviewKey);
       document.querySelectorAll(".stay").forEach(applyStay);
+      updateRouteImpact();
     };
 
     stayEditorForm.addEventListener("submit", (event) => {
@@ -1327,6 +1440,7 @@ Wichtig fuer das Import-JSON:
       if (document.querySelector("#edit-shift-following").checked) shiftFollowingStays(editingStayId, deltaDays);
       saveState();
       document.querySelectorAll(".stay").forEach(applyStay);
+      updateRouteImpact();
       stayEditor.close();
     });
 
@@ -1340,6 +1454,9 @@ Wichtig fuer das Import-JSON:
       } catch (error) {
         accommodationHelperOutput.value = `Planungshilfe konnte nicht erstellt werden: ${error.message}`;
       }
+    });
+    document.querySelector("#route-impact-helper")?.addEventListener("click", () => {
+      document.querySelector("#accommodation-helper")?.click();
     });
     document.querySelector("#close-accommodation-helper")?.addEventListener("click", () => accommodationHelperDialog.close());
     document.querySelector("#copy-accommodation-helper")?.addEventListener("click", async () => {
