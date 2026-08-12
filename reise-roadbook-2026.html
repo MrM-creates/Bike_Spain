@@ -2155,7 +2155,7 @@ Wichtig fuer das Import-JSON:
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
         save("Online veröffentlicht");
-        alert(`Online veröffentlicht. Commit: ${result.commit || "unbekannt"}\\nVercel deployed jetzt automatisch.`);
+        alert(`Online veröffentlicht.\nCommit: ${result.commit || "unbekannt"}\nVercel deployed jetzt automatisch.`);
         const target = new URL(window.location.href);
         target.searchParams.set("refresh", result.commit || Date.now().toString());
         window.location.href = target.toString();
