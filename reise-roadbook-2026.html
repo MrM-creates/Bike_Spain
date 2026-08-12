@@ -1937,6 +1937,13 @@
       showAccommodationImpact();
     };
 
+    const clearAccommodationReview = () => {
+      try {
+        localStorage.removeItem(ACCOMMODATION_REVIEW_KEY);
+      } catch (_) {}
+      showAccommodationImpact();
+    };
+
     const routeLink = (label, url, secondary = false, meta = "") => {
       const anchor = document.createElement("a");
       anchor.className = `route-link${secondary ? " secondary" : ""}`;
@@ -2571,7 +2578,7 @@ Wichtig fuer das Import-JSON:
       if (!confirm("Den unveränderten Originalplan dieser Reise laden? Lokale Änderungen in diesem Browser werden ersetzt.")) return;
       state.days = clone(originalBaseline);
       activeFilter = "all";
-      markAccommodationReview("Originalplan geladen");
+      clearAccommodationReview();
       save("Originalplan geladen");
       render();
     });
