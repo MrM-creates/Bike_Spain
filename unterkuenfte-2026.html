@@ -314,6 +314,14 @@
       color: var(--text);
       font-size: 13px;
     }
+    .schedule-warning {
+      margin: 12px 0 0;
+      padding: 10px 12px;
+      border-left: 3px solid var(--amber);
+      background: var(--amber-soft);
+      color: #67400f;
+      font-size: 13px;
+    }
 
     .tool-button {
       min-height: 38px;
@@ -374,6 +382,19 @@
       font-size: 14px;
     }
     .field textarea { min-height: 76px; resize: vertical; }
+    .field-hint { margin: 0; color: var(--muted); font-size: 12px; }
+    .schedule-control {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: #fff;
+    }
+    .schedule-control input { width: 18px; height: 18px; margin: 2px 0 0; flex: 0 0 auto; }
+    .schedule-control strong { display: block; margin-bottom: 2px; font-size: 13px; }
+    .schedule-control span { display: block; color: var(--muted); font-size: 12px; }
 
     .options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
     .hotel { min-width: 0; padding-top: 12px; border-top: 1px solid var(--border); }
@@ -500,7 +521,7 @@
 
     <p class="notice"><strong>Vor jeder Buchung schriftlich bestätigen:</strong> Platz für zwei Motorräder, nachts geschlossen oder kontrolliert, reservierbar und am Anreisetag tatsächlich zugänglich. Verfügbarkeit und Preise für 2026 sind noch nicht in jedem Buchungssystem freigeschaltet.</p>
 
-    <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Eine neue Roadbook-Route aktualisiert diese Unterkunftsliste nicht automatisch. Nach einem importierten ChatGPT-Plan die betroffenen Nächte hier separat prüfen und Hotels bei Bedarf neu planen.</p>
+    <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Eine geänderte Nacht kann im Bearbeitungsmodus alle folgenden Unterkünfte bis zur fixen Fähre automatisch verschieben. Wenn ein Konflikt mit der Fähre angezeigt wird, Roadbook-Verlauf neu planen oder vorher eine Nacht streichen.</p>
 
     <details class="booking-plan">
       <summary>Empfohlene Buchungsstrategie</summary>
@@ -748,8 +769,12 @@
       </div>
       <div class="editor-body">
         <div class="form-grid">
-          <div class="field"><label for="edit-date">Datum</label><input id="edit-date" name="date"></div>
-          <div class="field"><label for="edit-nights">Nächte</label><input id="edit-nights" name="nights"></div>
+          <div class="field"><label for="edit-start-date">Anreise</label><input id="edit-start-date" name="startDate" type="date"></div>
+          <div class="field"><label for="edit-night-count">Nächte</label><input id="edit-night-count" name="nightCount" type="number" min="1" step="1"></div>
+          <label class="schedule-control">
+            <input id="edit-shift-following" type="checkbox" checked>
+            <span><strong>Folgende Unterkünfte bis zur Fähre automatisch verschieben</strong><span>Die Fähre bleibt fix. Wenn der Plan davor zu lang wird, zeigt die Liste einen Konflikt.</span></span>
+          </label>
           <div class="field full"><label for="edit-title">Ort / Stopp</label><input id="edit-title" name="title"></div>
           <div class="field full"><label for="edit-base-note">Basisnotiz</label><input id="edit-base-note" name="baseNote"></div>
           <div class="field"><label for="edit-booking">Status</label><select id="edit-booking" name="booking"><option value="">Offen</option><option value="asked">Angefragt</option><option value="booked">Gebucht</option></select></div>
@@ -771,6 +796,70 @@
     const publishedAccommodationState = {};
     let state = { ...publishedAccommodationState };
     let editingStayId = "";
+    const dayMs = 86400000;
+    const fixedStayId = "ferry";
+    const baseSchedule = [
+      ["grenoble", "2026-09-24", "2026-09-25"],
+      ["sisteron", "2026-09-25", "2026-09-26"],
+      ["lourmarin", "2026-09-26", "2026-09-27"],
+      ["nimes", "2026-09-27", "2026-09-28"],
+      ["carcassonne", "2026-09-28", "2026-09-29"],
+      ["castelldefels-1", "2026-09-29", "2026-10-01"],
+      ["falset", "2026-10-01", "2026-10-03"],
+      ["albarracin", "2026-10-03", "2026-10-05"],
+      ["alboraya", "2026-10-05", "2026-10-07"],
+      ["altea", "2026-10-07", "2026-10-08"],
+      ["monachil", "2026-10-08", "2026-10-11"],
+      ["ronda", "2026-10-11", "2026-10-14"],
+      ["ubeda", "2026-10-14", "2026-10-16"],
+      ["cuenca", "2026-10-16", "2026-10-18"],
+      ["zaragoza", "2026-10-18", "2026-10-19"],
+      ["castelldefels-2", "2026-10-19", "2026-10-21"],
+      ["ferry", "2026-10-21", "2026-10-22"],
+      ["aosta-como", "2026-10-22", "2026-10-23"]
+    ];
+    const scheduleById = new Map(baseSchedule.map(([id, startDate, endDate]) => [id, { startDate, endDate }]));
+    const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
+    const shortMonthNames = ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."];
+
+    const parseIsoDate = (value) => {
+      const [year, month, day] = String(value || "").split("-").map(Number);
+      return new Date(Date.UTC(year, month - 1, day));
+    };
+    const isoDate = (date) => date.toISOString().slice(0, 10);
+    const addDays = (value, days) => isoDate(new Date(parseIsoDate(value).getTime() + days * dayMs));
+    const diffDays = (start, end) => Math.round((parseIsoDate(end).getTime() - parseIsoDate(start).getTime()) / dayMs);
+    const nightLabel = (count, id = "") => `${count} ${count === 1 ? "Nacht" : "Nächte"}${id === fixedStayId ? " an Bord" : ""}`;
+    const dateRangeLabel = (startDate, endDate) => {
+      const start = parseIsoDate(startDate);
+      const end = parseIsoDate(endDate);
+      const startDay = start.getUTCDate();
+      const endDay = end.getUTCDate();
+      const startMonth = start.getUTCMonth();
+      const endMonth = end.getUTCMonth();
+      if (startMonth === endMonth) return `${startDay}.–${endDay}. ${monthNames[endMonth]}`;
+      return `${startDay}. ${shortMonthNames[startMonth]}–${endDay}. ${monthNames[endMonth]}`;
+    };
+    const stayOrder = () => Array.from(document.querySelectorAll(".stay")).map((stay) => stay.dataset.stay);
+    const staySchedule = (id) => {
+      const base = scheduleById.get(id) || {};
+      const data = state[id] || {};
+      const startDate = data.startDate || base.startDate || "";
+      const nightCount = Number(data.nightCount) || (startDate && (data.endDate || base.endDate) ? diffDays(startDate, data.endDate || base.endDate) : 1);
+      const endDate = data.endDate || (startDate ? addDays(startDate, nightCount) : "");
+      return { startDate, endDate, nightCount };
+    };
+    const scheduleFields = (id, startDate, nightCount) => {
+      const nights = Math.max(1, Number(nightCount) || 1);
+      const endDate = addDays(startDate, nights);
+      return {
+        startDate,
+        endDate,
+        nightCount: nights,
+        date: dateRangeLabel(startDate, endDate),
+        nights: nightLabel(nights, id)
+      };
+    };
 
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
@@ -785,6 +874,7 @@
     };
 
     const getStayBaseline = (stay) => ({
+      ...staySchedule(stay.dataset.stay),
       date: stay.querySelector(".stay-date strong")?.textContent.trim() || "",
       nights: stay.querySelector(".stay-date span")?.textContent.trim() || "",
       title: stay.querySelector("h2")?.textContent.trim() || "",
@@ -798,8 +888,9 @@
     const applyStay = (stay) => {
       const id = stay.dataset.stay;
       const data = state[id] || {};
-      const date = data.date || stay.dataset.baseDate;
-      const nights = data.nights || stay.dataset.baseNights;
+      const schedule = staySchedule(id);
+      const date = data.date || dateRangeLabel(schedule.startDate, schedule.endDate);
+      const nights = data.nights || nightLabel(schedule.nightCount, id);
       const title = data.title || stay.dataset.baseTitle;
       const baseNote = data.baseNote || stay.dataset.baseNote;
       stay.querySelector(".stay-date strong").textContent = date;
@@ -837,6 +928,19 @@
       }
       note.textContent = data.note || "";
       note.hidden = !data.note;
+
+      let warning = stay.querySelector(".schedule-warning");
+      if (!warning) {
+        warning = document.createElement("p");
+        warning.className = "schedule-warning";
+        stay.querySelector(".options").before(warning);
+      }
+      const ferrySchedule = staySchedule(fixedStayId);
+      const overlapsFerry = id !== fixedStayId && id !== "aosta-como" && schedule.endDate > ferrySchedule.startDate;
+      warning.textContent = overlapsFerry
+        ? `Konflikt mit der fixen Fähre am ${dateRangeLabel(ferrySchedule.startDate, ferrySchedule.endDate)}. Vor der Veröffentlichung Route neu planen oder vorher eine Nacht streichen.`
+        : "";
+      warning.hidden = !overlapsFerry;
     };
 
     const bookingGuidance = {
@@ -856,9 +960,13 @@
       Object.entries(data).forEach(([key, value]) => {
         if (stayEditorForm.elements[key]) stayEditorForm.elements[key].value = value || "";
       });
+      stayEditorForm.elements.startDate.value = data.startDate || "";
+      stayEditorForm.elements.nightCount.value = data.nightCount || 1;
+      document.querySelector("#edit-shift-following").checked = editingStayId !== fixedStayId;
+      document.querySelector("#edit-shift-following").disabled = editingStayId === fixedStayId || editingStayId === "aosta-como";
       document.querySelector("#stay-editor-title").textContent = `${data.title || "Unterkunft"} bearbeiten`;
       stayEditor.showModal();
-      stayEditorForm.elements.date.focus();
+      stayEditorForm.elements.startDate.focus();
     };
 
     document.querySelectorAll(".stay").forEach((stay) => {
@@ -868,6 +976,11 @@
       stay.dataset.baseNights = stay.querySelector(".stay-date span")?.textContent.trim() || "";
       stay.dataset.baseTitle = stay.querySelector("h2")?.textContent.trim() || "";
       stay.dataset.baseNote = stay.querySelector(".base-note")?.textContent.trim() || "";
+      const baseScheduleEntry = scheduleById.get(id);
+      if (baseScheduleEntry) {
+        stay.dataset.baseStartDate = baseScheduleEntry.startDate;
+        stay.dataset.baseEndDate = baseScheduleEntry.endDate;
+      }
       const [guidance, guidanceClass] = bookingGuidance[id] || ["Flexibel reservieren · stornierbarer Tarif", ""];
       const guidanceBadge = document.createElement("span");
       guidanceBadge.className = `booking-advice ${guidanceClass}`.trim();
@@ -900,17 +1013,45 @@
     document.querySelectorAll(".edit-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
     document.querySelector("#close-stay-editor").addEventListener("click", () => stayEditor.close());
     document.querySelector("#cancel-stay-editor").addEventListener("click", () => stayEditor.close());
+    const mergeStayState = (id, values) => {
+      state[id] = { ...(state[id] || {}), ...values };
+      Object.keys(state[id]).forEach((key) => {
+        if (state[id][key] === "" || state[id][key] === null || state[id][key] === undefined) delete state[id][key];
+      });
+      if (!Object.keys(state[id]).length) delete state[id];
+    };
+
+    const shiftFollowingStays = (id, deltaDays) => {
+      if (!deltaDays) return;
+      const ids = stayOrder();
+      const start = ids.indexOf(id) + 1;
+      const fixed = ids.indexOf(fixedStayId);
+      if (start <= 0 || fixed < 0) return;
+      ids.slice(start, fixed).forEach((nextId) => {
+        const schedule = staySchedule(nextId);
+        mergeStayState(nextId, scheduleFields(nextId, addDays(schedule.startDate, deltaDays), schedule.nightCount));
+      });
+    };
+
     stayEditorForm.addEventListener("submit", (event) => {
       event.preventDefault();
       const values = Object.fromEntries(new FormData(stayEditorForm));
-      state[editingStayId] = Object.fromEntries(
+      const previous = staySchedule(editingStayId);
+      const startDate = String(values.startDate || "").trim();
+      const nightCount = Math.max(1, Number(values.nightCount) || previous.nightCount || 1);
+      if (!startDate) return;
+      const nextSchedule = scheduleFields(editingStayId, startDate, nightCount);
+      const deltaDays = diffDays(previous.endDate, nextSchedule.endDate);
+      const cleanValues = Object.fromEntries(
         Object.entries(values)
+          .filter(([key]) => !["startDate", "nightCount"].includes(key))
           .map(([key, value]) => [key, String(value || "").trim()])
           .filter(([, value]) => value)
       );
-      if (!Object.keys(state[editingStayId]).length) delete state[editingStayId];
+      mergeStayState(editingStayId, { ...cleanValues, ...nextSchedule });
+      if (document.querySelector("#edit-shift-following").checked) shiftFollowingStays(editingStayId, deltaDays);
       saveState();
-      applyStay(document.querySelector(`.stay[data-stay="${editingStayId}"]`));
+      document.querySelectorAll(".stay").forEach(applyStay);
       stayEditor.close();
     });
 

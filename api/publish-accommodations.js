@@ -40,7 +40,7 @@ const githubRequest = async (path, options = {}) => {
 };
 
 const normalizeEntry = (entry) => {
-  const allowed = ["booking", "date", "nights", "title", "baseNote", "firstChoice", "alternative", "note"];
+  const allowed = ["booking", "date", "nights", "startDate", "endDate", "nightCount", "title", "baseNote", "firstChoice", "alternative", "note"];
   const output = {};
   allowed.forEach((key) => {
     if (entry?.[key] !== undefined && entry[key] !== null) {
