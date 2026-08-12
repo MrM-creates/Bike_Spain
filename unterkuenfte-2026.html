@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f5f0">
-  <title>Spanienreise 2026 - Unterkünfte</title>
+  <title>Motorrad-Roadbook - Unterkünfte</title>
   <style>
     :root {
       --bg: #f4f5f0;
@@ -49,13 +49,13 @@
       margin: 0 auto;
     }
     .topbar-inner {
-      min-height: 66px;
+      min-height: 68px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 16px;
     }
-    .brand { font-size: 16px; font-weight: 760; }
+    .brand { font-size: 17px; font-weight: 760; white-space: nowrap; }
     .topbar-nav {
       display: flex;
       align-items: center;
@@ -120,6 +120,15 @@
       border-radius: var(--radius);
       background: var(--amber-soft);
       color: #67400f;
+      font-size: 14px;
+    }
+    .sync-note {
+      margin: 0 0 22px;
+      padding: 13px 15px;
+      border: 1px solid #c9d7e5;
+      border-radius: var(--radius);
+      background: var(--blue-soft);
+      color: #244a70;
       font-size: 14px;
     }
 
@@ -295,6 +304,9 @@
 
     @media (max-width: 760px) {
       .topbar-inner { min-height: 58px; }
+      .topbar-inner { align-items: stretch; flex-direction: column; justify-content: center; padding: 10px 0; }
+      .topbar-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+      .nav-link { justify-content: center; width: 100%; min-width: 0; padding: 0 8px; font-size: 12px; }
       main { padding-top: 24px; }
       .intro { grid-template-columns: 1fr; gap: 10px; }
       .principles { grid-template-columns: 1fr; }
@@ -311,7 +323,7 @@
     }
     @media (max-width: 480px) {
       .topbar-inner, main, footer { width: min(100% - 22px, 980px); }
-      .brand { font-size: 14px; }
+      .brand { font-size: 15px; }
       h1 { font-size: 30px; }
       .stay-head { display: block; }
       .booking-state { margin-top: 12px; }
@@ -322,7 +334,7 @@
 <body>
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand">Spanienreise 2026</div>
+      <div class="brand">Motorrad-Roadbook</div>
       <nav class="topbar-nav" aria-label="Hauptnavigation">
         <a class="nav-link" href="/">Fahren</a>
         <a class="nav-link" href="/?admin=1">Planen</a>
@@ -349,7 +361,9 @@
 
     <p class="notice"><strong>Vor jeder Buchung schriftlich bestätigen:</strong> Platz für zwei Motorräder, nachts geschlossen oder kontrolliert, reservierbar und am Anreisetag tatsächlich zugänglich. Verfügbarkeit und Preise für 2026 sind noch nicht in jedem Buchungssystem freigeschaltet.</p>
 
-    <details class="booking-plan" open>
+    <p class="sync-note"><strong>Wichtig bei Umplanung:</strong> Eine neue Roadbook-Route aktualisiert diese Unterkunftsliste nicht automatisch. Nach einem importierten ChatGPT-Plan die betroffenen Nächte hier separat prüfen und Hotels bei Bedarf neu planen.</p>
+
+    <details class="booking-plan">
       <summary>Empfohlene Buchungsstrategie</summary>
       <div class="booking-plan-body">
         <p class="booking-plan-intro">Reservierungen dienen als Sicherheitsnetz, nicht als starres Programm. Wegen der begrenzten Auswahl mit sicherer Abstellung für zwei Motorräder ist eine reine Suche am Vorabend unnötig riskant.</p>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f4f5f0">
-  <title>Spanienreise 2026 - Roadbook</title>
+  <title>Motorrad-Roadbook</title>
   <style>
     :root {
       --bg: #f4f5f0;
@@ -23,7 +23,7 @@
       --done: #176b46;
       --skipped: #747b76;
       --radius: 8px;
-      --shadow: 0 8px 24px rgba(23, 32, 25, 0.08);
+      --shadow: 0 10px 28px rgba(23, 32, 25, 0.08);
       --fast: 160ms ease;
     }
 
@@ -60,7 +60,7 @@
     }
 
     .topbar-inner {
-      min-height: 66px;
+      min-height: 68px;
       display: grid;
       gap: 8px;
       padding: 10px 0;
@@ -82,7 +82,8 @@
 
     .brand {
       font-weight: 760;
-      font-size: 16px;
+      font-size: 17px;
+      white-space: nowrap;
     }
 
     .topbar-nav {
@@ -137,20 +138,20 @@
 
     .topbar-context[hidden] { display: none !important; }
 
-    main { padding: 36px 0 64px; }
+    main { padding: 30px 0 64px; }
 
     .intro {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       align-items: end;
       gap: 24px;
-      margin-bottom: 28px;
+      margin-bottom: 20px;
     }
 
     h1 {
-      margin: 0 0 8px;
+      margin: 0;
       max-width: 650px;
-      font-size: clamp(30px, 5vw, 46px);
+      font-size: clamp(28px, 5vw, 42px);
       line-height: 1.08;
       letter-spacing: 0;
     }
@@ -159,7 +160,7 @@
       margin: 0;
       max-width: 680px;
       color: var(--muted);
-      font-size: 17px;
+      font-size: 16px;
     }
 
     .legend {
@@ -181,35 +182,6 @@
     }
 
     .legend .rest-key::before { background: var(--rest); }
-
-    .trip-summary {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin: 0 0 24px;
-      background: var(--text);
-      color: #fff;
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
-
-    .trip-summary div {
-      min-width: 0;
-      padding: 16px 18px;
-      border-right: 1px solid rgba(255, 255, 255, 0.16);
-    }
-
-    .trip-summary div:last-child { border-right: 0; }
-
-    .trip-summary strong {
-      display: block;
-      margin-bottom: 2px;
-      font-size: 20px;
-    }
-
-    .trip-summary span {
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 13px;
-    }
 
     .glossary {
       margin: 0 0 20px;
@@ -395,6 +367,15 @@
       white-space: nowrap;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+
     .glossary summary {
       padding: 15px 18px;
       color: var(--text);
@@ -519,11 +500,11 @@
 
     .day {
       display: grid;
-      grid-template-columns: 74px minmax(0, 1fr) auto;
-      gap: 18px;
+      grid-template-columns: 70px minmax(0, 1fr) 214px;
+      gap: 16px;
       align-items: start;
       min-height: 118px;
-      padding: 20px;
+      padding: 18px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-left: 4px solid var(--accent);
@@ -589,17 +570,21 @@
     .facts {
       display: flex;
       flex-wrap: wrap;
-      gap: 7px 14px;
+      gap: 6px;
       margin: 0 0 9px;
       color: var(--text);
       font-size: 14px;
       font-weight: 720;
     }
 
-    .facts span + span::before {
-      content: "·";
-      margin-right: 14px;
-      color: var(--border);
+    .facts span {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #edf0ed;
+      color: #2f3932;
     }
 
     .note {
@@ -661,7 +646,7 @@
       flex-direction: column;
       align-items: stretch;
       gap: 7px;
-      width: 210px;
+      width: 100%;
     }
 
     .action-group {
@@ -845,17 +830,31 @@
     }
 
     @media (max-width: 760px) {
-      .topbar-inner { min-height: 58px; }
-      .topbar-main { align-items: flex-start; flex-direction: column; gap: 8px; }
+      .topbar-inner { min-height: 58px; gap: 7px; }
+      .topbar-main { align-items: stretch; flex-direction: column; gap: 8px; }
       .topbar-menu { width: 100%; }
-      .topbar-nav { width: 100%; overflow-x: auto; padding-bottom: 1px; }
+      .topbar-nav {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 5px;
+      }
+      .topbar-link,
+      .nav-button {
+        justify-content: center;
+        min-width: 0;
+        padding: 0 8px;
+        font-size: 12px;
+      }
+      .nav-icon {
+        width: 38px;
+        min-width: 38px;
+        flex: 0 0 38px;
+      }
       .topbar-context { align-items: stretch; flex-direction: column; }
       main { padding-top: 24px; }
       .intro { grid-template-columns: 1fr; gap: 14px; }
       .legend { white-space: normal; }
-      .trip-summary { grid-template-columns: 1fr; }
-      .trip-summary div { border-right: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.16); }
-      .trip-summary div:last-child { border-bottom: 0; }
       .glossary-grid { grid-template-columns: 1fr; }
       .action-help-grid { grid-template-columns: 1fr; }
       .day {
@@ -870,19 +869,36 @@
       }
       .route-link { min-height: 48px; }
       .detail-grid { grid-template-columns: 1fr; }
-      .planning-actions { overflow-x: auto; padding-bottom: 1px; }
+      .planning-actions { width: 100%; overflow: visible; padding-bottom: 1px; }
+      .planning-group { width: 100%; }
+      .planning-group-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .planning-group-actions .tool-button {
+        min-width: 0;
+        min-height: 44px;
+        height: auto;
+        padding: 8px 9px;
+        line-height: 1.2;
+      }
       .save-state { display: none; }
       .map-frame { height: 52vh; min-height: 320px; }
       .form-grid { grid-template-columns: 1fr; }
       .field.full { grid-column: auto; }
       .editor-footer { flex-wrap: wrap; }
       .editor-footer .tool-button { flex: 1 1 180px; }
+      .tool-button[data-help]::before,
+      .tool-button[data-help]::after,
+      .nav-button[data-help]::before,
+      .nav-button[data-help]::after { display: none; }
     }
 
     @media (max-width: 420px) {
       .topbar-inner,
       main,
       footer { width: min(100% - 22px, 980px); }
+      .brand { font-size: 15px; }
       h1 { font-size: 30px; }
       .day { grid-template-columns: 46px minmax(0, 1fr); }
       .day-number strong { font-size: 24px; }
@@ -899,7 +915,7 @@
   <header class="topbar">
     <div class="topbar-inner">
       <div class="topbar-main">
-        <div class="brand">Spanienreise 2026</div>
+        <div class="brand">Motorrad-Roadbook</div>
         <div class="topbar-menu">
           <nav class="topbar-nav" aria-label="Hauptnavigation">
             <button class="nav-button" id="nav-drive" type="button">Fahren</button>
@@ -930,19 +946,13 @@
   <main>
     <section class="intro" aria-labelledby="page-title">
       <div>
-        <h1 id="page-title">Motorrad-Roadbook</h1>
-        <p>Geplanter Reiseverlauf mit Strassen, Hotels und Hinweisen. Aktuelle Fahrzeit, Verkehr und Sperrungen in Google Maps prüfen.</p>
+        <h1 class="sr-only" id="page-title">Motorrad-Roadbook</h1>
+        <p>Geplanter Strassenverlauf mit Hotels und Hinweisen. Aktuelle Fahrzeit, Verkehr und Sperrungen in Google Maps prüfen.</p>
       </div>
       <div class="legend" aria-label="Legende">
         <span>Fahrtag</span>
         <span class="rest-key">Ruhetag</span>
       </div>
-    </section>
-
-    <section class="trip-summary" aria-label="Reiseübersicht">
-      <div><strong id="summary-days">30 Tage</strong><span>24.09.–23.10.2026 · Berikon – Spanien – Berikon</span></div>
-      <div><strong>ca. 5'200 km</strong><span>Hauptroute, ohne Zusatzrunden</span></div>
-      <div><strong>Roadbook-Stand</strong><span>11. August 2026 · Routen geprüft am 1. August</span></div>
     </section>
 
     <details class="action-help" id="hilfe">
@@ -964,7 +974,7 @@
       </div>
     </details>
 
-    <details class="map-panel" open>
+    <details class="map-panel">
       <summary>My Maps – ursprüngliche Gesamtkarte</summary>
       <iframe
         class="map-frame"
@@ -2017,6 +2027,7 @@ Ziel:
 - Plane motorradfreundlich, ruhig und sicher, aber nicht als Calimoto-Kurvenmaximierung.
 - Nutze Google Maps als Routengeruest mit klaren Kontrollpunkten.
 - Sichere Motorradabstellung fuer zwei beladene Triumph-Motorraeder bleibt bei Unterkuenften Pflicht.
+- Die Unterkunftsseite wird durch das Import-JSON nicht automatisch aktualisiert. Nenne vor dem JSON klar, welche Uebernachtungen oder Hotels betroffen sind und separat geprueft oder neu geplant werden muessen.
 
 Fixpunkte:
 - Reisezeit: 24.09. bis 23.10.2026.
@@ -2168,7 +2179,6 @@ Wichtig fuer das Import-JSON:
     const render = () => {
       list.innerHTML = "";
       renderFilters();
-      document.querySelector("#summary-days").textContent = `${state.days.length} Tage`;
       setActiveNav();
       document.querySelectorAll(".planning-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
 
