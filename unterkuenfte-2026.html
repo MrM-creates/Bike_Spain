@@ -532,7 +532,7 @@
         <div class="brand">Motorrad-Roadbook</div>
         <nav class="topbar-nav" aria-label="Hauptnavigation">
           <a class="nav-link" href="/">Fahren</a>
-          <a class="nav-link" href="/?admin=1#plan-aendern">Plan ändern</a>
+          <a class="nav-link" id="nav-plan-link" href="/?admin=1#plan-aendern">Plan ändern</a>
           <a class="nav-link" href="/unterkuenfte" aria-current="page">Unterkünfte</a>
           <a class="nav-link" href="/#hilfe">Hilfe</a>
         </nav>
@@ -555,11 +555,10 @@
       </div>
       <div class="intro-actions">
         <span class="count">16 Stopps · 28 Nächte + Fähre</span>
-        <a class="tool-button" href="/?admin=1#plan-aendern">Plan ändern</a>
       </div>
     </section>
 
-    <section class="route-impact" id="plan-view-state" aria-live="polite">
+    <section class="route-impact" id="plan-view-state" aria-live="polite" hidden>
       <div><strong id="plan-view-state-title">Aktueller Plan</strong><span id="plan-view-state-text">Diese Unterkünfte gehören zum gemeinsamen Online-Plan.</span></div>
       <div class="route-impact-actions">
         <a class="tool-button" id="plan-view-state-link" href="/">Zum Roadbook</a>
@@ -1435,10 +1434,13 @@ Wichtig fuer das Import-JSON:
     document.querySelectorAll(".edit-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
     if (activeDraft) {
       document.querySelector("#plan-view-state").classList.add("draft-state");
+      document.querySelector("#plan-view-state").hidden = false;
       document.querySelector("#plan-view-state-title").textContent = "Entwurf";
-      document.querySelector("#plan-view-state-text").textContent = "Diese Unterkünfte gehören zum noch nicht veröffentlichten Routenvorschlag.";
-      document.querySelector("#plan-view-state-link").textContent = "Entwurf prüfen";
+      document.querySelector("#plan-view-state-text").textContent = "Du prüfst die Unterkünfte des noch nicht veröffentlichten Reiseplans.";
+      document.querySelector("#plan-view-state-link").textContent = "Zur Entwurfsübersicht";
       document.querySelector("#plan-view-state-link").href = "/?admin=1";
+      document.querySelector("#nav-plan-link").textContent = "Entwurf";
+      document.querySelector("#nav-plan-link").href = "/?admin=1";
       document.querySelector("#route-impact").hidden = true;
     }
     updateRouteImpact();
