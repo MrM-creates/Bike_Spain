@@ -2126,6 +2126,7 @@ Ziel:
 - Passe den weiteren Reiseverlauf ab diesem Tag bis zum Tag vor dem Fixpunkt Faehre Barcelona - Genua an.
 - Die Faehre selbst ist ein Fixpunkt und darf nicht ersetzt oder verschoben werden.
 - Wenn die Aenderung nur eine kleine lokale Notiz betrifft, erklaere kurz, warum keine Neuplanung noetig ist.
+- Wenn ein Aufenthalt um eine oder mehrere Naechte verlaengert wurde, ist das keine lokale Notiz: Plane den Rest bis zur Faehre neu und kompensiere die zusaetzlichen Naechte durch Streichen, Zusammenlegen oder direktere Etappen.
 - Plane motorradfreundlich, ruhig und sicher, aber nicht als Calimoto-Kurvenmaximierung.
 - Nutze Google Maps als Routengeruest mit klaren Kontrollpunkten.
 - Sichere Motorradabstellung fuer zwei beladene Triumph-Motorraeder bleibt bei Unterkuenften Pflicht.
@@ -2149,10 +2150,11 @@ ${JSON.stringify({ generatedAt: new Date().toISOString(), startDay: startIndex +
 Arbeitsauftrag:
 1. Stelle zuerst die neue Planung als Text vor.
 2. Gib pro Tag Start, Ziel, Uebernachtungsort, Kilometer, Fahrzeit, Kontrollpunkte, Sicherheitsnotiz und Aenderung gegenueber dem Originalplan an.
-3. Danach gib ein einziges JSON nach folgendem Schema aus. Dieses JSON fuege ich im Roadbook ueber "ChatGPT-Plan uebernehmen" ein.
-4. Nach dem Import veroeffentliche ich den Stand im Roadbook mit "Online veroeffentlichen". Die App schreibt dann serverseitig nach GitHub \`MrM-creates/Bike_Spain\`; Vercel-Projekt \`motorrad-roadbook-spanien-2026\` deployed automatisch.
-5. Der Originalplan soll als Rueckfallbasis erhalten bleiben. Das JSON beschreibt nur den aktuellen Roadbook-Plan, nicht den Originalplan.
-6. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
+3. Wenn zusaetzliche Naechte enthalten sind, nenne konkret, welche Tage oder Reserven gestrichen, zusammengelegt oder direkter gefahren werden, damit die Faehre fix bleibt.
+4. Danach gib ein einziges JSON nach folgendem Schema aus. Dieses JSON fuege ich im Roadbook ueber "ChatGPT-Plan uebernehmen" ein.
+5. Nach dem Import veroeffentliche ich den Stand im Roadbook mit "Online veroeffentlichen". Die App schreibt dann serverseitig nach GitHub \`MrM-creates/Bike_Spain\`; Vercel-Projekt \`motorrad-roadbook-spanien-2026\` deployed automatisch.
+6. Der Originalplan soll als Rueckfallbasis erhalten bleiben. Das JSON beschreibt nur den aktuellen Roadbook-Plan, nicht den Originalplan.
+7. Gib keinen Markdown-Kommentar innerhalb des JSON aus.
 
 JSON-Schema fuer den Roadbook-Import:
 \`\`\`json
@@ -2182,26 +2184,36 @@ Wichtig fuer das Import-JSON:
       if (place === null) return;
       const trimmedPlace = place.trim();
       if (!trimmedPlace) return;
+      const nightsInput = prompt("Wie viele zusätzliche Nächte?", "1");
+      if (nightsInput === null) return;
+      const extraNights = Number(nightsInput.trim().replace(",", "."));
+      if (!Number.isInteger(extraNights) || extraNights < 1 || extraNights > 7) {
+        alert("Bitte eine ganze Zahl zwischen 1 und 7 eingeben.");
+        return;
+      }
       const reason = prompt("Kurze Notiz zur Verlängerung", "Aufenthalt verlängert; Folgeetappen neu prüfen.");
       if (reason === null) return;
       current.status = "changed";
-      const note = reason.trim() || "Aufenthalt verlängert; Folgeetappen neu prüfen.";
-      const extraDay = prepareDay({
+      const baseNote = reason.trim() || "Aufenthalt verlängert; Folgeetappen neu prüfen.";
+      const nightLabel = `${extraNights} zusätzliche ${extraNights === 1 ? "Nacht" : "Nächte"} in ${trimmedPlace}`;
+      const note = `${nightLabel}. ${baseNote}`;
+      current.travelNote = current.travelNote ? `${current.travelNote} ${nightLabel}.` : nightLabel;
+      const extraDays = Array.from({ length: extraNights }, (_, offset) => prepareDay({
         title: trimmedPlace,
         type: "Ruhetag / Verlängerung",
         overnight: trimmedPlace,
         roads: "Keine feste Fahrroute",
         points: "Erholung · Organisation · Folgeetappen prüfen",
-        note,
-        travelNote: note,
+        note: `${note}${extraNights > 1 ? ` (${offset + 1}/${extraNights})` : ""}`,
+        travelNote: `${nightLabel}. Folgeetappen bis zur fixen Fähre neu planen.`,
         rest: true,
         status: "changed",
         custom: true
-      }, index + 1, true);
-      state.days.splice(index + 1, 0, extraDay);
+      }, index + 1 + offset, true));
+      state.days.splice(index + 1, 0, ...extraDays);
       activeFilter = "all";
-      markAccommodationReview(`Aufenthalt bei Tag ${index + 1} verlängert`);
-      save("Aufenthalt verlängert");
+      markAccommodationReview(`Aufenthalt bei Tag ${index + 1} um ${extraNights} ${extraNights === 1 ? "Nacht" : "Nächte"} verlängert`);
+      save(`Aufenthalt um ${extraNights} ${extraNights === 1 ? "Nacht" : "Nächte"} verlängert`);
       render();
     };
 
@@ -2410,7 +2422,7 @@ Wichtig fuer das Import-JSON:
         const quickActions = document.createElement("div");
         quickActions.className = "quick-actions";
         quickActions.append(
-          dayTool("Verlängern", `Fügt nach Tag ${index + 1} einen zusätzlichen Ruhetag am gewählten Ort ein.`, () => extendStay(index), false, false),
+          dayTool("Verlängern", `Fügt nach Tag ${index + 1} eine oder mehrere zusätzliche Nächte am gewählten Ort ein.`, () => extendStay(index), false, false),
           dayTool("Auslassen", `Markiert Tag ${index + 1} als ausgelassen und speichert den Grund als Notiz.`, () => skipDay(index), false, false),
           dayTool("Ab hier planen", `Erstellt eine ChatGPT-Planungshilfe ab Tag ${index + 1} mit den nächsten Etappen und Import-Anweisung.`, () => openPlanningHelper(index), false, false)
         );
