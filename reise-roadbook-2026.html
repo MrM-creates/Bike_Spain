@@ -2024,9 +2024,7 @@
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       if (saved?.days?.length) {
-        state.days = ADMIN_MODE
-          ? saved.days.map((item, index) => prepareDay(item, index, item.custom))
-          : savedOverlay(saved.days);
+        state.days = savedOverlay(saved.days);
       }
     } catch (_) {}
 

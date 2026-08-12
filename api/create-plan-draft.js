@@ -130,7 +130,9 @@ const createStructuredResponse = async ({ instructions, input, schema, name, web
   return JSON.parse(responseText(body));
 };
 
-const ferryIndexOf = (days) => days.findIndex((day) => /f(a|ä)hre/i.test(String(day?.title || "")));
+const ferryIndexOf = (days) => days.findIndex((day) => /f(a|ä)hre/i.test(
+  [day?.title, day?.type, day?.overnight].filter(Boolean).join(" ")
+));
 
 const normalizeInputDay = (day) => ({
   title: cleanText(day?.title, 180),
