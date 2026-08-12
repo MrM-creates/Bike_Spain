@@ -528,6 +528,7 @@
         <button class="tool-button primary-button" id="accommodation-helper" type="button">Aus Roadbook planen</button>
         <button class="tool-button" id="import-accommodations" type="button">Unterkunftsplan übernehmen</button>
         <button class="tool-button" id="publish-accommodations" type="button">Online veröffentlichen</button>
+        <button class="tool-button" id="reset-accommodations" type="button">Online-Stand laden</button>
         <a class="tool-button" href="/unterkuenfte">Fertig</a>
       </div>
     </div>
@@ -1212,6 +1213,14 @@ Wichtig fuer das Import-JSON:
       localStorage.setItem(storageKey, JSON.stringify(state));
     };
 
+    const clearLocalAccommodationState = () => {
+      state = { ...publishedAccommodationState };
+      localStorage.removeItem(storageKey);
+      localStorage.removeItem(accommodationReviewKey);
+      document.querySelectorAll(".stay").forEach(applyStay);
+      updateRouteImpact();
+    };
+
     const downloadText = (filename, text, type = "text/plain") => {
       const blob = new Blob([text], { type });
       const url = URL.createObjectURL(blob);
@@ -1496,6 +1505,11 @@ Wichtig fuer das Import-JSON:
       } catch (error) {
         alert(`Import fehlgeschlagen: ${error.message}`);
       }
+    });
+    document.querySelector("#reset-accommodations")?.addEventListener("click", () => {
+      if (!confirm("Lokale Unterkunftsänderungen in diesem Browser verwerfen und den Online-Stand laden?")) return;
+      clearLocalAccommodationState();
+      alert("Online-Stand geladen. Lokale Unterkunftsänderungen wurden verworfen.");
     });
 
     document.querySelector("#publish-accommodations")?.addEventListener("click", async () => {
