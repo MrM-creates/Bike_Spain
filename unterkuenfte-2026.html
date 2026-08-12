@@ -1102,11 +1102,13 @@
           }
     };
     let state = { ...publishedAccommodationState };
+    let appliedAccommodationVersion = PUBLISHED_VERSION;
     let accommodationHandoff = null;
     try {
       const savedHandoff = JSON.parse(localStorage.getItem(accommodationHandoffKey) || "null");
       if (savedHandoff?.version > PUBLISHED_VERSION && savedHandoff.accommodations && typeof savedHandoff.accommodations === "object") {
         accommodationHandoff = savedHandoff;
+        appliedAccommodationVersion = savedHandoff.version;
       } else if (savedHandoff) {
         localStorage.removeItem(accommodationHandoffKey);
       }
@@ -1451,11 +1453,12 @@ Wichtig fuer das Import-JSON:
       state = { ...state, ...accommodationHandoff.accommodations };
       showPlanningVersion(accommodationHandoff.version);
     }
+    let sharedAccommodationState = { ...state };
     try {
       const savedDraft = JSON.parse(localStorage.getItem(draftKey) || "null");
       if (savedDraft?.days?.length && savedDraft?.accommodations) {
         activeDraft = savedDraft;
-        state = { ...state, ...savedDraft.accommodations };
+        state = { ...sharedAccommodationState, ...savedDraft.accommodations };
       }
     } catch (_) {}
 
@@ -1471,11 +1474,13 @@ Wichtig fuer das Import-JSON:
     const routeImpactText = document.querySelector("#route-impact-text");
 
     const saveState = () => {
+      sharedAccommodationState = { ...state };
       localStorage.setItem(storageKey, JSON.stringify(state));
     };
 
     const clearLocalAccommodationState = () => {
       state = { ...publishedAccommodationState };
+      sharedAccommodationState = { ...state };
       localStorage.removeItem(storageKey);
       localStorage.removeItem(accommodationReviewKey);
       document.querySelectorAll(".stay").forEach(applyStay);
@@ -1655,18 +1660,66 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelectorAll(".edit-only").forEach((element) => { element.hidden = !ADMIN_MODE; });
-    if (activeDraft) {
-      document.querySelector("#plan-view-state").classList.add("draft-state");
-      document.querySelector("#plan-view-state").hidden = false;
-      document.querySelector("#plan-view-state-title").textContent = "Entwurf";
-      document.querySelector("#plan-view-state-text").textContent = "Du prüfst die Unterkünfte des noch nicht veröffentlichten Reiseplans.";
-      document.querySelector("#plan-view-state-link").textContent = "Zur Entwurfsübersicht";
-      document.querySelector("#plan-view-state-link").href = "/?admin=1";
-      document.querySelector("#nav-plan-link").textContent = "Entwurf";
-      document.querySelector("#nav-plan-link").href = "/?admin=1";
-      document.querySelector("#route-impact").hidden = true;
-    }
+    const updatePlanViewState = () => {
+      const viewState = document.querySelector("#plan-view-state");
+      const planLink = document.querySelector("#nav-plan-link");
+      if (activeDraft) {
+        viewState.classList.add("draft-state");
+        viewState.hidden = false;
+        document.querySelector("#plan-view-state-title").textContent = "Entwurf";
+        document.querySelector("#plan-view-state-text").textContent = "Du prüfst die Unterkünfte des noch nicht veröffentlichten Reiseplans.";
+        document.querySelector("#plan-view-state-link").textContent = "Zur Entwurfsübersicht";
+        document.querySelector("#plan-view-state-link").href = "/?admin=1";
+        planLink.textContent = "Entwurf";
+        planLink.href = "/?admin=1";
+        routeImpact.hidden = true;
+        return;
+      }
+      viewState.classList.remove("draft-state");
+      viewState.hidden = true;
+      planLink.textContent = "Plan ändern";
+      planLink.href = "/?admin=1#plan-aendern";
+    };
+
+    const syncSharedPlan = () => {
+      let savedHandoff = null;
+      try {
+        savedHandoff = JSON.parse(localStorage.getItem(accommodationHandoffKey) || "null");
+      } catch (_) {}
+      if (savedHandoff?.version > appliedAccommodationVersion && savedHandoff.accommodations && typeof savedHandoff.accommodations === "object") {
+        sharedAccommodationState = { ...publishedAccommodationState, ...savedHandoff.accommodations };
+        appliedAccommodationVersion = savedHandoff.version;
+        showPlanningVersion(savedHandoff.version);
+      }
+      try {
+        const savedDraft = JSON.parse(localStorage.getItem(draftKey) || "null");
+        activeDraft = savedDraft?.days?.length && savedDraft?.accommodations ? savedDraft : null;
+      } catch (_) {
+        activeDraft = null;
+      }
+      state = activeDraft
+        ? { ...sharedAccommodationState, ...activeDraft.accommodations }
+        : { ...sharedAccommodationState };
+      document.querySelectorAll(".stay").forEach((stay) => {
+        applyStay(stay);
+        const booking = state[stay.dataset.stay]?.booking || "";
+        stay.querySelectorAll(".state-button").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.state === booking));
+        });
+      });
+      updatePlanViewState();
+      updateRouteImpact();
+    };
+
+    updatePlanViewState();
     updateRouteImpact();
+    window.addEventListener("pageshow", syncSharedPlan);
+    window.addEventListener("storage", (event) => {
+      if ([accommodationHandoffKey, draftKey].includes(event.key)) syncSharedPlan();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") syncSharedPlan();
+    });
     document.querySelector("#close-stay-editor").addEventListener("click", () => stayEditor.close());
     document.querySelector("#cancel-stay-editor").addEventListener("click", () => stayEditor.close());
     const mergeStayState = (id, values) => {

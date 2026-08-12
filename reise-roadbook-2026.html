@@ -2271,10 +2271,10 @@
         createdAt: new Date().toISOString(),
         baseVersion: currentPublishedVersion,
         request: { type: "restore-original" },
-        decision: "Originalplan wiederherstellen",
+        decision: "Originalplan",
         summary: [
-          "Die unveränderte Originalroute und die ursprüngliche Unterkunftskette werden wiederhergestellt.",
-          "Der aktuell veröffentlichte Plan bleibt aktiv, bis du diesen Entwurf übernimmst und veröffentlichst."
+          "Die unveränderte Originalroute und die ursprüngliche Unterkunftskette sind zur Prüfung bereit.",
+          "Der aktuelle gemeinsame Plan bleibt aktiv, bis du den Originalplan für alle aktivierst."
         ],
         openItems: ["Bestehende Buchungen und Verfügbarkeiten für die ursprünglichen Reisedaten prüfen."],
         days: clone(originalBaseline),
@@ -2290,6 +2290,7 @@
 
     const renderWorkflow = () => {
       const hasDraft = Boolean(draft?.days?.length);
+      const isOriginalDraft = hasDraft && draft.request?.type === "restore-original";
       const hasTravelUpdates = !hasDraft && state.days.some((item, index) => {
         const published = currentPlanDays[index] || {};
         return item.status !== published.status || (item.travelNote || "") !== (published.travelNote || "");
@@ -2301,21 +2302,23 @@
       workflowBadge.hidden = justPublished;
       workflowText.hidden = justPublished;
       workflowBadge.textContent = hasDraft ? "Entwurf" : "Lokale Änderung";
-      workflowTitle.textContent = justPublished ? "Plan aktualisiert" : "Noch nicht veröffentlicht";
+      workflowTitle.textContent = justPublished ? "Plan aktualisiert" : (isOriginalDraft ? "Originalplan bereit" : "Noch nicht veröffentlicht");
       workflowText.textContent = hasDraft
-        ? "Route und Unterkünfte wurden gemeinsam neu geplant. Prüfe die Änderungen, bevor du sie veröffentlichst."
+        ? (isOriginalDraft
+          ? "Prüfe Route und Unterkünfte. Danach kannst du den Originalplan für beide Geräte aktivieren."
+          : "Route und Unterkünfte wurden gemeinsam neu geplant. Prüfe die Änderungen, bevor du sie veröffentlichst.")
         : (hasTravelUpdates
           ? "Tagesstatus oder Notizen wurden auf diesem Gerät geändert."
           : publishNotice);
       const startButton = document.querySelector("#start-plan-change");
       const discardButton = document.querySelector("#discard-draft");
       const publishButton = document.querySelector("#publish-draft");
-      startButton.hidden = hasTravelUpdates || Boolean(publishNotice);
+      startButton.hidden = hasTravelUpdates || Boolean(publishNotice) || isOriginalDraft;
       startButton.textContent = hasDraft ? "Planungswunsch ändern" : "Plan ändern";
       discardButton.hidden = !pending;
-      discardButton.textContent = hasDraft ? "Entwurf verwerfen" : "Lokale Änderung verwerfen";
+      discardButton.textContent = isOriginalDraft ? "Beim aktuellen Plan bleiben" : (hasDraft ? "Entwurf verwerfen" : "Lokale Änderung verwerfen");
       publishButton.hidden = !pending;
-      publishButton.textContent = hasDraft ? "Änderungen übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen";
+      publishButton.textContent = isOriginalDraft ? "Originalplan für alle aktivieren" : (hasDraft ? "Änderungen übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen");
       draftDetails.hidden = !hasDraft;
       if (pending) accommodationImpact.hidden = true;
       if (!hasDraft) {
@@ -2476,12 +2479,13 @@
 
     const publishDraft = async () => {
       if (!draft) return;
+      const restoringOriginal = draft.request?.type === "restore-original";
       const secret = getPublishPin();
       if (!secret) return;
-      if (!confirm("Route und Unterkünfte gemeinsam als neuen Online-Plan veröffentlichen?")) return;
+      if (!restoringOriginal && !confirm("Route und Unterkünfte gemeinsam als neuen Online-Plan veröffentlichen?")) return;
       const button = document.querySelector("#publish-draft");
       button.disabled = true;
-      button.textContent = "Wird veröffentlicht ...";
+      button.textContent = restoringOriginal ? "Originalplan wird aktiviert ..." : "Wird veröffentlicht ...";
       try {
         const response = await fetch("/api/publish-roadbook", {
           method: "POST",
@@ -2511,13 +2515,13 @@
         publishNotice = "Plan aktualisiert";
         showPlanningVersion(result.version);
         render();
-        alert("Plan aktualisiert.");
+        alert(restoringOriginal ? "Der Originalplan ist jetzt für alle aktiv." : "Plan aktualisiert.");
       } catch (error) {
         if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
         alert(`Veröffentlichung fehlgeschlagen: ${error.message}`);
       } finally {
         button.disabled = false;
-        button.textContent = "Änderungen übernehmen & veröffentlichen";
+        button.textContent = restoringOriginal ? "Originalplan für alle aktivieren" : "Änderungen übernehmen & veröffentlichen";
       }
     };
 
@@ -3188,7 +3192,7 @@ Wichtig fuer das Import-JSON:
       startDayField.hidden = !["reroute", "free"].includes(type);
       placeField.hidden = restoring;
       instructionField.hidden = restoring;
-      submit.textContent = restoring ? "Originalplan als Entwurf laden" : "Vorschläge erstellen";
+      submit.textContent = restoring ? "Originalplan prüfen" : "Vorschläge erstellen";
       document.querySelector("#change-nights-label").textContent = type === "shorten" ? "Weniger Nächte" : "Zusätzliche Nächte";
     });
 
@@ -3222,7 +3226,7 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelector("#reset-plan").addEventListener("click", () => {
-      if (!confirm("Den Originalplan als Entwurf laden? Der aktuelle Plan bleibt bis zur Veröffentlichung aktiv.")) return;
+      if (!confirm("Originalplan prüfen? Der aktuelle gemeinsame Plan bleibt dabei unverändert.")) return;
       createOriginalDraft().catch((error) => alert(`Originalplan konnte nicht geladen werden: ${error.message}`));
     });
 
