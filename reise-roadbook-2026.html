@@ -234,8 +234,37 @@
 
     .change-form { display: grid; gap: 14px; }
     .change-form .form-grid { align-items: end; }
-    .planning-progress { margin: 12px 0 0; color: var(--accent); font-size: 13px; font-weight: 700; }
+    .planning-progress {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      min-height: 170px;
+      padding: 24px;
+      border: 1px solid #c9ddd1;
+      border-radius: var(--radius);
+      background: var(--accent-soft);
+      color: var(--text);
+    }
     .planning-progress[hidden] { display: none; }
+    .planning-spinner {
+      width: 26px;
+      height: 26px;
+      flex: 0 0 26px;
+      border: 3px solid rgba(23, 107, 70, .2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: planning-spin .8s linear infinite;
+    }
+    .planning-progress strong { display: block; margin-bottom: 5px; font-size: 16px; }
+    .planning-progress span { display: block; color: #3f5547; font-size: 14px; }
+    .planning-progress small { display: block; margin-top: 14px; color: var(--muted); font-size: 12px; }
+    .planning-progress.is-error { min-height: 0; border-color: #efc98f; background: var(--option-soft); }
+    .planning-progress.is-error .planning-spinner { display: none; }
+    .planning-progress.is-error small { display: none; }
+    #plan-change-dialog.is-planning .form-grid,
+    #plan-change-dialog.is-planning .editor-footer { display: none; }
+    #plan-change-dialog.is-planning #close-plan-change { visibility: hidden; }
+    @keyframes planning-spin { to { transform: rotate(360deg); } }
     .legacy-planning { display: none !important; }
 
     .glossary {
@@ -1206,7 +1235,14 @@
             <textarea id="change-instruction" name="instruction" placeholder="z. B. Wir möchten zwei zusätzliche Nächte bleiben. Optionale Rundfahrten dürfen entfallen, lange Fahrtage möglichst vermeiden."></textarea>
           </div>
         </div>
-        <p class="planning-progress" id="planning-progress" hidden>ChatGPT erstellt Route und Unterkünfte. Das kann einen Moment dauern.</p>
+        <div class="planning-progress" id="planning-progress" role="status" aria-live="polite" hidden>
+          <span class="planning-spinner" aria-hidden="true"></span>
+          <div>
+            <strong id="planning-progress-title">Vorschläge werden erstellt</strong>
+            <span id="planning-progress-text">ChatGPT plant zuerst die Route, gleicht sie mit der Fähre ab und passt danach die Unterkünfte an.</span>
+            <small>Das Fenster schliesst sich automatisch, sobald der Entwurf bereit ist. Der aktuelle Online-Plan bleibt unverändert.</small>
+          </div>
+        </div>
       </div>
       <div class="editor-footer">
         <button class="tool-button" type="button" id="cancel-plan-change">Abbrechen</button>
@@ -2204,7 +2240,13 @@
 
     const openPlanChange = (startDay = 1) => {
       planChangeForm.elements.startDay.value = Math.max(1, Number(startDay) || 1);
-      document.querySelector("#planning-progress").hidden = true;
+      const progress = document.querySelector("#planning-progress");
+      planChangeDialog.classList.remove("is-planning");
+      progress.classList.remove("is-error");
+      progress.hidden = true;
+      document.querySelector("#planning-progress-title").textContent = "Vorschläge werden erstellt";
+      document.querySelector("#planning-progress-text").textContent = "ChatGPT plant zuerst die Route, gleicht sie mit der Fähre ab und passt danach die Unterkünfte an.";
+      document.querySelector("#close-plan-change").disabled = false;
       document.querySelector("#create-suggestions").disabled = false;
       planChangeDialog.showModal();
       planChangeForm.elements.type.focus();
@@ -2215,8 +2257,12 @@
       if (!secret) return;
       const progress = document.querySelector("#planning-progress");
       const submit = document.querySelector("#create-suggestions");
+      const close = document.querySelector("#close-plan-change");
+      planChangeDialog.classList.add("is-planning");
+      progress.classList.remove("is-error");
       progress.hidden = false;
       submit.disabled = true;
+      close.disabled = true;
       try {
         const accommodations = await loadAccommodationContext();
         const controller = new AbortController();
@@ -2239,11 +2285,15 @@
         workflow.scrollIntoView({ behavior: "smooth", block: "start" });
       } catch (error) {
         if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
-        progress.textContent = error.name === "AbortError"
+        planChangeDialog.classList.remove("is-planning");
+        progress.classList.add("is-error");
+        document.querySelector("#planning-progress-title").textContent = "Vorschläge konnten nicht erstellt werden";
+        document.querySelector("#planning-progress-text").textContent = error.name === "AbortError"
           ? "Die Planung hat zu lange gedauert. Der aktuelle Plan wurde nicht verändert."
           : `Der Entwurf konnte nicht erstellt werden: ${error.message}`;
       } finally {
         submit.disabled = false;
+        close.disabled = false;
       }
     };
 
