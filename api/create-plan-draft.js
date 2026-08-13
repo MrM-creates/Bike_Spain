@@ -314,6 +314,10 @@ module.exports = async (request, response) => {
 
     const requestedType = cleanText(payload.change?.type, 80);
     const requestedPlace = cleanText(payload.change?.place, 160);
+    const requestedInstruction = cleanText(payload.change?.instruction, 1200);
+    if (["reroute", "free"].includes(requestedType) && !requestedInstruction) {
+      throw new Error("Bitte beschreibe die gewünschte Richtung oder Anpassung.");
+    }
     const placeBased = ["extend", "shorten", "skip"].includes(requestedType);
     const placeIndex = placeBased ? placeIndexOf(currentDays.slice(0, ferryIndex), requestedPlace) : -1;
     if (placeBased && placeIndex < 0) throw new Error(`Ort oder Etappe „${requestedPlace || "unbekannt"}“ wurde im aktuellen Plan nicht gefunden.`);
@@ -327,13 +331,13 @@ module.exports = async (request, response) => {
       shorten: "Aufenthalt verkuerzen",
       skip: "Etappe oder Ausflug auslassen",
       reroute: "Ab diesem Tag neu planen",
-      free: "Andere Aenderung"
+      free: "Weitere Anpassung"
     };
     const change = {
       type: changeTypes[requestedType] || requestedType,
       place: requestedPlace,
       nights: Math.max(0, Math.min(7, Number(payload.change?.nights) || 0)),
-      instruction: cleanText(payload.change?.instruction, 1200)
+      instruction: requestedInstruction
     };
     const currentPlaceNights = placeBased ? contiguousPlaceNights(currentDays, placeIndex, requestedPlace) : null;
     const targetPlaceNights = requestedType === "extend"
@@ -346,7 +350,12 @@ module.exports = async (request, response) => {
     };
 
     const routeStartedAt = Date.now();
-    const routeInstructions = `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. Bei Verlaengern oder Verkuerzen ist targetNightsAtPlace eine harte Vorgabe fuer die gesamte Anzahl aufeinanderfolgender Uebernachtungen am gewuenschten Ort; nights bezeichnet nur die hinzukommenden oder wegfallenden Naechte. Zusaetzliche Aufenthaltsnaechte muessen vor der Faehre durch Weglassen optionaler Rundfahrten oder Reservetage, Zusammenlegen oder direktere Etappen ausgeglichen werden. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`;
+    const changeScopeInstruction = requestedType === "reroute"
+      ? "Der Nutzer will den Reiseverlauf ab replaceFromDay bewusst neu ausrichten. Behandle instruction als Zielbild fuer Richtung, Regionen und Wunschorte. Du darfst alle Tage ab dort bis zur Faehre neu aufbauen."
+      : (requestedType === "free"
+        ? "Setze die beschriebene Anpassung ab replaceFromDay um. Behalte nicht betroffene Orte, Etappen und Ruhetage moeglichst unveraendert und aendere nur, was zur konsistenten Umsetzung notwendig ist."
+        : "Setze die konkrete Aenderung um und halte den uebrigen Verlauf so stabil wie sinnvoll.");
+    const routeInstructions = `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. ${changeScopeInstruction} Bei Verlaengern oder Verkuerzen ist targetNightsAtPlace eine harte Vorgabe fuer die gesamte Anzahl aufeinanderfolgender Uebernachtungen am gewuenschten Ort; nights bezeichnet nur die hinzukommenden oder wegfallenden Naechte. Zusaetzliche Aufenthaltsnaechte muessen vor der Faehre durch Weglassen optionaler Rundfahrten oder Reservetage, Zusammenlegen oder direktere Etappen ausgeglichen werden. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`;
     const routeInput = {
       requestedChange,
       replaceFromDay: startDay,

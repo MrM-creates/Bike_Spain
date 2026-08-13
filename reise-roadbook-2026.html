@@ -1250,13 +1250,13 @@
               <option value="shorten">Aufenthalt verkürzen</option>
               <option value="skip">Etappe oder Ausflug auslassen</option>
               <option value="reroute">Ab hier neu planen</option>
-              <option value="free">Andere Änderung</option>
+              <option value="free">Weitere Anpassung beschreiben</option>
               <option value="restore-original">Originalplan wiederherstellen</option>
             </select>
           </div>
           <div class="field" id="change-start-day-field" hidden>
-            <label for="change-start-day">Ab Reisetag</label>
-            <input id="change-start-day" name="startDay" type="number" min="1" max="27" value="1">
+            <label for="change-start-day" id="change-start-day-label">Neuplanung beginnt bei</label>
+            <select id="change-start-day" name="startDay"></select>
           </div>
           <div class="field" id="change-place-field">
             <label for="change-place">Ort oder Etappe</label>
@@ -1267,8 +1267,9 @@
             <input id="change-nights" name="nights" type="number" min="0" max="7" value="1">
           </div>
           <div class="field full" id="change-instruction-field">
-            <label for="change-instruction">Was ist euch wichtig?</label>
+            <label for="change-instruction" id="change-instruction-label">Was ist euch wichtig?</label>
             <textarea id="change-instruction" name="instruction" placeholder="z. B. Wir möchten zwei zusätzliche Nächte bleiben. Optionale Rundfahrten dürfen entfallen, lange Fahrtage möglichst vermeiden."></textarea>
+            <small id="change-instruction-hint"></small>
           </div>
         </div>
         <div class="planning-progress" id="planning-progress" role="status" aria-live="polite" hidden>
@@ -2368,8 +2369,61 @@
       }
     };
 
-    const openPlanChange = (startDay = 1) => {
-      planChangeForm.elements.startDay.value = Math.max(1, Number(startDay) || 1);
+    const updatePlanChangeFields = () => {
+      const type = planChangeForm.elements.type.value;
+      const nightsField = document.querySelector("#change-nights-field");
+      const startDayField = document.querySelector("#change-start-day-field");
+      const placeField = document.querySelector("#change-place-field");
+      const instructionField = document.querySelector("#change-instruction-field");
+      const instruction = planChangeForm.elements.instruction;
+      const place = planChangeForm.elements.place;
+      const submit = document.querySelector("#create-suggestions");
+      const restoring = type === "restore-original";
+      const planningFromDay = ["reroute", "free"].includes(type);
+      nightsField.hidden = !["extend", "shorten"].includes(type);
+      startDayField.hidden = !planningFromDay;
+      placeField.hidden = restoring || planningFromDay;
+      instructionField.hidden = restoring;
+      place.required = ["extend", "shorten", "skip"].includes(type);
+      instruction.required = planningFromDay;
+      submit.textContent = restoring ? "Originalplan prüfen" : "Vorschläge erstellen";
+      document.querySelector("#change-nights-label").textContent = type === "shorten" ? "Weniger Nächte" : "Zusätzliche Nächte";
+      document.querySelector("#change-start-day-label").textContent = type === "reroute" ? "Neuplanung beginnt bei" : "Anpassung gilt ab";
+      const instructionLabel = document.querySelector("#change-instruction-label");
+      const instructionHint = document.querySelector("#change-instruction-hint");
+      if (type === "reroute") {
+        instructionLabel.textContent = "Neue Richtung oder gewünschte Orte";
+        instruction.placeholder = "z. B. Ab Barcelona Richtung Pyrenäen und Nordspanien. San Sebastián und Picos de Europa wären interessant. Rechtzeitig zur Fähre zurück nach Barcelona.";
+        instructionHint.textContent = "ChatGPT darf den weiteren Verlauf neu aufbauen. Die Fähre bleibt unverändert.";
+      } else if (type === "free") {
+        instructionLabel.textContent = "Gewünschte Anpassung";
+        instruction.placeholder = "z. B. Ab Valencia wegen Regen die Bergstrecken vermeiden und die nächsten Fahrtage auf höchstens 250 km begrenzen.";
+        instructionHint.textContent = "ChatGPT ändert nur, was für diesen Wunsch nötig ist, und passt die Unterkünfte entsprechend an.";
+      } else {
+        instructionLabel.textContent = "Was ist euch wichtig?";
+        instruction.placeholder = "z. B. Optionale Rundfahrten dürfen entfallen, lange Fahrtage möglichst vermeiden.";
+        instructionHint.textContent = "";
+      }
+    };
+
+    const fillPlanStartDays = (selectedDay = 1) => {
+      const select = planChangeForm.elements.startDay;
+      const ferryIndex = state.days.findIndex(isFerryDay);
+      const lastIndex = ferryIndex >= 0 ? ferryIndex - 1 : state.days.length - 1;
+      select.replaceChildren(...state.days.slice(0, lastIndex + 1).map((day, index) => {
+        const option = document.createElement("option");
+        option.value = String(index + 1);
+        option.textContent = `Tag ${index + 1} · ${dateForDay(index)} · ${day.title}`;
+        return option;
+      }));
+      select.value = String(Math.max(1, Math.min(lastIndex + 1, Number(selectedDay) || 1)));
+    };
+
+    const openPlanChange = (startDay = 1, type = "extend") => {
+      planChangeForm.reset();
+      fillPlanStartDays(startDay);
+      planChangeForm.elements.type.value = type;
+      updatePlanChangeFields();
       const progress = document.querySelector("#planning-progress");
       planChangeDialog.classList.remove("is-planning");
       progress.classList.remove("is-error");
@@ -2997,7 +3051,7 @@ Wichtig fuer das Import-JSON:
         quickActions.append(
           dayTool("Verlängern", `Plant ab Tag ${index + 1} eine oder mehrere zusätzliche Nächte ein, ohne den festen Fährtermin zu verschieben.`, () => extendStay(index), false, false),
           dayTool("Auslassen", `Markiert Tag ${index + 1} als ausgelassen und speichert den Grund als Notiz.`, () => skipDay(index), false, false),
-          dayTool("Ab hier planen", `Erstellt eine ChatGPT-Planungshilfe ab Tag ${index + 1} mit den nächsten Etappen und Import-Anweisung.`, () => openPlanningHelper(index), false, false)
+          dayTool("Ab hier neu planen", `Öffnet die Neuplanung ab Tag ${index + 1}. Route und Unterkünfte werden gemeinsam vorgeschlagen.`, () => openPlanChange(index + 1, "reroute"), false, false)
         );
         actions.append(actionGroup("Planen", [quickActions]));
 
@@ -3180,21 +3234,7 @@ Wichtig fuer das Import-JSON:
         instruction: String(values.instruction || "").trim()
       });
     });
-    planChangeForm.elements.type.addEventListener("change", () => {
-      const type = planChangeForm.elements.type.value;
-      const nightsField = document.querySelector("#change-nights-field");
-      const startDayField = document.querySelector("#change-start-day-field");
-      const placeField = document.querySelector("#change-place-field");
-      const instructionField = document.querySelector("#change-instruction-field");
-      const submit = document.querySelector("#create-suggestions");
-      const restoring = type === "restore-original";
-      nightsField.hidden = !["extend", "shorten"].includes(type);
-      startDayField.hidden = !["reroute", "free"].includes(type);
-      placeField.hidden = restoring;
-      instructionField.hidden = restoring;
-      submit.textContent = restoring ? "Originalplan prüfen" : "Vorschläge erstellen";
-      document.querySelector("#change-nights-label").textContent = type === "shorten" ? "Weniger Nächte" : "Zusätzliche Nächte";
-    });
+    planChangeForm.elements.type.addEventListener("change", updatePlanChangeFields);
 
     document.querySelector("#export-plan").addEventListener("click", () => {
       const blob = new Blob([JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), days: state.days }, null, 2)], { type: "application/json" });
