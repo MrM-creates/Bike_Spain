@@ -84,13 +84,21 @@
       min-width: 0;
     }
 
-    .brand {
-      font-weight: 760;
-      font-size: 17px;
-      white-space: nowrap;
+    .brand-block {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-
-    .brand-block { min-width: 0; }
+    .brand {
+      width: 64px;
+      height: 64px;
+      flex: 0 0 64px;
+      display: block;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .brand img { display: block; width: 100%; height: 100%; object-fit: contain; }
     .planning-version {
       display: block;
       margin-top: 1px;
@@ -1045,7 +1053,8 @@
       .topbar-inner,
       main,
       footer { width: min(100% - 22px, 980px); }
-      .brand { font-size: 15px; }
+      .brand { width: 54px; height: 54px; flex-basis: 54px; }
+      .planning-version { white-space: normal; }
       h1 { font-size: 30px; }
       .day { grid-template-columns: 62px minmax(0, 1fr); gap: 10px; }
       .day-number strong { font-size: 24px; }
@@ -1064,7 +1073,9 @@
     <div class="topbar-inner">
       <div class="topbar-main">
         <div class="brand-block">
-          <div class="brand">Motorrad-Roadbook</div>
+          <a class="brand" href="/" aria-label="Motorrad-Roadbook">
+            <img src="/assets/roadbook-icon-192.png" width="64" height="64" alt="">
+          </a>
           <span class="planning-version" id="planning-version"></span>
         </div>
         <div class="topbar-menu">
