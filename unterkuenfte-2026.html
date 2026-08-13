@@ -907,15 +907,18 @@
   <script>
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
     const PUBLISHED_VERSION = "2026-08-12T16:32:07.603Z";
+    const PUBLISHED_PLAN_KIND = "original";
+    let displayedPlanKind = PUBLISHED_PLAN_KIND;
     const planningVersionFormatter = new Intl.DateTimeFormat("de-CH", {
       day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
       timeZone: "Europe/Zurich"
     });
     const showPlanningVersion = (version = PUBLISHED_VERSION) => {
       const date = new Date(version);
+      const planLabel = displayedPlanKind === "original" ? "Originalplan" : "Angepasster Plan";
       document.querySelector("#planning-version").textContent = Number.isNaN(date.getTime())
-        ? "Stand der Planung: unbekannt"
-        : `Stand der Planung: ${planningVersionFormatter.format(date)}`;
+        ? `${planLabel} · Stand: unbekannt`
+        : `${planLabel} · Stand: ${planningVersionFormatter.format(date)}`;
     };
     showPlanningVersion();
     const storageKey = `spanien-roadbook-2026-hotels-${PUBLISHED_VERSION}`;
@@ -1451,6 +1454,7 @@ Wichtig fuer das Import-JSON:
     } catch (_) {}
     if (accommodationHandoff) {
       state = { ...state, ...accommodationHandoff.accommodations };
+      displayedPlanKind = accommodationHandoff.planKind === "original" ? "original" : "adjusted";
       showPlanningVersion(accommodationHandoff.version);
     }
     let sharedAccommodationState = { ...state };
@@ -1689,6 +1693,7 @@ Wichtig fuer das Import-JSON:
       if (savedHandoff?.version > appliedAccommodationVersion && savedHandoff.accommodations && typeof savedHandoff.accommodations === "object") {
         sharedAccommodationState = { ...publishedAccommodationState, ...savedHandoff.accommodations };
         appliedAccommodationVersion = savedHandoff.version;
+        displayedPlanKind = savedHandoff.planKind === "original" ? "original" : "adjusted";
         showPlanningVersion(savedHandoff.version);
       }
       try {

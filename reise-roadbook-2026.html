@@ -2007,7 +2007,9 @@
     ];
 
     const PUBLISHED_VERSION = "2026-08-12T16:32:07.603Z";
+    const PUBLISHED_PLAN_KIND = "original";
     let currentPublishedVersion = PUBLISHED_VERSION;
+    let currentPlanKind = PUBLISHED_PLAN_KIND;
     const STORAGE_KEY = "spanien-roadbook-2026-plan-202608121632";
     const DRAFT_KEY = "spanien-roadbook-2026-draft-v1";
     const SESSION_PIN_KEY = "spanien-roadbook-2026-publish-pin";
@@ -2024,9 +2026,10 @@
     });
     const showPlanningVersion = (version = currentPublishedVersion) => {
       const date = new Date(version);
+      const planLabel = currentPlanKind === "original" ? "Originalplan" : "Angepasster Plan";
       document.querySelector("#planning-version").textContent = Number.isNaN(date.getTime())
-        ? "Stand der Planung: unbekannt"
-        : `Stand der Planung: ${planningVersionFormatter.format(date)}`;
+        ? `${planLabel} · Stand: unbekannt`
+        : `${planLabel} · Stand: ${planningVersionFormatter.format(date)}`;
     };
     const isFerryDay = (item = {}) => {
       const title = String(item.title || "").toLowerCase();
@@ -2511,6 +2514,7 @@
             secret,
             reason: "Unterwegs-Status und Notizen aktualisiert",
             days: state.days,
+            planKind: currentPlanKind,
             baseVersion: currentPublishedVersion
           })
         });
@@ -2549,18 +2553,21 @@
             reason: draft.decision || "Reiseplan angepasst",
             days: draft.days,
             accommodations: draft.accommodations,
+            planKind: restoringOriginal ? "original" : "adjusted",
             baseVersion: draft.baseVersion
           })
         });
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
         currentPublishedVersion = result.version || currentPublishedVersion;
+        currentPlanKind = restoringOriginal ? "original" : "adjusted";
         currentPlanDays = clone(draft.days);
         state.days = clone(draft.days);
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ days: state.days }));
         localStorage.setItem(accommodationStorageKey(), JSON.stringify(draft.accommodations || {}));
         localStorage.setItem(ACCOMMODATION_HANDOFF_KEY, JSON.stringify({
           version: currentPublishedVersion,
+          planKind: currentPlanKind,
           accommodations: draft.accommodations || {}
         }));
         localStorage.removeItem(ACCOMMODATION_REVIEW_KEY);

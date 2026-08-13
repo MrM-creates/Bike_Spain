@@ -127,12 +127,23 @@ const bumpStorageKey = (html) => {
 
 const publishedVersion = (html) => html.match(/const PUBLISHED_VERSION = "([^"]+)";/)?.[1] || "legacy";
 
+const publishedPlanKind = (html) => html.match(/const PUBLISHED_PLAN_KIND = "([^"]+)";/)?.[1] || "adjusted";
+
 const bumpPublishedVersion = (html, version) => {
   const statement = `const PUBLISHED_VERSION = "${version}";`;
   if (/const PUBLISHED_VERSION = "[^"]+";/.test(html)) {
     return html.replace(/const PUBLISHED_VERSION = "[^"]+";/, statement);
   }
   return html.replace(/(const STORAGE_KEY = "[^"]+";)/, `${statement}\n    $1`);
+};
+
+const setPublishedPlanKind = (html, kind) => {
+  const value = kind === "original" ? "original" : "adjusted";
+  const statement = `const PUBLISHED_PLAN_KIND = "${value}";`;
+  if (/const PUBLISHED_PLAN_KIND = "[^"]+";/.test(html)) {
+    return html.replace(/const PUBLISHED_PLAN_KIND = "[^"]+";/, statement);
+  }
+  return html.replace(/(const PUBLISHED_VERSION = "[^"]+";)/, `$1\n    ${statement}`);
 };
 
 const replacePublishedAccommodationState = (html, state) => {
@@ -209,12 +220,18 @@ module.exports = async (request, response) => {
     ]);
     const roadbookHtml = Buffer.from(currentRoadbook.content, "base64").toString("utf8");
     const currentVersion = publishedVersion(roadbookHtml);
+    const planKind = ["original", "adjusted"].includes(payload.planKind)
+      ? payload.planKind
+      : publishedPlanKind(roadbookHtml);
     if (payload.baseVersion && String(payload.baseVersion) !== currentVersion) {
       json(response, 409, { error: "Der Online-Plan wurde inzwischen geändert. Lade den aktuellen Stand und erstelle den Entwurf erneut." });
       return;
     }
     const nextVersion = new Date().toISOString();
-    const updatedRoadbookHtml = bumpPublishedVersion(bumpStorageKey(replaceCurrentDays(roadbookHtml, days)), nextVersion);
+    const updatedRoadbookHtml = setPublishedPlanKind(
+      bumpPublishedVersion(bumpStorageKey(replaceCurrentDays(roadbookHtml, days)), nextVersion),
+      planKind
+    );
 
     const message = payload.reason
       ? `Update roadbook plan: ${String(payload.reason).slice(0, 140)}`
@@ -223,9 +240,12 @@ module.exports = async (request, response) => {
     const files = [{ path: ROADBOOK_PATH, content: updatedRoadbookHtml }];
     if (accommodations) {
       const accommodationHtml = Buffer.from(currentAccommodations.content, "base64").toString("utf8");
-      const updatedAccommodationHtml = bumpPublishedVersion(
-        replacePublishedAccommodationState(accommodationHtml, accommodations),
-        nextVersion
+      const updatedAccommodationHtml = setPublishedPlanKind(
+        bumpPublishedVersion(
+          replacePublishedAccommodationState(accommodationHtml, accommodations),
+          nextVersion
+        ),
+        planKind
       );
       files.push({ path: ACCOMMODATIONS_PATH, content: updatedAccommodationHtml });
     }
