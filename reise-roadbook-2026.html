@@ -2554,6 +2554,21 @@
       workflowTitle.textContent = "Route wird automatisch geprüft";
       workflowText.textContent = "ChatGPT prüft Straßen, Pässe, Wegpunkte, Distanzen und Schlechtwetteralternativen und korrigiert den Entwurf direkt.";
       try {
+        const firstChangedIndex = draft.days.findIndex((day) => day.status === "changed");
+        const routeIdentityValue = (value) => String(value || "").normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+        const sameRouteIdentity = (left, right) => ["title", "overnight", "origin", "destination"]
+          .every((key) => routeIdentityValue(left?.[key]) === routeIdentityValue(right?.[key])) && Boolean(left?.rest) === Boolean(right?.rest);
+        const firstRouteDifferenceIndex = draft.days.findIndex((day, index) => !sameRouteIdentity(day, currentPlanDays[index]));
+        const inferredRouteStartIndex = firstRouteDifferenceIndex > 0 && draft.days[firstRouteDifferenceIndex - 1]?.rest
+          ? firstRouteDifferenceIndex - 1
+          : firstRouteDifferenceIndex;
+        const requestedStartDay = Number(draft.request?.startDay);
+        const verificationStartDay = requestedStartDay > 0
+          ? requestedStartDay
+          : (firstChangedIndex > 0
+            ? firstChangedIndex + 1
+            : (inferredRouteStartIndex > 0 ? inferredRouteStartIndex + 1 : (draft.replaceFromDay || 1)));
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 305000);
         let response;
@@ -2566,7 +2581,7 @@
               secret,
               stage: "verify-route",
               days: draft.days,
-              replaceFromDay: draft.replaceFromDay || draft.request?.startDay || 1,
+              replaceFromDay: verificationStartDay,
               change: draft.request || {},
               lockedStay: draft.lockedStay || null
             })

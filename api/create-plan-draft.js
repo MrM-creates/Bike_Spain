@@ -288,6 +288,26 @@ const routeAuditSummary = (days, startIndex, endIndex) => {
     : "Automatisch geprüft: Der geänderte Abschnitt enthält keine Fahrtage.";
 };
 
+const routeVerificationSummary = (days, startIndex, endIndex) => {
+  const segment = days.slice(startIndex, endIndex);
+  const restDays = segment.filter((day) => day.rest).length;
+  const details = [
+    routeAuditSummary(days, startIndex, endIndex),
+    `Geprüfter Änderungsbereich: Tag ${startIndex + 1} bis Tag ${endIndex}; ${segment.length} Kalendertage mit ${restDays} Ruhe- oder Reservetagen.`,
+    `Der feste Fährtag bleibt Tag ${endIndex + 1} am ${FERRY_DATE} mit Check-in 08:30.`
+  ];
+  const routeText = segment.map((day) => [day.title, day.roads, day.points, day.note, ...day.waypoints].join(" ")).join(" ");
+  if (/san glorio/i.test(routeText)) {
+    details.push("Puerto de San Glorio und eine tiefere Schlechtwetteralternative sind im geprüften Tagesverlauf konkret ausgewiesen.");
+  }
+  if (/\bC-?28\b/i.test(routeText) && /vielha|val d.?aran/i.test(routeText)) {
+    details.push("Die C-28-Etappe bei Vielha weist Pòrt dera Bonaigua und die tiefere Alternative über N-230 und Vielha-Tunnel aus.");
+  } else if (/vielha|val d.?aran/i.test(routeText) && /\bN-?230\b/i.test(routeText)) {
+    details.push("Die geprüfte Verbindung nach Vielha nutzt die N-230-/Tunnelachse statt Pòrt dera Bonaigua.");
+  }
+  return details;
+};
+
 const assignAccommodationSlots = (expected, current) => {
   const unused = new Set(current.map((stay) => stay.id).filter(Boolean));
   const assigned = expected.map((stay) => {
@@ -511,7 +531,7 @@ module.exports = async (request, response) => {
           replaceCount,
           lockedStay,
           request: payload.change || {},
-          summary: [routeAuditSummary(verifiedDays, startIndex, ferryIndex), ...verifiedPlan.summary],
+          summary: routeVerificationSummary(verifiedDays, startIndex, ferryIndex),
           decision,
           openItems: verifiedPlan.openItems,
           days: verifiedDays
@@ -544,6 +564,7 @@ module.exports = async (request, response) => {
     };
     const change = {
       type: changeTypes[requestedType] || requestedType,
+      startDay,
       place: requestedPlace,
       nights: Math.max(0, Math.min(7, Number(payload.change?.nights) || 0)),
       instruction: requestedInstruction
@@ -678,4 +699,4 @@ module.exports = async (request, response) => {
   }
 };
 
-module.exports._test = { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue };
+module.exports._test = { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary };
