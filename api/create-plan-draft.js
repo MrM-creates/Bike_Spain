@@ -202,7 +202,10 @@ const placesMatch = (left, right) => {
   const b = placeKey(right);
   if (!a || !b) return false;
   if (a === b || a.includes(b) || b.includes(a)) return true;
-  const ignored = new Set(["oder", "raum", "vorzugsweise"]);
+  const ignored = new Set([
+    "oder", "raum", "vorzugsweise", "stadtrand", "ortsrand", "randlage", "aussenbezirk",
+    "gewerbegebiet", "neustadt", "spain", "france", "italy", "switzerland"
+  ]);
   const tokens = (value) => new Set(value.split(" ").filter((token) => token.length >= 4 && !ignored.has(token)));
   const aTokens = tokens(a);
   const bTokens = tokens(b);
@@ -218,6 +221,30 @@ const contiguousPlaceNights = (days, startIndex, place) => {
     nights += 1;
   }
   return nights;
+};
+
+const routeContinuityIssue = (days, startIndex, endIndex) => {
+  for (let index = startIndex; index < endIndex; index += 1) {
+    const day = days[index];
+    const previousOvernight = cleanText(days[index - 1]?.overnight, 160);
+    const departure = day.rest ? cleanText(day.overnight, 160) : cleanText(day.origin, 180);
+    const dayNumber = index + 1;
+
+    if (previousOvernight && !departure) {
+      return `Tag ${dayNumber} hat keinen Ausgangsort; erwartet wird ${previousOvernight}.`;
+    }
+    if (previousOvernight && !placesMatch(previousOvernight, departure)) {
+      return `Tag ${dayNumber} beginnt in ${departure}, obwohl Tag ${dayNumber - 1} in ${previousOvernight} endet.`;
+    }
+    if (!day.rest) {
+      const destination = cleanText(day.destination, 180);
+      if (!destination) return `Tag ${dayNumber} hat keinen Zielort.`;
+      if (!placesMatch(destination, day.overnight)) {
+        return `Tag ${dayNumber} endet laut Route in ${destination}, die Übernachtung ist aber in ${day.overnight}.`;
+      }
+    }
+  }
+  return "";
 };
 
 const assignAccommodationSlots = (expected, current) => {
@@ -356,11 +383,12 @@ module.exports = async (request, response) => {
       : (requestedType === "free"
         ? "Setze die beschriebene Anpassung ab replaceFromDay um. Behalte nicht betroffene Orte, Etappen und Ruhetage moeglichst unveraendert und aendere nur, was zur konsistenten Umsetzung notwendig ist."
         : "Setze die konkrete Aenderung um und halte den uebrigen Verlauf so stabil wie sinnvoll.");
-    const routeInstructions = `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. ${changeScopeInstruction} Bei Verlaengern oder Verkuerzen ist targetNightsAtPlace eine harte Vorgabe fuer die gesamte Anzahl aufeinanderfolgender Uebernachtungen am gewuenschten Ort; nights bezeichnet nur die hinzukommenden oder wegfallenden Naechte. Zusaetzliche Aufenthaltsnaechte muessen vor der Faehre durch Weglassen optionaler Rundfahrten oder Reservetage, Zusammenlegen oder direktere Etappen ausgeglichen werden. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`;
+    const routeInstructions = `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. ${changeScopeInstruction} Der erste neue Tag muss am Uebernachtungsort von previousDay beginnen. Danach muss jede Etappe am Uebernachtungsort des Vortags beginnen und am eigenen Uebernachtungsort enden; es darf keine Ortsluecken oder gedanklichen Transfers geben. Verwende nur tatsaechlich zusammenhaengende Strassen und plausible Distanzen. Bei Verlaengern oder Verkuerzen ist targetNightsAtPlace eine harte Vorgabe fuer die gesamte Anzahl aufeinanderfolgender Uebernachtungen am gewuenschten Ort; nights bezeichnet nur die hinzukommenden oder wegfallenden Naechte. Zusaetzliche Aufenthaltsnaechte muessen vor der Faehre durch Weglassen optionaler Rundfahrten oder Reservetage, Zusammenlegen oder direktere Etappen ausgeglichen werden. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`;
     const routeInput = {
       requestedChange,
       replaceFromDay: startDay,
       replaceCount,
+      previousDay: currentDays[startIndex - 1] || null,
       fixedFerry: { day: ferryIndex + 1, date: FERRY_DATE, checkIn: "08:30", dayData: currentDays[ferryIndex] },
       currentSegment: currentDays.slice(startIndex, ferryIndex)
     };
@@ -400,6 +428,25 @@ module.exports = async (request, response) => {
         actualNights = contiguousPlaceNights(draftDays, placeIndex, requestedPlace);
         if (actualNights !== targetPlaceNights) {
           throw new Error(`Der Entwurf enthält ${actualNights} statt exakt ${targetPlaceNights} Nächten in ${requestedPlace}. Der aktuelle Plan wurde nicht verändert.`);
+        }
+      }
+    }
+    let continuityIssue = routeContinuityIssue(draftDays, startIndex, ferryIndex);
+    if (continuityIssue) {
+      routePlan = await requestRoutePlan({
+        ...routeInput,
+        previousInvalidPlan: routePlan,
+        correction: `Der vorherige Vorschlag hat eine unzulaessige Ortsluecke: ${continuityIssue} Korrigiere alle Tagesuebergaenge. Der erste neue Tag beginnt zwingend am Uebernachtungsort von previousDay.`
+      }, `${routeInstructions} Der vorherige Vorschlag war geografisch nicht durchgaengig. Korrigiere die genannte Ortsluecke und pruefe danach jeden weiteren Tagesuebergang.`);
+      draftDays = assembleDraftDays(routePlan);
+      continuityIssue = routeContinuityIssue(draftDays, startIndex, ferryIndex);
+      if (continuityIssue) {
+        throw new Error(`Der Routenvorschlag ist nicht durchgängig: ${continuityIssue} Der aktuelle Plan wurde nicht verändert.`);
+      }
+      if (targetPlaceNights !== null) {
+        const actualNights = contiguousPlaceNights(draftDays, placeIndex, requestedPlace);
+        if (actualNights !== targetPlaceNights) {
+          throw new Error(`Der korrigierte Entwurf enthält ${actualNights} statt exakt ${targetPlaceNights} Nächten in ${requestedPlace}. Der aktuelle Plan wurde nicht verändert.`);
         }
       }
     }
@@ -469,3 +516,5 @@ module.exports = async (request, response) => {
     json(response, error.status || 500, { error: error.message || "Der Entwurf konnte nicht erstellt werden." });
   }
 };
+
+module.exports._test = { routeContinuityIssue };
