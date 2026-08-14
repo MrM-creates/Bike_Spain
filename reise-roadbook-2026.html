@@ -2345,7 +2345,7 @@
       const discardButton = document.querySelector("#discard-draft");
       const publishButton = document.querySelector("#publish-draft");
       startButton.hidden = hasTravelUpdates || Boolean(publishNotice) || isOriginalDraft;
-      startButton.textContent = hasDraft ? "Planungswunsch ändern" : "Plan ändern";
+      startButton.textContent = isRouteDraft ? "Route erneut prüfen" : (hasDraft ? "Planungswunsch ändern" : "Plan ändern");
       discardButton.hidden = !pending;
       discardButton.textContent = isOriginalDraft ? "Beim aktuellen Plan bleiben" : (hasDraft ? "Entwurf verwerfen" : "Lokale Änderung verwerfen");
       publishButton.hidden = !pending;
@@ -2540,8 +2540,8 @@
       }
     };
 
-    const verifyExistingRouteDraft = async () => {
-      if (!draft || draft.phase !== "route" || (draft.verified === true && Number(draft.verificationVersion) >= 2)) return true;
+    const verifyExistingRouteDraft = async (force = false) => {
+      if (!draft || draft.phase !== "route" || (!force && draft.verified === true && Number(draft.verificationVersion) >= 2)) return true;
       const secret = getPublishPin();
       if (!secret) return false;
       const publishButton = document.querySelector("#publish-draft");
@@ -3388,6 +3388,10 @@ Wichtig fuer das Import-JSON:
     });
 
     document.querySelector("#start-plan-change").addEventListener("click", () => {
+      if (draft?.phase === "route") {
+        verifyExistingRouteDraft(true);
+        return;
+      }
       if (ADMIN_MODE) openPlanChange();
       else {
         const target = new URL(window.location.href);
