@@ -284,18 +284,38 @@ const routeAuditSummary = (days, startIndex, endIndex) => {
     .filter((item) => !item.day.rest);
   const longest = ridingDays.reduce((current, item) => !current || item.km > current.km ? item : current, null);
   return longest
-    ? `Automatisch geprüft: ${ridingDays.length} Fahrtage; längste geplante Etappe ist Tag ${longest.index + 1} mit bis zu ${longest.km} km.`
+    ? `Automatisch geprüft: ${ridingDays.length} Fahrtage; längste geplante Etappe ist Tag ${longest.index + 1} „${longest.day.title}“ mit bis zu ${longest.km} km.`
     : "Automatisch geprüft: Der geänderte Abschnitt enthält keine Fahrtage.";
 };
 
-const routeVerificationSummary = (days, startIndex, endIndex) => {
+const routeVerificationSummary = (days, startIndex, endIndex, candidateDays = days) => {
   const segment = days.slice(startIndex, endIndex);
   const restDays = segment.filter((day) => day.rest).length;
+  const overnightChain = segment
+    .map((day) => cleanText(day.overnight, 160))
+    .filter((place, index, places) => place && (index === 0 || !placesMatch(place, places[index - 1])));
+  const correctedDays = segment
+    .map((day, offset) => {
+      const candidate = candidateDays[startIndex + offset] || {};
+      const fields = ["title", "overnight", "origin", "destination", "roads", "km", "time"];
+      const routeChanged = fields.some((field) => cleanText(day[field], 500) !== cleanText(candidate[field], 500));
+      const waypointsChanged = JSON.stringify(day.waypoints || []) !== JSON.stringify(candidate.waypoints || []);
+      return routeChanged || waypointsChanged ? startIndex + offset + 1 : 0;
+    })
+    .filter(Boolean);
   const details = [
     routeAuditSummary(days, startIndex, endIndex),
+    `Reiseverlauf: ${overnightChain.join(" → ")}.`,
     `Geprüfter Änderungsbereich: Tag ${startIndex + 1} bis Tag ${endIndex}; ${segment.length} Kalendertage mit ${restDays} Ruhe- oder Reservetagen.`,
     `Der feste Fährtag bleibt Tag ${endIndex + 1} am ${FERRY_DATE} mit Check-in 08:30.`
   ];
+  if (correctedDays.length) {
+    const shownDays = correctedDays.slice(0, 8).join(", ");
+    const remainder = correctedDays.length > 8 ? ` sowie ${correctedDays.length - 8} weitere` : "";
+    details.push(`Die automatische Prüfung hat die Routendaten an Tag ${shownDays}${remainder} konkret korrigiert.`);
+  } else {
+    details.push("Die automatische Prüfung hat keine technische Korrektur am vorgeschlagenen Tagesverlauf benötigt.");
+  }
   const routeText = segment.map((day) => [day.title, day.roads, day.points, day.note, ...day.waypoints].join(" ")).join(" ");
   if (/san glorio/i.test(routeText)) {
     details.push("Puerto de San Glorio und eine tiefere Schlechtwetteralternative sind im geprüften Tagesverlauf konkret ausgewiesen.");
@@ -572,7 +592,7 @@ module.exports = async (request, response) => {
           replaceCount,
           lockedStay,
           request: payload.change || {},
-          summary: routeVerificationSummary(verifiedDays, startIndex, ferryIndex),
+          summary: routeVerificationSummary(verifiedDays, startIndex, ferryIndex, currentDays),
           decision,
           openItems: verifiedPlan.openItems,
           days: verifiedDays

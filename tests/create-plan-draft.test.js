@@ -47,8 +47,9 @@ const checkedRoute = [
   })
 ];
 assert.equal(routeDetailIssue(checkedRoute, 1, 3), "");
-assert.match(routeAuditSummary(checkedRoute, 1, 3), /Tag 2 mit bis zu 220 km/);
-assert.match(routeVerificationSummary(checkedRoute, 1, 3)[1], /Tag 2 bis Tag 3/);
+assert.match(routeAuditSummary(checkedRoute, 1, 3), /Tag 2 „Start – Vielha“ mit bis zu 220 km/);
+assert.match(routeVerificationSummary(checkedRoute, 1, 3)[1], /Vielha → Potes/);
+assert.match(routeVerificationSummary(checkedRoute, 1, 3)[2], /Tag 2 bis Tag 3/);
 checkedRoute[1].note = "Kurvige Fahrt nach Vielha.";
 assert.match(routeDetailIssue(checkedRoute, 1, 3), /Bonaigua/);
 
