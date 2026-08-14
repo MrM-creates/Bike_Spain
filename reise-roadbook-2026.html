@@ -2495,9 +2495,13 @@
         state.days = draft.days.map((item, index) => prepareDay(item, index, item.custom));
         localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
         activeFilter = "all";
+        planChangeDialog.classList.remove("is-planning");
+        progress.hidden = true;
         planChangeDialog.close();
-        render();
-        workflow.scrollIntoView({ behavior: "smooth", block: "start" });
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          render();
+          workflow.scrollIntoView({ behavior: "smooth", block: "start" });
+        }));
       } catch (error) {
         if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
         planChangeDialog.classList.remove("is-planning");
