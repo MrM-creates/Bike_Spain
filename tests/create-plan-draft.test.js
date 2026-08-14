@@ -84,8 +84,10 @@ const makeDay = (title, overnight, rest = true) => ({
     status: "changed"
   }));
   let fetchCount = 0;
-  global.fetch = async () => {
+  let routeRequestPayload = null;
+  global.fetch = async (_url, options) => {
     fetchCount += 1;
+    routeRequestPayload = JSON.parse(options.body);
     return {
       ok: true,
       json: async () => ({
@@ -111,6 +113,7 @@ const makeDay = (title, overnight, rest = true) => ({
   assert.equal(routeResult.body.draft.decision, "Vorgeschlagene Planänderung");
   assert.equal(routeResult.body.draft.accommodations, undefined);
   assert.equal(fetchCount, 1, "route stage should call the model exactly once");
+  assert.deepEqual(routeRequestPayload.tools, [{ type: "web_search" }], "route stage should verify roads with web search");
 
   global.fetch = async () => { throw new Error("accommodation stage unexpectedly called the model"); };
   const accommodationResult = await callApi({
