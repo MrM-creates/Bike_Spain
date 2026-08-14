@@ -84,10 +84,10 @@ const makeDay = (title, overnight, rest = true) => ({
     status: "changed"
   }));
   let fetchCount = 0;
-  let routeRequestPayload = null;
+  const modelRequests = [];
   global.fetch = async (_url, options) => {
     fetchCount += 1;
-    routeRequestPayload = JSON.parse(options.body);
+    modelRequests.push(JSON.parse(options.body));
     return {
       ok: true,
       json: async () => ({
@@ -111,16 +111,40 @@ const makeDay = (title, overnight, rest = true) => ({
   assert.equal(routeResult.status, 200);
   assert.equal(routeResult.body.draft.phase, "route");
   assert.equal(routeResult.body.draft.decision, "Vorgeschlagene Planänderung");
+  assert.equal(routeResult.body.draft.verified, false);
   assert.equal(routeResult.body.draft.accommodations, undefined);
   assert.equal(fetchCount, 1, "route stage should call the model exactly once");
-  assert.deepEqual(routeRequestPayload.tools, [{ type: "web_search" }], "route stage should verify roads with web search");
+  assert.equal(modelRequests[0].tools, undefined, "initial route generation should not use web search");
+
+  const verifiedResult = await callApi({
+    secret: "test-pin",
+    stage: "verify-route",
+    days: routeResult.body.draft.days,
+    replaceFromDay: routeResult.body.draft.replaceFromDay,
+    change: routeResult.body.draft.request,
+    lockedStay: routeResult.body.draft.lockedStay
+  });
+  assert.equal(verifiedResult.status, 200);
+  assert.equal(verifiedResult.body.verifiedDraft.phase, "route");
+  assert.equal(verifiedResult.body.verifiedDraft.verified, true);
+  assert.equal(fetchCount, 2, "route verification should call the model exactly once");
+  assert.deepEqual(modelRequests[1].tools, [{ type: "web_search" }], "route verification should use web search");
 
   global.fetch = async () => { throw new Error("accommodation stage unexpectedly called the model"); };
+  const unverifiedAccommodationResult = await callApi({
+    secret: "test-pin",
+    stage: "accommodations",
+    days: routeResult.body.draft.days,
+    accommodations: []
+  });
+  assert.equal(unverifiedAccommodationResult.status, 500);
+  assert.match(unverifiedAccommodationResult.body.error, /automatisch geprüft/);
   const accommodationResult = await callApi({
     secret: "test-pin",
     stage: "accommodations",
-    routeSummary: routeResult.body.draft.summary,
-    days: routeResult.body.draft.days,
+    routeVerified: true,
+    routeSummary: verifiedResult.body.verifiedDraft.summary,
+    days: verifiedResult.body.verifiedDraft.days,
     accommodations: [
       { id: "base", title: "Basisort", currentFirstChoice: "Basis Hotel" },
       { id: "ferry", title: "Kabine auf der Fähre", currentFirstChoice: "Fährkabine" },
@@ -129,7 +153,7 @@ const makeDay = (title, overnight, rest = true) => ({
   });
   assert.equal(accommodationResult.status, 200);
   assert.ok(accommodationResult.body.accommodationPlan.accommodations.base);
-  assert.equal(fetchCount, 1, "accommodation stage should not recalculate the route");
+  assert.equal(fetchCount, 2, "accommodation stage should not recalculate the route");
   console.log("two-stage planning API tests passed");
 })().catch((error) => {
   console.error(error);

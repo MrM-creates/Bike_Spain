@@ -401,6 +401,7 @@ module.exports = async (request, response) => {
     if (ferryIndex < 0 || isoForDay(ferryIndex) !== FERRY_DATE) throw new Error("Der feste Fährtermin am 21.10.2026 wurde im aktuellen Plan nicht gefunden.");
 
     if (payload.stage === "accommodations") {
+      if (payload.routeVerified !== true) throw new Error("Die Route muss vor der Unterkunftsplanung automatisch geprüft werden.");
       const continuityIssue = routeContinuityIssue(currentDays, 1, ferryIndex);
       if (continuityIssue) throw new Error(`Der bestätigte Routenentwurf ist nicht durchgängig: ${continuityIssue}`);
       const accommodationContext = Array.isArray(payload.accommodations) ? payload.accommodations.slice(0, 30) : [];
@@ -410,6 +411,69 @@ module.exports = async (request, response) => {
       const accommodationPlan = await createAccommodationPlan({ draftDays: currentDays, accommodationContext, routeSummary });
       json(response, 200, { ok: true, accommodationPlan });
       console.log(JSON.stringify({ level: "info", message: "accommodation draft completed", ms: Date.now() - startedAt }));
+      return;
+    }
+
+    if (payload.stage === "verify-route") {
+      const replaceFromDay = Math.max(1, Math.min(ferryIndex, Number(payload.replaceFromDay) || 1));
+      const startIndex = replaceFromDay - 1;
+      const replaceCount = ferryIndex - startIndex;
+      const verificationStartedAt = Date.now();
+      const verifiedPlan = await createStructuredResponse({
+        name: "roadbook_verified_route",
+        schema: routeSchema,
+        web: true,
+        instructions: `Du bist die unabhaengige Qualitaetspruefung fuer ein Motorrad-Roadbook. Pruefe den Kandidaten mit Websuche und korrigiere ihn direkt, bevor der Nutzer ihn sieht. Behalte Reiseidee, Tageszahl und sinnvolle Teile unveraendert. Verifiziere fuer jeden Fahrtag die geografisch zusammenhaengende Strassenfolge, die Reihenfolge der Wegpunkte, plausible Kilometer und Fahrzeit sowie asphaltierte, fuer zwei beladene Motorraeder geeignete Strassen. Pruefe Rundtouren besonders streng. Hochpaesse und anspruchsvolle Schluchten muessen realistisch benannt sein. Fuer wetterkritische Hochgebirgsetappen braucht es eine geografisch korrekte Alternative auf tieferen Hauptstrassen. Keine Offroad-, Pisten-, Strand-, Wald- oder unnoetig schmalen Abenteuerstrassen. Der erste Tag beginnt am Uebernachtungsort von previousDay; jeder Folgetag beginnt am Uebernachtungsort des Vortags. Der Faehren-Fixpunkt bleibt unveraendert. Gib den vollstaendig korrigierten Abschnitt mit exakt replaceFromDay, replaceCount und gleich vielen Tagen aus. summary beschreibt den finalen Reiseverlauf und nur wesentliche automatische Korrekturen in einfacher Sprache. Technische Fehler duerfen nicht als offene Aufgabe an den Nutzer weitergegeben werden. Gib ausschliesslich das strukturierte Ergebnis aus.`,
+        input: JSON.stringify({
+          requestedChange: payload.change || {},
+          replaceFromDay,
+          replaceCount,
+          previousDay: currentDays[startIndex - 1] || null,
+          fixedFerry: { day: ferryIndex + 1, date: FERRY_DATE, checkIn: "08:30", dayData: currentDays[ferryIndex] },
+          candidateSegment: currentDays.slice(startIndex, ferryIndex)
+        })
+      });
+      if (verifiedPlan.replaceFromDay !== replaceFromDay || verifiedPlan.replaceCount !== replaceCount || verifiedPlan.days.length !== replaceCount) {
+        throw new Error("Die automatische Routenprüfung hat nicht alle benötigten Reisetage zurückgegeben.");
+      }
+      const verifiedDays = [
+        ...currentDays.slice(0, startIndex),
+        ...verifiedPlan.days.map(normalizeInputDay),
+        ...currentDays.slice(ferryIndex)
+      ];
+      const verifiedFerryIndex = ferryIndexOf(verifiedDays);
+      if (verifiedDays.length !== currentDays.length || verifiedFerryIndex !== ferryIndex || isoForDay(verifiedFerryIndex) !== FERRY_DATE) {
+        throw new Error("Die automatisch geprüfte Route verletzt den festen Fährtermin.");
+      }
+      const continuityIssue = routeContinuityIssue(verifiedDays, startIndex, ferryIndex);
+      if (continuityIssue) throw new Error(`Die automatische Routenprüfung ist nicht durchgängig: ${continuityIssue}`);
+      const lockedStay = payload.lockedStay && typeof payload.lockedStay === "object" ? payload.lockedStay : null;
+      if (lockedStay?.place && Number.isInteger(Number(lockedStay.startIndex)) && Number.isInteger(Number(lockedStay.nights))) {
+        const actualNights = contiguousPlaceNights(verifiedDays, Number(lockedStay.startIndex), cleanText(lockedStay.place, 160));
+        if (actualNights !== Number(lockedStay.nights)) {
+          throw new Error(`Die automatische Routenprüfung hat den bestätigten Aufenthalt in ${cleanText(lockedStay.place, 160)} verändert.`);
+        }
+      }
+      const decision = /^(accepted|approved|ok|changed)$/i.test(cleanText(verifiedPlan.decision, 200))
+        ? "Vorgeschlagene Planänderung"
+        : verifiedPlan.decision;
+      json(response, 200, {
+        ok: true,
+        verifiedDraft: {
+          createdAt: new Date().toISOString(),
+          phase: "route",
+          verified: true,
+          replaceFromDay,
+          replaceCount,
+          lockedStay,
+          request: payload.change || {},
+          summary: verifiedPlan.summary,
+          decision,
+          openItems: verifiedPlan.openItems,
+          days: verifiedDays
+        }
+      });
+      console.log(JSON.stringify({ level: "info", message: "route verification completed", ms: Date.now() - verificationStartedAt, replaceCount }));
       return;
     }
 
@@ -456,7 +520,7 @@ module.exports = async (request, response) => {
       : (requestedType === "free"
         ? "Setze die beschriebene Anpassung ab replaceFromDay um. Behalte nicht betroffene Orte, Etappen und Ruhetage moeglichst unveraendert und aendere nur, was zur konsistenten Umsetzung notwendig ist."
         : "Setze die konkrete Aenderung um und halte den uebrigen Verlauf so stabil wie sinnvoll.");
-    const routeInstructions = `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. ${changeScopeInstruction} Wenn previousDay vorhanden ist, muss der erste neue Tag an dessen Uebernachtungsort beginnen. Danach muss jede Etappe am Uebernachtungsort des Vortags beginnen und am eigenen Uebernachtungsort enden; es darf keine Ortsluecken oder gedanklichen Transfers geben. Nutze die Websuche, um kritische Strassenfolgen, Hochpaesse und Schlechtwetteralternativen vor der Ausgabe zu verifizieren. Verwende nur tatsaechlich zusammenhaengende Strassen und plausible Distanzen. Bewerte Hochpaesse in den Pyrenaeen und Picos Anfang Oktober realistisch: Paesse ueber 1.800 m muessen in note ausdruecklich benannt werden und eine konkrete Schlechtwetteralternative auf tieferen Hauptstrassen erhalten. Bezeichne solche Etappen nicht als passfrei oder harmlos. Jede Rundtour braucht konkrete asphaltierte Wegpunkte in sinnvoller Reihenfolge, damit der Google-Maps-Export die beabsichtigte Strecke abbildet. Bei Verlaengern oder Verkuerzen ist targetNightsAtPlace eine harte Vorgabe fuer die gesamte Anzahl aufeinanderfolgender Uebernachtungen am gewuenschten Ort; nights bezeichnet nur die hinzukommenden oder wegfallenden Naechte. Zusaetzliche Aufenthaltsnaechte muessen vor der Faehre durch Weglassen optionaler Rundfahrten oder Reservetage, Zusammenlegen oder direktere Etappen ausgeglichen werden. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`;
+    const routeInstructions = `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. ${changeScopeInstruction} Wenn previousDay vorhanden ist, muss der erste neue Tag an dessen Uebernachtungsort beginnen. Danach muss jede Etappe am Uebernachtungsort des Vortags beginnen und am eigenen Uebernachtungsort enden; es darf keine Ortsluecken oder gedanklichen Transfers geben. Verwende nur tatsaechlich zusammenhaengende Strassen und plausible Distanzen. Bewerte Hochpaesse in den Pyrenaeen und Picos Anfang Oktober realistisch: Paesse ueber 1.800 m muessen in note ausdruecklich benannt werden und eine konkrete Schlechtwetteralternative auf tieferen Hauptstrassen erhalten. Bezeichne solche Etappen nicht als passfrei oder harmlos. Jede Rundtour braucht konkrete asphaltierte Wegpunkte in sinnvoller Reihenfolge, damit der Google-Maps-Export die beabsichtigte Strecke abbildet. Bei Verlaengern oder Verkuerzen ist targetNightsAtPlace eine harte Vorgabe fuer die gesamte Anzahl aufeinanderfolgender Uebernachtungen am gewuenschten Ort; nights bezeichnet nur die hinzukommenden oder wegfallenden Naechte. Zusaetzliche Aufenthaltsnaechte muessen vor der Faehre durch Weglassen optionaler Rundfahrten oder Reservetage, Zusammenlegen oder direktere Etappen ausgeglichen werden. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`;
     const routeInput = {
       requestedChange,
       replaceFromDay: startDay,
@@ -468,7 +532,6 @@ module.exports = async (request, response) => {
     const requestRoutePlan = (input, instructions = routeInstructions) => createStructuredResponse({
       name: "roadbook_route_draft",
       schema: routeSchema,
-      web: true,
       instructions,
       input: JSON.stringify(input)
     });
@@ -535,6 +598,10 @@ module.exports = async (request, response) => {
         draft: {
           createdAt: new Date().toISOString(),
           phase: "route",
+          verified: false,
+          replaceFromDay: startDay,
+          replaceCount,
+          lockedStay: targetPlaceNights === null ? null : { place: requestedPlace, startIndex: placeIndex, nights: targetPlaceNights },
           request: change,
           summary: routePlan.summary,
           decision,

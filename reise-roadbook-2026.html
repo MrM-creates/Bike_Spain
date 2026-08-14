@@ -2315,6 +2315,7 @@
       const hasDraft = Boolean(draft?.days?.length);
       const isOriginalDraft = hasDraft && draft.request?.type === "restore-original";
       const isRouteDraft = hasDraft && !isOriginalDraft && draft.phase === "route";
+      const isUnverifiedRouteDraft = isRouteDraft && draft.verified !== true;
       const hasTravelUpdates = !hasDraft && state.days.some((item, index) => {
         const published = currentPlanDays[index] || {};
         return item.status !== published.status || (item.travelNote || "") !== (published.travelNote || "");
@@ -2328,12 +2329,14 @@
       workflowBadge.textContent = hasDraft ? "Entwurf" : "Lokale Änderung";
       workflowTitle.textContent = justPublished
         ? "Plan aktualisiert"
-        : (isOriginalDraft ? "Originalplan bereit" : (isRouteDraft ? "Routenentwurf bereit" : "Planentwurf bereit"));
+        : (isOriginalDraft ? "Originalplan bereit" : (isRouteDraft ? (isUnverifiedRouteDraft ? "Routenprüfung ausstehend" : "Geprüfter Routenentwurf") : "Planentwurf bereit"));
       workflowText.textContent = hasDraft
         ? (isOriginalDraft
           ? "Prüfe Route und Unterkünfte. Danach kannst du den Originalplan für beide Geräte aktivieren."
           : (isRouteDraft
-            ? "Prüfe zuerst die Route. Erst nach deiner Bestätigung erstellt ChatGPT die passenden Unterkünfte."
+            ? (isUnverifiedRouteDraft
+              ? "Dieser ältere Entwurf wurde noch nicht automatisch auf Straßen, Pässe und Wetteralternativen geprüft."
+              : "Die Route wurde automatisch geprüft und korrigiert. Entscheide nur noch, ob euch der Verlauf gefällt.")
             : "Route und Unterkünfte sind aufeinander abgestimmt. Prüfe den gesamten Entwurf vor der Veröffentlichung."))
         : (hasTravelUpdates
           ? "Tagesstatus oder Notizen wurden auf diesem Gerät geändert."
@@ -2348,7 +2351,9 @@
       publishButton.hidden = !pending;
       publishButton.textContent = isOriginalDraft
         ? "Originalplan für alle aktivieren"
-        : (isRouteDraft ? "Route bestätigen" : (hasDraft ? "Plan übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen"));
+        : (isRouteDraft
+          ? (isUnverifiedRouteDraft ? "Route automatisch prüfen" : "Route bestätigen")
+          : (hasDraft ? "Plan übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen"));
       draftDetails.hidden = !hasDraft;
       document.querySelector("#review-draft-accommodations").hidden = isRouteDraft;
       if (pending) accommodationImpact.hidden = true;
@@ -2377,7 +2382,7 @@
         heading.textContent = `Vor der Veröffentlichung klären (${openItems.length})`;
         const explanation = document.createElement("p");
         explanation.textContent = isRouteDraft
-          ? "Diese Punkte solltest du bei der Prüfung der Route beachten."
+          ? "Das sind Hinweise zur Reiseentscheidung. Technische Routenfehler werden vorher automatisch korrigiert."
           : "Das sind praktische Buchungs- und Verfügbarkeitsaufgaben, keine Fehler im Reiseplan.";
         const addList = (items, parent) => {
           const list = document.createElement("ul");
@@ -2480,18 +2485,37 @@
       submit.disabled = true;
       close.disabled = true;
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 305000);
-        const response = await fetch("/api/create-plan-draft", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          signal: controller.signal,
-          body: JSON.stringify({ secret, stage: "route", change, days: state.days })
-        });
-        clearTimeout(timeout);
-        const result = await response.json();
-        if (!response.ok || !result.ok) throw new Error(result.error || "Der Entwurf konnte nicht erstellt werden.");
-        draft = { ...result.draft, baseVersion: currentPublishedVersion };
+        const requestStage = async (body, fallbackError) => {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 305000);
+          try {
+            const response = await fetch("/api/create-plan-draft", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              signal: controller.signal,
+              body: JSON.stringify({ secret, ...body })
+            });
+            const result = await response.json();
+            if (!response.ok || !result.ok) throw new Error(result.error || fallbackError);
+            return result;
+          } finally {
+            clearTimeout(timeout);
+          }
+        };
+        const generated = await requestStage(
+          { stage: "route", change, days: state.days },
+          "Der Routenentwurf konnte nicht erstellt werden."
+        );
+        document.querySelector("#planning-progress-title").textContent = "Route wird geprüft";
+        document.querySelector("#planning-progress-text").textContent = "ChatGPT prüft Straßen, Pässe, Wegpunkte, Distanzen und Schlechtwetteralternativen und korrigiert den Entwurf automatisch.";
+        const verified = await requestStage({
+          stage: "verify-route",
+          days: generated.draft.days,
+          replaceFromDay: generated.draft.replaceFromDay,
+          change: generated.draft.request,
+          lockedStay: generated.draft.lockedStay
+        }, "Die automatische Routenprüfung ist fehlgeschlagen.");
+        draft = { ...verified.verifiedDraft, baseVersion: currentPublishedVersion };
         state.days = draft.days.map((item, index) => prepareDay(item, index, item.custom));
         localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
         activeFilter = "all";
@@ -2508,16 +2532,77 @@
         progress.classList.add("is-error");
         document.querySelector("#planning-progress-title").textContent = "Vorschläge konnten nicht erstellt werden";
         document.querySelector("#planning-progress-text").textContent = error.name === "AbortError"
-          ? "Die Planung hat zu lange gedauert. Der aktuelle Plan wurde nicht verändert."
-          : `Der Entwurf konnte nicht erstellt werden: ${error.message}`;
+          ? "Die Erstellung oder automatische Prüfung hat zu lange gedauert. Der aktuelle Plan wurde nicht verändert."
+          : `Es wurde kein ungeprüfter Entwurf übernommen: ${error.message}`;
       } finally {
         submit.disabled = false;
         close.disabled = false;
       }
     };
 
+    const verifyExistingRouteDraft = async () => {
+      if (!draft || draft.phase !== "route" || draft.verified === true) return true;
+      const secret = getPublishPin();
+      if (!secret) return false;
+      const publishButton = document.querySelector("#publish-draft");
+      const discardButton = document.querySelector("#discard-draft");
+      const startButton = document.querySelector("#start-plan-change");
+      publishButton.disabled = true;
+      discardButton.disabled = true;
+      startButton.disabled = true;
+      publishButton.textContent = "Route wird geprüft ...";
+      workflowTitle.textContent = "Route wird automatisch geprüft";
+      workflowText.textContent = "ChatGPT prüft Straßen, Pässe, Wegpunkte, Distanzen und Schlechtwetteralternativen und korrigiert den Entwurf direkt.";
+      try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 305000);
+        let response;
+        try {
+          response = await fetch("/api/create-plan-draft", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: controller.signal,
+            body: JSON.stringify({
+              secret,
+              stage: "verify-route",
+              days: draft.days,
+              replaceFromDay: draft.replaceFromDay || draft.request?.startDay || 1,
+              change: draft.request || {},
+              lockedStay: draft.lockedStay || null
+            })
+          });
+        } finally {
+          clearTimeout(timeout);
+        }
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || "Die automatische Routenprüfung ist fehlgeschlagen.");
+        draft = { ...result.verifiedDraft, baseVersion: draft.baseVersion || currentPublishedVersion };
+        state.days = draft.days.map((item, index) => prepareDay(item, index, item.custom));
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        render();
+        workflow.scrollIntoView({ behavior: "smooth", block: "start" });
+        return true;
+      } catch (error) {
+        if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
+        workflowTitle.textContent = "Routenprüfung fehlgeschlagen";
+        workflowText.textContent = error.name === "AbortError"
+          ? "Die Prüfung hat zu lange gedauert. Der Entwurf bleibt ungeprüft und kann nicht bestätigt werden."
+          : `${error.message} Der Entwurf bleibt ungeprüft und kann nicht bestätigt werden.`;
+        publishButton.textContent = "Route erneut prüfen";
+        return false;
+      } finally {
+        publishButton.disabled = false;
+        discardButton.disabled = false;
+        startButton.disabled = false;
+      }
+    };
+
     const createAccommodationDraft = async () => {
       if (!draft || draft.phase !== "route") return;
+      if (draft.verified !== true) {
+        await verifyExistingRouteDraft();
+        return;
+      }
       const secret = getPublishPin();
       if (!secret) return;
       const publishButton = document.querySelector("#publish-draft");
@@ -2540,6 +2625,7 @@
           body: JSON.stringify({
             secret,
             stage: "accommodations",
+            routeVerified: draft.verified === true,
             days: draft.days,
             accommodations,
             routeSummary: draft.summary
