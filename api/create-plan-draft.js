@@ -465,17 +465,28 @@ module.exports = async (request, response) => {
     let researched = { summary: [], stays: [], openItems: [] };
     if (researchStays.length) {
       const accommodationStartedAt = Date.now();
-      researched = await createStructuredResponse({
-        name: "roadbook_accommodation_draft",
+      const researchChunks = [];
+      for (let index = 0; index < researchStays.length; index += 6) {
+        researchChunks.push(researchStays.slice(index, index + 6));
+      }
+      const researchResults = await Promise.all(researchChunks.map((expectedStays, chunkIndex) => createStructuredResponse({
+        name: `roadbook_accommodation_draft_${chunkIndex + 1}`,
         schema: accommodationSchema,
         web: true,
         instructions: `Du planst nur die neuen oder unpassenden Unterkuenfte eines bereits validierten Motorrad-Roadbooks. Gib fuer jeden bereitgestellten Uebernachtungsblock genau einen Eintrag in gleicher Reihenfolge aus und verwende dafuer die bereitgestellte slotId. Suche eine konkrete erste Wahl und Alternative und liefere fuer beide einen direkten HTTPS-Link zur offiziellen Unterkunftsseite oder einer serioesen Buchungsseite. Wichtig sind sichere Abstellung fuer zwei beladene Motorraeder, einfache asphaltierte Zufahrt, keine problematische Altstadt- oder ZBE-Zufahrt und moeglichst stornierbare Tarife. Verfuegbarkeit und Preis gelten immer als zu pruefen. Gib ausschliesslich das strukturierte Ergebnis aus.`,
-        input: JSON.stringify({ expectedStays: researchStays, routeChanges: routePlan.summary })
+        input: JSON.stringify({ expectedStays, routeChanges: routePlan.summary })
+      })));
+      researchResults.forEach((result, index) => {
+        if (result.stays.length !== researchChunks[index].length) {
+          throw new Error(`ChatGPT hat in Unterkunftsgruppe ${index + 1} ${result.stays.length} statt ${researchChunks[index].length} Stopps geliefert.`);
+        }
       });
-      console.log(JSON.stringify({ level: "info", message: "hotel research completed", ms: Date.now() - accommodationStartedAt, count: researchStays.length }));
-      if (researched.stays.length !== researchStays.length) {
-        throw new Error(`ChatGPT hat ${researched.stays.length} statt ${researchStays.length} neuen Unterkunftsstopps geliefert.`);
-      }
+      researched = {
+        summary: researchResults.flatMap((result) => result.summary),
+        stays: researchResults.flatMap((result) => result.stays),
+        openItems: researchResults.flatMap((result) => result.openItems)
+      };
+      console.log(JSON.stringify({ level: "info", message: "hotel research completed", ms: Date.now() - accommodationStartedAt, count: researchStays.length, chunks: researchChunks.length }));
     }
     const researchedById = new Map(researched.stays.map((stay) => [stay.id, stay]));
     const accommodationStays = slotPlan.assigned.map((stay, index) => {
