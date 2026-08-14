@@ -2315,7 +2315,7 @@
       const hasDraft = Boolean(draft?.days?.length);
       const isOriginalDraft = hasDraft && draft.request?.type === "restore-original";
       const isRouteDraft = hasDraft && !isOriginalDraft && draft.phase === "route";
-      const isUnverifiedRouteDraft = isRouteDraft && draft.verified !== true;
+      const isUnverifiedRouteDraft = isRouteDraft && (draft.verified !== true || Number(draft.verificationVersion) < 2);
       const hasTravelUpdates = !hasDraft && state.days.some((item, index) => {
         const published = currentPlanDays[index] || {};
         return item.status !== published.status || (item.travelNote || "") !== (published.travelNote || "");
@@ -2541,7 +2541,7 @@
     };
 
     const verifyExistingRouteDraft = async () => {
-      if (!draft || draft.phase !== "route" || draft.verified === true) return true;
+      if (!draft || draft.phase !== "route" || (draft.verified === true && Number(draft.verificationVersion) >= 2)) return true;
       const secret = getPublishPin();
       if (!secret) return false;
       const publishButton = document.querySelector("#publish-draft");
@@ -2599,7 +2599,7 @@
 
     const createAccommodationDraft = async () => {
       if (!draft || draft.phase !== "route") return;
-      if (draft.verified !== true) {
+      if (draft.verified !== true || Number(draft.verificationVersion) < 2) {
         await verifyExistingRouteDraft();
         return;
       }
@@ -2626,6 +2626,7 @@
             secret,
             stage: "accommodations",
             routeVerified: draft.verified === true,
+            routeVerificationVersion: draft.verificationVersion,
             days: draft.days,
             accommodations,
             routeSummary: draft.summary

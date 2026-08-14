@@ -442,7 +442,9 @@ module.exports = async (request, response) => {
     if (ferryIndex < 0 || isoForDay(ferryIndex) !== FERRY_DATE) throw new Error("Der feste Fährtermin am 21.10.2026 wurde im aktuellen Plan nicht gefunden.");
 
     if (payload.stage === "accommodations") {
-      if (payload.routeVerified !== true) throw new Error("Die Route muss vor der Unterkunftsplanung automatisch geprüft werden.");
+      if (payload.routeVerified !== true || Number(payload.routeVerificationVersion) < 2) {
+        throw new Error("Die Route muss vor der Unterkunftsplanung mit der aktuellen Prüfung kontrolliert werden.");
+      }
       const continuityIssue = routeContinuityIssue(currentDays, 1, ferryIndex);
       if (continuityIssue) throw new Error(`Der bestätigte Routenentwurf ist nicht durchgängig: ${continuityIssue}`);
       const accommodationContext = Array.isArray(payload.accommodations) ? payload.accommodations.slice(0, 30) : [];
@@ -504,6 +506,7 @@ module.exports = async (request, response) => {
           createdAt: new Date().toISOString(),
           phase: "route",
           verified: true,
+          verificationVersion: 2,
           replaceFromDay,
           replaceCount,
           lockedStay,

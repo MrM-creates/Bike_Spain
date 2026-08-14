@@ -165,6 +165,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.equal(verifiedResult.status, 200);
   assert.equal(verifiedResult.body.verifiedDraft.phase, "route");
   assert.equal(verifiedResult.body.verifiedDraft.verified, true);
+  assert.equal(verifiedResult.body.verifiedDraft.verificationVersion, 2);
   assert.equal(fetchCount, 2, "route verification should call the model exactly once");
   assert.deepEqual(modelRequests[1].tools, [{ type: "web_search" }], "route verification should use web search");
 
@@ -176,11 +177,12 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
     accommodations: []
   });
   assert.equal(unverifiedAccommodationResult.status, 500);
-  assert.match(unverifiedAccommodationResult.body.error, /automatisch geprüft/);
+  assert.match(unverifiedAccommodationResult.body.error, /aktuellen Prüfung/);
   const accommodationResult = await callApi({
     secret: "test-pin",
     stage: "accommodations",
     routeVerified: true,
+    routeVerificationVersion: 2,
     routeSummary: verifiedResult.body.verifiedDraft.summary,
     days: verifiedResult.body.verifiedDraft.days,
     accommodations: [
