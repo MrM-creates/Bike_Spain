@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { Readable } = require("node:stream");
 const handler = require("../api/create-plan-draft");
-const { routeContinuityIssue } = handler._test;
+const { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue } = handler._test;
 
 const days = [
   { overnight: "Castelldefels" },
@@ -33,6 +33,24 @@ assert.equal(routeContinuityIssue(days, 1, 3), "");
 days[2].overnight = "Pamplona";
 assert.match(routeContinuityIssue(days, 1, 3), /beginnt in Pamplona/);
 
+assert.equal(maximumDistance("ca. 180–200 km"), 200);
+const checkedRoute = [
+  makeCheckedDay("Start", "Start", true),
+  makeCheckedDay("Start – Vielha", "Vielha", false, {
+    origin: "Start", destination: "Vielha", km: "220 km", time: "4 h 15",
+    roads: "N-260 · C-28", note: "Pòrt dera Bonaigua; Schlechtwetteralternative über N-230 und Vielha-Tunnel."
+  }),
+  makeCheckedDay("Picos-Runde", "Potes", false, {
+    origin: "Potes", destination: "Potes", km: "180–200 km", time: "4 h",
+    roads: "N-621 · N-625 · AS-114", note: "Puerto de San Glorio; Schlechtwetteralternative durch Desfiladero de la Hermida.",
+    waypoints: ["Riaño", "Arenas de Cabrales"]
+  })
+];
+assert.equal(routeDetailIssue(checkedRoute, 1, 3), "");
+assert.match(routeAuditSummary(checkedRoute, 1, 3), /Tag 2 mit bis zu 220 km/);
+checkedRoute[1].note = "Kurvige Fahrt nach Vielha.";
+assert.match(routeDetailIssue(checkedRoute, 1, 3), /Bonaigua/);
+
 console.log("create-plan-draft tests passed");
 
 const callApi = async (body) => {
@@ -58,6 +76,26 @@ const makeDay = (title, overnight, rest = true) => ({
   waypoints: [],
   status: "planned"
 });
+
+function makeCheckedDay(title, overnight, rest, overrides = {}) {
+  return {
+    title,
+    type: rest ? "Ruhetag" : "Fahrtag",
+    overnight,
+    km: "",
+    time: "",
+    roads: "Keine Fahrroute",
+    points: "",
+    note: "",
+    travelNote: "",
+    rest,
+    origin: "",
+    destination: "",
+    waypoints: [],
+    status: "planned",
+    ...overrides
+  };
+}
 
 (async () => {
   process.env.ROADBOOK_PUBLISH_SECRET = "test-pin";

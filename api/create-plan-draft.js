@@ -247,6 +247,47 @@ const routeContinuityIssue = (days, startIndex, endIndex) => {
   return "";
 };
 
+const maximumDistance = (value) => {
+  const values = String(value || "").match(/\d+(?:[.,]\d+)?/g) || [];
+  return values.length ? Math.max(...values.map((item) => Number(item.replace(",", ".")))) : 0;
+};
+
+const routeDetailIssue = (days, startIndex, endIndex) => {
+  for (let index = startIndex; index < endIndex; index += 1) {
+    const day = days[index];
+    if (day.rest) continue;
+    const dayNumber = index + 1;
+    if (!maximumDistance(day.km)) return `Tag ${dayNumber} hat keine auswertbare Kilometerangabe.`;
+    if (!/\d/.test(day.time || "")) return `Tag ${dayNumber} hat keine auswertbare Fahrzeit.`;
+    if (!cleanText(day.roads, 300) || /keine (feste )?fahrroute/i.test(day.roads)) {
+      return `Tag ${dayNumber} nennt keine konkrete Straßenfolge.`;
+    }
+    if (placesMatch(day.origin, day.destination) && day.waypoints.length < 2) {
+      return `Die Rundtour an Tag ${dayNumber} benötigt mindestens zwei konkrete Wegpunkte.`;
+    }
+    const routeText = [day.title, day.roads, day.points, day.note, ...day.waypoints].join(" ");
+    if (/\bC-?28\b/i.test(routeText) && /vielha|val d.?aran/i.test(routeText)) {
+      if (!/bonaigua/i.test(routeText) || !/(n-?230|tunnel|schlechtwetteralternative)/i.test(routeText)) {
+        return `Tag ${dayNumber} nutzt die C-28 bei Vielha, benennt aber Pòrt dera Bonaigua und die tiefere N-230-Tunnelalternative nicht konkret.`;
+      }
+    }
+    if (/san glorio/i.test(routeText) && !/(hermida|n-?627|schlechtwetteralternative)/i.test(routeText)) {
+      return `Tag ${dayNumber} nennt Puerto de San Glorio ohne konkrete tiefere Schlechtwetteralternative.`;
+    }
+  }
+  return "";
+};
+
+const routeAuditSummary = (days, startIndex, endIndex) => {
+  const ridingDays = days.slice(startIndex, endIndex)
+    .map((day, offset) => ({ day, index: startIndex + offset, km: maximumDistance(day.km) }))
+    .filter((item) => !item.day.rest);
+  const longest = ridingDays.reduce((current, item) => !current || item.km > current.km ? item : current, null);
+  return longest
+    ? `Automatisch geprüft: ${ridingDays.length} Fahrtage; längste geplante Etappe ist Tag ${longest.index + 1} mit bis zu ${longest.km} km.`
+    : "Automatisch geprüft: Der geänderte Abschnitt enthält keine Fahrtage.";
+};
+
 const assignAccommodationSlots = (expected, current) => {
   const unused = new Set(current.map((stay) => stay.id).filter(Boolean));
   const assigned = expected.map((stay) => {
@@ -423,7 +464,7 @@ module.exports = async (request, response) => {
         name: "roadbook_verified_route",
         schema: routeSchema,
         web: true,
-        instructions: `Du bist die unabhaengige Qualitaetspruefung fuer ein Motorrad-Roadbook. Pruefe den Kandidaten mit Websuche und korrigiere ihn direkt, bevor der Nutzer ihn sieht. Behalte Reiseidee, Tageszahl und sinnvolle Teile unveraendert. Verifiziere fuer jeden Fahrtag die geografisch zusammenhaengende Strassenfolge, die Reihenfolge der Wegpunkte, plausible Kilometer und Fahrzeit sowie asphaltierte, fuer zwei beladene Motorraeder geeignete Strassen. Pruefe Rundtouren besonders streng. Hochpaesse und anspruchsvolle Schluchten muessen realistisch benannt sein. Fuer wetterkritische Hochgebirgsetappen braucht es eine geografisch korrekte Alternative auf tieferen Hauptstrassen. Keine Offroad-, Pisten-, Strand-, Wald- oder unnoetig schmalen Abenteuerstrassen. Der erste Tag beginnt am Uebernachtungsort von previousDay; jeder Folgetag beginnt am Uebernachtungsort des Vortags. Der Faehren-Fixpunkt bleibt unveraendert. Gib den vollstaendig korrigierten Abschnitt mit exakt replaceFromDay, replaceCount und gleich vielen Tagen aus. summary beschreibt den finalen Reiseverlauf und nur wesentliche automatische Korrekturen in einfacher Sprache. Technische Fehler duerfen nicht als offene Aufgabe an den Nutzer weitergegeben werden. Gib ausschliesslich das strukturierte Ergebnis aus.`,
+        instructions: `Du bist die unabhaengige Qualitaetspruefung fuer ein Motorrad-Roadbook. Pruefe den Kandidaten mit Websuche und korrigiere ihn direkt, bevor der Nutzer ihn sieht. Behalte Reiseidee, Tageszahl und sinnvolle Teile unveraendert. Verifiziere fuer jeden Fahrtag die geografisch zusammenhaengende Strassenfolge, die Reihenfolge der Wegpunkte, plausible Kilometer und Fahrzeit sowie asphaltierte, fuer zwei beladene Motorraeder geeignete Strassen. Pruefe Rundtouren besonders streng. Hochpaesse und anspruchsvolle Schluchten muessen realistisch benannt sein. Fuer wetterkritische Hochgebirgsetappen braucht es eine geografisch korrekte Alternative auf tieferen Hauptstrassen. Eine Etappe ueber die C-28 nach Vielha muss Poert dera Bonaigua mit Hoehe benennen und als tiefere Schlechtwetteralternative die Verbindung ueber N-230 und Vielha-Tunnel konkret ausweisen. Eine Runde ueber Puerto de San Glorio muss eine geografisch geschlossene, tiefere Alternative ab demselben Uebernachtungsort nennen. Keine Offroad-, Pisten-, Strand-, Wald- oder unnoetig schmalen Abenteuerstrassen. Der erste Tag beginnt am Uebernachtungsort von previousDay; jeder Folgetag beginnt am Uebernachtungsort des Vortags. Der Faehren-Fixpunkt bleibt unveraendert. Gib den vollstaendig korrigierten Abschnitt mit exakt replaceFromDay, replaceCount und gleich vielen Tagen aus. Jeder Fahrtag braucht konkrete Strassen, eine auswertbare Kilometerangabe und Fahrzeit. summary darf keine pauschalen Sicherheitsbehauptungen enthalten; nenne stattdessen konkrete wesentliche Korrekturen und kritische Alternativen. Technische Fehler duerfen nicht als offene Aufgabe an den Nutzer weitergegeben werden. decision ist immer 'Vorgeschlagene Planaenderung'. Gib ausschliesslich das strukturierte Ergebnis aus.`,
         input: JSON.stringify({
           requestedChange: payload.change || {},
           replaceFromDay,
@@ -447,6 +488,8 @@ module.exports = async (request, response) => {
       }
       const continuityIssue = routeContinuityIssue(verifiedDays, startIndex, ferryIndex);
       if (continuityIssue) throw new Error(`Die automatische Routenprüfung ist nicht durchgängig: ${continuityIssue}`);
+      const detailIssue = routeDetailIssue(verifiedDays, startIndex, ferryIndex);
+      if (detailIssue) throw new Error(`Die automatische Routenprüfung ist unvollständig: ${detailIssue}`);
       const lockedStay = payload.lockedStay && typeof payload.lockedStay === "object" ? payload.lockedStay : null;
       if (lockedStay?.place && Number.isInteger(Number(lockedStay.startIndex)) && Number.isInteger(Number(lockedStay.nights))) {
         const actualNights = contiguousPlaceNights(verifiedDays, Number(lockedStay.startIndex), cleanText(lockedStay.place, 160));
@@ -454,9 +497,7 @@ module.exports = async (request, response) => {
           throw new Error(`Die automatische Routenprüfung hat den bestätigten Aufenthalt in ${cleanText(lockedStay.place, 160)} verändert.`);
         }
       }
-      const decision = /^(accepted|approved|ok|changed)$/i.test(cleanText(verifiedPlan.decision, 200))
-        ? "Vorgeschlagene Planänderung"
-        : verifiedPlan.decision;
+      const decision = "Vorgeschlagene Planänderung";
       json(response, 200, {
         ok: true,
         verifiedDraft: {
@@ -467,7 +508,7 @@ module.exports = async (request, response) => {
           replaceCount,
           lockedStay,
           request: payload.change || {},
-          summary: verifiedPlan.summary,
+          summary: [routeAuditSummary(verifiedDays, startIndex, ferryIndex), ...verifiedPlan.summary],
           decision,
           openItems: verifiedPlan.openItems,
           days: verifiedDays
@@ -589,9 +630,7 @@ module.exports = async (request, response) => {
     }
     console.log(JSON.stringify({ level: "info", message: "route draft completed", ms: Date.now() - routeStartedAt, replaceCount }));
 
-    const decision = /^(accepted|approved|ok|changed)$/i.test(cleanText(routePlan.decision, 200))
-      ? "Vorgeschlagene Planänderung"
-      : routePlan.decision;
+    const decision = "Vorgeschlagene Planänderung";
     if (payload.stage === "route") {
       json(response, 200, {
         ok: true,
@@ -636,4 +675,4 @@ module.exports = async (request, response) => {
   }
 };
 
-module.exports._test = { routeContinuityIssue };
+module.exports._test = { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue };
