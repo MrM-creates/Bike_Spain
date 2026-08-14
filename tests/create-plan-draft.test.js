@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { Readable } = require("node:stream");
 const handler = require("../api/create-plan-draft");
-const { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary } = handler._test;
+const { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
 
 const days = [
   { overnight: "Castelldefels" },
@@ -51,6 +51,8 @@ assert.match(routeAuditSummary(checkedRoute, 1, 3), /Tag 2 mit bis zu 220 km/);
 assert.match(routeVerificationSummary(checkedRoute, 1, 3)[1], /Tag 2 bis Tag 3/);
 checkedRoute[1].note = "Kurvige Fahrt nach Vielha.";
 assert.match(routeDetailIssue(checkedRoute, 1, 3), /Bonaigua/);
+
+assert.throws(() => verifyAccommodationState(checkedRoute, {}), /Übernachtungsblöcken/);
 
 console.log("create-plan-draft tests passed");
 
@@ -194,7 +196,18 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   });
   assert.equal(accommodationResult.status, 200);
   assert.ok(accommodationResult.body.accommodationPlan.accommodations.base);
+  assert.equal(accommodationResult.body.accommodationAudit.version, 1);
+  assert.match(accommodationResult.body.accommodationAudit.summary[0], /Ort, Reihenfolge, Datum und Nächtezahl/);
   assert.equal(fetchCount, 2, "accommodation stage should not recalculate the route");
+
+  const accommodationVerificationResult = await callApi({
+    secret: "test-pin",
+    stage: "verify-accommodations",
+    days: verifiedResult.body.verifiedDraft.days,
+    accommodations: accommodationResult.body.accommodationPlan.accommodations
+  });
+  assert.equal(accommodationVerificationResult.status, 200);
+  assert.equal(accommodationVerificationResult.body.accommodationAudit.version, 1);
   console.log("two-stage planning API tests passed");
 })().catch((error) => {
   console.error(error);

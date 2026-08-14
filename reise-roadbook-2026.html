@@ -2316,6 +2316,7 @@
       const isOriginalDraft = hasDraft && draft.request?.type === "restore-original";
       const isRouteDraft = hasDraft && !isOriginalDraft && draft.phase === "route";
       const isUnverifiedRouteDraft = isRouteDraft && (draft.verified !== true || Number(draft.verificationVersion) < 2);
+      const isUnverifiedCompleteDraft = hasDraft && draft.phase === "complete" && !isOriginalDraft && Number(draft.accommodationVerificationVersion) < 1;
       const hasTravelUpdates = !hasDraft && state.days.some((item, index) => {
         const published = currentPlanDays[index] || {};
         return item.status !== published.status || (item.travelNote || "") !== (published.travelNote || "");
@@ -2329,7 +2330,7 @@
       workflowBadge.textContent = hasDraft ? "Entwurf" : "Lokale Änderung";
       workflowTitle.textContent = justPublished
         ? "Plan aktualisiert"
-        : (isOriginalDraft ? "Originalplan bereit" : (isRouteDraft ? (isUnverifiedRouteDraft ? "Routenprüfung ausstehend" : "Geprüfter Routenentwurf") : "Planentwurf bereit"));
+        : (isOriginalDraft ? "Originalplan bereit" : (isRouteDraft ? (isUnverifiedRouteDraft ? "Routenprüfung ausstehend" : "Geprüfter Routenentwurf") : (isUnverifiedCompleteDraft ? "Planprüfung ausstehend" : "Geprüfter Planentwurf")));
       workflowText.textContent = hasDraft
         ? (isOriginalDraft
           ? "Prüfe Route und Unterkünfte. Danach kannst du den Originalplan für beide Geräte aktivieren."
@@ -2337,7 +2338,9 @@
             ? (isUnverifiedRouteDraft
               ? "Dieser ältere Entwurf wurde noch nicht automatisch auf Straßen, Pässe und Wetteralternativen geprüft."
               : "Die Route wurde automatisch geprüft und korrigiert. Entscheide nur noch, ob euch der Verlauf gefällt.")
-            : "Route und Unterkünfte sind aufeinander abgestimmt. Prüfe den gesamten Entwurf vor der Veröffentlichung."))
+            : (isUnverifiedCompleteDraft
+              ? "Route und Unterkünfte werden jetzt automatisch gegeneinander geprüft."
+              : "Route und Unterkünfte wurden automatisch aufeinander abgestimmt.")))
         : (hasTravelUpdates
           ? "Tagesstatus oder Notizen wurden auf diesem Gerät geändert."
           : publishNotice);
@@ -2353,7 +2356,7 @@
         ? "Originalplan für alle aktivieren"
         : (isRouteDraft
           ? (isUnverifiedRouteDraft ? "Route automatisch prüfen" : "Route bestätigen")
-          : (hasDraft ? "Plan übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen"));
+          : (isUnverifiedCompleteDraft ? "Plan automatisch prüfen" : (hasDraft ? "Plan übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen")));
       draftDetails.hidden = !hasDraft;
       document.querySelector("#review-draft-accommodations").hidden = isRouteDraft;
       if (pending) accommodationImpact.hidden = true;
@@ -2653,8 +2656,9 @@
         draft = {
           ...draft,
           phase: "complete",
-          summary: [...(draft.summary || []), ...(result.accommodationPlan.summary || [])],
-          openItems: [...(draft.openItems || []), ...(result.accommodationPlan.openItems || [])],
+          accommodationVerificationVersion: result.accommodationAudit?.version || 0,
+          summary: [...(draft.summary || []), ...(result.accommodationPlan.summary || []), ...(result.accommodationAudit?.summary || [])],
+          openItems: [...(draft.openItems || []), ...(result.accommodationPlan.openItems || []), ...(result.accommodationAudit?.openItems || [])],
           accommodations: result.accommodationPlan.accommodations
         };
         localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
@@ -2671,6 +2675,42 @@
         publishButton.disabled = false;
         discardButton.disabled = false;
         startButton.disabled = false;
+      }
+    };
+
+    const verifyExistingAccommodationDraft = async () => {
+      if (!draft?.accommodations || draft.phase !== "complete") return false;
+      const secret = getPublishPin();
+      if (!secret) return false;
+      const button = document.querySelector("#publish-draft");
+      button.disabled = true;
+      button.textContent = "Plan wird geprüft ...";
+      workflowTitle.textContent = "Route und Unterkünfte werden abgeglichen";
+      workflowText.textContent = "Die App prüft Orte, Reihenfolge, Daten, Nächte, Hotelvorschläge, Links und Abstellhinweise.";
+      try {
+        const response = await fetch("/api/create-plan-draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ secret, stage: "verify-accommodations", days: draft.days, accommodations: draft.accommodations })
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || "Der Planabgleich ist fehlgeschlagen.");
+        draft = {
+          ...draft,
+          accommodationVerificationVersion: result.accommodationAudit.version,
+          summary: [...(draft.summary || []), ...(result.accommodationAudit.summary || [])],
+          openItems: [...(draft.openItems || []), ...(result.accommodationAudit.openItems || [])]
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        render();
+        workflow.scrollIntoView({ behavior: "smooth", block: "start" });
+        return true;
+      } catch (error) {
+        workflowTitle.textContent = "Planprüfung fehlgeschlagen";
+        workflowText.textContent = error.message;
+        return false;
+      } finally {
+        button.disabled = false;
       }
     };
 
@@ -2730,6 +2770,10 @@
       const restoringOriginal = draft.request?.type === "restore-original";
       if (!restoringOriginal && !draft.accommodations) {
         await createAccommodationDraft();
+        return;
+      }
+      if (!restoringOriginal && Number(draft.accommodationVerificationVersion) < 1) {
+        await verifyExistingAccommodationDraft();
         return;
       }
       const secret = getPublishPin();

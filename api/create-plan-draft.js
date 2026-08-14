@@ -355,6 +355,39 @@ const normalizeStayState = (stays, allIds) => {
   return state;
 };
 
+const verifyAccommodationState = (days, state) => {
+  const expected = expectedStays(days);
+  const active = Object.entries(state || {})
+    .filter(([, stay]) => stay && stay.inactive !== "true")
+    .map(([id, stay]) => ({ id, ...stay, nightCount: Number(stay.nightCount || 0), order: Number(stay.order || 0) }))
+    .sort((left, right) => left.order - right.order);
+  if (active.length !== expected.length) {
+    throw new Error(`Die Unterkunftskette enthält ${active.length} statt ${expected.length} Übernachtungsblöcken.`);
+  }
+  const practicalChecks = [];
+  expected.forEach((stay, index) => {
+    const actual = active[index];
+    if (!placesMatch(actual.title, stay.title) || actual.startDate !== stay.startDate || actual.endDate !== stay.endDate || actual.nightCount !== stay.nightCount) {
+      throw new Error(`Unterkunft ${index + 1} passt nicht zur Route: erwartet ${stay.title}, ${stay.startDate} bis ${stay.endDate}.`);
+    }
+    if (actual.id === "ferry" || /kabine|fahre/.test(placeKey(actual.title))) return;
+    if (!cleanText(actual.firstChoice, 240) || !cleanText(actual.alternative, 240)) {
+      practicalChecks.push(`${actual.title}: konkrete erste Wahl oder Alternative fehlt.`);
+    }
+    if (!/^https:\/\//i.test(actual.firstChoiceUrl || "") || !/^https:\/\//i.test(actual.alternativeUrl || "")) {
+      practicalChecks.push(`${actual.title}: mindestens ein Unterkunftslink fehlt oder ist ungültig.`);
+    }
+    if (!/(garage|park|stell|abstell|hof)/i.test(actual.note || "")) {
+      practicalChecks.push(`${actual.title}: sichere Motorradabstellung noch konkret anfragen.`);
+    }
+  });
+  return {
+    version: 1,
+    summary: [`Automatisch abgeglichen: ${active.length} Übernachtungsblöcke stimmen in Ort, Reihenfolge, Datum und Nächtezahl mit der bestätigten Route überein.`],
+    openItems: practicalChecks
+  };
+};
+
 const preservedStay = (expected, current) => {
   const datesChanged = expected.startDate !== current.startDate || expected.endDate !== current.endDate;
   const longer = expected.startDate === current.startDate && expected.nightCount > Number(current.nightCount || 0);
@@ -472,8 +505,16 @@ module.exports = async (request, response) => {
         ? payload.routeSummary.slice(0, 30).map((item) => cleanText(item, 800)).filter(Boolean)
         : [];
       const accommodationPlan = await createAccommodationPlan({ draftDays: currentDays, accommodationContext, routeSummary });
-      json(response, 200, { ok: true, accommodationPlan });
+      const accommodationAudit = verifyAccommodationState(currentDays, accommodationPlan.accommodations);
+      json(response, 200, { ok: true, accommodationPlan, accommodationAudit });
       console.log(JSON.stringify({ level: "info", message: "accommodation draft completed", ms: Date.now() - startedAt }));
+      return;
+    }
+
+    if (payload.stage === "verify-accommodations") {
+      const accommodationAudit = verifyAccommodationState(currentDays, payload.accommodations || {});
+      json(response, 200, { ok: true, accommodationAudit });
+      console.log(JSON.stringify({ level: "info", message: "accommodation verification completed", ms: Date.now() - startedAt }));
       return;
     }
 
@@ -699,4 +740,4 @@ module.exports = async (request, response) => {
   }
 };
 
-module.exports._test = { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary };
+module.exports._test = { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
