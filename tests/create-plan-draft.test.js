@@ -1,5 +1,7 @@
 const assert = require("node:assert/strict");
-const { routeContinuityIssue } = require("../api/create-plan-draft")._test;
+const { Readable } = require("node:stream");
+const handler = require("../api/create-plan-draft");
+const { routeContinuityIssue } = handler._test;
 
 const days = [
   { overnight: "Castelldefels" },
@@ -32,3 +34,101 @@ days[2].overnight = "Pamplona";
 assert.match(routeContinuityIssue(days, 1, 3), /beginnt in Pamplona/);
 
 console.log("create-plan-draft tests passed");
+
+const callApi = async (body) => {
+  const request = Readable.from([Buffer.from(JSON.stringify(body))]);
+  request.method = "POST";
+  let responseBody = "";
+  const response = {
+    statusCode: 200,
+    setHeader() {},
+    end(value) { responseBody = value; }
+  };
+  await handler(request, response);
+  return { status: response.statusCode, body: JSON.parse(responseBody) };
+};
+
+const makeDay = (title, overnight, rest = true) => ({
+  title,
+  type: rest ? "Ruhetag" : "Fahrtag",
+  overnight,
+  rest,
+  origin: "",
+  destination: "",
+  waypoints: [],
+  status: "planned"
+});
+
+(async () => {
+  process.env.ROADBOOK_PUBLISH_SECRET = "test-pin";
+  process.env.OPENAI_API_KEY = "test-key";
+  const currentDays = Array.from({ length: 27 }, () => makeDay("Basis", "Basisort"));
+  currentDays.push(makeDay("Fähre Barcelona – Genua", "Kabine auf der Fähre", false));
+  currentDays.push(makeDay("Genua – Aosta", "Aosta"));
+  currentDays.push(makeDay("Aosta – Berikon", "Berikon"));
+
+  const routeDays = Array.from({ length: 26 }, () => ({
+    title: "Basis",
+    type: "Ruhetag",
+    overnight: "Basisort",
+    km: "",
+    time: "",
+    roads: "Keine Fahrroute",
+    points: "",
+    note: "",
+    travelNote: "",
+    rest: true,
+    origin: "",
+    destination: "",
+    waypoints: [],
+    status: "changed"
+  }));
+  let fetchCount = 0;
+  global.fetch = async () => {
+    fetchCount += 1;
+    return {
+      ok: true,
+      json: async () => ({
+        output_text: JSON.stringify({
+          summary: ["Route angepasst"],
+          decision: "changed",
+          replaceFromDay: 2,
+          replaceCount: 26,
+          days: routeDays,
+          openItems: []
+        })
+      })
+    };
+  };
+  const routeResult = await callApi({
+    secret: "test-pin",
+    stage: "route",
+    change: { type: "reroute", startDay: 2, instruction: "Neue Richtung" },
+    days: currentDays
+  });
+  assert.equal(routeResult.status, 200);
+  assert.equal(routeResult.body.draft.phase, "route");
+  assert.equal(routeResult.body.draft.decision, "Vorgeschlagene Planänderung");
+  assert.equal(routeResult.body.draft.accommodations, undefined);
+  assert.equal(fetchCount, 1, "route stage should call the model exactly once");
+
+  global.fetch = async () => { throw new Error("accommodation stage unexpectedly called the model"); };
+  const accommodationResult = await callApi({
+    secret: "test-pin",
+    stage: "accommodations",
+    routeSummary: routeResult.body.draft.summary,
+    days: routeResult.body.draft.days,
+    accommodations: [
+      { id: "base", title: "Basisort", currentFirstChoice: "Basis Hotel" },
+      { id: "ferry", title: "Kabine auf der Fähre", currentFirstChoice: "Fährkabine" },
+      { id: "aosta-como", title: "Aosta", currentFirstChoice: "Aosta Hotel" }
+    ]
+  });
+  assert.equal(accommodationResult.status, 200);
+  assert.ok(accommodationResult.body.accommodationPlan.accommodations.base);
+  assert.equal(fetchCount, 1, "accommodation stage should not recalculate the route");
+  console.log("two-stage planning API tests passed");
+})().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

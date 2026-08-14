@@ -1128,7 +1128,7 @@
       <div class="plan-workflow-actions">
         <button class="tool-button primary-button" id="start-plan-change" type="button">Plan ändern</button>
         <button class="tool-button" id="discard-draft" type="button" hidden>Entwurf verwerfen</button>
-        <button class="tool-button primary-button" id="publish-draft" type="button" hidden>Änderungen übernehmen &amp; veröffentlichen</button>
+        <button class="tool-button primary-button" id="publish-draft" type="button" hidden>Plan übernehmen &amp; veröffentlichen</button>
       </div>
       <div class="draft-details" id="draft-details" hidden>
         <p class="draft-decision" id="draft-decision"></p>
@@ -1136,7 +1136,7 @@
         <div class="draft-review-actions">
           <span>Entwurf prüfen</span>
           <button class="tool-button" id="review-draft-route" type="button">Route unten ansehen</button>
-          <a class="tool-button" href="/unterkuenfte">Unterkünfte ansehen</a>
+          <a class="tool-button" id="review-draft-accommodations" href="/unterkuenfte">Unterkünfte ansehen</a>
         </div>
         <div class="draft-open" id="draft-open" hidden></div>
       </div>
@@ -1151,7 +1151,7 @@
       <summary>Hilfe</summary>
       <div class="action-help-grid">
         <div><strong>Fahren</strong><span>Ruhige Roadbook-Ansicht für unterwegs: Route öffnen, Status setzen, Notiz erfassen.</span></div>
-        <div><strong>Plan ändern</strong><span>Beschreibt eine Änderung. ChatGPT erstellt daraus Route und Unterkünfte als prüfbaren Entwurf.</span></div>
+        <div><strong>Plan ändern</strong><span>ChatGPT erstellt zuerst eine Route. Nach deiner Bestätigung folgen die passenden Unterkünfte.</span></div>
         <div><strong>↻</strong><span>Lädt den veröffentlichten Vercel-Stand neu. Vercel ist die gemeinsame Anzeige für beide Geräte.</span></div>
         <div><strong>Entwurf</strong><span>Zeigt vorgeschlagene Änderungen, ohne den aktuellen Online-Plan zu überschreiben.</span></div>
         <div><strong>Übernehmen &amp; veröffentlichen</strong><span>Veröffentlicht Route und Unterkünfte gemeinsam. Vercel aktualisiert danach den Online-Stand.</span></div>
@@ -1251,7 +1251,7 @@
       <div class="editor-header">
         <div>
           <h2 id="plan-change-title">Plan ändern</h2>
-          <p class="dialog-note">ChatGPT plant zuerst die Route und daraus anschließend die Unterkünfte.</p>
+          <p class="dialog-note">ChatGPT erstellt zuerst nur die Route. Die Unterkünfte folgen nach deiner Bestätigung.</p>
         </div>
         <button class="tool-button icon" type="button" id="close-plan-change" aria-label="Fenster schliessen" title="Schliessen">×</button>
       </div>
@@ -1290,7 +1290,7 @@
           <span class="planning-spinner" aria-hidden="true"></span>
           <div>
             <strong id="planning-progress-title">Vorschläge werden erstellt</strong>
-            <span id="planning-progress-text">ChatGPT plant zuerst die Route, gleicht sie mit der Fähre ab und passt danach die Unterkünfte an.</span>
+            <span id="planning-progress-text">ChatGPT erstellt jetzt nur die Route und gleicht sie mit dem Fährtermin ab.</span>
             <small>Das Fenster schliesst sich automatisch, sobald der Entwurf bereit ist. Der aktuelle Online-Plan bleibt unverändert.</small>
           </div>
         </div>
@@ -2291,6 +2291,7 @@
       }]));
       draft = {
         createdAt: new Date().toISOString(),
+        phase: "complete",
         baseVersion: currentPublishedVersion,
         request: { type: "restore-original" },
         decision: "Originalplan",
@@ -2313,6 +2314,7 @@
     const renderWorkflow = () => {
       const hasDraft = Boolean(draft?.days?.length);
       const isOriginalDraft = hasDraft && draft.request?.type === "restore-original";
+      const isRouteDraft = hasDraft && !isOriginalDraft && draft.phase === "route";
       const hasTravelUpdates = !hasDraft && state.days.some((item, index) => {
         const published = currentPlanDays[index] || {};
         return item.status !== published.status || (item.travelNote || "") !== (published.travelNote || "");
@@ -2324,11 +2326,15 @@
       workflowBadge.hidden = justPublished;
       workflowText.hidden = justPublished;
       workflowBadge.textContent = hasDraft ? "Entwurf" : "Lokale Änderung";
-      workflowTitle.textContent = justPublished ? "Plan aktualisiert" : (isOriginalDraft ? "Originalplan bereit" : "Noch nicht veröffentlicht");
+      workflowTitle.textContent = justPublished
+        ? "Plan aktualisiert"
+        : (isOriginalDraft ? "Originalplan bereit" : (isRouteDraft ? "Routenentwurf bereit" : "Planentwurf bereit"));
       workflowText.textContent = hasDraft
         ? (isOriginalDraft
           ? "Prüfe Route und Unterkünfte. Danach kannst du den Originalplan für beide Geräte aktivieren."
-          : "Route und Unterkünfte wurden gemeinsam neu geplant. Prüfe die Änderungen, bevor du sie veröffentlichst.")
+          : (isRouteDraft
+            ? "Prüfe zuerst die Route. Erst nach deiner Bestätigung erstellt ChatGPT die passenden Unterkünfte."
+            : "Route und Unterkünfte sind aufeinander abgestimmt. Prüfe den gesamten Entwurf vor der Veröffentlichung."))
         : (hasTravelUpdates
           ? "Tagesstatus oder Notizen wurden auf diesem Gerät geändert."
           : publishNotice);
@@ -2340,8 +2346,11 @@
       discardButton.hidden = !pending;
       discardButton.textContent = isOriginalDraft ? "Beim aktuellen Plan bleiben" : (hasDraft ? "Entwurf verwerfen" : "Lokale Änderung verwerfen");
       publishButton.hidden = !pending;
-      publishButton.textContent = isOriginalDraft ? "Originalplan für alle aktivieren" : (hasDraft ? "Änderungen übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen");
+      publishButton.textContent = isOriginalDraft
+        ? "Originalplan für alle aktivieren"
+        : (isRouteDraft ? "Route bestätigen" : (hasDraft ? "Plan übernehmen & veröffentlichen" : "Unterwegs-Stand veröffentlichen"));
       draftDetails.hidden = !hasDraft;
+      document.querySelector("#review-draft-accommodations").hidden = isRouteDraft;
       if (pending) accommodationImpact.hidden = true;
       if (!hasDraft) {
         draftDecision.textContent = "";
@@ -2353,7 +2362,7 @@
         .replace(/\b1 neue Stopps\b/gi, "1 neuer Stopp")
         .trim();
       const decision = cleanDraftText(draft.decision);
-      draftDecision.textContent = /^(accepted|approved|ok)$/i.test(decision) ? "Vorgeschlagene Planänderung" : (decision || "Vorgeschlagene Planänderung");
+      draftDecision.textContent = /^(accepted|approved|ok|changed)$/i.test(decision) ? "Vorgeschlagene Planänderung" : (decision || "Vorgeschlagene Planänderung");
       draftSummary.innerHTML = "";
       (draft.summary || []).forEach((text) => {
         const item = document.createElement("li");
@@ -2367,7 +2376,9 @@
         const heading = document.createElement("strong");
         heading.textContent = `Vor der Veröffentlichung klären (${openItems.length})`;
         const explanation = document.createElement("p");
-        explanation.textContent = "Das sind praktische Buchungs- und Verfügbarkeitsaufgaben, keine Fehler im Reiseplan.";
+        explanation.textContent = isRouteDraft
+          ? "Diese Punkte solltest du bei der Prüfung der Route beachten."
+          : "Das sind praktische Buchungs- und Verfügbarkeitsaufgaben, keine Fehler im Reiseplan.";
         const addList = (items, parent) => {
           const list = document.createElement("ul");
           items.forEach((text) => {
@@ -2449,8 +2460,8 @@
       planChangeDialog.classList.remove("is-planning");
       progress.classList.remove("is-error");
       progress.hidden = true;
-      document.querySelector("#planning-progress-title").textContent = "Vorschläge werden erstellt";
-      document.querySelector("#planning-progress-text").textContent = "ChatGPT plant zuerst die Route, gleicht sie mit der Fähre ab und passt danach die Unterkünfte an.";
+      document.querySelector("#planning-progress-title").textContent = "Route wird erstellt";
+      document.querySelector("#planning-progress-text").textContent = "ChatGPT plant die Route und gleicht sie mit dem festen Fährtermin ab.";
       document.querySelector("#close-plan-change").disabled = false;
       document.querySelector("#create-suggestions").disabled = false;
       planChangeDialog.showModal();
@@ -2469,14 +2480,13 @@
       submit.disabled = true;
       close.disabled = true;
       try {
-        const accommodations = await loadAccommodationContext();
         const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 305000);
         const response = await fetch("/api/create-plan-draft", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           signal: controller.signal,
-          body: JSON.stringify({ secret, change, days: state.days, accommodations })
+          body: JSON.stringify({ secret, stage: "route", change, days: state.days })
         });
         clearTimeout(timeout);
         const result = await response.json();
@@ -2499,6 +2509,62 @@
       } finally {
         submit.disabled = false;
         close.disabled = false;
+      }
+    };
+
+    const createAccommodationDraft = async () => {
+      if (!draft || draft.phase !== "route") return;
+      const secret = getPublishPin();
+      if (!secret) return;
+      const publishButton = document.querySelector("#publish-draft");
+      const discardButton = document.querySelector("#discard-draft");
+      const startButton = document.querySelector("#start-plan-change");
+      publishButton.disabled = true;
+      discardButton.disabled = true;
+      startButton.disabled = true;
+      publishButton.textContent = "Unterkünfte werden erstellt ...";
+      workflowTitle.textContent = "Unterkünfte werden erstellt";
+      workflowText.textContent = "Die bestätigte Route bleibt als Entwurf erhalten. Dieser Schritt kann einige Minuten dauern.";
+      try {
+        const accommodations = await loadAccommodationContext();
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 305000);
+        const response = await fetch("/api/create-plan-draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
+          body: JSON.stringify({
+            secret,
+            stage: "accommodations",
+            days: draft.days,
+            accommodations,
+            routeSummary: draft.summary
+          })
+        });
+        clearTimeout(timeout);
+        const result = await response.json();
+        if (!response.ok || !result.ok) throw new Error(result.error || "Die Unterkünfte konnten nicht erstellt werden.");
+        draft = {
+          ...draft,
+          phase: "complete",
+          summary: [...(draft.summary || []), ...(result.accommodationPlan.summary || [])],
+          openItems: [...(draft.openItems || []), ...(result.accommodationPlan.openItems || [])],
+          accommodations: result.accommodationPlan.accommodations
+        };
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+        render();
+        workflow.scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (error) {
+        if (/PIN/i.test(error.message)) sessionStorage.removeItem(SESSION_PIN_KEY);
+        workflowTitle.textContent = "Unterkünfte konnten nicht erstellt werden";
+        workflowText.textContent = error.name === "AbortError"
+          ? "Die Suche hat zu lange gedauert. Die bestätigte Route bleibt erhalten; du kannst die Unterkunftssuche erneut starten."
+          : `${error.message} Die bestätigte Route bleibt erhalten.`;
+        publishButton.textContent = "Unterkünfte erneut erstellen";
+      } finally {
+        publishButton.disabled = false;
+        discardButton.disabled = false;
+        startButton.disabled = false;
       }
     };
 
@@ -2556,6 +2622,10 @@
     const publishDraft = async () => {
       if (!draft) return;
       const restoringOriginal = draft.request?.type === "restore-original";
+      if (!restoringOriginal && !draft.accommodations) {
+        await createAccommodationDraft();
+        return;
+      }
       const secret = getPublishPin();
       if (!secret) return;
       if (!restoringOriginal && !confirm("Route und Unterkünfte gemeinsam als neuen Online-Plan veröffentlichen?")) return;
@@ -2600,7 +2670,7 @@
         alert(`Veröffentlichung fehlgeschlagen: ${error.message}`);
       } finally {
         button.disabled = false;
-        button.textContent = restoringOriginal ? "Originalplan für alle aktivieren" : "Änderungen übernehmen & veröffentlichen";
+        button.textContent = restoringOriginal ? "Originalplan für alle aktivieren" : "Plan übernehmen & veröffentlichen";
       }
     };
 
@@ -3076,7 +3146,7 @@ Wichtig fuer das Import-JSON:
         quickActions.append(
           dayTool("Verlängern", `Plant ab Tag ${index + 1} eine oder mehrere zusätzliche Nächte ein, ohne den festen Fährtermin zu verschieben.`, () => extendStay(index), false, false),
           dayTool("Auslassen", `Markiert Tag ${index + 1} als ausgelassen und speichert den Grund als Notiz.`, () => skipDay(index), false, false),
-          dayTool("Ab hier neu planen", `Öffnet die Neuplanung ab Tag ${index + 1}. Route und Unterkünfte werden gemeinsam vorgeschlagen.`, () => openPlanChange(index + 1, "reroute"), false, false)
+          dayTool("Ab hier neu planen", `Öffnet die Neuplanung ab Tag ${index + 1}. ChatGPT erstellt zuerst nur die Route.`, () => openPlanChange(index + 1, "reroute"), false, false)
         );
         actions.append(actionGroup("Planen", [quickActions]));
 
