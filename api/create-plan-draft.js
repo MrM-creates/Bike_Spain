@@ -246,7 +246,7 @@ const assignAccommodationSlots = (expected, current) => {
 
 const normalizeStayState = (stays, allIds) => {
   const state = Object.fromEntries(allIds.map((id) => [id, { inactive: "true" }]));
-  stays.forEach((stay) => {
+  stays.forEach((stay, index) => {
     state[stay.id] = {
       title: stay.title,
       startDate: stay.startDate,
@@ -260,6 +260,7 @@ const normalizeStayState = (stays, allIds) => {
       note: stay.note,
       baseNote: stay.baseNote,
       hideBaseline: stay.hideBaseline ? "true" : "",
+      order: String(index + 1),
       inactive: ""
     };
   });

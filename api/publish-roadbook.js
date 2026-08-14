@@ -60,7 +60,7 @@ const normalizeDay = (day) => {
 };
 
 const normalizeAccommodationEntry = (entry) => {
-  const allowed = ["booking", "date", "nights", "startDate", "endDate", "nightCount", "title", "baseNote", "firstChoice", "firstChoiceUrl", "alternative", "alternativeUrl", "note", "hideBaseline", "inactive"];
+  const allowed = ["booking", "date", "nights", "startDate", "endDate", "nightCount", "title", "baseNote", "firstChoice", "firstChoiceUrl", "alternative", "alternativeUrl", "note", "hideBaseline", "inactive", "order"];
   const output = {};
   allowed.forEach((key) => {
     if (entry?.[key] !== undefined && entry[key] !== null) {

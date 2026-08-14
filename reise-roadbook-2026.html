@@ -2268,6 +2268,8 @@
           currentAlternative: data.alternative || hotels[1]?.name || "",
           currentAlternativeUrl: data.alternativeUrl || hotels[1]?.url || "",
           currentNote: data.note || "",
+          inactive: data.inactive || (stay.dataset.flexSlot === "true" ? "true" : ""),
+          order: data.order || "",
           baselineHotels: hotels
         };
       });
@@ -2283,7 +2285,9 @@
         firstChoice: stay.currentFirstChoice,
         firstChoiceUrl: stay.currentFirstChoiceUrl,
         alternative: stay.currentAlternative,
-        alternativeUrl: stay.currentAlternativeUrl
+        alternativeUrl: stay.currentAlternativeUrl,
+        inactive: stay.inactive,
+        order: stay.order
       }]));
       draft = {
         createdAt: new Date().toISOString(),
