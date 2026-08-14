@@ -185,6 +185,22 @@
       font-size: 16px;
     }
 
+    .route-overview-label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .route-overview-caption {
+      margin-bottom: 3px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 780;
+      text-transform: uppercase;
+    }
+
     .legend {
       display: flex;
       gap: 12px;
@@ -557,6 +573,46 @@
       padding: 0 16px 16px;
       flex-wrap: wrap;
     }
+
+    .workflow-help {
+      margin: 0 16px 14px;
+      padding: 14px 0 4px;
+      border-top: 1px solid var(--border);
+    }
+
+    .workflow-help > strong { display: block; margin-bottom: 10px; font-size: 14px; }
+    .workflow-help ol {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: workflow-step;
+    }
+    .workflow-help li {
+      position: relative;
+      padding: 30px 12px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      counter-increment: workflow-step;
+    }
+    .workflow-help li::before {
+      content: counter(workflow-step);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 23px;
+      height: 23px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .workflow-help li strong { display: block; margin-bottom: 2px; color: var(--text); font-size: 13px; }
 
     .glossary-grid {
       display: grid;
@@ -1012,6 +1068,8 @@
       .legend { white-space: normal; }
       .glossary-grid { grid-template-columns: 1fr; }
       .action-help-grid { grid-template-columns: 1fr; }
+      .workflow-help ol { grid-template-columns: 1fr; gap: 12px; }
+      .workflow-help li { min-height: 23px; padding: 1px 0 0 34px; }
       .day {
         grid-template-columns: 54px minmax(0, 1fr);
         gap: 12px;
@@ -1109,6 +1167,8 @@
     <section class="intro" aria-labelledby="page-title">
       <div>
         <h1 class="sr-only" id="page-title">Motorrad-Roadbook</h1>
+        <div class="route-overview-caption">Aktuelle Route</div>
+        <strong class="route-overview-label" id="route-overview-label">Berikon → Südfrankreich → Spanien → Barcelona → Berikon</strong>
         <p>Geplanter Strassenverlauf mit Hotels und Hinweisen. Aktuelle Fahrzeit, Verkehr und Sperrungen in Google Maps prüfen.</p>
       </div>
       <div class="legend" aria-label="Legende">
@@ -1157,6 +1217,15 @@
         <div><strong>Übernehmen &amp; veröffentlichen</strong><span>Veröffentlicht Route und Unterkünfte gemeinsam. Vercel aktualisiert danach den Online-Stand.</span></div>
         <div><strong>Unterwegs-Stand</strong><span>Veröffentlicht geänderte Tagesstatus und Notizen, damit beide Geräte denselben Stand sehen.</span></div>
         <div><strong>Sicherung</strong><span>Fallback für Sonderfälle. Der normale gemeinsame Stand entsteht über GitHub und Vercel.</span></div>
+      </div>
+      <div class="workflow-help">
+        <strong>So entsteht ein neuer gemeinsamer Plan</strong>
+        <ol>
+          <li><strong>Wunsch eingeben</strong>Aufenthalt ändern, Etappe auslassen oder einen Abschnitt neu planen.</li>
+          <li><strong>Route prüfen</strong>ChatGPT plant die Route; Strassen, Distanzen, Wetteralternativen und Fährtermin werden automatisch geprüft.</li>
+          <li><strong>Route bestätigen</strong>Danach erstellt ChatGPT die passenden Unterkünfte und gleicht sie automatisch mit der Route ab.</li>
+          <li><strong>Veröffentlichen</strong>Erst mit deiner Zustimmung wird der Gesamtplan zum gemeinsamen Online-Stand.</li>
+        </ol>
       </div>
       <div class="planning-group-actions help-actions">
         <button class="tool-button" id="export-plan" type="button" data-help="Lädt deinen aktuellen Browserstand als JSON-Sicherung herunter.">Lokale Sicherung herunterladen</button>
@@ -2044,6 +2113,25 @@
       document.querySelector("#planning-version").textContent = Number.isNaN(date.getTime())
         ? `${planLabel} · Stand: unbekannt`
         : `${planLabel} · Stand: ${planningVersionFormatter.format(date)}`;
+    };
+    const routeOverviewForDays = (days) => {
+      const routeText = days.map((day) => [day.title, day.overnight, day.origin, day.destination, ...(day.waypoints || [])].join(" "))
+        .join(" ").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const parts = ["Berikon"];
+      if (/grenoble|sisteron|lourmarin|nimes|carcassonne|france/.test(routeText)) parts.push("Südfrankreich");
+      const hasNorth = /la seu|vielha|jaca|pamplona|san sebastian|potes|picos|burgos|soria/.test(routeText);
+      const hasSouth = /granada|monachil|ronda|ubeda|andalus/.test(routeText);
+      const hasEast = /falset|albarracin|valencia|patacona|alboraya|altea/.test(routeText);
+      if (hasNorth) parts.push("Pyrenäen und Nordspanien");
+      if (hasEast && hasSouth) parts.push("Ost- und Südspanien");
+      else if (hasSouth) parts.push("Südspanien");
+      else if (hasEast && !hasNorth) parts.push("Ostspanien");
+      if (/barcelona|castelldefels/.test(routeText)) parts.push("Barcelona");
+      parts.push("Berikon");
+      return parts.filter((part, index) => index === 0 || part !== parts[index - 1]).join(" → ");
+    };
+    const renderRouteOverview = () => {
+      document.querySelector("#route-overview-label").textContent = routeOverviewForDays(state.days);
     };
     const isFerryDay = (item = {}) => {
       const title = String(item.title || "").toLowerCase();
@@ -3163,6 +3251,7 @@ Wichtig fuer das Import-JSON:
 
     const render = () => {
       list.innerHTML = "";
+      renderRouteOverview();
       renderFilters();
       setActiveNav();
       showAccommodationImpact();
