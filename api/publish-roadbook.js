@@ -47,7 +47,7 @@ const normalizeDay = (day) => {
   const allowed = [
     "id", "day", "title", "type", "overnight", "km", "time", "roads", "points",
     "note", "travelNote", "alert", "rest", "origin", "destination", "waypoints",
-    "status", "custom", "mainLabel", "mainMeta", "alt"
+    "status", "custom", "mainLabel", "mainMeta", "alt", "routeStyle"
   ];
   const output = {};
   allowed.forEach((key) => {
@@ -56,6 +56,7 @@ const normalizeDay = (day) => {
   if (!Array.isArray(output.waypoints)) output.waypoints = [];
   if (output.alt && !Array.isArray(output.alt)) delete output.alt;
   if (output.status && !["planned", "changed", "done", "skipped"].includes(output.status)) output.status = "changed";
+  if (output.routeStyle && !["direct", "scenic"].includes(output.routeStyle)) delete output.routeStyle;
   return output;
 };
 

@@ -24,9 +24,11 @@ Die Integration umfasst:
 - synchronisierte Tages- und Unterkunftslisten links, die echte Karte in der Mitte und kontextabhängige Details rechts;
 - verlinkte Unterkunft und Alternative sowie Buchungsstatus im Unterkunftskontext;
 - Tagesrouten in unterschiedlichen Farben und nummerierte Übernachtungsmarker;
-- eine lokale Vorschau für `Direkt` bzw. `Kurvig & schön`, die den veröffentlichten Plan nicht verändert und über eine klar beschriftete Kartenlegende mit ihm verglichen werden kann;
+- eine Vorschau für `Direkt` bzw. `Kurvig & schön`, die den veröffentlichten Plan nicht verändert und über eine klar beschriftete Kartenlegende mit ihm verglichen werden kann;
 - sichtbar neu berechnete Distanz und Fahrzeit für die gewählte Routenvorschau;
 - einen kompakten Entscheidungsdialog zum Verwerfen oder Übernehmen einer neuen Routenart;
+- die dauerhafte Ablage einer bestätigten Routenart im bestehenden lokalen Reiseentwurf; der Entwurf wird nach einem Reload wiederhergestellt und kann sauber zurückgesetzt werden;
+- eine auf genau eine Tagesetappe begrenzte automatische Webprüfung für reine Routenart-Änderungen;
 - eine klar getrennte, auf lokale Streckenwünsche und Wegpunkte begrenzte Aktion `Etappe anpassen`;
 - kontextgebundene Änderungsdialoge für die ausgewählte Etappe oder Unterkunft;
 - einen Exportdialog: die aktuell ausgewählte Routenart der Tagesroute in Google Maps sowie die bereinigte Gesamtreise als KML oder GPX;
@@ -34,16 +36,16 @@ Die Integration umfasst:
 
 ## Sicherheitsgrenzen
 
-- Die neue Ansicht schreibt keine Plan- oder Unterkunftsdaten.
-- Die bestehenden Publish-Endpunkte wurden nicht verändert.
-- Der veröffentlichte Plan bleibt die einzige Datenquelle der neuen Übersicht.
+- Die neue Ansicht schreibt ausschließlich in den bereits vorhandenen lokalen Reiseentwurf. Ohne ausdrückliche Veröffentlichung ändert sich der gemeinsame Online-Plan nicht.
+- Der Publish-Endpunkt akzeptiert das neue Feld `routeStyle`, veröffentlicht aber weiterhin nur nach dem bestehenden PIN-, Prüf- und Bestätigungsflow.
+- Der veröffentlichte Plan bleibt die unveränderliche Vergleichsbasis für Übersicht, Roadbook und Karte.
 - Geschützte Fixpunkte werden nur lesend übernommen.
 - Es wurde kein Deployment ausgelöst.
 - Der externe Routingdienst wird nur vom Entwicklungsskript verwendet. Die App selbst lädt die erzeugte lokale GeoJSON-Datei und sendet zur Laufzeit keine Reise- oder Buchungsdaten an den Routingdienst.
 
 ## Datenbrücke
 
-`reise-roadbook-2026.html` stellt einen eingefrorenen Read-only-Snapshot bereit. `assets/travel-model.js` überführt diesen in `Trip`, `PlanRevision`, `Stage`, `RouteVariant`, `Stay`, `AccommodationOption`, `Booking`, `FixPoint`, `NarrativeSegment` und `PublishedRelease`.
+`reise-roadbook-2026.html` stellt den veröffentlichten Snapshot sowie eine schmale Entwurfsbrücke bereit. `assets/travel-model.js` überführt den Snapshot in `Trip`, `PlanRevision`, `Stage`, `RouteVariant`, `Stay`, `AccommodationOption`, `Booking`, `FixPoint`, `NarrativeSegment` und `PublishedRelease`.
 
 Der Import prüft die Parität zwischen den 30 bestehenden Reisetagen und den 30 erzeugten Etappen. Tagesnummern dienen nur der Anzeige; Beziehungen verwenden stabile IDs.
 
@@ -51,6 +53,16 @@ Der Import prüft die Parität zwischen den 30 bestehenden Reisetagen und den 30
 
 Der Heimweg von Aosta nach Berikon verwendet Martigny und Lausanne als Korridor. Der zuvor irrtümlich gesetzte Sion-Anker wurde entfernt, damit die Route keinen Hin-und-zurück-Abstecher mehr enthält.
 
+## Entwurfs- und Prüfzustände
+
+1. Eine andere Routenart erzeugt zunächst nur eine sichtbare Vorschau.
+2. `Übernehmen` speichert die Änderung im vorhandenen lokalen Entwurf und kennzeichnet sie als `Prüfung ausstehend`.
+3. Nach einem Reload werden Entwurf, Karte, Routenhinweise und Google-Maps-Link aus demselben Änderungsstand rekonstruiert.
+4. `Route automatisch prüfen` sendet bei einer reinen Routenart-Änderung nur die ausgewählte Tagesetappe an die bestehende Webprüfung. Start, Ziel, Unterkunft, Folgetag und Fährfixpunkt werden kontrolliert.
+5. Erst der bestehende Veröffentlichungsflow kann aus dem geprüften Entwurf einen neuen gemeinsamen Online-Stand machen.
+
+Die Fährerkennung unterscheidet nun ausdrücklich zwischen `Fahrtag` und `Fährtag`; ein normaler Motorradtag kann dadurch nicht mehr versehentlich als Transport-Fixpunkt gelten.
+
 ## Nächster Integrationsschritt
 
-Nach visueller Freigabe kann das generische Modell schrittweise zur gemeinsamen Leseschicht für Roadbook und Unterkünfte werden. Schreibende Änderungen, neue Reisen und die Veröffentlichung neuer Revisionen bleiben davon getrennte, ausdrücklich freizugebende Schritte.
+Als Nächstes werden die übrigen Änderungsarten (`Etappe anpassen`, Aufenthalt ändern, Unterkunft ersetzen und `Reise anpassen`) vollständig gegen denselben Revisionsstand getestet. Danach folgen Mobile-/Desktop-Abnahme, Preview-Deployment und erst nach ausdrücklicher Freigabe die Veröffentlichung in Production. Neue Reisen bleiben ein eigener späterer Integrationsschritt.

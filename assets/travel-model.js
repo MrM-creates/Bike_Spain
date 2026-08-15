@@ -101,7 +101,9 @@
         const variant = {
           id: stableId("route", `${id}-active`),
           stageId: id,
-          style: /anreise|transfer|heimweg|heimfahrt|rückweg|ruckweg|rückverbindung|ruckverbindung/i.test(`${source.type} ${source.title}`) ? "direct" : "scenic",
+          style: ["direct", "scenic"].includes(source.routeStyle)
+            ? source.routeStyle
+            : (/anreise|transfer|heimweg|heimfahrt|rückweg|ruckweg|rückverbindung|ruckverbindung/i.test(`${source.type} ${source.title}`) ? "direct" : "scenic"),
           distanceMeters: parseDistanceMeters(source.km),
           durationSeconds: parseDurationSeconds(source.time),
           geometry: null,

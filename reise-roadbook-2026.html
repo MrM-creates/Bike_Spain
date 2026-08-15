@@ -2716,7 +2716,13 @@
         }
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.error || "Die automatische Routenprüfung ist fehlgeschlagen.");
-        draft = { ...result.verifiedDraft, baseVersion: draft.baseVersion || currentPublishedVersion };
+        draft = {
+          ...result.verifiedDraft,
+          baseVersion: draft.baseVersion || currentPublishedVersion,
+          routeStyleChanges: clone(draft.routeStyleChanges || []),
+          accommodations: draft.accommodations,
+          accommodationVerificationVersion: draft.accommodationVerificationVersion || 1
+        };
         state.days = draft.days.map((item, index) => prepareDay(item, index, item.custom));
         localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
         render();
@@ -2890,6 +2896,10 @@
     const publishDraft = async () => {
       if (!draft) return;
       const restoringOriginal = draft.request?.type === "restore-original";
+      if (!restoringOriginal && draft.phase === "route" && (draft.verified !== true || Number(draft.verificationVersion) < 2)) {
+        await verifyExistingRouteDraft();
+        return;
+      }
       if (!restoringOriginal && !draft.accommodations) {
         await createAccommodationDraft();
         return;
@@ -3642,7 +3652,131 @@ Wichtig fuer das Import-JSON:
       createOriginalDraft().catch((error) => alert(`Originalplan konnte nicht geladen werden: ${error.message}`));
     });
 
+    const inferredRouteStyle = (day) => ["direct", "scenic"].includes(day?.routeStyle)
+      ? day.routeStyle
+      : (/anreise|transfer|heimweg|heimfahrt|rückweg|ruckweg|rückverbindung|ruckverbindung/i.test(`${day?.type || ""} ${day?.title || ""}`) ? "direct" : "scenic");
+
+    const routeStyleDraftState = () => {
+      if (!draft?.days?.length) return [];
+      if (Array.isArray(draft.routeStyleChanges)) return clone(draft.routeStyleChanges);
+      return draft.days.flatMap((day, stageIndex) => {
+        const publishedStyle = inferredRouteStyle(currentPlanDays[stageIndex]);
+        const style = inferredRouteStyle(day);
+        return style !== publishedStyle ? [{ stageIndex, style, publishedStyle }] : [];
+      });
+    };
+
+    const accommodationStateFromContext = (items) => Object.fromEntries(items.map((stay) => [stay.id, {
+      booking: stay.booking,
+      startDate: stay.startDate,
+      endDate: stay.endDate,
+      nightCount: stay.nightCount,
+      title: stay.title,
+      firstChoice: stay.currentFirstChoice,
+      firstChoiceUrl: stay.currentFirstChoiceUrl,
+      alternative: stay.currentAlternative,
+      alternativeUrl: stay.currentAlternativeUrl,
+      note: stay.currentNote,
+      inactive: stay.inactive,
+      order: stay.order
+    }]));
+
+    const routeDurationLabel = (seconds) => {
+      const totalMinutes = Math.max(0, Math.round(Number(seconds || 0) / 60));
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      return `${hours ? `${hours} h` : ""}${minutes ? ` ${minutes} min` : ""}`.trim();
+    };
+
+    const directGoogleMapsUrl = (url) => {
+      try {
+        const parsed = new URL(url);
+        parsed.searchParams.delete("waypoints");
+        return parsed.toString();
+      } catch (_) {
+        return url || "";
+      }
+    };
+
+    const saveRouteStyleDraft = async (change) => {
+      const stageIndex = Number(change?.stageIndex);
+      const style = change?.style;
+      if (!Number.isInteger(stageIndex) || stageIndex < 0 || stageIndex >= currentPlanDays.length) throw new Error("Die gewählte Etappe wurde nicht gefunden.");
+      if (!["direct", "scenic"].includes(style)) throw new Error("Diese Routenart wird nicht unterstützt.");
+      const publishedDay = currentPlanDays[stageIndex];
+      const publishedStyle = inferredRouteStyle(publishedDay);
+      const existingChanges = routeStyleDraftState().filter((item) => Number(item.stageIndex) !== stageIndex);
+      const days = draft?.days?.length === currentPlanDays.length ? clone(draft.days) : clone(currentPlanDays);
+
+      if (style === publishedStyle) {
+        days[stageIndex] = clone(publishedDay);
+      } else {
+        const origin = publishedDay.origin || routeParts(publishedDay.main).origin;
+        const destination = publishedDay.destination || routeParts(publishedDay.main).destination;
+        days[stageIndex] = {
+          ...days[stageIndex],
+          routeStyle: style,
+          km: change.distanceMeters ? `${Math.round(Number(change.distanceMeters) / 1000)} km` : days[stageIndex].km,
+          time: change.durationSeconds ? routeDurationLabel(change.durationSeconds) : days[stageIndex].time,
+          roads: style === "direct"
+            ? `Direkte Verbindung ${origin} → ${destination}`
+            : `Kurvige Verbindung ${origin} → ${destination}; Details werden automatisch geprüft`,
+          points: style === "direct"
+            ? "Direkte Verbindung ohne die Zwischenziele der kurvigen Variante."
+            : "Landschaftliche Zwischenziele werden bei der automatischen Routenprüfung festgelegt.",
+          waypoints: style === "direct" ? [] : (publishedDay.waypoints || []),
+          main: style === "direct" ? directGoogleMapsUrl(publishedDay.main) : publishedDay.main,
+          status: "changed"
+        };
+        existingChanges.push({
+          stageIndex,
+          day: publishedDay.day || stageIndex + 1,
+          style,
+          publishedStyle,
+          distanceMeters: Number(change.distanceMeters) || 0,
+          durationSeconds: Number(change.durationSeconds) || 0
+        });
+      }
+
+      const onlyRouteStyleDraft = !draft || draft.request?.scope === "route-style";
+      if (!existingChanges.length && onlyRouteStyleDraft) {
+        draft = null;
+        state.days = clone(currentPlanDays);
+        localStorage.removeItem(DRAFT_KEY);
+        render();
+        return { changes: [] };
+      }
+
+      let accommodations = draft?.accommodations;
+      if (!accommodations) accommodations = accommodationStateFromContext(await loadAccommodationContext());
+      draft = {
+        ...(draft || {}),
+        createdAt: draft?.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        phase: "route",
+        verified: false,
+        verificationVersion: 0,
+        baseVersion: draft?.baseVersion || currentPublishedVersion,
+        request: onlyRouteStyleDraft
+          ? { type: "route-style", scope: "route-style", startDay: Math.min(...existingChanges.map((item) => item.day)), routeStyleChanges: clone(existingChanges) }
+          : { ...(draft.request || {}), routeStyleChanges: clone(existingChanges) },
+        routeStyleChanges: clone(existingChanges),
+        decision: "Routenart angepasst",
+        summary: [`${existingChanges.length} ${existingChanges.length === 1 ? "Routenart ist" : "Routenarten sind"} lokal als Entwurf gespeichert.`],
+        openItems: ["Routenänderung automatisch mit Websuche prüfen."],
+        days,
+        accommodations,
+        accommodationVerificationVersion: draft?.accommodationVerificationVersion || 1
+      };
+      state.days = days.map((item, index) => prepareDay(item, index, item.custom));
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      render();
+      return { changes: clone(existingChanges), verified: false };
+    };
+
     window.__ROADBOOK_READ_MODEL__ = Object.freeze({
+      getRouteStyleDrafts: async () => routeStyleDraftState(),
+      saveRouteStyleDraft,
       getPublishedSnapshot: async () => {
         let accommodations = [];
         try { accommodations = await loadAccommodationContext(); } catch (error) { console.warn("Unterkunftsstand fuer Reiseuebersicht nicht verfuegbar", error); }
@@ -3701,7 +3835,7 @@ Wichtig fuer das Import-JSON:
       openPlanChange();
     }
   </script>
-  <script src="/assets/travel-model.js?v=20260815o"></script>
-  <script src="/assets/trip-overview.js?v=20260815x"></script>
+  <script src="/assets/travel-model.js?v=20260815p"></script>
+  <script src="/assets/trip-overview.js?v=20260815y"></script>
 </body>
 </html>

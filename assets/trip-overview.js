@@ -54,6 +54,46 @@
   const confirmedRouteStyleDrafts = new Set();
   let pendingRouteStyleChange = null;
 
+  const hydrateRouteStyleDrafts = async () => {
+    if (typeof bridge.getRouteStyleDrafts !== "function") return;
+    const changes = await bridge.getRouteStyleDrafts();
+    (Array.isArray(changes) ? changes : []).forEach((change) => {
+      const stageIndex = Number(change.stageIndex);
+      if (!Number.isInteger(stageIndex) || !["direct", "scenic"].includes(change.style)) return;
+      routeStyleDrafts.set(stageIndex, change.style);
+      confirmedRouteStyleDrafts.add(stageIndex);
+    });
+  };
+
+  const updateDraftChrome = () => {
+    const count = confirmedRouteStyleDrafts.size;
+    const status = navRoot.querySelector(".generic-status");
+    if (status) status.textContent = count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : `${planLabel()} · veröffentlicht`;
+    const loaded = root.querySelector(".generic-loaded-plan strong");
+    if (loaded) loaded.textContent = count ? "Entwurf lokal gespeichert" : "Veröffentlicht";
+  };
+
+  const persistRouteStyle = async (stageIndex, style) => {
+    if (typeof bridge.saveRouteStyleDraft !== "function") return;
+    const stage = model.revision.stages[stageIndex];
+    const route = routeFor(stage);
+    const metrics = geometryFor(stageIndex, style === "direct" ? "direct" : "original") || route;
+    const result = await bridge.saveRouteStyleDraft({
+      stageIndex,
+      style,
+      distanceMeters: metrics?.distanceMeters || 0,
+      durationSeconds: metrics?.durationSeconds || 0
+    });
+    routeStyleDrafts.clear();
+    confirmedRouteStyleDrafts.clear();
+    (result?.changes || []).forEach((change) => {
+      const index = Number(change.stageIndex);
+      if (!Number.isInteger(index)) return;
+      routeStyleDrafts.set(index, change.style);
+      confirmedRouteStyleDrafts.add(index);
+    });
+  };
+
   const place = (id) => model.places.find((item) => item.id === id) || { name: "Unbekannter Ort" };
   const routeFor = (stage) => model.revision.routeVariants.find((item) => item.id === stage.activeRouteVariantId) || null;
   const optionsFor = (stay) => stay.accommodationOptionIds.map((id) => model.revision.accommodationOptions.find((item) => item.id === id)).filter(Boolean);
@@ -196,15 +236,29 @@
       routeStyleDialog.close();
       cancelPendingRouteStyleChange();
     });
-    routeStyleDialog.querySelector("#generic-route-style-confirm").addEventListener("click", () => {
+    routeStyleDialog.querySelector("#generic-route-style-confirm").addEventListener("click", async () => {
+      const confirmButton = routeStyleDialog.querySelector("#generic-route-style-confirm");
       const stageIndex = pendingRouteStyleChange?.stageIndex;
-      if (Number.isInteger(stageIndex) && routeStyleDrafts.has(stageIndex)) confirmedRouteStyleDrafts.add(stageIndex);
-      pendingRouteStyleChange = null;
-      routeStyleDialog.close();
-      renderInspector();
-      updateCompareControl();
-      applyWorkspaceMapFocus(false);
-      applyOverviewRouteStyles();
+      const style = pendingRouteStyleChange?.previewStyle;
+      confirmButton.disabled = true;
+      confirmButton.textContent = "Wird gespeichert …";
+      try {
+        if (Number.isInteger(stageIndex) && style) await persistRouteStyle(stageIndex, style);
+        pendingRouteStyleChange = null;
+        routeStyleDialog.close();
+        renderInspector();
+        updateCompareControl();
+        applyWorkspaceMapFocus(false);
+        applyOverviewRouteStyles();
+        updateDraftChrome();
+      } catch (error) {
+        cancelPendingRouteStyleChange();
+        routeStyleDialog.close();
+        window.alert(`Die Routenänderung konnte nicht gespeichert werden: ${error.message}`);
+      } finally {
+        confirmButton.disabled = false;
+        confirmButton.textContent = "Übernehmen";
+      }
     });
     routeStyleDialog.addEventListener("cancel", (event) => {
       event.preventDefault();
@@ -437,15 +491,28 @@
     showRouteStyleDialog(stage, route, style, previousStyle);
   }
 
-  function discardRoutePreview() {
+  async function discardRoutePreview() {
+    const stage = model.revision.stages[selectedStage];
+    const route = routeFor(stage);
+    const wasConfirmed = confirmedRouteStyleDrafts.has(selectedStage);
     pendingRouteStyleChange = null;
-    routeStyleDrafts.delete(selectedStage);
-    confirmedRouteStyleDrafts.delete(selectedStage);
+    if (wasConfirmed && route) {
+      try {
+        await persistRouteStyle(selectedStage, route.style);
+      } catch (error) {
+        window.alert(`Die Routenänderung konnte nicht zurückgesetzt werden: ${error.message}`);
+        return;
+      }
+    } else {
+      routeStyleDrafts.delete(selectedStage);
+      confirmedRouteStyleDrafts.delete(selectedStage);
+    }
     compareOriginal = false;
     renderInspector();
     updateCompareControl();
     applyWorkspaceMapFocus(true);
     applyOverviewRouteStyles();
+    updateDraftChrome();
   }
 
   function cancelPendingRouteStyleChange() {
@@ -594,7 +661,7 @@
       inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Tag ${stage.legacy?.day || selectedStage + 1} · ${stage.kind === "rest" ? "Ruhetag" : stage.kind === "transport" ? "Transport" : stage.kind === "loop" ? "Rundfahrt" : "Motorradetappe"}</span><h2>${escapeHtml(stage.title)}</h2><span>${escapeHtml(formatDate(stage.date, { weekday: "long", day: "2-digit", month: "long" }))}</span></div>
         ${fixed ? `<div class="generic-fixed-notice"><strong>🔒 Geschützter Fixpunkt</strong>${escapeHtml(fixed.title)} kann nur nach ausdrücklicher Bestätigung verändert werden.</div>` : ""}
         <div class="generic-metrics"><div><strong>${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km` : "–"}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Strecke"}</span></div><div><strong>${formatDuration(displayedRoute?.durationSeconds)}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Fahrzeit"}</span></div><div><strong>${escapeHtml(destination)}</strong><span>Übernachtung</span></div></div>
-        ${route ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt sofort eine Vorschau und fragt anschließend, ob du sie übernehmen möchtest.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Als Änderung vorgemerkt" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
+        ${route ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt sofort eine Vorschau und fragt anschließend, ob du sie übernehmen möchtest.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Lokal gespeichert · Prüfung ausstehend" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
         <div class="generic-detail-block"><h3>Streckenhinweise</h3><p>${escapeHtml(routeHintsFor(stage, route, activeStyle))}</p></div>
         <div class="generic-detail-block"><h3>Unterkunft</h3>${accommodation ? `<div class="generic-hotel"><span class="generic-hotel-icon">⌂</span><div><strong>${escapeHtml(accommodation.name)}</strong><span>${bookingLabel(booking)} · ${accommodation.motorcycleParking === "confirmed" ? "Motorradgarage bestätigt" : "Abstellung prüfen"}</span>${accommodation.url ? `<a class="generic-hotel-link" href="${escapeHtml(accommodation.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : ""}${alternative ? `<small>Alternative: ${escapeHtml(alternative.name)}</small>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : ""}` : ""}</div></div>` : `<p>Für diesen Tag ist noch keine Unterkunft hinterlegt.</p>`}${stay ? `<button class="generic-context-link" type="button" id="generic-show-stay">Unterkunft dieses Tages ansehen →</button>` : ""}</div>
         <div class="generic-inspector-actions">${googleMapsUrl ? `<a class="generic-action-button" href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div>`;
@@ -785,10 +852,12 @@
       const snapshot = await bridge.getPublishedSnapshot();
       model = modelApi.importLegacyRoadbook(snapshot);
       modelApi.assertLegacyParity(model, { sourceDays: 30, stages: 30 });
+      await hydrateRouteStyleDrafts();
       window.__GENERIC_TRIP_MODEL__ = model;
       renderNavigation();
       renderOverview();
       setView(requestedView);
+      updateDraftChrome();
     } catch (error) {
       document.body.classList.remove("generic-trip-enabled");
       navRoot.hidden = true;

@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { Readable } = require("node:stream");
 const handler = require("../api/create-plan-draft");
-const { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
+const { ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
 
 const days = [
   { overnight: "Castelldefels" },
@@ -20,6 +20,8 @@ const days = [
 ];
 
 assert.match(routeContinuityIssue(days, 1, 3), /Tag 2 beginnt in La Patacona/);
+assert.equal(ferryIndexOf([{ title: "Normaler Tag", type: "Fahrtag", overnight: "Ziel" }]), -1);
+assert.equal(ferryIndexOf([{ title: "Fähre Barcelona – Genua", type: "Fährtag", overnight: "Kabine auf der Fähre" }]), 0);
 
 days[1].origin = "Castelldefels, Spain";
 assert.equal(routeContinuityIssue(days, 1, 3), "");
@@ -129,7 +131,20 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   const modelRequests = [];
   global.fetch = async (_url, options) => {
     fetchCount += 1;
-    modelRequests.push(JSON.parse(options.body));
+    const request = JSON.parse(options.body);
+    modelRequests.push(request);
+    const input = JSON.parse(request.input);
+    const styleOnly = input.requestedChange?.scope === "route-style";
+    const responseDays = styleOnly ? [{
+      ...input.candidateSegment[0],
+      km: "118 km",
+      time: "1 h 35 min",
+      roads: "A-1 · A-2",
+      points: "Direkte, geprüfte Verbindung.",
+      note: "Aktuelle Verkehrslage vor Abfahrt prüfen.",
+      waypoints: [],
+      routeStyle: "direct"
+    }] : routeDays;
     return {
       ok: true,
       json: async () => ({
@@ -137,8 +152,8 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
           summary: ["Route angepasst"],
           decision: "changed",
           replaceFromDay: 2,
-          replaceCount: 26,
-          days: routeDays,
+          replaceCount: styleOnly ? 1 : 26,
+          days: responseDays,
           openItems: []
         })
       })
@@ -173,6 +188,35 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.equal(fetchCount, 2, "route verification should call the model exactly once");
   assert.deepEqual(modelRequests[1].tools, [{ type: "web_search" }], "route verification should use web search");
 
+  const styleDays = currentDays.map((day) => ({ ...day }));
+  styleDays[1] = makeCheckedDay("Basisort – Zielort", "Zielort", false, {
+    origin: "Basisort",
+    destination: "Zielort",
+    km: "120 km",
+    time: "1 h 40 min",
+    roads: "A-1 · A-2",
+    points: "Direkte Verbindung.",
+    routeStyle: "direct",
+    status: "changed"
+  });
+  styleDays[2] = makeCheckedDay("Zielort", "Zielort", true);
+  assert.equal(styleDays.findIndex((day) => /Fähre/.test(day.title)), 27);
+  assert.equal(ferryIndexOf(styleDays.map(normalizeInputDay)), 27);
+  assert.equal(isoForDay(27), "2026-10-21");
+  const styleVerifiedResult = await callApi({
+    secret: "test-pin",
+    stage: "verify-route",
+    days: styleDays,
+    replaceFromDay: 2,
+    change: { type: "route-style", scope: "route-style", startDay: 2 }
+  });
+  assert.equal(styleVerifiedResult.status, 200);
+  assert.equal(styleVerifiedResult.body.verifiedDraft.replaceCount, 1);
+  assert.equal(styleVerifiedResult.body.verifiedDraft.days[1].routeStyle, "direct");
+  assert.equal(styleVerifiedResult.body.verifiedDraft.days[2].overnight, "Zielort", "the following day must remain unchanged");
+  assert.deepEqual(modelRequests[2].tools, [{ type: "web_search" }], "route-style verification should use web search");
+  assert.equal(JSON.parse(modelRequests[2].input).candidateSegment.length, 1, "only the selected stage should be verified");
+
   global.fetch = async () => { throw new Error("accommodation stage unexpectedly called the model"); };
   const unverifiedAccommodationResult = await callApi({
     secret: "test-pin",
@@ -199,7 +243,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.ok(accommodationResult.body.accommodationPlan.accommodations.base);
   assert.equal(accommodationResult.body.accommodationAudit.version, 1);
   assert.match(accommodationResult.body.accommodationAudit.summary[0], /Ort, Reihenfolge, Datum und Nächtezahl/);
-  assert.equal(fetchCount, 2, "accommodation stage should not recalculate the route");
+  assert.equal(fetchCount, 3, "accommodation stage should not recalculate the route");
 
   const accommodationVerificationResult = await callApi({
     secret: "test-pin",

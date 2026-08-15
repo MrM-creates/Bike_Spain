@@ -9,7 +9,7 @@ const {
 const days = [
   { id: "d1", title: "Berikon – Grenoble", type: "Anreise", origin: "Berikon, Switzerland", destination: "Grenoble, France", overnight: "Grenoble", km: "404 km", time: "4 h 20", roads: "A1 · A41" },
   { id: "d2", title: "Grenoble", type: "Ruhetag", overnight: "Grenoble", rest: true, roads: "Keine Fahrroute" },
-  { id: "d3", title: "Grenoble – Barcelona", type: "Fahrtag", origin: "Grenoble, France", destination: "Barcelona, Spain", overnight: "Barcelona", km: "ca. 620 km", time: "6 h 30" },
+  { id: "d3", title: "Grenoble – Barcelona", type: "Fahrtag", origin: "Grenoble, France", destination: "Barcelona, Spain", overnight: "Barcelona", km: "ca. 620 km", time: "6 h 30", routeStyle: "direct" },
   { id: "d4", title: "Fähre Barcelona – Genua", type: "Fährtag", origin: "Barcelona, Spain", destination: "Genua, Italy", overnight: "Kabine auf der Fähre" }
 ];
 
@@ -44,7 +44,7 @@ assert.equal(model.revision.stages[0].date, "2026-09-24");
 assert.equal(model.revision.stages[1].kind, "rest");
 assert.equal(model.revision.stages[3].kind, "transport");
 assert.equal(model.revision.routeVariants[0].style, "direct");
-assert.equal(model.revision.routeVariants[1].style, "scenic");
+assert.equal(model.revision.routeVariants[1].style, "direct");
 assert.match(model.revision.routeVariants[0].providerRouteRef, /^https:\/\/www\.google\.com\/maps\/dir\/\?/);
 assert.match(model.revision.routeVariants[0].providerRouteRef, /origin=Berikon%2C\+Switzerland/);
 assert.equal(model.revision.stays[0].nightCount, 2);

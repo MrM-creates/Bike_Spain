@@ -21,7 +21,7 @@ const cleanText = (value, limit = 2000) => String(value || "").trim().slice(0, l
 const daySchema = {
   type: "object",
   additionalProperties: false,
-  required: ["title", "type", "overnight", "km", "time", "roads", "points", "note", "travelNote", "rest", "origin", "destination", "waypoints", "status"],
+  required: ["title", "type", "overnight", "km", "time", "roads", "points", "note", "travelNote", "rest", "origin", "destination", "waypoints", "status", "routeStyle"],
   properties: {
     title: { type: "string" },
     type: { type: "string" },
@@ -36,7 +36,8 @@ const daySchema = {
     origin: { type: "string" },
     destination: { type: "string" },
     waypoints: { type: "array", items: { type: "string" } },
-    status: { type: "string", enum: ["planned", "changed", "done", "skipped"] }
+    status: { type: "string", enum: ["planned", "changed", "done", "skipped"] },
+    routeStyle: { type: "string", enum: ["", "direct", "scenic"] }
   }
 };
 
@@ -134,9 +135,9 @@ const ferryIndexOf = (days) => days.findIndex((day) => {
   const title = cleanText(day?.title, 180);
   const type = cleanText(day?.type, 100);
   const overnight = cleanText(day?.overnight, 160);
-  return /^f(a|ä)hre\b/i.test(title)
-    || /^f(a|ä)hr(tag)?$/i.test(type)
-    || /kabine auf der f(a|ä)hre/i.test(overnight);
+  return /^f(?:ä|ae)hre\b/i.test(title)
+    || /^f(?:ä|ae)hr(tag)?$/i.test(type)
+    || /kabine auf der f(?:ä|ae)hre/i.test(overnight);
 });
 
 const placeIndexOf = (days, place) => {
@@ -167,7 +168,8 @@ const normalizeInputDay = (day) => ({
   origin: cleanText(day?.origin, 180),
   destination: cleanText(day?.destination, 180),
   waypoints: Array.isArray(day?.waypoints) ? day.waypoints.slice(0, 12).map((item) => cleanText(item, 180)) : [],
-  status: ["planned", "changed", "done", "skipped"].includes(day?.status) ? day.status : "planned"
+  status: ["planned", "changed", "done", "skipped"].includes(day?.status) ? day.status : "planned",
+  routeStyle: ["direct", "scenic"].includes(day?.routeStyle) ? day.routeStyle : ""
 });
 
 const isoForDay = (index) => new Date(Date.UTC(2026, 8, 24) + index * 86400000).toISOString().slice(0, 10);
@@ -288,7 +290,7 @@ const routeAuditSummary = (days, startIndex, endIndex) => {
     : "Automatisch geprüft: Der geänderte Abschnitt enthält keine Fahrtage.";
 };
 
-const routeVerificationSummary = (days, startIndex, endIndex, candidateDays = days) => {
+const routeVerificationSummary = (days, startIndex, endIndex, candidateDays = days, ferryIndex = endIndex) => {
   const segment = days.slice(startIndex, endIndex);
   const restDays = segment.filter((day) => day.rest).length;
   const overnightChain = segment
@@ -307,7 +309,7 @@ const routeVerificationSummary = (days, startIndex, endIndex, candidateDays = da
     routeAuditSummary(days, startIndex, endIndex),
     `Reiseverlauf: ${overnightChain.join(" → ")}.`,
     `Geprüfter Änderungsbereich: Tag ${startIndex + 1} bis Tag ${endIndex}; ${segment.length} Kalendertage mit ${restDays} Ruhe- oder Reservetagen.`,
-    `Der feste Fährtag bleibt Tag ${endIndex + 1} am ${FERRY_DATE} mit Check-in 08:30.`
+    `Der feste Fährtag bleibt Tag ${ferryIndex + 1} am ${FERRY_DATE} mit Check-in 08:30.`
   ];
   if (correctedDays.length) {
     const shownDays = correctedDays.slice(0, 8).join(", ");
@@ -541,37 +543,58 @@ module.exports = async (request, response) => {
     if (payload.stage === "verify-route") {
       const replaceFromDay = Math.max(1, Math.min(ferryIndex, Number(payload.replaceFromDay) || 1));
       const startIndex = replaceFromDay - 1;
-      const replaceCount = ferryIndex - startIndex;
+      const routeStyleOnly = payload.change?.scope === "route-style";
+      const replaceCount = routeStyleOnly ? 1 : ferryIndex - startIndex;
+      const endIndex = startIndex + replaceCount;
       const verificationStartedAt = Date.now();
       const verifiedPlan = await createStructuredResponse({
         name: "roadbook_verified_route",
         schema: routeSchema,
         web: true,
-        instructions: `Du bist die unabhaengige Qualitaetspruefung fuer ein Motorrad-Roadbook. Pruefe den Kandidaten mit Websuche und korrigiere ihn direkt, bevor der Nutzer ihn sieht. Behalte Reiseidee, Tageszahl und sinnvolle Teile unveraendert. Verifiziere fuer jeden Fahrtag die geografisch zusammenhaengende Strassenfolge, die Reihenfolge der Wegpunkte, plausible Kilometer und Fahrzeit sowie asphaltierte, fuer zwei beladene Motorraeder geeignete Strassen. Pruefe Rundtouren besonders streng. Hochpaesse und anspruchsvolle Schluchten muessen realistisch benannt sein. Fuer wetterkritische Hochgebirgsetappen braucht es eine geografisch korrekte Alternative auf tieferen Hauptstrassen. Eine Etappe ueber die C-28 nach Vielha muss Poert dera Bonaigua mit Hoehe benennen und als tiefere Schlechtwetteralternative die Verbindung ueber N-230 und Vielha-Tunnel konkret ausweisen. Eine Runde ueber Puerto de San Glorio muss eine geografisch geschlossene, tiefere Alternative ab demselben Uebernachtungsort nennen. Keine Offroad-, Pisten-, Strand-, Wald- oder unnoetig schmalen Abenteuerstrassen. Der erste Tag beginnt am Uebernachtungsort von previousDay; jeder Folgetag beginnt am Uebernachtungsort des Vortags. Der Faehren-Fixpunkt bleibt unveraendert. Gib den vollstaendig korrigierten Abschnitt mit exakt replaceFromDay, replaceCount und gleich vielen Tagen aus. Jeder Fahrtag braucht konkrete Strassen, eine auswertbare Kilometerangabe und Fahrzeit. summary darf keine pauschalen Sicherheitsbehauptungen enthalten; nenne stattdessen konkrete wesentliche Korrekturen und kritische Alternativen. Technische Fehler duerfen nicht als offene Aufgabe an den Nutzer weitergegeben werden. decision ist immer 'Vorgeschlagene Planaenderung'. Gib ausschliesslich das strukturierte Ergebnis aus.`,
+        instructions: `Du bist die unabhaengige Qualitaetspruefung fuer ein Motorrad-Roadbook. Pruefe den Kandidaten mit Websuche und korrigiere ihn direkt, bevor der Nutzer ihn sieht. Behalte Reiseidee, Tageszahl und sinnvolle Teile unveraendert. ${routeStyleOnly ? "Pruefe ausschliesslich die einzelne ausgewaehlte Tagesetappe. Start, Ziel, Uebernachtung und alle anderen Reisetage muessen exakt unveraendert bleiben. Halte die in routeStyle verlangte Routenart ein: direct bedeutet eine nachvollziehbare direkte Strassenverbindung ohne landschaftliche Umwege; scenic bedeutet eine kurvige, asphaltierte Motorradroute mit konkreten sinnvollen Wegpunkten." : "Pruefe den gesamten angegebenen Aenderungsabschnitt."} Verifiziere fuer jeden Fahrtag die geografisch zusammenhaengende Strassenfolge, die Reihenfolge der Wegpunkte, plausible Kilometer und Fahrzeit sowie asphaltierte, fuer zwei beladene Motorraeder geeignete Strassen. Pruefe Rundtouren besonders streng. Hochpaesse und anspruchsvolle Schluchten muessen realistisch benannt sein. Fuer wetterkritische Hochgebirgsetappen braucht es eine geografisch korrekte Alternative auf tieferen Hauptstrassen. Eine Etappe ueber die C-28 nach Vielha muss Poert dera Bonaigua mit Hoehe benennen und als tiefere Schlechtwetteralternative die Verbindung ueber N-230 und Vielha-Tunnel konkret ausweisen. Eine Runde ueber Puerto de San Glorio muss eine geografisch geschlossene, tiefere Alternative ab demselben Uebernachtungsort nennen. Keine Offroad-, Pisten-, Strand-, Wald- oder unnoetig schmalen Abenteuerstrassen. Der erste Tag beginnt am Uebernachtungsort von previousDay; jeder Folgetag beginnt am Uebernachtungsort des Vortags. Der Faehren-Fixpunkt bleibt unveraendert. Gib den vollstaendig korrigierten Abschnitt mit exakt replaceFromDay, replaceCount und gleich vielen Tagen aus. Jeder Fahrtag braucht konkrete Strassen, eine auswertbare Kilometerangabe und Fahrzeit. summary darf keine pauschalen Sicherheitsbehauptungen enthalten; nenne stattdessen konkrete wesentliche Korrekturen und kritische Alternativen. Technische Fehler duerfen nicht als offene Aufgabe an den Nutzer weitergegeben werden. decision ist immer 'Vorgeschlagene Planaenderung'. Gib ausschliesslich das strukturierte Ergebnis aus.`,
         input: JSON.stringify({
           requestedChange: payload.change || {},
           replaceFromDay,
           replaceCount,
           previousDay: currentDays[startIndex - 1] || null,
           fixedFerry: { day: ferryIndex + 1, date: FERRY_DATE, checkIn: "08:30", dayData: currentDays[ferryIndex] },
-          candidateSegment: currentDays.slice(startIndex, ferryIndex)
+          nextDay: currentDays[endIndex] || null,
+          candidateSegment: currentDays.slice(startIndex, endIndex)
         })
       });
       if (verifiedPlan.replaceFromDay !== replaceFromDay || verifiedPlan.replaceCount !== replaceCount || verifiedPlan.days.length !== replaceCount) {
         throw new Error("Die automatische Routenprüfung hat nicht alle benötigten Reisetage zurückgegeben.");
       }
+      if (routeStyleOnly) {
+        const candidate = currentDays[startIndex];
+        const verified = normalizeInputDay(verifiedPlan.days[0]);
+        const fixedFields = ["origin", "destination", "overnight"];
+        if (fixedFields.some((field) => !placesMatch(candidate[field], verified[field])) || candidate.rest !== verified.rest) {
+          throw new Error("Die automatische Routenprüfung hat Start, Ziel oder Übernachtung der ausgewählten Etappe verändert.");
+        }
+        if (candidate.routeStyle && verified.routeStyle !== candidate.routeStyle) {
+          throw new Error("Die automatische Routenprüfung hat die gewählte Routenart nicht beibehalten.");
+        }
+      }
       const verifiedDays = [
         ...currentDays.slice(0, startIndex),
         ...verifiedPlan.days.map(normalizeInputDay),
-        ...currentDays.slice(ferryIndex)
+        ...currentDays.slice(endIndex)
       ];
       const verifiedFerryIndex = ferryIndexOf(verifiedDays);
       if (verifiedDays.length !== currentDays.length || verifiedFerryIndex !== ferryIndex || isoForDay(verifiedFerryIndex) !== FERRY_DATE) {
         throw new Error("Die automatisch geprüfte Route verletzt den festen Fährtermin.");
       }
-      const continuityIssue = routeContinuityIssue(verifiedDays, startIndex, ferryIndex);
+      const continuityEndIndex = routeStyleOnly ? endIndex : ferryIndex;
+      let continuityIssue = routeContinuityIssue(verifiedDays, startIndex, continuityEndIndex);
+      if (!continuityIssue && routeStyleOnly && verifiedDays[endIndex]) {
+        const nextDeparture = cleanText(verifiedDays[endIndex].origin || verifiedDays[endIndex].overnight, 180);
+        if (nextDeparture && !placesMatch(verifiedDays[endIndex - 1].overnight, nextDeparture)) {
+          continuityIssue = `Tag ${endIndex + 1} beginnt in ${nextDeparture}, obwohl Tag ${endIndex} in ${verifiedDays[endIndex - 1].overnight} endet.`;
+        }
+      }
       if (continuityIssue) throw new Error(`Die automatische Routenprüfung ist nicht durchgängig: ${continuityIssue}`);
-      const detailIssue = routeDetailIssue(verifiedDays, startIndex, ferryIndex);
+      const detailIssue = routeDetailIssue(verifiedDays, startIndex, endIndex);
       if (detailIssue) throw new Error(`Die automatische Routenprüfung ist unvollständig: ${detailIssue}`);
       const lockedStay = payload.lockedStay && typeof payload.lockedStay === "object" ? payload.lockedStay : null;
       if (lockedStay?.place && Number.isInteger(Number(lockedStay.startIndex)) && Number.isInteger(Number(lockedStay.nights))) {
@@ -592,7 +615,7 @@ module.exports = async (request, response) => {
           replaceCount,
           lockedStay,
           request: payload.change || {},
-          summary: routeVerificationSummary(verifiedDays, startIndex, ferryIndex, currentDays),
+          summary: routeVerificationSummary(verifiedDays, startIndex, endIndex, currentDays, ferryIndex),
           decision,
           openItems: verifiedPlan.openItems,
           days: verifiedDays
@@ -760,4 +783,4 @@ module.exports = async (request, response) => {
   }
 };
 
-module.exports._test = { maximumDistance, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
+module.exports._test = { ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
