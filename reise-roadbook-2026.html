@@ -8,6 +8,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/roadbook-icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="/assets/trip-overview.css?v=20260815x">
   <style>
     :root {
       --bg: #f4f5f0;
@@ -1161,9 +1162,12 @@
       </div>
       <span class="save-state" id="save-state" aria-live="polite"></span>
     </div>
+    <div class="generic-trip-nav" id="generic-trip-nav" hidden></div>
   </header>
 
-  <main>
+  <main id="trip-overview-root" hidden></main>
+
+  <main id="legacy-roadbook">
     <section class="intro" aria-labelledby="page-title">
       <div>
         <h1 class="sr-only" id="page-title">Motorrad-Roadbook</h1>
@@ -1325,6 +1329,7 @@
         <button class="tool-button icon" type="button" id="close-plan-change" aria-label="Fenster schliessen" title="Schliessen">×</button>
       </div>
       <div class="editor-body">
+        <div class="plan-change-context" id="plan-change-context" hidden></div>
         <div class="form-grid">
           <div class="field">
             <label for="change-type">Was soll sich ändern?</label>
@@ -2546,6 +2551,12 @@
 
     const openPlanChange = (startDay = 1, type = "extend") => {
       planChangeForm.reset();
+      document.querySelector("#plan-change-title").textContent = "Plan ändern";
+      planChangeForm.elements.type.closest(".field").hidden = false;
+      document.querySelector("#create-suggestions").textContent = "Vorschläge erstellen";
+      const context = document.querySelector("#plan-change-context");
+      context.hidden = true;
+      context.replaceChildren();
       fillPlanStartDays(startDay);
       planChangeForm.elements.type.value = type;
       updatePlanChangeFields();
@@ -2559,6 +2570,32 @@
       document.querySelector("#create-suggestions").disabled = false;
       planChangeDialog.showModal();
       planChangeForm.elements.type.focus();
+    };
+
+    window.__ROADBOOK_OPEN_PLAN_CHANGE__ = (request = {}) => {
+      const type = ["extend", "shorten", "skip", "reroute", "free", "restore-original"].includes(request.type)
+        ? request.type
+        : "free";
+      openPlanChange(request.startDay || 1, type);
+      if (request.place) planChangeForm.elements.place.value = String(request.place);
+      if (Number.isFinite(Number(request.nights))) planChangeForm.elements.nights.value = String(Number(request.nights));
+      if (request.instruction) planChangeForm.elements.instruction.value = String(request.instruction);
+      if (request.scope === "stage") {
+        planChangeForm.elements.type.closest(".field").hidden = true;
+        document.querySelector("#change-instruction-label").textContent = "Wie soll diese Etappe verlaufen?";
+        document.querySelector("#change-instruction-hint").textContent = "Start, Ziel und die übrige Reise bleiben unverändert.";
+        document.querySelector("#create-suggestions").textContent = "Etappe prüfen";
+      }
+      const context = document.querySelector("#plan-change-context");
+      if (request.contextLabel) {
+        context.innerHTML = `<span>Ausgewählt</span><strong>${String(request.contextLabel).replace(/[&<>"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[character])}</strong>`;
+        context.hidden = false;
+      }
+      document.querySelector("#plan-change-title").textContent = request.title || "Plan ändern";
+      const focusTarget = type === "extend" || type === "shorten"
+        ? planChangeForm.elements.nights
+        : planChangeForm.elements.instruction;
+      focusTarget?.focus();
     };
 
     const createDraft = async (change) => {
@@ -3605,6 +3642,53 @@ Wichtig fuer das Import-JSON:
       createOriginalDraft().catch((error) => alert(`Originalplan konnte nicht geladen werden: ${error.message}`));
     });
 
+    window.__ROADBOOK_READ_MODEL__ = Object.freeze({
+      getPublishedSnapshot: async () => {
+        let accommodations = [];
+        try { accommodations = await loadAccommodationContext(); } catch (error) { console.warn("Unterkunftsstand fuer Reiseuebersicht nicht verfuegbar", error); }
+        return {
+          publishedVersion: currentPublishedVersion,
+          planKind: currentPlanKind,
+          originalDays: clone(originalBaseline),
+          days: clone(currentPlanDays),
+          accommodations: clone(accommodations),
+          trip: {
+            id: "trip_spanien_2026",
+            name: "Spanien 2026",
+            startDate: "2026-09-24",
+            startPlace: "Berikon",
+            endPlace: "Berikon",
+            timezone: "Europe/Zurich",
+            utcOffset: "+02:00",
+            participantCount: 2,
+            motorcycleCount: 2,
+            transportMatchers: ["Fährtag", "Fähre Barcelona.*Genua"],
+            preferences: {
+              routeStyle: "mixed",
+              ridingRhythm: "relaxed",
+              accommodationStyle: "Motorradfreundlich mit sicherer Abstellung",
+              preferGoodWeather: true
+            },
+            placeAliases: {
+              "La Patacona / Alboraya": "La Patacona",
+              "Kabine auf der Fähre": "Fähre Barcelona–Genua"
+            },
+            fixPoints: [
+              { id: "fix_start_berikon", kind: "start", title: "Start in Berikon", place: "Berikon", startsAt: "2026-09-24T08:00:00+02:00", source: "import" },
+              { id: "fix_ferry_barcelona_genoa", kind: "transport", title: "Fähre Barcelona → Genua", place: "Barcelona", startsAt: "2026-10-21T08:30:00+02:00", endsAt: "2026-10-22T09:00:00+02:00", stageTitlePattern: "Fähre Barcelona.*Genua", source: "booking", bookingRef: "legacy-ferry-booking" },
+              { id: "fix_end_berikon", kind: "end", title: "Rückkehr nach Berikon", place: "Berikon", startsAt: "2026-10-23T18:00:00+02:00", source: "import" }
+            ],
+            narrativeSegments: [
+              { title: "Über die Alpen in den Süden.", text: "Von Berikon geht es über Grenoble und die Route Napoléon durch die Provence bis an die katalanische Küste.", fromDay: 1, toDay: 6, mapGroup: 0 },
+              { title: "Zwischen Küste und Hinterland.", text: "Priorat, Albarracín, Valencia und die Costa Blanca verbinden kurvige Fahrtage mit bewussten Pausen.", fromDay: 7, toDay: 14, mapGroup: 1 },
+              { title: "Andalusische Höhepunkte.", text: "Granada, die Alpujarras, Ronda und die weißen Dörfer bilden den südlichen Schwerpunkt der Reise.", fromDay: 15, toDay: 24, mapGroup: 2 },
+              { title: "Über das Inland zurück zur Fähre.", text: "Cuenca und Zaragoza führen zurück nach Barcelona. Die gebuchte Fähre nach Genua bleibt der geschützte Fixpunkt für den Heimweg.", fromDay: 25, toDay: 30, mapGroup: 3 }
+            ]
+          }
+        };
+      }
+    });
+
     showPlanningVersion();
     render();
 
@@ -3617,5 +3701,7 @@ Wichtig fuer das Import-JSON:
       openPlanChange();
     }
   </script>
+  <script src="/assets/travel-model.js?v=20260815o"></script>
+  <script src="/assets/trip-overview.js?v=20260815x"></script>
 </body>
 </html>

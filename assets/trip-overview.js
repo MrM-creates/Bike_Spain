@@ -1,0 +1,802 @@
+(function () {
+  "use strict";
+
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("tripOverview") !== "1") return;
+  const requestedView = params.get("view") === "roadbook" ? "roadbook" : "overview";
+
+  const bridge = window.__ROADBOOK_READ_MODEL__;
+  const modelApi = window.MotorcycleTravelModel;
+  const navRoot = document.querySelector("#generic-trip-nav");
+  const root = document.querySelector("#trip-overview-root");
+  const legacyRoadbook = document.querySelector("#legacy-roadbook");
+  if (!bridge || !modelApi || !navRoot || !root || !legacyRoadbook) return;
+
+  const leafletCss = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+  const leafletJs = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+  const colours = ["#176b46", "#b06024", "#6d58a7", "#26758a", "#b14d55", "#68733b", "#2d67a2", "#9b6515"];
+  const escapeHtml = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[char]);
+  const normalize = (value) => modelApi.normalizeText(value || "");
+  const km = new Intl.NumberFormat("de-CH", { maximumFractionDigits: 0 });
+  const formatDate = (value, options = { day: "2-digit", month: "long", year: "numeric" }) => {
+    const date = new Date(`${value}T12:00:00Z`);
+    return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat("de-CH", { ...options, timeZone: "UTC" }).format(date);
+  };
+  const formatDuration = (seconds) => {
+    if (!seconds) return "–";
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.round((seconds % 3600) / 60);
+    return `${hours ? `${hours} h` : ""}${minutes ? ` ${minutes} min` : ""}`.trim();
+  };
+  const parseCoordinates = (text) => String(text || "").trim().split(/\s+/).map((entry) => {
+    const [longitude, latitude] = entry.split(",").map(Number);
+    return [latitude, longitude];
+  }).filter(([latitude, longitude]) => Number.isFinite(latitude) && Number.isFinite(longitude));
+
+  let model;
+  let activeView = "overview";
+  let listMode = "days";
+  let selectedStage = 0;
+  let selectedStay = 0;
+  let overviewMap = null;
+  let overviewGroups = [];
+  let overviewRoutes = new Map();
+  let overviewBounds = null;
+  let workspaceMap = null;
+  let workspaceBounds = null;
+  let workspaceRoutes = new Map();
+  let workspaceMarkers = [];
+  let workspaceInitialised = false;
+  let compareOriginal = false;
+  let mapDataPromise = null;
+  const routeGeometryData = new Map();
+  const routeStyleDrafts = new Map();
+  const confirmedRouteStyleDrafts = new Set();
+  let pendingRouteStyleChange = null;
+
+  const place = (id) => model.places.find((item) => item.id === id) || { name: "Unbekannter Ort" };
+  const routeFor = (stage) => model.revision.routeVariants.find((item) => item.id === stage.activeRouteVariantId) || null;
+  const optionsFor = (stay) => stay.accommodationOptionIds.map((id) => model.revision.accommodationOptions.find((item) => item.id === id)).filter(Boolean);
+  const bookingFor = (stay) => model.revision.bookings.find((item) => item.stayId === stay.id) || null;
+  const stayForDate = (date) => model.revision.stays.find((item) => item.startDate <= date && item.endDate > date) || null;
+  const stageForStay = (stay) => model.revision.stages.findIndex((item) => item.date === stay.startDate);
+  const fixedForStage = (stage) => model.revision.fixPoints.find((item) => item.targetRef?.type === "stage" && item.targetRef.id === stage.id) || null;
+  const dateRange = () => `${formatDate(model.revision.stages[0].date)} – ${formatDate(model.revision.stages.at(-1).date)}`;
+  const bookingLabel = (booking) => booking?.status === "booked" ? "Gebucht" : booking?.status === "requested" ? "Angefragt" : "Offen";
+  const bookingClass = (booking) => booking?.status === "booked" ? "booked" : booking?.status === "requested" ? "requested" : "open";
+  const planLabel = () => model.source?.planKind === "original" ? "Originalplan" : "Angepasster Plan";
+  const planVersionLabel = () => {
+    const value = model.source?.publishedVersion;
+    if (!value) return "Stand unbekannt";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? "Stand unbekannt" : `Stand ${new Intl.DateTimeFormat("de-CH", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Zurich" }).format(date)}`;
+  };
+  const routeStyleLabel = (style) => style === "scenic" ? "Kurvig & schön" : "Direkt";
+  const googleMapsUrlForSelection = (stage, route) => {
+    if (!stage || !route?.providerRouteRef) return null;
+    if (selectedRouteStyle(stage, route) !== "direct") return route.providerRouteRef;
+    try {
+      const url = new URL(route.providerRouteRef);
+      url.searchParams.delete("waypoints");
+      return url.toString();
+    } catch (_error) {
+      return route.providerRouteRef;
+    }
+  };
+
+  const loadLeaflet = () => new Promise((resolve, reject) => {
+    if (window.L) { resolve(window.L); return; }
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = leafletCss;
+    link.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
+    link.crossOrigin = "";
+    document.head.append(link);
+    const script = document.createElement("script");
+    script.src = leafletJs;
+    script.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
+    script.crossOrigin = "";
+    script.onload = () => resolve(window.L);
+    script.onerror = () => reject(new Error("Kartenbibliothek konnte nicht geladen werden."));
+    document.head.append(script);
+  });
+
+  async function loadKml() {
+    const response = await fetch("/reiseplanung-verfeinert-2026.kml", { cache: "no-store" });
+    if (!response.ok) throw new Error("KML-Korridor konnte nicht geladen werden.");
+    return new DOMParser().parseFromString(await response.text(), "application/xml");
+  }
+
+  async function loadMapData() {
+    if (!mapDataPromise) {
+      mapDataPromise = Promise.all([
+        loadKml(),
+        fetch("/assets/roadbook-routes.geojson", { cache: "no-store" }).then((response) => {
+          if (!response.ok) throw new Error("Straßenverlauf konnte nicht geladen werden.");
+          return response.json();
+        })
+      ]).then(([xml, routes]) => ({ xml, routes }));
+    }
+    return mapDataPromise;
+  }
+
+  const leafletCoordinates = (feature) => feature.geometry.coordinates.map(([longitude, latitude]) => [latitude, longitude]);
+  const stageIndexForFeature = (feature) => {
+    const day = Number(feature.properties.day);
+    const matched = feature.properties.ferry
+      ? model.revision.stages.findIndex((stage) => stage.kind === "transport")
+      : model.revision.stages.findIndex((stage) => Number(stage.legacy?.day) === day);
+    return matched >= 0 ? matched : Math.max(0, day - 1);
+  };
+  const kmlPoints = (xml) => {
+    const points = new Map();
+    Array.from(xml.querySelectorAll("Placemark")).forEach((placemark) => {
+      const point = placemark.querySelector("Point coordinates");
+      if (!point) return;
+      const name = placemark.querySelector("name")?.textContent.trim() || "Ort";
+      const coordinate = parseCoordinates(point.textContent)[0];
+      if (coordinate) points.set(normalize(name), coordinate);
+    });
+    return points;
+  };
+  const pointCoordinateFor = (points, placeName, day) => {
+    const key = normalize(placeName);
+    const tokens = key.split(" ").filter((token) => token.length >= 4 && !["raum", "oder", "vorzugsweise"].includes(token));
+    return Array.from(points.entries()).map(([pointName, coordinate]) => {
+      const placeScore = tokens.reduce((score, token) => score + (pointName.includes(token) ? token.length : 0), 0);
+      const dayText = String(day);
+      const dayScore = pointName.includes(`tag ${dayText}`) || pointName.includes(`-${dayText}`) ? 20 : 0;
+      return { coordinate, score: placeScore + dayScore };
+    }).filter((candidate) => candidate.score > 0).sort((a, b) => b.score - a.score)[0]?.coordinate || null;
+  };
+  const geometryFor = (index, variant) => routeGeometryData.get(`${index}:${variant}`) || null;
+  const previewMetricsFor = (index, route) => {
+    const style = routeStyleDrafts.get(index);
+    if (!style) return route;
+    return geometryFor(index, style === "direct" ? "direct" : "original") || route;
+  };
+
+  const kmlGroupForName = (name) => {
+    const day = Number(String(name).match(/^\s*(\d+)/)?.[1]);
+    if (!day) return -1;
+    if (day <= 6) return 0;
+    if (day <= 16) return 1;
+    if (day <= 23) return 2;
+    return 3;
+  };
+
+  function renderNavigation() {
+    navRoot.hidden = false;
+    navRoot.innerHTML = `
+      <div class="generic-trip-nav-left"><button class="generic-back" id="generic-journeys" type="button"><span aria-hidden="true">←</span> Reisen</button><div class="generic-trip-identity"><strong>${escapeHtml(model.trip.name)}</strong><span>${escapeHtml(dateRange())} · ${model.revision.stages.length} Tage</span></div></div>
+      <nav class="generic-trip-tabs" role="tablist" aria-label="Ansicht der Reise"><button class="generic-trip-tab" type="button" role="tab" aria-selected="true" data-generic-view="overview">Übersicht</button><button class="generic-trip-tab" type="button" role="tab" aria-selected="false" data-generic-view="roadbook">Roadbook</button></nav>
+      <div class="generic-trip-nav-actions"><span class="generic-status">${escapeHtml(planLabel())} · veröffentlicht</span><button class="generic-primary" id="generic-adjust" type="button">Reise anpassen</button><div class="generic-more"><button class="generic-more-button" id="generic-more" type="button" aria-label="Weitere Aktionen" aria-expanded="false">•••</button><div class="generic-more-menu" id="generic-more-menu" hidden><button type="button" id="generic-export">Exportieren</button><button type="button" id="generic-accommodations">Unterkünfte</button><button type="button" id="generic-help">Hilfe</button><button type="button" id="generic-legacy">Bisherige Ansicht</button></div></div></div>`;
+
+    const dialog = document.createElement("dialog");
+    dialog.className = "generic-journeys-dialog";
+    dialog.id = "generic-journeys-dialog";
+    dialog.innerHTML = `<div class="generic-dialog-head"><div><h2>Reisen</h2><p>Bestehende Reise öffnen oder später eine neue Motorradreise planen.</p></div><button class="generic-dialog-close" type="button" aria-label="Dialog schließen">×</button></div><div class="generic-journey-row"><div><strong>${escapeHtml(model.trip.name)}</strong><span>${escapeHtml(dateRange())} · ${model.revision.stages.length} Tage</span></div><button class="generic-secondary" type="button">Geöffnet</button></div><div class="generic-dialog-foot"><span>Die generische Neuerstellung folgt in einem späteren Integrationsschritt.</span><button class="generic-secondary" type="button" disabled>Neue Reise planen</button></div>`;
+    document.body.append(dialog);
+    dialog.querySelector(".generic-dialog-close").addEventListener("click", () => dialog.close());
+    dialog.querySelector(".generic-journey-row button").addEventListener("click", () => dialog.close());
+    navRoot.querySelector("#generic-journeys").addEventListener("click", () => dialog.showModal());
+    const exportDialog = document.createElement("dialog");
+    exportDialog.className = "generic-journeys-dialog generic-export-dialog";
+    exportDialog.id = "generic-export-dialog";
+    exportDialog.innerHTML = `<div class="generic-dialog-head"><div><h2>Route exportieren</h2><p>Die gewählte Tagesroute in Google Maps öffnen oder die gesamte Reise als Datei laden.</p></div><button class="generic-dialog-close" type="button" aria-label="Export schließen">×</button></div><div class="generic-export-options"><a class="generic-action-button primary" id="generic-export-google" target="_blank" rel="noopener">Tagesroute in Google Maps öffnen ↗</a><span id="generic-export-day"></span><a class="generic-action-button" href="/reiseplanung-verfeinert-2026-export.kml" download>Gesamtreise als KML</a><a class="generic-action-button" href="/reiseplanung-verfeinert-2026.gpx" download>Gesamtreise als GPX</a></div>`;
+    document.body.append(exportDialog);
+    exportDialog.querySelector(".generic-dialog-close").addEventListener("click", () => exportDialog.close());
+    const routeStyleDialog = document.createElement("dialog");
+    routeStyleDialog.className = "generic-journeys-dialog generic-route-style-dialog";
+    routeStyleDialog.id = "generic-route-style-dialog";
+    routeStyleDialog.setAttribute("aria-labelledby", "generic-route-style-title");
+    routeStyleDialog.innerHTML = `<div class="generic-dialog-head"><div><h2 id="generic-route-style-title">Routenart übernehmen?</h2><p id="generic-route-style-context"></p></div></div><div class="generic-route-confirm-body"><div class="generic-route-confirm-change"><div><span>Bisher</span><strong id="generic-route-style-original"></strong><small id="generic-route-style-original-metrics"></small></div><i aria-hidden="true">→</i><div><span>Vorschau</span><strong id="generic-route-style-preview"></strong><small id="generic-route-style-preview-metrics"></small></div></div><p>Start, Ziel und Unterkunft bleiben gleich. Die Änderung wird zunächst als Entwurf vorgemerkt; der veröffentlichte Plan bleibt unverändert.</p></div><div class="generic-route-confirm-actions"><button class="generic-action-button" type="button" id="generic-route-style-discard">Verwerfen</button><button class="generic-action-button primary" type="button" id="generic-route-style-confirm">Übernehmen</button></div>`;
+    document.body.append(routeStyleDialog);
+    routeStyleDialog.querySelector("#generic-route-style-discard").addEventListener("click", () => {
+      routeStyleDialog.close();
+      cancelPendingRouteStyleChange();
+    });
+    routeStyleDialog.querySelector("#generic-route-style-confirm").addEventListener("click", () => {
+      const stageIndex = pendingRouteStyleChange?.stageIndex;
+      if (Number.isInteger(stageIndex) && routeStyleDrafts.has(stageIndex)) confirmedRouteStyleDrafts.add(stageIndex);
+      pendingRouteStyleChange = null;
+      routeStyleDialog.close();
+      renderInspector();
+      updateCompareControl();
+      applyWorkspaceMapFocus(false);
+      applyOverviewRouteStyles();
+    });
+    routeStyleDialog.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      routeStyleDialog.close();
+      cancelPendingRouteStyleChange();
+    });
+    navRoot.querySelectorAll("[data-generic-view]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.genericView)));
+    navRoot.querySelector("#generic-adjust").addEventListener("click", openExistingPlanner);
+    const moreButton = navRoot.querySelector("#generic-more");
+    const moreMenu = navRoot.querySelector("#generic-more-menu");
+    const closeMore = () => { moreMenu.hidden = true; moreButton.setAttribute("aria-expanded", "false"); };
+    navRoot.querySelector("#generic-export").addEventListener("click", () => {
+      const stage = model.revision.stages[selectedStage];
+      const route = routeFor(stage);
+      const selectedStyle = selectedRouteStyle(stage, route);
+      const googleMapsUrl = googleMapsUrlForSelection(stage, route);
+      const googleLink = exportDialog.querySelector("#generic-export-google");
+      googleLink.href = googleMapsUrl || "#";
+      googleLink.setAttribute("aria-disabled", String(!googleMapsUrl));
+      exportDialog.querySelector("#generic-export-day").textContent = `Tag ${stage.legacy?.day || selectedStage + 1} · ${stage.title} · ${routeStyleLabel(selectedStyle)} ausgewählt. Google Maps berechnet den Verlauf beim Öffnen neu.`;
+      exportDialog.showModal();
+      closeMore();
+    });
+    navRoot.querySelector("#generic-accommodations").addEventListener("click", () => { setView("roadbook"); setListMode("stays"); closeMore(); });
+    navRoot.querySelector("#generic-help").addEventListener("click", () => { document.querySelector("#nav-help")?.click(); closeMore(); });
+    navRoot.querySelector("#generic-legacy").addEventListener("click", () => {
+      const target = new URL(window.location.href);
+      target.searchParams.delete("tripOverview");
+      window.location.href = target.toString();
+    });
+    moreButton.addEventListener("click", (event) => {
+      event.stopPropagation();
+      const open = moreMenu.hidden;
+      moreMenu.hidden = !open;
+      moreButton.setAttribute("aria-expanded", String(open));
+    });
+    document.addEventListener("click", (event) => { if (!event.target.closest(".generic-more")) closeMore(); });
+  }
+
+  function renderOverview() {
+    const { trip, revision } = model;
+    const totalDistance = revision.routeVariants.reduce((sum, route) => sum + route.distanceMeters, 0) / 1000;
+    const rideCount = revision.stages.filter((stage) => ["ride", "loop"].includes(stage.kind)).length;
+    const restCount = revision.stages.filter((stage) => stage.kind === "rest").length;
+    const booked = revision.bookings.filter((booking) => booking.status === "booked").length;
+    const requested = revision.bookings.filter((booking) => booking.status === "requested").length;
+    const open = Math.max(0, revision.stays.length - booked - requested);
+    root.innerHTML = `<section id="generic-overview-panel">
+      <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">Kurven, Küsten und spanisches Hinterland</h1><p>Eine ausgedehnte Motorradreise von den Westalpen über Südfrankreich bis nach Andalusien. Kurvige Berg- und Küstenstraßen wechseln sich mit entspannten Ruhetagen ab; die gebuchte Fähre von Barcelona nach Genua setzt den festen Schlusspunkt in Spanien.</p></div><div class="generic-overview-date">${escapeHtml(planLabel())} · veröffentlicht<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
+      <section class="generic-route-card" aria-label="Karte und Reiseverlauf"><div class="generic-map-wrap"><div id="trip-overview-map" aria-label="Interaktive Übersichtskarte"></div><div class="generic-map-loading">Karte und veröffentlichte Route werden geladen …</div><span class="generic-map-label" id="generic-overview-map-label">${escapeHtml(planLabel())} · dieselbe Route wie im Roadbook</span><button class="generic-map-reset" id="generic-map-reset" type="button">Gesamte Route</button></div><div class="generic-route-story"><h2>Reiseverlauf</h2><p>Karte und Beschreibung sind miteinander verbunden.</p>${revision.narrativeSegments.map((segment, index) => `<button class="generic-story-segment" type="button" data-story="${index}" aria-current="${index === 0}"><strong>${escapeHtml(segment.title)}</strong>${escapeHtml(segment.text)}</button>`).join("")}</div></section>
+      <section class="generic-overview-stats" aria-label="Eckdaten"><div class="generic-overview-stat"><strong>${revision.stages.length} Tage</strong><span>Gesamtdauer</span></div><div class="generic-overview-stat"><strong>${rideCount}</strong><span>Fahretappen</span></div><div class="generic-overview-stat"><strong>${restCount}</strong><span>Ruhetage</span></div><div class="generic-overview-stat"><strong>${km.format(totalDistance)} km</strong><span>Planwerte</span></div><div class="generic-overview-stat"><strong>${trip.motorcycleCount} Motorräder</strong><span>Reiseparameter</span></div></section>
+      <section class="generic-overview-details"><article class="generic-overview-card"><div class="generic-card-head"><h2>Fixpunkte</h2><span>Automatisch geschützt</span></div><ul class="generic-fix-list">${revision.fixPoints.map((fix) => `<li><span class="generic-fix-icon">${fix.kind === "transport" ? "⚓" : fix.kind === "start" ? "●" : "◎"}</span><span><strong>${escapeHtml(fix.title)}</strong><small>${escapeHtml(fix.startsAt ? formatDate(fix.startsAt.slice(0, 10)) : "Verbindlich")}</small></span><span class="generic-fix-tag">Geschützt</span></li>`).join("")}</ul></article><article class="generic-overview-card"><div class="generic-card-head"><h2>Unterkünfte</h2><span>${revision.stays.length} Stopps</span></div><div class="generic-booking-stats"><div><strong>${booked}</strong><span>Gebucht</span></div><div><strong>${requested}</strong><span>Angefragt</span></div><div><strong>${open}</strong><span>Offen</span></div></div><p class="generic-card-note">Unterkünfte, Alternativen und Buchungsstatus sind direkt mit dem Roadbook verbunden.</p><button class="generic-secondary" id="generic-overview-stays" type="button">Unterkünfte im Roadbook ansehen</button></article></section>
+    </section><section class="generic-workspace" id="generic-workspace" hidden></section>`;
+    root.querySelectorAll(".generic-story-segment").forEach((button) => button.addEventListener("click", () => activateOverviewStory(Number(button.dataset.story), true)));
+    root.querySelector("#generic-overview-stays").addEventListener("click", () => { setView("roadbook"); setListMode("stays"); });
+    renderWorkspace();
+    initialiseOverviewMap(revision.narrativeSegments);
+  }
+
+  async function initialiseOverviewMap(narrativeSegments) {
+    const loading = root.querySelector(".generic-map-loading");
+    try {
+      const [L, { xml, routes }] = await Promise.all([loadLeaflet(), loadMapData()]);
+      overviewMap = L.map("trip-overview-map", { zoomControl: true, scrollWheelZoom: true }).setView([42.2, 2.1], 5);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(overviewMap);
+      overviewGroups = narrativeSegments.map(() => L.featureGroup().addTo(overviewMap));
+      overviewRoutes = new Map();
+      const allRoutes = L.featureGroup().addTo(overviewMap);
+      const overviewDayEnds = new Map();
+      routes.features.filter((feature) => !feature.properties.optional && !(feature.properties.ferry && feature.properties.variant === "direct")).forEach((feature) => {
+        const { name, ferry, day, variant } = feature.properties;
+        const groupIndex = kmlGroupForName(name);
+        if (groupIndex < 0 || !overviewGroups[groupIndex]) return;
+        const index = stageIndexForFeature(feature);
+        routeGeometryData.set(`${index}:${variant}`, feature.properties);
+        const polyline = L.polyline(leafletCoordinates(feature), { className: `generic-route-line route-${variant} route-stage-${index}`, color: ferry ? "#9a6118" : colours[index % colours.length], weight: ferry ? 4 : 5, opacity: .9, dashArray: ferry ? "9 8" : variant === "direct" ? "9 7" : null, lineCap: "round", isFerry: ferry }).bindTooltip(`Tag ${day} · ${model.revision.stages[index]?.title || name}`, { sticky: true });
+        polyline.on("click", () => activateOverviewStory(groupIndex, true));
+        if (!overviewRoutes.has(index)) overviewRoutes.set(index, { groupIndex, original: null, direct: null });
+        overviewRoutes.get(index)[variant] = polyline;
+        if (variant === "original") {
+          overviewGroups[groupIndex].addLayer(polyline);
+          allRoutes.addLayer(polyline);
+          overviewDayEnds.set(index, leafletCoordinates(feature).at(-1));
+        }
+      });
+      const points = kmlPoints(xml);
+      model.revision.stays.forEach((stay, stayIndex) => {
+        const name = place(stay.placeId).name;
+        const stageIndex = stageForStay(stay);
+        const day = model.revision.stages[stageIndex]?.legacy?.day || stageIndex + 1;
+        let coordinate = pointCoordinateFor(points, name, day) || overviewDayEnds.get(stageIndex);
+        for (let offset = 1; !coordinate && offset <= 4; offset += 1) {
+          coordinate = overviewDayEnds.get(stageIndex - offset) || overviewDayEnds.get(stageIndex + offset);
+        }
+        if (!coordinate) return;
+        const icon = L.divIcon({ className: "generic-stay-marker-shell", html: `<span>${day}</span>`, iconSize: [28, 28], iconAnchor: [14, 14] });
+        L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${day} · ${name}`).on("click", () => { selectedStay = stayIndex; setView("roadbook"); setListMode("stays"); }).addTo(overviewMap);
+      });
+      overviewBounds = allRoutes.getBounds();
+      if (overviewBounds.isValid()) overviewMap.fitBounds(overviewBounds, { padding: [24, 24] });
+      loading?.remove();
+      applyOverviewRouteStyles();
+      activateOverviewStory(0, false);
+      root.querySelector("#generic-map-reset")?.addEventListener("click", () => {
+        root.querySelectorAll(".generic-story-segment").forEach((button) => button.setAttribute("aria-current", "false"));
+        overviewGroups.forEach((group) => group.eachLayer((layer) => {
+          const match = String(layer.options.className || "").match(/route-stage-(\d+)/);
+          const index = Number(match?.[1] || 0);
+          layer.setStyle({ color: layer.options.isFerry ? "#9a6118" : colours[index % colours.length], weight: 5, opacity: .9 });
+        }));
+        if (overviewBounds?.isValid()) overviewMap.fitBounds(overviewBounds, { padding: [24, 24] });
+      });
+    } catch (error) {
+      if (loading) loading.outerHTML = `<div class="generic-map-fallback"><div><strong>Karte momentan nicht verfügbar</strong><br>${escapeHtml(error.message)}</div></div>`;
+    }
+  }
+
+  function activateOverviewStory(index, fit) {
+    root.querySelectorAll(".generic-story-segment").forEach((button) => button.setAttribute("aria-current", String(Number(button.dataset.story) === Number(index))));
+    overviewGroups.forEach((group, groupIndex) => group.eachLayer((layer) => {
+      const ferry = Boolean(layer.options.isFerry);
+      const match = String(layer.options.className || "").match(/route-stage-(\d+)/);
+      const stageIndex = Number(match?.[1] || 0);
+      layer.setStyle({ color: ferry ? "#9a6118" : groupIndex === index ? colours[stageIndex % colours.length] : "#718078", weight: groupIndex === index ? 7 : 3, opacity: groupIndex === index ? .95 : .22 });
+    }));
+    if (fit && overviewGroups[index]?.getBounds().isValid()) overviewMap.fitBounds(overviewGroups[index].getBounds(), { padding: [30, 30], maxZoom: 7 });
+  }
+
+  function applyOverviewRouteStyles() {
+    if (!overviewMap || !overviewRoutes.size) return;
+    overviewRoutes.forEach((variants, index) => {
+      const group = overviewGroups[variants.groupIndex];
+      const useDirect = confirmedRouteStyleDrafts.has(index) && routeStyleDrafts.get(index) === "direct";
+      const desired = useDirect ? variants.direct : variants.original;
+      const hidden = useDirect ? variants.original : variants.direct;
+      if (hidden && group.hasLayer(hidden)) group.removeLayer(hidden);
+      if (desired && !group.hasLayer(desired)) group.addLayer(desired);
+    });
+    const changeCount = confirmedRouteStyleDrafts.size;
+    const label = root.querySelector("#generic-overview-map-label");
+    if (label) label.textContent = changeCount
+      ? `Roadbook-Entwurf · ${changeCount} ${changeCount === 1 ? "Routenänderung" : "Routenänderungen"}`
+      : `${planLabel()} · dieselbe Route wie im Roadbook`;
+    const activeStory = root.querySelector(".generic-story-segment[aria-current='true']");
+    if (activeStory) activateOverviewStory(Number(activeStory.dataset.story), false);
+  }
+
+  function renderWorkspace() {
+    const workspace = root.querySelector("#generic-workspace");
+    workspace.innerHTML = `<section class="generic-stage-panel" aria-labelledby="generic-list-title"><div class="generic-panel-head"><div class="generic-panel-title"><h2 id="generic-list-title">Reiseplan</h2><span id="generic-list-meta"></span></div><div class="generic-loaded-plan"><span>${escapeHtml(planLabel())}</span><strong>Veröffentlicht</strong><small>${escapeHtml(planVersionLabel())}</small></div><div class="generic-plan-switch" role="tablist" aria-label="Reiseplan-Ansicht"><button type="button" role="tab" aria-selected="true" data-list-mode="days">Tage <span>${model.revision.stages.length}</span></button><button type="button" role="tab" aria-selected="false" data-list-mode="stays">Unterkünfte <span>${model.revision.stays.length}</span></button></div></div><div class="generic-stage-list" id="generic-stage-list"></div></section>
+      <section class="generic-work-map" aria-label="Interaktive Routenkarte"><div id="generic-work-map"></div><div class="generic-work-map-toolbar"><div class="generic-work-map-status"><strong id="generic-work-map-title">${escapeHtml(planLabel())}</strong><span id="generic-work-map-subtitle">Karte und Tagesliste sind synchronisiert.</span></div><button class="generic-compare" type="button" aria-pressed="false" disabled title="Verfügbar, sobald für diese Etappe eine Routenvorschau erstellt wurde"><span>Original vergleichen</span><i aria-hidden="true"></i></button></div><div class="generic-work-map-legend"><span><i class="route"></i>Tagesetappe</span><span><i class="stay"></i>Übernachtung</span><span>◆ Ruhetag</span><span>🔒 Fixpunkt</span><span class="generic-compare-legend" id="generic-compare-legend" hidden></span></div><div class="generic-map-hint">Ort oder Strecke anklicken, um Details zu sehen</div></section>
+      <aside class="generic-inspector" id="generic-inspector" aria-live="polite"></aside>`;
+    workspace.querySelectorAll("[data-list-mode]").forEach((button) => button.addEventListener("click", () => setListMode(button.dataset.listMode)));
+    workspace.querySelector(".generic-compare").addEventListener("click", () => {
+      if (listMode !== "days" || !routeStyleDrafts.has(selectedStage)) return;
+      compareOriginal = !compareOriginal;
+      updateCompareControl();
+      applyWorkspaceMapFocus(false);
+    });
+    renderWorkList();
+    renderInspector();
+  }
+
+  function setListMode(mode) {
+    listMode = mode === "stays" ? "stays" : "days";
+    compareOriginal = false;
+    root.querySelectorAll("[data-list-mode]").forEach((button) => button.setAttribute("aria-selected", String(button.dataset.listMode === listMode)));
+    renderWorkList();
+    renderInspector();
+    updateCompareControl();
+    applyWorkspaceMapFocus(true);
+  }
+
+  function renderWorkList() {
+    const list = root.querySelector("#generic-stage-list");
+    const meta = root.querySelector("#generic-list-meta");
+    if (!list || !meta) return;
+    if (listMode === "days") {
+      const total = model.revision.routeVariants.reduce((sum, item) => sum + item.distanceMeters, 0) / 1000;
+      meta.textContent = `${model.revision.stages.length} Tage · ${km.format(total)} km`;
+      list.setAttribute("aria-label", "Tagesetappen");
+      list.innerHTML = model.revision.stages.map((stage, index) => {
+        const route = routeFor(stage);
+        const fixed = fixedForStage(stage);
+        const overnight = stage.legacy?.overnight || place(stage.destinationPlaceId).name;
+        return `<button class="generic-stage-row ${stage.kind === "rest" ? "rest" : ""} ${fixed ? "fixed" : ""}" type="button" data-stage-index="${index}" aria-current="${index === selectedStage}" style="--stage-colour:${colours[index % colours.length]}"><span class="generic-day-number">${stage.legacy?.day || index + 1}</span><span class="generic-stage-copy"><strong>${escapeHtml(stage.title)}</strong><span>${fixed ? "🔒 Geschützter Fixpunkt" : escapeHtml(overnight)}</span></span><span class="generic-stage-distance">${stage.kind === "rest" ? "Ruhetag" : route?.distanceMeters ? `${km.format(route.distanceMeters / 1000)} km` : stage.kind === "transport" ? "Fähre" : "–"}</span></button>`;
+      }).join("");
+      list.querySelectorAll("[data-stage-index]").forEach((button) => button.addEventListener("click", () => selectStage(Number(button.dataset.stageIndex), true)));
+    } else {
+      meta.textContent = `${model.revision.stays.length} Stopps · aktueller Stand`;
+      list.setAttribute("aria-label", "Unterkünfte");
+      list.innerHTML = model.revision.stays.map((stay, index) => {
+        const startIndex = stageForStay(stay);
+        const option = optionsFor(stay)[0];
+        const booking = bookingFor(stay);
+        return `<button class="generic-stage-row stay" type="button" data-stay-index="${index}" aria-current="${index === selectedStay}"><span class="generic-day-number">${model.revision.stages[startIndex]?.legacy?.day || startIndex + 1}</span><span class="generic-stage-copy"><strong>${escapeHtml(place(stay.placeId).name)}</strong><span>${escapeHtml(option?.name || "Unterkunft offen")}</span><small class="generic-booking-badge ${bookingClass(booking)}">${bookingLabel(booking)}</small></span><span class="generic-stage-distance">${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></button>`;
+      }).join("");
+      list.querySelectorAll("[data-stay-index]").forEach((button) => button.addEventListener("click", () => selectStay(Number(button.dataset.stayIndex), true)));
+    }
+  }
+
+  function selectedRouteStyle(stage, route) {
+    return routeStyleDrafts.get(model.revision.stages.indexOf(stage)) || route?.style || "direct";
+  }
+
+  function previewRouteStyle(style) {
+    const stage = model.revision.stages[selectedStage];
+    const route = routeFor(stage);
+    if (!route) return;
+    const previousStyle = selectedRouteStyle(stage, route);
+    if (style === previousStyle) return;
+    pendingRouteStyleChange = {
+      stageIndex: selectedStage,
+      previousStyle,
+      previousHadDraft: routeStyleDrafts.has(selectedStage),
+      previousConfirmed: confirmedRouteStyleDrafts.has(selectedStage),
+      previewStyle: style
+    };
+    if (style === route.style) {
+      routeStyleDrafts.delete(selectedStage);
+      confirmedRouteStyleDrafts.delete(selectedStage);
+    } else {
+      routeStyleDrafts.set(selectedStage, style);
+      confirmedRouteStyleDrafts.delete(selectedStage);
+    }
+    compareOriginal = false;
+    renderInspector();
+    updateCompareControl();
+    applyWorkspaceMapFocus(true);
+    showRouteStyleDialog(stage, route, style, previousStyle);
+  }
+
+  function discardRoutePreview() {
+    pendingRouteStyleChange = null;
+    routeStyleDrafts.delete(selectedStage);
+    confirmedRouteStyleDrafts.delete(selectedStage);
+    compareOriginal = false;
+    renderInspector();
+    updateCompareControl();
+    applyWorkspaceMapFocus(true);
+    applyOverviewRouteStyles();
+  }
+
+  function cancelPendingRouteStyleChange() {
+    if (!pendingRouteStyleChange) return;
+    const { stageIndex, previousStyle, previousHadDraft, previousConfirmed } = pendingRouteStyleChange;
+    if (previousHadDraft) routeStyleDrafts.set(stageIndex, previousStyle);
+    else routeStyleDrafts.delete(stageIndex);
+    if (previousConfirmed) confirmedRouteStyleDrafts.add(stageIndex);
+    else confirmedRouteStyleDrafts.delete(stageIndex);
+    pendingRouteStyleChange = null;
+    compareOriginal = false;
+    renderInspector();
+    updateCompareControl();
+    applyWorkspaceMapFocus(true);
+  }
+
+  function showRouteStyleDialog(stage, route, previewStyle, previousStyle) {
+    const dialog = document.querySelector("#generic-route-style-dialog");
+    if (!dialog) return;
+    const day = stage.legacy?.day || selectedStage + 1;
+    const preview = previewMetricsFor(selectedStage, route);
+    const metrics = (value) => value?.distanceMeters
+      ? `${km.format(value.distanceMeters / 1000)} km · ${formatDuration(value.durationSeconds)}`
+      : "Wird beim Übernehmen berechnet";
+    dialog.dataset.stageIndex = String(selectedStage);
+    dialog.querySelector("#generic-route-style-title").textContent = `${routeStyleLabel(previousStyle)} → ${routeStyleLabel(previewStyle)}?`;
+    dialog.querySelector("#generic-route-style-context").textContent = `Routenart ändern · Tag ${day} · ${stage.title}`;
+    const previousMetrics = previousStyle === route.style
+      ? route
+      : geometryFor(selectedStage, previousStyle === "direct" ? "direct" : "original") || route;
+    dialog.querySelector("#generic-route-style-original").textContent = routeStyleLabel(previousStyle);
+    dialog.querySelector("#generic-route-style-original-metrics").textContent = metrics(previousMetrics);
+    dialog.querySelector("#generic-route-style-preview").textContent = routeStyleLabel(previewStyle);
+    dialog.querySelector("#generic-route-style-preview-metrics").textContent = metrics(preview);
+    dialog.showModal();
+    dialog.querySelector("#generic-route-style-confirm").focus();
+  }
+
+  function routeHintsFor(stage, route, activeStyle) {
+    const hasChangedStyle = routeStyleDrafts.has(selectedStage) && activeStyle !== route?.style;
+    if (hasChangedStyle && activeStyle === "direct") {
+      return `Direkte Verbindung von ${place(stage.originPlaceId).name} nach ${place(stage.destinationPlaceId).name}. Die Zwischenziele der kurvigen Variante entfallen.`;
+    }
+    if (hasChangedStyle && activeStyle === "scenic") {
+      return `Kurvige Verbindung von ${place(stage.originPlaceId).name} nach ${place(stage.destinationPlaceId).name}. Landschaftliche Zwischenziele werden bei der Routenprüfung festgelegt.`;
+    }
+    return [route?.roadSummary.join(" · "), stage.legacy?.points].filter(Boolean).join(" · ")
+      || stage.notes.join(" ")
+      || (stage.kind === "rest" ? "Motorräder bleiben stehen." : "Keine zusätzlichen Hinweise.");
+  }
+
+  function updateCompareControl() {
+    const control = root.querySelector(".generic-compare");
+    if (!control) return;
+    const hasSelectedPreview = listMode === "days" && routeStyleDrafts.has(selectedStage);
+    const stage = model.revision.stages[selectedStage];
+    const route = stage ? routeFor(stage) : null;
+    const previewStyle = routeStyleDrafts.get(selectedStage);
+    const legend = root.querySelector("#generic-compare-legend");
+    control.disabled = !hasSelectedPreview;
+    control.setAttribute("aria-pressed", String(hasSelectedPreview && compareOriginal));
+    control.querySelector("span").textContent = compareOriginal ? "Vergleich aktiv" : "Original vergleichen";
+    control.title = hasSelectedPreview ? "Original und Routenvorschau dieser Etappe vergleichen" : "Verfügbar, sobald für diese Etappe eine Routenvorschau erstellt wurde";
+    if (legend) {
+      legend.hidden = !(hasSelectedPreview && compareOriginal);
+      if (hasSelectedPreview && route) {
+        legend.innerHTML = `<span><i class="compare-line original" style="--compare-colour:${colours[selectedStage % colours.length]}"></i>${escapeHtml(routeStyleLabel(route.style))} · Original</span><span><i class="compare-line preview"></i>${escapeHtml(routeStyleLabel(previewStyle))} · Vorschau</span>`;
+      } else {
+        legend.innerHTML = "";
+      }
+    }
+  }
+
+  function openPlanContext(request) {
+    if (typeof window.__ROADBOOK_OPEN_PLAN_CHANGE__ === "function") {
+      window.__ROADBOOK_OPEN_PLAN_CHANGE__(request);
+      return;
+    }
+    document.querySelector("#nav-plan")?.click();
+  }
+
+  function openStagePlanContext(action = "stage") {
+    const stage = model.revision.stages[selectedStage];
+    const route = routeFor(stage);
+    const previewStyle = routeStyleDrafts.get(selectedStage);
+    const dayLabel = stage.legacy?.day || selectedStage + 1;
+    const fixed = fixedForStage(stage);
+    const previewText = previewStyle
+      ? ` Die Routenart soll von ${route?.style === "scenic" ? "Kurvig & schön" : "Direkt"} auf ${previewStyle === "scenic" ? "Kurvig & schön" : "Direkt"} wechseln.`
+      : "";
+    openPlanContext({
+      title: fixed && action === "fixed" ? "Fixpunkt ändern" : "Etappe anpassen",
+      contextLabel: `Tag ${dayLabel} · ${stage.title}`,
+      scope: "stage",
+      type: "free",
+      startDay: selectedStage + 1,
+      place: stage.title,
+      instruction: `Nur die ausgewählte Etappe „${stage.title}“ anpassen. Start, Ziel, Unterkunft und alle übrigen Reisetage unverändert lassen.${previewText}`
+    });
+  }
+
+  function openStayPlanContext(action) {
+    const stay = model.revision.stays[selectedStay];
+    const startIndex = stageForStay(stay);
+    const location = place(stay.placeId).name;
+    const dayLabel = model.revision.stages[startIndex]?.legacy?.day || startIndex + 1;
+    if (action === "night") {
+      openPlanContext({
+        title: "Aufenthalt verlängern",
+        contextLabel: `Unterkunft · ${location} · ab Tag ${dayLabel}`,
+        type: "extend",
+        startDay: startIndex + 1,
+        place: location,
+        nights: 1,
+        instruction: `Den bestehenden Aufenthalt in ${location} um eine Nacht verlängern. Angrenzende Etappen und den geschützten Fährtermin prüfen.`
+      });
+      return;
+    }
+    openPlanContext({
+      title: "Neue Unterkunft suchen",
+      contextLabel: `Unterkunft · ${location} · ab Tag ${dayLabel}`,
+      type: "free",
+      startDay: startIndex + 1,
+      place: location,
+      instruction: `Für den bestehenden Aufenthalt in ${location} eine neue motorradfreundliche Unterkunft mit sicherer Abstellung suchen. Zuerst am gleichen Ort suchen; nur falls nötig die angrenzenden Etappen ändern.`
+    });
+  }
+
+  function renderInspector() {
+    const inspector = root.querySelector("#generic-inspector");
+    if (!inspector) return;
+    if (listMode === "days") {
+      const stage = model.revision.stages[selectedStage];
+      const route = routeFor(stage);
+      const stay = stayForDate(stage.date);
+      const accommodation = stay ? optionsFor(stay)[0] : null;
+      const alternative = stay ? optionsFor(stay)[1] : null;
+      const booking = stay ? bookingFor(stay) : null;
+      const fixed = fixedForStage(stage);
+      const destination = stage.legacy?.overnight || place(stage.destinationPlaceId).name;
+      const activeStyle = selectedRouteStyle(stage, route);
+      const hasRoutePreview = routeStyleDrafts.has(selectedStage);
+      const routePreviewConfirmed = confirmedRouteStyleDrafts.has(selectedStage);
+      const displayedRoute = previewMetricsFor(selectedStage, route);
+      const googleMapsUrl = googleMapsUrlForSelection(stage, route);
+      inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Tag ${stage.legacy?.day || selectedStage + 1} · ${stage.kind === "rest" ? "Ruhetag" : stage.kind === "transport" ? "Transport" : stage.kind === "loop" ? "Rundfahrt" : "Motorradetappe"}</span><h2>${escapeHtml(stage.title)}</h2><span>${escapeHtml(formatDate(stage.date, { weekday: "long", day: "2-digit", month: "long" }))}</span></div>
+        ${fixed ? `<div class="generic-fixed-notice"><strong>🔒 Geschützter Fixpunkt</strong>${escapeHtml(fixed.title)} kann nur nach ausdrücklicher Bestätigung verändert werden.</div>` : ""}
+        <div class="generic-metrics"><div><strong>${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km` : "–"}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Strecke"}</span></div><div><strong>${formatDuration(displayedRoute?.durationSeconds)}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Fahrzeit"}</span></div><div><strong>${escapeHtml(destination)}</strong><span>Übernachtung</span></div></div>
+        ${route ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt sofort eine Vorschau und fragt anschließend, ob du sie übernehmen möchtest.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Als Änderung vorgemerkt" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
+        <div class="generic-detail-block"><h3>Streckenhinweise</h3><p>${escapeHtml(routeHintsFor(stage, route, activeStyle))}</p></div>
+        <div class="generic-detail-block"><h3>Unterkunft</h3>${accommodation ? `<div class="generic-hotel"><span class="generic-hotel-icon">⌂</span><div><strong>${escapeHtml(accommodation.name)}</strong><span>${bookingLabel(booking)} · ${accommodation.motorcycleParking === "confirmed" ? "Motorradgarage bestätigt" : "Abstellung prüfen"}</span>${accommodation.url ? `<a class="generic-hotel-link" href="${escapeHtml(accommodation.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : ""}${alternative ? `<small>Alternative: ${escapeHtml(alternative.name)}</small>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : ""}` : ""}</div></div>` : `<p>Für diesen Tag ist noch keine Unterkunft hinterlegt.</p>`}${stay ? `<button class="generic-context-link" type="button" id="generic-show-stay">Unterkunft dieses Tages ansehen →</button>` : ""}</div>
+        <div class="generic-inspector-actions">${googleMapsUrl ? `<a class="generic-action-button" href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div>`;
+      inspector.querySelectorAll("[data-route-style]").forEach((button) => button.addEventListener("click", () => previewRouteStyle(button.dataset.routeStyle)));
+      inspector.querySelector("#generic-discard-route-preview")?.addEventListener("click", discardRoutePreview);
+      inspector.querySelector("#generic-adjust-stage")?.addEventListener("click", () => openStagePlanContext("stage"));
+      inspector.querySelector("#generic-adjust-fixed")?.addEventListener("click", () => openStagePlanContext("fixed"));
+      inspector.querySelector("#generic-show-stay")?.addEventListener("click", () => { selectedStay = model.revision.stays.indexOf(stay); setListMode("stays"); });
+    } else {
+      const stay = model.revision.stays[selectedStay];
+      const startIndex = stageForStay(stay);
+      const option = optionsFor(stay)[0];
+      const alternative = optionsFor(stay)[1];
+      const booking = bookingFor(stay);
+      const protectedBooking = Boolean(booking?.protected);
+      inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Unterkunft · ab Tag ${model.revision.stages[startIndex]?.legacy?.day || startIndex + 1}</span><h2>${escapeHtml(place(stay.placeId).name)}</h2><span>${formatDate(stay.startDate)} · ${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div>
+        ${protectedBooking ? `<div class="generic-fixed-notice"><strong>🔒 Buchung geschützt</strong>Eine Änderung benötigt deine ausdrückliche Bestätigung und eine Prüfung der angrenzenden Route.</div>` : ""}
+        <div class="generic-metrics two"><div><strong>${bookingLabel(booking)}</strong><span>Buchungsstatus</span></div><div><strong>${stay.nightCount}</strong><span>${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div></div>
+        <div class="generic-detail-block"><h3>${option ? "Unterkunft" : "Unterkunft offen"}</h3>${option ? `<div class="generic-hotel"><span class="generic-hotel-icon">⌂</span><div><strong>${escapeHtml(option.name)}</strong><span>${option.motorcycleParking === "confirmed" ? "Motorradgarage bestätigt" : "Sichere Abstellung prüfen"}</span>${option.url ? `<a class="generic-hotel-link" href="${escapeHtml(option.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : `<small>Kein Hotel-Link hinterlegt</small>`}</div></div>` : `<p>Es ist noch keine erste Wahl hinterlegt.</p>`}</div>
+        <div class="generic-detail-block"><h3>Alternative</h3>${alternative ? `<div class="generic-hotel"><span class="generic-hotel-icon secondary">2</span><div><strong>${escapeHtml(alternative.name)}</strong><span>Noch nicht ausgewählt</span>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : `<small>Kein Link hinterlegt</small>`}</div></div>` : `<p>Noch keine Alternative hinterlegt.</p>`}<p class="generic-context-note">Zuerst am gleichen Ort suchen. Nur ein Ortswechsel löst eine Prüfung der angrenzenden Etappen aus.</p></div>
+        <div class="generic-inspector-actions"><button class="generic-action-button primary" type="button" id="generic-find-accommodation">Neue Unterkunft suchen</button><button class="generic-action-button" type="button" id="generic-add-night">Nacht hinzufügen</button><button class="generic-context-link" type="button" id="generic-show-adjacent">Angrenzende Etappen ansehen →</button></div>`;
+      inspector.querySelector("#generic-find-accommodation")?.addEventListener("click", () => openStayPlanContext("search"));
+      inspector.querySelector("#generic-add-night")?.addEventListener("click", () => openStayPlanContext("night"));
+      inspector.querySelector("#generic-show-adjacent")?.addEventListener("click", () => { selectedStage = Math.max(0, startIndex); setListMode("days"); });
+    }
+  }
+
+  function selectStage(index, fit) {
+    const nextStage = Math.max(0, Math.min(model.revision.stages.length - 1, index));
+    if (nextStage !== selectedStage || listMode !== "days") compareOriginal = false;
+    selectedStage = nextStage;
+    if (listMode !== "days") listMode = "days";
+    root.querySelectorAll("[data-list-mode]").forEach((button) => button.setAttribute("aria-selected", String(button.dataset.listMode === "days")));
+    renderWorkList();
+    renderInspector();
+    updateCompareControl();
+    applyWorkspaceMapFocus(fit);
+  }
+
+  function selectStay(index, fit) {
+    selectedStay = Math.max(0, Math.min(model.revision.stays.length - 1, index));
+    compareOriginal = false;
+    if (listMode !== "stays") listMode = "stays";
+    root.querySelectorAll("[data-list-mode]").forEach((button) => button.setAttribute("aria-selected", String(button.dataset.listMode === "stays")));
+    renderWorkList();
+    renderInspector();
+    updateCompareControl();
+    applyWorkspaceMapFocus(fit);
+  }
+
+  async function initialiseWorkspaceMap() {
+    if (workspaceInitialised) return;
+    workspaceInitialised = true;
+    try {
+      const [L, { xml, routes }] = await Promise.all([loadLeaflet(), loadMapData()]);
+      workspaceMap = L.map("generic-work-map", { zoomControl: true, scrollWheelZoom: true }).setView([42.2, 2.1], 5);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(workspaceMap);
+      const pointCoordinates = kmlPoints(xml);
+      const dayEnds = new Map();
+      workspaceBounds = L.latLngBounds([]);
+      routes.features.forEach((feature) => {
+        const { variant, ferry, day, name } = feature.properties;
+        if (feature.properties.optional || (ferry && variant === "direct")) return;
+        const index = stageIndexForFeature(feature);
+        const coordinates = leafletCoordinates(feature);
+        routeGeometryData.set(`${index}:${variant}`, feature.properties);
+        if (!workspaceRoutes.has(index)) workspaceRoutes.set(index, { original: L.featureGroup(), direct: L.featureGroup() });
+        const polyline = L.polyline(coordinates, { className: `generic-route-line route-${variant} route-stage-${index}`, color: ferry ? "#9a6118" : colours[index % colours.length], weight: 5, opacity: .78, dashArray: ferry ? "9 8" : null, lineCap: "round" }).bindTooltip(`Tag ${day} · ${model.revision.stages[index]?.title || name}`, { sticky: true });
+        polyline.on("click", () => selectStage(index, true));
+        workspaceRoutes.get(index)[variant].addLayer(polyline);
+        if (variant === "original") {
+          workspaceRoutes.get(index).original.addTo(workspaceMap);
+          workspaceBounds.extend(polyline.getBounds());
+          dayEnds.set(index, coordinates.at(-1));
+        }
+      });
+      model.revision.stays.forEach((stay, stayIndex) => {
+        const stageIndex = stageForStay(stay);
+        const name = place(stay.placeId).name;
+        const day = model.revision.stages[stageIndex]?.legacy?.day || stageIndex + 1;
+        let coordinate = pointCoordinateFor(pointCoordinates, name, day) || dayEnds.get(stageIndex);
+        for (let offset = 1; !coordinate && offset <= 4; offset += 1) {
+          coordinate = dayEnds.get(stageIndex - offset) || dayEnds.get(stageIndex + offset);
+        }
+        if (!coordinate) return;
+        const icon = L.divIcon({ className: "generic-stay-marker-shell", html: `<span>${day}</span>`, iconSize: [28, 28], iconAnchor: [14, 14] });
+        const marker = L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${day} · ${name}`);
+        marker.on("click", () => selectStay(stayIndex, true));
+        marker.addTo(workspaceMap);
+        if (marker.getElement()) {
+          marker.getElement().dataset.stayIndex = String(stayIndex);
+          marker.getElement().dataset.latitude = String(coordinate[0]);
+          marker.getElement().dataset.longitude = String(coordinate[1]);
+        }
+        workspaceMarkers.push({ marker, stayIndex, stageIndex });
+      });
+      if (workspaceBounds.isValid()) workspaceMap.fitBounds(workspaceBounds, { padding: [32, 32] });
+      renderInspector();
+      updateCompareControl();
+      applyWorkspaceMapFocus(false);
+    } catch (error) {
+      const mapRoot = root.querySelector("#generic-work-map");
+      if (mapRoot) mapRoot.innerHTML = `<div class="generic-map-fallback"><div><strong>Karte momentan nicht verfügbar</strong><br>${escapeHtml(error.message)}</div></div>`;
+    }
+  }
+
+  function applyWorkspaceMapFocus(fit) {
+    if (!workspaceMap) return;
+    const title = root.querySelector("#generic-work-map-title");
+    const subtitle = root.querySelector("#generic-work-map-subtitle");
+    if (listMode === "days") {
+      const stage = model.revision.stages[selectedStage];
+      const route = routeFor(stage);
+      const previewStyle = routeStyleDrafts.get(selectedStage);
+      const previewMetrics = previewMetricsFor(selectedStage, route);
+      title.textContent = `${previewStyle ? (compareOriginal ? "Routenvergleich" : "Routenvorschau") : planLabel()} · Tag ${stage.legacy?.day || selectedStage + 1}`;
+      subtitle.textContent = previewStyle
+        ? compareOriginal
+          ? `${routeStyleLabel(route?.style)} (Original) und ${routeStyleLabel(previewStyle)} (Vorschau).`
+          : `${routeStyleLabel(previewStyle)} neu berechnet${previewMetrics?.distanceMeters ? ` · ${km.format(previewMetrics.distanceMeters / 1000)} km · ${formatDuration(previewMetrics.durationSeconds)}` : ""}. Originalplan bleibt unverändert.`
+        : `${stage.title} · veröffentlichter Stand.`;
+      workspaceRoutes.forEach((variants, index) => {
+        const draftUsesDirect = index === selectedStage && previewStyle === "direct";
+        const showDirect = draftUsesDirect;
+        const showOriginal = !draftUsesDirect || compareOriginal;
+        if (showOriginal && !workspaceMap.hasLayer(variants.original)) variants.original.addTo(workspaceMap);
+        if (!showOriginal && workspaceMap.hasLayer(variants.original)) workspaceMap.removeLayer(variants.original);
+        if (showDirect && !workspaceMap.hasLayer(variants.direct)) variants.direct.addTo(workspaceMap);
+        if (!showDirect && workspaceMap.hasLayer(variants.direct)) workspaceMap.removeLayer(variants.direct);
+        variants.original.eachLayer((layer) => layer.setStyle({
+          color: layer.options.dashArray ? "#9a6118" : colours[index % colours.length],
+          weight: index === selectedStage ? 8 : 4,
+          opacity: index === selectedStage ? (draftUsesDirect && compareOriginal ? .35 : .96) : .2
+        }));
+        variants.direct.eachLayer((layer) => layer.setStyle({ color: "#202822", weight: 8, opacity: .96, dashArray: "9 7" }));
+      });
+      workspaceMarkers.forEach(({ marker, stageIndex }) => marker.getElement()?.classList.toggle("is-active", stageIndex === selectedStage));
+      const selected = workspaceRoutes.get(selectedStage);
+      const selectedGroup = previewStyle === "direct" ? selected?.direct : selected?.original;
+      if (fit && selectedGroup?.getBounds().isValid()) workspaceMap.fitBounds(selectedGroup.getBounds(), { padding: [70, 70], maxZoom: 9 });
+    } else {
+      const stay = model.revision.stays[selectedStay];
+      const startIndex = stageForStay(stay);
+      title.textContent = `${planLabel()} · ${place(stay.placeId).name}`;
+      subtitle.textContent = "Veröffentlichter Übernachtungsort mit ankommender und abgehender Etappe.";
+      workspaceRoutes.forEach((variants, index) => {
+        if (!workspaceMap.hasLayer(variants.original)) variants.original.addTo(workspaceMap);
+        if (workspaceMap.hasLayer(variants.direct)) workspaceMap.removeLayer(variants.direct);
+        variants.original.eachLayer((layer) => layer.setStyle({ weight: [startIndex, startIndex + 1].includes(index) ? 6 : 3, opacity: [startIndex, startIndex + 1].includes(index) ? .42 : .05 }));
+      });
+      workspaceMarkers.forEach(({ marker, stayIndex }) => marker.getElement()?.classList.toggle("is-active", stayIndex === selectedStay));
+      const selectedMarker = workspaceMarkers.find((item) => item.stayIndex === selectedStay)?.marker;
+      if (fit && selectedMarker) workspaceMap.setView(selectedMarker.getLatLng(), 8, { animate: true });
+    }
+  }
+
+  function openExistingPlanner() {
+    document.querySelector("#nav-plan")?.click();
+  }
+
+  function setView(view) {
+    activeView = view === "roadbook" ? "roadbook" : "overview";
+    const overview = activeView === "overview";
+    root.hidden = false;
+    root.querySelector("#generic-overview-panel").hidden = !overview;
+    root.querySelector("#generic-workspace").hidden = overview;
+    legacyRoadbook.hidden = true;
+    document.body.classList.toggle("generic-roadbook-view", !overview);
+    navRoot.querySelectorAll("[data-generic-view]").forEach((button) => button.setAttribute("aria-selected", String(button.dataset.genericView === activeView)));
+    const viewUrl = new URL(window.location.href);
+    if (activeView === "roadbook") viewUrl.searchParams.set("view", "roadbook");
+    else viewUrl.searchParams.delete("view");
+    history.replaceState(null, "", viewUrl);
+    if (overview && overviewMap) {
+      applyOverviewRouteStyles();
+      window.setTimeout(() => overviewMap.invalidateSize(), 0);
+    }
+    if (!overview) {
+      initialiseWorkspaceMap();
+      window.setTimeout(() => { workspaceMap?.invalidateSize(); applyWorkspaceMapFocus(false); }, 0);
+    }
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
+
+  async function start() {
+    document.body.classList.add("generic-trip-enabled");
+    try {
+      const snapshot = await bridge.getPublishedSnapshot();
+      model = modelApi.importLegacyRoadbook(snapshot);
+      modelApi.assertLegacyParity(model, { sourceDays: 30, stages: 30 });
+      window.__GENERIC_TRIP_MODEL__ = model;
+      renderNavigation();
+      renderOverview();
+      setView(requestedView);
+    } catch (error) {
+      document.body.classList.remove("generic-trip-enabled");
+      navRoot.hidden = true;
+      root.hidden = true;
+      legacyRoadbook.hidden = false;
+      console.error("Generische Reiseansicht konnte nicht geladen werden", error);
+    }
+  }
+
+  start();
+})();
