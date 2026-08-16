@@ -2,7 +2,6 @@
   "use strict";
 
   const params = new URLSearchParams(window.location.search);
-  if (params.get("tripOverview") !== "1") return;
   const requestedView = params.get("view") === "roadbook" ? "roadbook" : "overview";
 
   const bridge = window.__ROADBOOK_READ_MODEL__;
