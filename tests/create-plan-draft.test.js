@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { Readable } = require("node:stream");
 const handler = require("../api/create-plan-draft");
-const { ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
+const { ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
 
 const days = [
   { overnight: "Castelldefels" },
@@ -56,6 +56,8 @@ checkedRoute[1].note = "Kurvige Fahrt nach Vielha.";
 assert.match(routeDetailIssue(checkedRoute, 1, 3), /Bonaigua/);
 
 assert.throws(() => verifyAccommodationState(checkedRoute, {}), /Übernachtungsblöcken/);
+assert.equal(protectedStartIssue([{ origin: "Berikon, Switzerland", overnight: "Grenoble" }], { place: "Berikon" }), "");
+assert.match(protectedStartIssue([{ origin: "Zürich", overnight: "Grenoble" }], { place: "Berikon" }), /geschützten Startpunkt Berikon/);
 
 console.log("create-plan-draft tests passed");
 
@@ -129,7 +131,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   }));
   let fetchCount = 0;
   const modelRequests = [];
-  global.fetch = async (_url, options) => {
+  const successfulModelFetch = async (_url, options) => {
     fetchCount += 1;
     const request = JSON.parse(options.body);
     modelRequests.push(request);
@@ -159,6 +161,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
       })
     };
   };
+  global.fetch = successfulModelFetch;
   const routeResult = await callApi({
     secret: "test-pin",
     stage: "route",
@@ -187,6 +190,33 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.equal(verifiedResult.body.verifiedDraft.verificationVersion, 2);
   assert.equal(fetchCount, 2, "route verification should call the model exactly once");
   assert.deepEqual(modelRequests[1].tools, [{ type: "web_search" }], "route verification should use web search");
+
+  const movedStartDays = currentDays.map((day) => ({ ...day }));
+  movedStartDays[0] = makeCheckedDay("Zürich – Basisort", "Basisort", false, {
+    origin: "Zürich", destination: "Basisort", km: "120 km", time: "2 h", roads: "A1"
+  });
+  global.fetch = async (_url, options) => {
+    const request = JSON.parse(options.body);
+    const input = JSON.parse(request.input);
+    return {
+      ok: true,
+      json: async () => ({ output_text: JSON.stringify({
+        summary: ["Route geprüft"], decision: "changed", replaceFromDay: 1, replaceCount: 27,
+        days: input.candidateSegment, openItems: []
+      }) })
+    };
+  };
+  const protectedStartResult = await callApi({
+    secret: "test-pin",
+    stage: "verify-route",
+    days: movedStartDays,
+    replaceFromDay: 1,
+    change: { type: "reroute", startDay: 1 },
+    lockedStart: { place: "Berikon" }
+  });
+  assert.equal(protectedStartResult.status, 500);
+  assert.match(protectedStartResult.body.error, /geschützten Startpunkt Berikon/);
+  global.fetch = successfulModelFetch;
 
   const styleDays = currentDays.map((day) => ({ ...day }));
   styleDays[1] = makeCheckedDay("Basisort – Zielort", "Zielort", false, {

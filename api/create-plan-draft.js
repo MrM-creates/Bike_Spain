@@ -200,9 +200,16 @@ const placeKey = (value) => cleanText(value, 200)
   .trim();
 
 const placesMatch = (left, right) => {
-  const a = placeKey(left);
-  const b = placeKey(right);
+  const routePlaceKey = (value) => {
+    const key = placeKey(value);
+    if (/\b(?:la patacona|alboraya|olympia hotel)\b/.test(key)) return "la patacona";
+    return key;
+  };
+  const a = routePlaceKey(left);
+  const b = routePlaceKey(right);
   if (!a || !b) return false;
+  const isFerryStay = (value) => /(?:^| )(?:fahre|fahrkabine|kabine an bord|kabine auf der fahre)(?: |$)/.test(value);
+  if (isFerryStay(a) && isFerryStay(b)) return true;
   if (a === b || a.includes(b) || b.includes(a)) return true;
   const ignored = new Set([
     "oder", "raum", "vorzugsweise", "stadtrand", "ortsrand", "randlage", "aussenbezirk",
@@ -223,6 +230,18 @@ const contiguousPlaceNights = (days, startIndex, place) => {
     nights += 1;
   }
   return nights;
+};
+
+const departurePlace = (day) => cleanText(day?.rest ? day?.overnight : (day?.origin || day?.overnight), 180);
+
+const protectedStartIssue = (days, lockedStart) => {
+  const expected = cleanText(lockedStart?.place, 180);
+  if (!expected) return "";
+  const actual = departurePlace(days[0]);
+  if (!actual || !placesMatch(actual, expected)) {
+    return `Die Reise beginnt in ${actual || "einem unbekannten Ort"} statt am geschützten Startpunkt ${expected}.`;
+  }
+  return "";
 };
 
 const routeContinuityIssue = (days, startIndex, endIndex) => {
@@ -585,6 +604,9 @@ module.exports = async (request, response) => {
       if (verifiedDays.length !== currentDays.length || verifiedFerryIndex !== ferryIndex || isoForDay(verifiedFerryIndex) !== FERRY_DATE) {
         throw new Error("Die automatisch geprüfte Route verletzt den festen Fährtermin.");
       }
+      const lockedStart = payload.lockedStart && typeof payload.lockedStart === "object" ? payload.lockedStart : null;
+      const startIssue = protectedStartIssue(verifiedDays, lockedStart);
+      if (startIssue) throw new Error(`Die automatische Routenprüfung verletzt einen Fixpunkt: ${startIssue}`);
       const continuityEndIndex = routeStyleOnly ? endIndex : ferryIndex;
       let continuityIssue = routeContinuityIssue(verifiedDays, startIndex, continuityEndIndex);
       if (!continuityIssue && routeStyleOnly && verifiedDays[endIndex]) {
@@ -614,6 +636,7 @@ module.exports = async (request, response) => {
           replaceFromDay,
           replaceCount,
           lockedStay,
+          lockedStart,
           request: payload.change || {},
           summary: routeVerificationSummary(verifiedDays, startIndex, endIndex, currentDays, ferryIndex),
           decision,
@@ -662,6 +685,7 @@ module.exports = async (request, response) => {
       currentNightsAtPlace: currentPlaceNights,
       targetNightsAtPlace: targetPlaceNights
     };
+    const lockedStart = startIndex === 0 ? { place: departurePlace(currentDays[0]) } : null;
 
     const routeStartedAt = Date.now();
     const changeScopeInstruction = requestedType === "reroute"
@@ -702,6 +726,10 @@ module.exports = async (request, response) => {
 
     let routePlan = await requestRoutePlan(routeInput);
     let draftDays = assembleDraftDays(routePlan);
+    const initialStartIssue = protectedStartIssue(draftDays, lockedStart);
+    if (initialStartIssue) {
+      throw new Error(`${initialStartIssue} Der aktuelle Plan wurde nicht verändert.`);
+    }
     if (targetPlaceNights !== null) {
       let actualNights = contiguousPlaceNights(draftDays, placeIndex, requestedPlace);
       if (actualNights !== targetPlaceNights) {
@@ -749,6 +777,7 @@ module.exports = async (request, response) => {
           replaceFromDay: startDay,
           replaceCount,
           lockedStay: targetPlaceNights === null ? null : { place: requestedPlace, startIndex: placeIndex, nights: targetPlaceNights },
+          lockedStart,
           request: change,
           summary: routePlan.summary,
           decision,
@@ -783,4 +812,4 @@ module.exports = async (request, response) => {
   }
 };
 
-module.exports._test = { ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
+module.exports._test = { contiguousPlaceNights, expectedStays, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, placeIndexOf, placesMatch, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };

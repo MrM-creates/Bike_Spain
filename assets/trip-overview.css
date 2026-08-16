@@ -182,6 +182,9 @@ body.generic-trip-enabled.generic-roadbook-view .topbar { position: relative; }
 .generic-original-draft-banner > div:last-child { display: flex; flex: 0 0 auto; gap: 8px; }
 .generic-original-draft-banner button { min-height: 38px; }
 .generic-original-draft-banner button:disabled { opacity: .56; cursor: wait; }
+.generic-plan-draft-banner { border-color: #ddc69a; background: #fff8e9; box-shadow: 0 8px 24px rgba(154, 97, 24, .08); }
+.generic-plan-draft-banner strong { color: #8a5617; }
+.generic-draft-summary { display: grid; gap: 7px; margin: 14px 0 0; padding-left: 19px; color: var(--text); font-size: 12px; }
 
 body.generic-trip-enabled.generic-roadbook-view #legacy-roadbook > .intro { display: none; }
 
@@ -339,7 +342,7 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
   margin: 0;
   padding: 0;
 }
-body.generic-trip-enabled.generic-roadbook-view.generic-original-draft #trip-overview-root {
+body.generic-trip-enabled.generic-roadbook-view:is(.generic-original-draft, .generic-plan-draft) #trip-overview-root {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
 }
@@ -350,7 +353,7 @@ body.generic-trip-enabled.generic-roadbook-view .generic-original-draft-banner {
   padding: 9px 14px;
   box-shadow: none;
 }
-body.generic-trip-enabled.generic-roadbook-view.generic-original-draft .generic-workspace { min-height: 0; }
+body.generic-trip-enabled.generic-roadbook-view:is(.generic-original-draft, .generic-plan-draft) .generic-workspace { min-height: 0; }
 
 .generic-workspace {
   position: relative;

@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/roadbook-icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/trip-overview.css?v=20260816allroutes5">
+  <link rel="stylesheet" href="/assets/trip-overview.css?v=20260816replanning1">
   <style>
     :root {
       --bg: #f4f5f0;
@@ -1979,7 +1979,8 @@
           days: generated.draft.days,
           replaceFromDay: generated.draft.replaceFromDay,
           change: generated.draft.request,
-          lockedStay: generated.draft.lockedStay
+          lockedStay: generated.draft.lockedStay,
+          lockedStart: generated.draft.lockedStart
         }, "Die automatische Routenprüfung ist fehlgeschlagen.");
         draft = { ...verified.verifiedDraft, baseVersion: currentPublishedVersion };
         state.days = draft.days.map((item, index) => prepareDay(item, index, item.custom));
@@ -1988,6 +1989,10 @@
         planChangeDialog.classList.remove("is-planning");
         progress.hidden = true;
         planChangeDialog.close();
+        if (new URLSearchParams(window.location.search).get("tripOverview") === "1") {
+          window.location.reload();
+          return;
+        }
         requestAnimationFrame(() => requestAnimationFrame(() => {
           render();
           workflow.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -2049,7 +2054,8 @@
               days: draft.days,
               replaceFromDay: verificationStartDay,
               change: draft.request || {},
-              lockedStay: draft.lockedStay || null
+              lockedStay: draft.lockedStay || null,
+              lockedStart: draft.lockedStart || null
             })
           });
         } finally {
@@ -3116,6 +3122,7 @@ Wichtig fuer das Import-JSON:
     };
 
     const originalDraftActive = () => Boolean(draft?.days?.length && draft.request?.type === "restore-original");
+    const planDraftActive = () => Boolean(draft?.days?.length && !originalDraftActive());
 
     window.__ROADBOOK_READ_MODEL__ = Object.freeze({
       getRouteStyleDrafts: async () => originalDraftActive() ? [] : routeStyleDraftState(),
@@ -3138,15 +3145,44 @@ Wichtig fuer das Import-JSON:
         await publishDraft();
         return { published: !originalDraftActive() };
       },
+      getPlanDraftStatus: async () => planDraftActive() ? {
+        active: true,
+        phase: draft.phase || "route",
+        verified: draft.verified === true && Number(draft.verificationVersion) >= 2,
+        decision: draft.decision || "Vorgeschlagene Planänderung",
+        summary: clone(draft.summary || []),
+        openItems: clone(draft.openItems || [])
+      } : { active: false },
+      discardPlanDraft: async () => {
+        if (!planDraftActive()) return { discarded: false };
+        draft = null;
+        localStorage.removeItem(DRAFT_KEY);
+        state.days = clone(currentPlanDays);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ days: state.days }));
+        activeFilter = "all";
+        render();
+        return { discarded: true };
+      },
+      advancePlanDraft: async () => {
+        if (!planDraftActive()) return { active: false, published: false };
+        const previousPhase = draft.phase;
+        await publishDraft();
+        return {
+          active: planDraftActive(),
+          phase: draft?.phase || null,
+          published: previousPhase === "complete" && !planDraftActive()
+        };
+      },
       getPublishedSnapshot: async () => {
         let accommodations = [];
         try { accommodations = await loadAccommodationContext(); } catch (error) { console.warn("Unterkunftsstand fuer Reiseuebersicht nicht verfuegbar", error); }
         const useOriginalDraft = originalDraftActive();
+        const usePlanDraft = planDraftActive();
         return {
           publishedVersion: currentPublishedVersion,
-          planKind: useOriginalDraft ? "original-draft" : currentPlanKind,
+          planKind: useOriginalDraft ? "original-draft" : (usePlanDraft ? "plan-draft" : currentPlanKind),
           originalDays: clone(originalBaseline),
-          days: clone(useOriginalDraft ? draft.days : currentPlanDays),
+          days: clone((useOriginalDraft || usePlanDraft) ? draft.days : currentPlanDays),
           accommodations: clone(accommodations),
           trip: {
             ...clone(canonicalTripData.trip),
@@ -3181,6 +3217,6 @@ Wichtig fuer das Import-JSON:
     }
   </script>
   <script src="/assets/travel-model.js?v=20260816final"></script>
-  <script src="/assets/trip-overview.js?v=20260816allroutes5"></script>
+  <script src="/assets/trip-overview.js?v=20260816replanning1"></script>
 </body>
 </html>

@@ -1802,7 +1802,7 @@ Wichtig fuer das Import-JSON:
         const response = await fetch("/api/publish-accommodations", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ secret, reason, accommodations: state })
+          body: JSON.stringify({ secret, reason, accommodations: state, baseVersion: PUBLISHED_VERSION })
         });
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");
