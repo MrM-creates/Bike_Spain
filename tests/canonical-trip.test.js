@@ -65,6 +65,11 @@ test("accommodation schedule covers exactly 29 consecutive nights", () => {
   assert.equal(tripData.accommodations.alboraya.firstChoice, "Olympia Hotel, Events & Spa · Alboraya");
   assert.equal(tripData.accommodations.alboraya.alternative, "La Mozaira · Alboraya");
   assert.equal(tripData.accommodations["castelldefels-2"].title, "Castelldefels");
+  assert.equal(tripData.accommodations["castelldefels-2"].firstChoice, "ibis Barcelona Castelldefels");
+  assert.equal(tripData.baselineAccommodations["castelldefels-2"].firstChoice, "ibis Barcelona Castelldefels");
+  Object.values({ ...tripData.accommodations, ...tripData.baselineAccommodations }).forEach((stay) => {
+    assert.doesNotMatch(stay.firstChoice || "", /dasselbe|gleiche Unterkunft|wie am \d/i);
+  });
   assert.equal(tripData.accommodations.aosta.title, "Aosta");
   assert.equal(tripData.accommodations.ferry.alternative, undefined);
 

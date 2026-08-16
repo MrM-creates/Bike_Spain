@@ -49,6 +49,8 @@
   let workspaceMarkers = [];
   let workspaceInitialised = false;
   let compareOriginal = false;
+  let inspectorOpen = false;
+  let routeStyleDialogTimer = null;
   let mapDataPromise = null;
   const routeGeometryData = new Map();
   const routeStyleDrafts = new Map();
@@ -371,7 +373,7 @@
         if (!coordinate) return;
         const markerWidth = Math.max(32, 12 + markerLabel.length * 7);
         const icon = L.divIcon({ className: "generic-stay-marker-shell range", html: `<span>${escapeHtml(markerLabel)}</span>`, iconSize: [markerWidth, 28], iconAnchor: [markerWidth / 2, 14] });
-        L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${labels.join(" und ")} · ${name}`).on("click", () => { selectedStay = first.stayIndex; setView("roadbook"); setListMode("stays"); }).addTo(overviewMap);
+        L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${labels.join(" und ")} · ${name}`).on("click", () => { setView("roadbook"); selectStay(first.stayIndex, true); }).addTo(overviewMap);
       });
       const finalIndex = model.revision.stages.length - 1;
       const finalCoordinate = overviewDayEnds.get(finalIndex);
@@ -379,7 +381,7 @@
         const finalStage = model.revision.stages[finalIndex];
         const finalLabel = String(travelDayNumber(finalIndex));
         const icon = L.divIcon({ className: "generic-stay-marker-shell final", html: `<span>${finalLabel}</span>`, iconSize: [28, 28], iconAnchor: [14, 14] });
-        L.marker(finalCoordinate, { icon, zIndexOffset: 510 }).bindTooltip(`Tag ${finalLabel} · ${finalStage.title}`).on("click", () => { selectedStage = finalIndex; setView("roadbook"); setListMode("days"); }).addTo(overviewMap);
+        L.marker(finalCoordinate, { icon, zIndexOffset: 510 }).bindTooltip(`Tag ${finalLabel} · ${finalStage.title}`).on("click", () => { setView("roadbook"); selectStage(finalIndex, true); }).addTo(overviewMap);
       }
       overviewBounds = allRoutes.getBounds();
       if (overviewBounds.isValid()) overviewMap.fitBounds(overviewBounds, { padding: [24, 24] });
@@ -434,8 +436,13 @@
     const workspace = root.querySelector("#generic-workspace");
     workspace.innerHTML = `<section class="generic-stage-panel" aria-labelledby="generic-list-title"><div class="generic-panel-head"><div class="generic-panel-title"><h2 id="generic-list-title">Reiseplan</h2><span id="generic-list-meta"></span></div><div class="generic-loaded-plan"><span>${escapeHtml(planLabel())}</span><strong>Veröffentlicht</strong><small>${escapeHtml(planVersionLabel())}</small></div><div class="generic-plan-switch" role="tablist" aria-label="Reiseplan-Ansicht"><button type="button" role="tab" aria-selected="true" data-list-mode="days">Tage <span>${model.revision.stages.length}</span></button><button type="button" role="tab" aria-selected="false" data-list-mode="stays">Unterkünfte <span>${model.revision.stays.length}</span></button></div></div><div class="generic-stage-list" id="generic-stage-list"></div></section>
       <section class="generic-work-map" aria-label="Interaktive Routenkarte"><div id="generic-work-map"></div><div class="generic-work-map-toolbar"><div class="generic-work-map-status"><strong id="generic-work-map-title">${escapeHtml(planLabel())}</strong><span id="generic-work-map-subtitle">Karte und Tagesliste sind synchronisiert.</span></div><button class="generic-compare" type="button" aria-pressed="false" disabled title="Verfügbar, sobald für diese Etappe eine Routenvorschau erstellt wurde"><span>Original vergleichen</span><i aria-hidden="true"></i></button></div><div class="generic-work-map-legend"><span><i class="route"></i>Tagesetappe</span><span><i class="stay"></i>Übernachtung</span><span>◆ Ruhetag</span><span>🔒 Fixpunkt</span><span class="generic-compare-legend" id="generic-compare-legend" hidden></span></div><div class="generic-map-hint">Ort oder Strecke anklicken, um Details zu sehen</div></section>
-      <aside class="generic-inspector" id="generic-inspector" aria-live="polite"></aside>`;
+      <button class="generic-inspector-scrim" type="button" aria-label="Details schließen" tabindex="-1"></button><aside class="generic-inspector" id="generic-inspector" aria-live="polite"></aside>`;
     workspace.querySelectorAll("[data-list-mode]").forEach((button) => button.addEventListener("click", () => setListMode(button.dataset.listMode)));
+    workspace.querySelector(".generic-inspector-scrim").addEventListener("click", closeInspector);
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && inspectorOpen && !document.querySelector("dialog[open]")) closeInspector();
+    });
+    window.addEventListener("resize", syncInspectorState);
     workspace.querySelector(".generic-compare").addEventListener("click", () => {
       if (listMode !== "days" || !routeStyleDrafts.has(selectedStage)) return;
       compareOriginal = !compareOriginal;
@@ -444,16 +451,40 @@
     });
     renderWorkList();
     renderInspector();
+    syncInspectorState();
   }
 
   function setListMode(mode) {
     listMode = mode === "stays" ? "stays" : "days";
     compareOriginal = false;
+    closeInspector();
     root.querySelectorAll("[data-list-mode]").forEach((button) => button.setAttribute("aria-selected", String(button.dataset.listMode === listMode)));
     renderWorkList();
     renderInspector();
     updateCompareControl();
     applyWorkspaceMapFocus(true);
+  }
+
+  function syncInspectorState() {
+    const workspace = root.querySelector("#generic-workspace");
+    const inspector = root.querySelector("#generic-inspector");
+    if (!workspace || !inspector) return;
+    workspace.classList.toggle("is-inspector-open", inspectorOpen);
+    const usesDrawer = window.matchMedia("(max-width: 1240px)").matches;
+    if (usesDrawer) inspector.setAttribute("aria-hidden", String(!inspectorOpen));
+    else inspector.removeAttribute("aria-hidden");
+  }
+
+  function openInspector() {
+    inspectorOpen = true;
+    syncInspectorState();
+    window.setTimeout(() => workspaceMap?.invalidateSize(), 220);
+  }
+
+  function closeInspector() {
+    inspectorOpen = false;
+    syncInspectorState();
+    window.setTimeout(() => workspaceMap?.invalidateSize(), 220);
   }
 
   function renderWorkList() {
@@ -498,7 +529,7 @@
     pendingRouteStyleChange = {
       stageIndex: selectedStage,
       previousStyle,
-      previousHadDraft: routeStyleDrafts.has(selectedStage),
+      previousDraftStyle: routeStyleDrafts.get(selectedStage) || null,
       previousConfirmed: confirmedRouteStyleDrafts.has(selectedStage),
       previewStyle: style
     };
@@ -513,7 +544,14 @@
     renderInspector();
     updateCompareControl();
     applyWorkspaceMapFocus(true);
-    showRouteStyleDialog(stage, route, style, previousStyle);
+    if (routeStyleDialogTimer) window.clearTimeout(routeStyleDialogTimer);
+    window.requestAnimationFrame(() => {
+      routeStyleDialogTimer = window.setTimeout(() => {
+        routeStyleDialogTimer = null;
+        if (pendingRouteStyleChange?.stageIndex !== selectedStage || pendingRouteStyleChange?.previewStyle !== style) return;
+        showRouteStyleDialog(stage, route, style, previousStyle);
+      }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 180);
+    });
   }
 
   async function discardRoutePreview() {
@@ -542,16 +580,20 @@
 
   function cancelPendingRouteStyleChange() {
     if (!pendingRouteStyleChange) return;
-    const { stageIndex, previousStyle, previousHadDraft, previousConfirmed } = pendingRouteStyleChange;
-    if (previousHadDraft) routeStyleDrafts.set(stageIndex, previousStyle);
+    if (routeStyleDialogTimer) window.clearTimeout(routeStyleDialogTimer);
+    routeStyleDialogTimer = null;
+    const { stageIndex, previousDraftStyle, previousConfirmed } = pendingRouteStyleChange;
+    pendingRouteStyleChange = null;
+    if (previousDraftStyle) routeStyleDrafts.set(stageIndex, previousDraftStyle);
     else routeStyleDrafts.delete(stageIndex);
     if (previousConfirmed) confirmedRouteStyleDrafts.add(stageIndex);
     else confirmedRouteStyleDrafts.delete(stageIndex);
-    pendingRouteStyleChange = null;
     compareOriginal = false;
     renderInspector();
     updateCompareControl();
     applyWorkspaceMapFocus(true);
+    applyOverviewRouteStyles();
+    updateDraftChrome();
   }
 
   function showRouteStyleDialog(stage, route, previewStyle, previousStyle) {
@@ -683,7 +725,7 @@
       const routePreviewConfirmed = confirmedRouteStyleDrafts.has(selectedStage);
       const displayedRoute = previewMetricsFor(selectedStage, route);
       const googleMapsUrl = googleMapsUrlForSelection(stage, route);
-      inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Tag ${travelDayNumber(selectedStage)} · ${stage.kind === "rest" ? "Ruhetag" : stage.kind === "transport" ? "Transport" : stage.kind === "loop" ? "Rundfahrt" : "Motorradetappe"}</span><h2>${escapeHtml(stage.title)}</h2><span>${escapeHtml(formatDate(stage.date, { weekday: "long", day: "2-digit", month: "long" }))}</span></div>
+      inspector.innerHTML = `<button class="generic-inspector-close" type="button" aria-label="Zurück zur Route"><span aria-hidden="true">←</span> Zurück zur Route</button><div class="generic-inspector-head"><span class="generic-inspector-type">Tag ${travelDayNumber(selectedStage)} · ${stage.kind === "rest" ? "Ruhetag" : stage.kind === "transport" ? "Transport" : stage.kind === "loop" ? "Rundfahrt" : "Motorradetappe"}</span><h2>${escapeHtml(stage.title)}</h2><span>${escapeHtml(formatDate(stage.date, { weekday: "long", day: "2-digit", month: "long" }))}</span></div>
         ${fixed ? `<div class="generic-fixed-notice"><strong>🔒 Geschützter Fixpunkt</strong>${escapeHtml(fixed.title)} kann nur nach ausdrücklicher Bestätigung verändert werden.</div>` : ""}
         <div class="generic-metrics"><div><strong>${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km` : "–"}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Strecke"}</span></div><div><strong>${formatDuration(displayedRoute?.durationSeconds)}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Fahrzeit"}</span></div><div><strong>${escapeHtml(destination)}</strong><span>Übernachtung</span></div></div>
         ${route ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt sofort eine Vorschau und fragt anschließend, ob du sie übernehmen möchtest.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Lokal gespeichert · Prüfung ausstehend" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
@@ -691,10 +733,11 @@
         <div class="generic-detail-block"><h3>Unterkunft</h3>${accommodation ? `<div class="generic-hotel">${hotelIcon()}<div><strong>${escapeHtml(accommodation.name)}</strong><span>${bookingLabel(booking)} · ${parkingLabel(accommodation, stay)}</span>${accommodation.url ? `<a class="generic-hotel-link" href="${escapeHtml(accommodation.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : ""}${alternative ? `<small>Alternative: ${escapeHtml(alternative.name)}</small>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : ""}` : ""}</div></div>` : `<p>Für diesen Tag ist noch keine Unterkunft hinterlegt.</p>`}${stay ? `<button class="generic-context-link" type="button" id="generic-show-stay">Unterkunft dieses Tages ansehen →</button>` : ""}</div>
         <div class="generic-inspector-actions">${googleMapsUrl ? `<a class="generic-action-button" href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div>`;
       inspector.querySelectorAll("[data-route-style]").forEach((button) => button.addEventListener("click", () => previewRouteStyle(button.dataset.routeStyle)));
+      inspector.querySelector(".generic-inspector-close").addEventListener("click", closeInspector);
       inspector.querySelector("#generic-discard-route-preview")?.addEventListener("click", discardRoutePreview);
       inspector.querySelector("#generic-adjust-stage")?.addEventListener("click", () => openStagePlanContext("stage"));
       inspector.querySelector("#generic-adjust-fixed")?.addEventListener("click", () => openStagePlanContext("fixed"));
-      inspector.querySelector("#generic-show-stay")?.addEventListener("click", () => { selectedStay = model.revision.stays.indexOf(stay); setListMode("stays"); });
+      inspector.querySelector("#generic-show-stay")?.addEventListener("click", () => { selectedStay = model.revision.stays.indexOf(stay); setListMode("stays"); openInspector(); });
     } else {
       const stay = model.revision.stays[selectedStay];
       const startIndex = stageForStay(stay);
@@ -702,20 +745,22 @@
       const alternative = optionsFor(stay)[1];
       const booking = bookingFor(stay);
       const protectedBooking = Boolean(booking?.protected);
-      inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Unterkunft · Tag ${dayRangeForStay(stay).label}</span><h2>${escapeHtml(place(stay.placeId).name)}</h2><span>${formatDate(stay.startDate)} · ${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div>
+      inspector.innerHTML = `<button class="generic-inspector-close" type="button" aria-label="Zurück zur Route"><span aria-hidden="true">←</span> Zurück zur Route</button><div class="generic-inspector-head"><span class="generic-inspector-type">Unterkunft · Tag ${dayRangeForStay(stay).label}</span><h2>${escapeHtml(place(stay.placeId).name)}</h2><span>${formatDate(stay.startDate)} · ${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div>
         ${protectedBooking ? `<div class="generic-fixed-notice"><strong>🔒 Buchung geschützt</strong>Eine Änderung benötigt deine ausdrückliche Bestätigung und eine Prüfung der angrenzenden Route.</div>` : ""}
         <div class="generic-metrics two"><div><strong>${bookingLabel(booking)}</strong><span>Buchungsstatus</span></div><div><strong>${stay.nightCount}</strong><span>${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div></div>
         <div class="generic-detail-block"><h3>${option ? "Unterkunft" : "Unterkunft offen"}</h3>${option ? `<div class="generic-hotel">${hotelIcon()}<div><strong>${escapeHtml(option.name)}</strong><span>${parkingLabel(option, stay)}</span>${option.url ? `<a class="generic-hotel-link" href="${escapeHtml(option.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : `<small>Kein Hotel-Link hinterlegt</small>`}</div></div>` : `<p>Es ist noch keine erste Wahl hinterlegt.</p>`}</div>
         <div class="generic-detail-block"><h3>Alternative</h3>${alternative ? `<div class="generic-hotel">${hotelIcon(true)}<div><strong>${escapeHtml(alternative.name)}</strong><span>Noch nicht ausgewählt</span>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : `<small>Kein Link hinterlegt</small>`}</div></div>` : `<p>Noch keine Alternative hinterlegt.</p>`}<p class="generic-context-note">Zuerst am gleichen Ort suchen. Nur ein Ortswechsel löst eine Prüfung der angrenzenden Etappen aus.</p></div>
         <div class="generic-inspector-actions"><button class="generic-action-button primary" type="button" id="generic-find-accommodation">Neue Unterkunft suchen</button><button class="generic-action-button" type="button" id="generic-add-night">Nacht hinzufügen</button><button class="generic-context-link" type="button" id="generic-show-adjacent">Angrenzende Etappen ansehen →</button></div>`;
       inspector.querySelector("#generic-find-accommodation")?.addEventListener("click", () => openStayPlanContext("search"));
+      inspector.querySelector(".generic-inspector-close").addEventListener("click", closeInspector);
       inspector.querySelector("#generic-add-night")?.addEventListener("click", () => openStayPlanContext("night"));
-      inspector.querySelector("#generic-show-adjacent")?.addEventListener("click", () => { selectedStage = Math.max(0, startIndex); setListMode("days"); });
+      inspector.querySelector("#generic-show-adjacent")?.addEventListener("click", () => { selectedStage = Math.max(0, startIndex); setListMode("days"); openInspector(); });
     }
   }
 
   function selectStage(index, fit) {
     const nextStage = Math.max(0, Math.min(model.revision.stages.length - 1, index));
+    if (pendingRouteStyleChange && pendingRouteStyleChange.stageIndex !== nextStage) cancelPendingRouteStyleChange();
     if (nextStage !== selectedStage || listMode !== "days") compareOriginal = false;
     selectedStage = nextStage;
     if (listMode !== "days") listMode = "days";
@@ -724,6 +769,7 @@
     renderInspector();
     updateCompareControl();
     applyWorkspaceMapFocus(fit);
+    openInspector();
   }
 
   function selectStay(index, fit) {
@@ -735,6 +781,7 @@
     renderInspector();
     updateCompareControl();
     applyWorkspaceMapFocus(fit);
+    openInspector();
   }
 
   async function initialiseWorkspaceMap() {
@@ -742,7 +789,7 @@
     workspaceInitialised = true;
     try {
       const [L, { xml, routes }] = await Promise.all([loadLeaflet(), loadMapData()]);
-      workspaceMap = L.map("generic-work-map", { zoomControl: true, scrollWheelZoom: true }).setView([42.2, 2.1], 5);
+      workspaceMap = L.map("generic-work-map", { zoomControl: true, scrollWheelZoom: false, preferCanvas: true }).setView([42.2, 2.1], 5);
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(workspaceMap);
       const pointCoordinates = kmlPoints(xml);
       const dayEnds = new Map();

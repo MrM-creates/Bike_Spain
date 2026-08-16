@@ -1506,7 +1506,7 @@ window.__TRIP_DATA__ = Object.freeze({
       "endDate": "2026-10-21",
       "nightCount": "2",
       "title": "Castelldefels",
-      "firstChoice": "Dasselbe Hotel wie am 29. September",
+      "firstChoice": "ibis Barcelona Castelldefels",
       "firstChoiceUrl": "https://all.accor.com/hotel/3208/index.es.shtml",
       "alternative": "Central Park Castelldefels",
       "alternativeUrl": "https://www.centralparkcastelldefels.com/"
@@ -1687,7 +1687,7 @@ window.__TRIP_DATA__ = Object.freeze({
       "endDate": "2026-10-21",
       "nightCount": "2",
       "title": "Castelldefels",
-      "firstChoice": "Dasselbe Hotel wie am 29. September",
+      "firstChoice": "ibis Barcelona Castelldefels",
       "firstChoiceUrl": "https://all.accor.com/hotel/3208/index.es.shtml",
       "alternative": "Central Park Castelldefels",
       "alternativeUrl": "https://www.centralparkcastelldefels.com/"

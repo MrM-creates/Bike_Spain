@@ -298,6 +298,7 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
 }
 
 .generic-workspace {
+  position: relative;
   width: 100%;
   height: 100%;
   min-height: 620px;
@@ -382,6 +383,8 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
 .generic-stay-marker-shell.is-active span { transform: scale(1.2); border-color: #fff; background: var(--accent); color: #fff; }
 
 .generic-inspector { overflow: auto; }
+.generic-inspector-scrim,
+.generic-inspector-close { display: none; }
 .generic-inspector-head { padding: 18px 16px 14px; border-bottom: 1px solid var(--generic-line); }
 .generic-inspector-type { color: var(--accent) !important; font-size: 10px !important; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
 .generic-inspector-head h2 { margin: 5px 0; font-size: 20px; line-height: 1.15; }
@@ -437,21 +440,88 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
 .plan-change-context span { color: var(--accent); font-size: 9px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
 .plan-change-context strong { font-size: 12px; }
 
-@media (max-width: 1120px) {
-  .generic-workspace { grid-template-columns: 260px minmax(400px,1fr) 280px; }
+@media (max-width: 1240px) {
+  .generic-workspace { grid-template-columns: minmax(270px, 34%) minmax(0, 1fr); }
+  .generic-inspector {
+    position: absolute;
+    z-index: 901;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(430px, calc(100% - 72px));
+    box-shadow: -18px 0 46px rgba(23,32,25,.2);
+    transform: translateX(102%);
+    visibility: hidden;
+    pointer-events: none;
+    transition: transform 180ms ease, visibility 0s linear 180ms;
+  }
+  .generic-workspace.is-inspector-open .generic-inspector {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+  .generic-inspector-scrim {
+    position: absolute;
+    z-index: 900;
+    inset: 0;
+    display: block;
+    border: 0;
+    padding: 0;
+    background: rgba(17,25,20,.22);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 180ms ease, visibility 0s linear 180ms;
+  }
+  .generic-workspace.is-inspector-open .generic-inspector-scrim {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition-delay: 0s;
+  }
+  .generic-inspector-close {
+    position: sticky;
+    z-index: 3;
+    top: 0;
+    width: 100%;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    border-bottom: 1px solid var(--generic-line);
+    padding: 0 16px;
+    background: rgba(255,255,255,.96);
+    color: var(--accent);
+    font-size: 12px;
+    font-weight: 780;
+    text-align: left;
+    backdrop-filter: blur(16px);
+    cursor: pointer;
+  }
+  .generic-inspector-close span { font-size: 17px; }
 }
 
 @media (max-width: 860px) {
-  body.generic-trip-enabled.generic-roadbook-view { overflow: auto; }
-  body.generic-trip-enabled.generic-roadbook-view #trip-overview-root { height: auto; }
-  .generic-workspace { height: auto; display: grid; grid-template-columns: 1fr; overflow: visible; }
-  .generic-stage-panel { height: 330px; }
+  .generic-workspace {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(270px, 42%) minmax(330px, 58%);
+  }
+  .generic-stage-panel { height: auto; }
   .generic-work-map,
-  #generic-work-map { min-height: 470px; height: 470px; }
-  .generic-inspector { overflow: visible; }
+  #generic-work-map { min-height: 0; height: 100%; }
+  .generic-inspector { width: min(480px, 100%); }
 }
 
 @media (max-width: 520px) {
+  body.generic-trip-enabled.generic-roadbook-view #trip-overview-root { height: calc(100svh - 105px); }
+  .generic-workspace { min-height: 0; grid-template-rows: minmax(230px, 45%) minmax(260px, 55%); }
+  .generic-panel-head { padding: 12px; }
+  .generic-loaded-plan { display: none; }
+  .generic-stage-row { padding: 9px 8px; }
+  .generic-inspector { width: 100%; }
+  .generic-inspector-scrim { background: rgba(17,25,20,.14); }
   .generic-work-map-toolbar { left: 54px; }
   .generic-compare { position: absolute; top: 68px; right: 0; }
   .generic-work-map-status { max-width: calc(100vw - 82px); }
@@ -459,4 +529,9 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
   .generic-map-hint { display: none; }
   .generic-route-confirm-change { grid-template-columns: 1fr; }
   .generic-route-confirm-change > i { transform: rotate(90deg); text-align: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .generic-inspector,
+  .generic-inspector-scrim { transition: none; }
 }
