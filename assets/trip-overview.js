@@ -393,7 +393,7 @@
     const open = Math.max(0, revision.stays.length - booked - requested);
     root.innerHTML = `${isOriginalDraft() ? `<section class="generic-original-draft-banner" aria-label="Aktionen für den Originalplan"><div><strong>Originalplan als Entwurf geladen</strong><span>Der gemeinsame Plan bleibt unverändert, bis du ihn veröffentlichst.</span><small class="generic-original-bar-feedback" aria-live="polite"></small></div><div><button class="generic-secondary" id="generic-original-bar-discard" type="button">Beim aktuellen Plan bleiben</button><button class="generic-primary" id="generic-original-bar-publish" type="button">Originalplan veröffentlichen</button></div></section>` : (isPlanDraft() ? `<section class="generic-original-draft-banner generic-plan-draft-banner" aria-label="Aktionen für den Planentwurf"><div><strong>Planentwurf wird lokal angezeigt</strong><span>Der gemeinsame Plan bleibt unverändert, bis du ihn veröffentlichst.</span></div><div><button class="generic-secondary" id="generic-plan-bar-discard" type="button">Entwurf verwerfen</button><button class="generic-primary" id="generic-plan-bar-review" type="button">Entwurf prüfen</button></div></section>` : "")}<section id="generic-overview-panel">
       <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">Kurven, Küsten und spanisches Hinterland</h1><p>Eine ausgedehnte Motorradreise von den Westalpen über Südfrankreich bis nach Andalusien. Kurvige Berg- und Küstenstraßen wechseln sich mit entspannten Ruhetagen ab; die gebuchte Fähre von Barcelona nach Genua setzt den festen Schlusspunkt in Spanien.</p></div><div class="generic-overview-date">${escapeHtml(planLabel())} · ${(isOriginalDraft() || isPlanDraft()) ? "lokaler Entwurf" : "online"}<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
-      <section class="generic-route-card" aria-label="Karte und Reiseverlauf"><div class="generic-map-wrap"><div id="trip-overview-map" aria-label="Interaktive Übersichtskarte"></div><div class="generic-map-loading">Karte und aktuelle Route werden geladen …</div><span class="generic-map-label" id="generic-overview-map-label">${escapeHtml(planLabel())} · dieselbe Route wie im Roadbook</span><button class="generic-map-reset" id="generic-map-reset" type="button">Gesamte Route</button></div><div class="generic-route-story"><h2>Reiseverlauf</h2><p>Karte und Beschreibung sind miteinander verbunden.</p>${revision.narrativeSegments.map((segment, index) => `<button class="generic-story-segment" type="button" data-story="${index}" aria-current="${index === 0}"><strong>${escapeHtml(segment.title)}</strong>${escapeHtml(segment.text)}</button>`).join("")}</div></section>
+      <section class="generic-route-card" aria-label="Karte und Reiseverlauf"><div class="generic-map-wrap"><div id="trip-overview-map" aria-label="Interaktive Übersichtskarte"></div><div class="generic-map-loading">Karte und aktuelle Route werden geladen …</div><span class="generic-map-label" id="generic-overview-map-label">${escapeHtml(planLabel())} · dieselbe Route wie im Roadbook</span><button class="generic-map-reset" id="generic-map-reset" type="button">Gesamte Route</button></div><div class="generic-route-story"><h2>Reiseverlauf</h2><p>Karte und Beschreibung sind miteinander verbunden.</p>${revision.narrativeSegments.map((segment, index) => `<button class="generic-story-segment" type="button" data-story="${index}" aria-current="false"><strong>${escapeHtml(segment.title)}</strong>${escapeHtml(segment.text)}</button>`).join("")}</div></section>
       <section class="generic-overview-stats" aria-label="Eckdaten"><div class="generic-overview-stat"><strong>${revision.stages.length} Tage</strong><span>Gesamtdauer</span></div><div class="generic-overview-stat"><strong>${rideCount}</strong><span>Fahretappen</span></div><div class="generic-overview-stat"><strong>${restCount}</strong><span>Ruhetage</span></div><div class="generic-overview-stat"><strong>${km.format(totalDistance)} km</strong><span>Planwerte</span></div><div class="generic-overview-stat"><strong>${trip.motorcycleCount} Motorräder</strong><span>Reiseparameter</span></div></section>
       <section class="generic-overview-details"><article class="generic-overview-card"><div class="generic-card-head"><h2>Fixpunkte</h2><span>Automatisch geschützt</span></div><ul class="generic-fix-list">${revision.fixPoints.map((fix) => `<li><span class="generic-fix-icon">${fix.kind === "transport" ? "⚓" : fix.kind === "start" ? "●" : "◎"}</span><span><strong>${escapeHtml(fix.title)}</strong><small>${escapeHtml(fix.startsAt ? formatDate(fix.startsAt.slice(0, 10)) : "Verbindlich")}</small></span><span class="generic-fix-tag">Geschützt</span></li>`).join("")}</ul></article><article class="generic-overview-card"><div class="generic-card-head"><h2>Unterkünfte</h2><span>${revision.stays.length} Stopps</span></div><div class="generic-booking-stats"><div><strong>${booked}</strong><span>Gebucht</span></div><div><strong>${requested}</strong><span>Angefragt</span></div><div><strong>${open}</strong><span>Offen</span></div></div><p class="generic-card-note">Unterkünfte, Alternativen und Buchungsstatus sind direkt mit dem Roadbook verbunden.</p><button class="generic-secondary" id="generic-overview-stays" type="button">Unterkünfte im Roadbook ansehen</button></article></section>
     </section><section class="generic-workspace" id="generic-workspace" hidden></section>`;
@@ -484,19 +484,10 @@
         L.marker(finalCoordinate, { icon, zIndexOffset: 510 }).bindTooltip(`Tag ${finalLabel} · ${finalStage.title}`).on("click", () => { setView("roadbook"); selectStage(finalIndex, true); }).addTo(overviewMap);
       }
       overviewBounds = allRoutes.getBounds();
-      if (overviewBounds.isValid()) overviewMap.fitBounds(overviewBounds, { padding: [24, 24] });
       loading?.remove();
       applyOverviewRouteStyles();
-      activateOverviewStory(0, false);
-      root.querySelector("#generic-map-reset")?.addEventListener("click", () => {
-        root.querySelectorAll(".generic-story-segment").forEach((button) => button.setAttribute("aria-current", "false"));
-        overviewGroups.forEach((group) => group.eachLayer((layer) => {
-          const match = String(layer.options.className || "").match(/route-stage-(\d+)/);
-          const index = Number(match?.[1] || 0);
-          layer.setStyle({ color: layer.options.isFerry ? "#9a6118" : colours[index % colours.length], weight: 5, opacity: .9 });
-        }));
-        if (overviewBounds?.isValid()) overviewMap.fitBounds(overviewBounds, { padding: [24, 24] });
-      });
+      showOverviewFullRoute(true);
+      root.querySelector("#generic-map-reset")?.addEventListener("click", () => showOverviewFullRoute(true));
     } catch (error) {
       if (loading) loading.outerHTML = `<div class="generic-map-fallback"><div><strong>Karte momentan nicht verfügbar</strong><br>${escapeHtml(error.message)}</div></div>`;
     }
@@ -511,6 +502,20 @@
       layer.setStyle({ color: ferry ? "#9a6118" : groupIndex === index ? colours[stageIndex % colours.length] : "#718078", weight: groupIndex === index ? 7 : 3, opacity: groupIndex === index ? .95 : .22 });
     }));
     if (fit && overviewGroups[index]?.getBounds().isValid()) overviewMap.fitBounds(overviewGroups[index].getBounds(), { padding: [30, 30], maxZoom: 7 });
+  }
+
+  function showOverviewFullRoute(fit) {
+    root.querySelectorAll(".generic-story-segment").forEach((button) => button.setAttribute("aria-current", "false"));
+    overviewGroups.forEach((group) => group.eachLayer((layer) => {
+      const match = String(layer.options.className || "").match(/route-stage-(\d+)/);
+      const index = Number(match?.[1] || 0);
+      layer.setStyle({ color: layer.options.isFerry ? "#9a6118" : colours[index % colours.length], weight: 5, opacity: .9 });
+    }));
+    if (!fit || !overviewBounds?.isValid()) return;
+    window.requestAnimationFrame(() => {
+      overviewMap.invalidateSize();
+      overviewMap.fitBounds(overviewBounds, { padding: [24, 24] });
+    });
   }
 
   function applyOverviewRouteStyles() {
