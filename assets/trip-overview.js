@@ -609,6 +609,13 @@
   }
 
   function closeInspector() {
+    const inspector = root.querySelector("#generic-inspector");
+    if (inspector?.contains(document.activeElement)) {
+      const returnTarget = listMode === "stays"
+        ? root.querySelector(`[data-stay-index="${selectedStay}"]`)
+        : root.querySelector(`[data-stage-index="${selectedStage}"]`);
+      returnTarget?.focus();
+    }
     inspectorOpen = false;
     syncInspectorState();
     window.setTimeout(() => workspaceMap?.invalidateSize(), 220);

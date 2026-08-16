@@ -1,6 +1,6 @@
 window.__TRIP_DATA__ = Object.freeze({
   "schemaVersion": 1,
-  "publishedVersion": "2026-08-12T16:32:07.603Z",
+  "publishedVersion": "2026-08-16T14:49:12.000Z",
   "planKind": "published",
   "trip": {
     "id": "trip_spanien_2026",
@@ -29,6 +29,11 @@ window.__TRIP_DATA__ = Object.freeze({
       "name": "Monachil",
       "latitude": 37.1322,
       "longitude": -3.5398
+    },
+    "aguilas": {
+      "name": "Senator Águilas",
+      "latitude": 37.397,
+      "longitude": -1.6
     },
     "castelldefels": {
       "name": "Castelldefels",
@@ -87,14 +92,14 @@ window.__TRIP_DATA__ = Object.freeze({
     },
     {
       "title": "Zwischen Küste und Hinterland.",
-      "text": "Priorat, Albarracín, La Patacona und die Costa Blanca verbinden kurvige Fahrtage mit bewussten Pausen.",
+      "text": "Priorat, Albarracín, La Patacona, die Costa Blanca und Águilas verbinden kurvige Fahrtage mit bewussten Pausen am Meer.",
       "fromDay": 7,
       "toDay": 14,
       "mapGroup": 1
     },
     {
       "title": "Andalusische Höhepunkte.",
-      "text": "Monachil, die Alpujarras, Ronda und die weißen Dörfer bilden den südlichen Schwerpunkt der Reise.",
+      "text": "Von Águilas führt die Reise nach Monachil; die Alpujarras, Ronda und die weißen Dörfer bilden den südlichen Schwerpunkt.",
       "fromDay": 15,
       "toDay": 22,
       "mapGroup": 2
@@ -284,20 +289,22 @@ window.__TRIP_DATA__ = Object.freeze({
     {
       "id": "day-8",
       "day": 8,
-      "title": "Castelldefels – Falset",
+      "title": "Castelldefels – Priorat – Falset",
       "type": "Küste / Priorat",
       "overnight": "Falset",
-      "km": "ca. 135 km",
-      "time": "ca. 2 h 20",
-      "roads": "C-31/C-32 · T-11 · N-420",
-      "points": "Sitges · Tarragona · Reus",
-      "note": "Küstenabschnitt bei dichtem Verkehr auslassen und direkt Richtung Tarragona/Reus fahren.",
+      "km": "ca. 147 km",
+      "time": "ca. 2 h 25",
+      "roads": "C-31/C-32 · T-11 · N-420 · T-740/T-710",
+      "points": "Sitges · Tarragona · Reus · Porrera · Gratallops",
+      "note": "Die schönsten Punkte der früheren Priorat-Runde sind in den Anreisetag integriert. Bei dichtem Küstenverkehr Sitges auslassen; Porrera und Gratallops auf Asphalt anfahren.",
       "origin": "Castelldefels, Spain",
       "destination": "Falset, Spain",
       "waypoints": [
         "Sitges, Spain",
         "Tarragona, Spain",
-        "Reus, Spain"
+        "Reus, Spain",
+        "Porrera, Spain",
+        "Gratallops, Spain"
       ],
       "status": "planned",
       "custom": false
@@ -305,29 +312,6 @@ window.__TRIP_DATA__ = Object.freeze({
     {
       "id": "day-9",
       "day": 9,
-      "title": "Priorat-Runde",
-      "type": "Kurventag",
-      "overnight": "Falset",
-      "km": "58 km",
-      "time": "1 h 35",
-      "roads": "T-710 und asphaltierte Regionalstrassen",
-      "points": "Gratallops · La Vilella Baixa · Escaladei · Cornudella · Porrera",
-      "note": "Langsam und kurvig. Siurana nur als bewusste zusätzliche Stichstrasse.",
-      "origin": "Falset, Spain",
-      "destination": "Falset, Spain",
-      "waypoints": [
-        "Gratallops, Spain",
-        "La Vilella Baixa, Spain",
-        "Escaladei, Spain",
-        "Cornudella de Montsant, Spain",
-        "Porrera, Spain"
-      ],
-      "status": "planned",
-      "custom": false
-    },
-    {
-      "id": "day-10",
-      "day": 10,
       "title": "Falset – Albarracín",
       "type": "Inland",
       "overnight": "Albarracín",
@@ -348,8 +332,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
-      "id": "day-11",
-      "day": 11,
+      "id": "day-10",
+      "day": 10,
       "title": "Albarracín-Runde",
       "type": "Flex / Kurventag",
       "overnight": "Albarracín",
@@ -370,8 +354,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
-      "id": "day-12",
-      "day": 12,
+      "id": "day-11",
+      "day": 11,
       "title": "Albarracín – La Patacona",
       "type": "Transfer",
       "overnight": "La Patacona",
@@ -390,8 +374,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
-      "id": "day-13",
-      "day": 13,
+      "id": "day-12",
+      "day": 12,
       "title": "La Patacona / Valencia",
       "type": "Ruhetag / Stadt optional",
       "overnight": "La Patacona",
@@ -404,8 +388,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
-      "id": "day-14",
-      "day": 14,
+      "id": "day-13",
+      "day": 13,
       "title": "La Patacona – Altea",
       "type": "Costa-Blanca-Hinterland",
       "overnight": "Altea",
@@ -413,7 +397,7 @@ window.__TRIP_DATA__ = Object.freeze({
       "time": "ca. 3 h 50",
       "roads": "A-7 · CV-81 · CV-70",
       "points": "Xàtiva · Bocairent · Alcoy · Guadalest",
-      "note": "Kurviger Tag. Nur eine Nacht in Altea; der frühere Altea-Flex-/Ruhetag ist gestrichen, um den späteren Start ohne Stress einzuholen.",
+      "note": "Kurviger Tag. Nur eine Nacht in Altea; am Folgetag beginnt die Küstenetappe nach Águilas.",
       "origin": "Olympia Hotel, Events & Spa, Alboraya, Spain",
       "destination": "Altea, Spain",
       "waypoints": [
@@ -426,17 +410,45 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
+      "id": "day-14",
+      "day": 14,
+      "title": "Altea – Cartagena – Águilas",
+      "type": "Küste / Mittelmeer",
+      "overnight": "Águilas",
+      "km": "ca. 263 km",
+      "time": "ca. 3 h 40",
+      "roads": "A-7/AP-7 · RM-332 · Küstenstrassen über La Azohía",
+      "points": "Cartagena-Hafen · La Azohía · Puerto de Mazarrón",
+      "note": "Cartagena als längeren Mittagsstopp nutzen. Danach folgt der schönere Küstenabschnitt über La Azohía; bei Müdigkeit oder dichtem Verkehr direkt über A-7/RM-11 nach Águilas fahren.",
+      "origin": "Altea, Spain",
+      "destination": "Senator Águilas, Águilas, Spain",
+      "waypoints": [
+        "Puerto de Cartagena, Spain",
+        "La Azohía, Spain",
+        "Puerto de Mazarrón, Spain"
+      ],
+      "status": "planned",
+      "custom": false,
+      "alt": [
+        {
+          "label": "Direkt nach Águilas",
+          "meta": "ca. 230 km · 2 h 40",
+          "url": "https://www.google.com/maps/dir/?api=1&origin=Altea%2C+Spain&destination=Senator+%C3%81guilas%2C+%C3%81guilas%2C+Spain&travelmode=driving"
+        }
+      ]
+    },
+    {
       "id": "day-15",
       "day": 15,
-      "title": "Altea – Monachil",
+      "title": "Águilas – Monachil",
       "type": "Transfer",
       "overnight": "Monachil",
-      "km": "ca. 415 km",
-      "time": "ca. 4 h 25",
-      "roads": "A-7 · A-92N · GR-30",
-      "points": "Direkte Hauptstrecke; die Route führt an Murcia, Lorca und Guadix vorbei",
-      "note": "Granada-Zentrum vermeiden. Unterkunft in Monachil mit bestätigter Garage und einfacher Zufahrt wählen.",
-      "origin": "Altea, Spain",
+      "km": "ca. 245 km",
+      "time": "ca. 3 h",
+      "roads": "RM-11 · A-7 · A-92N · GR-30",
+      "points": "Lorca · Baza · Guadix",
+      "note": "Nach dem Frühstück am Meer die direkte Hauptstrecke nehmen. Granada-Zentrum vermeiden; nach Monachil mit einfacher Zufahrt routen.",
+      "origin": "Senator Águilas, Águilas, Spain",
       "destination": "Monachil, Granada, Spain",
       "waypoints": [],
       "status": "planned",
@@ -905,20 +917,22 @@ window.__TRIP_DATA__ = Object.freeze({
     {
       "id": "day-8",
       "day": 8,
-      "title": "Castelldefels – Falset",
+      "title": "Castelldefels – Priorat – Falset",
       "type": "Küste / Priorat",
       "overnight": "Falset",
-      "km": "ca. 135 km",
-      "time": "ca. 2 h 20",
-      "roads": "C-31/C-32 · T-11 · N-420",
-      "points": "Sitges · Tarragona · Reus",
-      "note": "Küstenabschnitt bei dichtem Verkehr auslassen und direkt Richtung Tarragona/Reus fahren.",
+      "km": "ca. 147 km",
+      "time": "ca. 2 h 25",
+      "roads": "C-31/C-32 · T-11 · N-420 · T-740/T-710",
+      "points": "Sitges · Tarragona · Reus · Porrera · Gratallops",
+      "note": "Die schönsten Punkte der früheren Priorat-Runde sind in den Anreisetag integriert. Bei dichtem Küstenverkehr Sitges auslassen; Porrera und Gratallops auf Asphalt anfahren.",
       "origin": "Castelldefels, Spain",
       "destination": "Falset, Spain",
       "waypoints": [
         "Sitges, Spain",
         "Tarragona, Spain",
-        "Reus, Spain"
+        "Reus, Spain",
+        "Porrera, Spain",
+        "Gratallops, Spain"
       ],
       "status": "planned",
       "custom": false
@@ -926,29 +940,6 @@ window.__TRIP_DATA__ = Object.freeze({
     {
       "id": "day-9",
       "day": 9,
-      "title": "Priorat-Runde",
-      "type": "Kurventag",
-      "overnight": "Falset",
-      "km": "58 km",
-      "time": "1 h 35",
-      "roads": "T-710 und asphaltierte Regionalstrassen",
-      "points": "Gratallops · La Vilella Baixa · Escaladei · Cornudella · Porrera",
-      "note": "Langsam und kurvig. Siurana nur als bewusste zusätzliche Stichstrasse.",
-      "origin": "Falset, Spain",
-      "destination": "Falset, Spain",
-      "waypoints": [
-        "Gratallops, Spain",
-        "La Vilella Baixa, Spain",
-        "Escaladei, Spain",
-        "Cornudella de Montsant, Spain",
-        "Porrera, Spain"
-      ],
-      "status": "planned",
-      "custom": false
-    },
-    {
-      "id": "day-10",
-      "day": 10,
       "title": "Falset – Albarracín",
       "type": "Inland",
       "overnight": "Albarracín",
@@ -969,8 +960,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
-      "id": "day-11",
-      "day": 11,
+      "id": "day-10",
+      "day": 10,
       "title": "Albarracín-Runde",
       "type": "Flex / Kurventag",
       "overnight": "Albarracín",
@@ -991,8 +982,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
-      "id": "day-12",
-      "day": 12,
+      "id": "day-11",
+      "day": 11,
       "title": "Albarracín – La Patacona",
       "type": "Transfer",
       "overnight": "La Patacona",
@@ -1011,8 +1002,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
-      "id": "day-13",
-      "day": 13,
+      "id": "day-12",
+      "day": 12,
       "title": "La Patacona / Valencia",
       "type": "Ruhetag / Stadt optional",
       "overnight": "La Patacona",
@@ -1025,8 +1016,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
-      "id": "day-14",
-      "day": 14,
+      "id": "day-13",
+      "day": 13,
       "title": "La Patacona – Altea",
       "type": "Costa-Blanca-Hinterland",
       "overnight": "Altea",
@@ -1034,7 +1025,7 @@ window.__TRIP_DATA__ = Object.freeze({
       "time": "ca. 3 h 50",
       "roads": "A-7 · CV-81 · CV-70",
       "points": "Xàtiva · Bocairent · Alcoy · Guadalest",
-      "note": "Kurviger Tag. Nur eine Nacht in Altea; der frühere Altea-Flex-/Ruhetag ist gestrichen, um den späteren Start ohne Stress einzuholen.",
+      "note": "Kurviger Tag. Nur eine Nacht in Altea; am Folgetag beginnt die Küstenetappe nach Águilas.",
       "origin": "Olympia Hotel, Events & Spa, Alboraya, Spain",
       "destination": "Altea, Spain",
       "waypoints": [
@@ -1047,17 +1038,45 @@ window.__TRIP_DATA__ = Object.freeze({
       "custom": false
     },
     {
+      "id": "day-14",
+      "day": 14,
+      "title": "Altea – Cartagena – Águilas",
+      "type": "Küste / Mittelmeer",
+      "overnight": "Águilas",
+      "km": "ca. 263 km",
+      "time": "ca. 3 h 40",
+      "roads": "A-7/AP-7 · RM-332 · Küstenstrassen über La Azohía",
+      "points": "Cartagena-Hafen · La Azohía · Puerto de Mazarrón",
+      "note": "Cartagena als längeren Mittagsstopp nutzen. Danach folgt der schönere Küstenabschnitt über La Azohía; bei Müdigkeit oder dichtem Verkehr direkt über A-7/RM-11 nach Águilas fahren.",
+      "origin": "Altea, Spain",
+      "destination": "Senator Águilas, Águilas, Spain",
+      "waypoints": [
+        "Puerto de Cartagena, Spain",
+        "La Azohía, Spain",
+        "Puerto de Mazarrón, Spain"
+      ],
+      "status": "planned",
+      "custom": false,
+      "alt": [
+        {
+          "label": "Direkt nach Águilas",
+          "meta": "ca. 230 km · 2 h 40",
+          "url": "https://www.google.com/maps/dir/?api=1&origin=Altea%2C+Spain&destination=Senator+%C3%81guilas%2C+%C3%81guilas%2C+Spain&travelmode=driving"
+        }
+      ]
+    },
+    {
       "id": "day-15",
       "day": 15,
-      "title": "Altea – Monachil",
+      "title": "Águilas – Monachil",
       "type": "Transfer",
       "overnight": "Monachil",
-      "km": "ca. 415 km",
-      "time": "ca. 4 h 25",
-      "roads": "A-7 · A-92N · GR-30",
-      "points": "Direkte Hauptstrecke; die Route führt an Murcia, Lorca und Guadix vorbei",
-      "note": "Granada-Zentrum vermeiden. Unterkunft in Monachil mit bestätigter Garage und einfacher Zufahrt wählen.",
-      "origin": "Altea, Spain",
+      "km": "ca. 245 km",
+      "time": "ca. 3 h",
+      "roads": "RM-11 · A-7 · A-92N · GR-30",
+      "points": "Lorca · Baza · Guadix",
+      "note": "Nach dem Frühstück am Meer die direkte Hauptstrecke nehmen. Granada-Zentrum vermeiden; nach Monachil mit einfacher Zufahrt routen.",
+      "origin": "Senator Águilas, Águilas, Spain",
       "destination": "Monachil, Granada, Spain",
       "waypoints": [],
       "status": "planned",
@@ -1411,8 +1430,8 @@ window.__TRIP_DATA__ = Object.freeze({
     },
     "falset": {
       "startDate": "2026-10-01",
-      "endDate": "2026-10-03",
-      "nightCount": "2",
+      "endDate": "2026-10-02",
+      "nightCount": "1",
       "title": "Falset",
       "firstChoice": "Hotel-Hostal Sport",
       "firstChoiceUrl": "https://www.hotelpriorat-hostalsport.com/en/hotel-hostal-sport-your-hotel-priorat",
@@ -1420,8 +1439,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "alternativeUrl": "https://www.theoriginhotels.com/es/priorat-aparthotel"
     },
     "albarracin": {
-      "startDate": "2026-10-03",
-      "endDate": "2026-10-05",
+      "startDate": "2026-10-02",
+      "endDate": "2026-10-04",
       "nightCount": "2",
       "title": "Albarracín",
       "firstChoice": "Hotel Doña Blanca",
@@ -1430,8 +1449,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "alternativeUrl": "https://hotelalbarran.es/"
     },
     "alboraya": {
-      "startDate": "2026-10-05",
-      "endDate": "2026-10-07",
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-06",
       "nightCount": "2",
       "title": "La Patacona",
       "firstChoice": "Olympia Hotel, Events & Spa · Alboraya",
@@ -1442,14 +1461,25 @@ window.__TRIP_DATA__ = Object.freeze({
       "hideBaseline": "true"
     },
     "altea": {
-      "startDate": "2026-10-07",
-      "endDate": "2026-10-08",
+      "startDate": "2026-10-06",
+      "endDate": "2026-10-07",
       "nightCount": "1",
       "title": "Altea",
       "firstChoice": "Hotel Cap Negret",
       "firstChoiceUrl": "https://www.hotelcapnegret.es/servicios/",
       "alternative": "Hotel Altaia",
       "alternativeUrl": "https://hotelaltaia.es/"
+    },
+    "aguilas": {
+      "startDate": "2026-10-07",
+      "endDate": "2026-10-08",
+      "nightCount": "1",
+      "title": "Águilas",
+      "firstChoice": "Senator Águilas",
+      "firstChoiceUrl": "https://www.senatorhr.com/senator-aguilas/",
+      "alternative": "Hotel El Paso",
+      "alternativeUrl": "https://www.turismoregiondemurcia.es/es/hotel/el-paso-2118/",
+      "note": "Senator liegt direkt am Meer und verfügt laut offizieller Tourismusinformation über Privatparkplatz; einen geschützten Platz für zwei Motorräder vor der Buchung bestätigen. Hotel El Paso nennt ausdrücklich eine kostenpflichtige Garage."
     },
     "monachil": {
       "startDate": "2026-10-08",
@@ -1529,7 +1559,7 @@ window.__TRIP_DATA__ = Object.freeze({
       "hideBaseline": "true"
     }
   },
-  "originalPlanVersion": "2026-08-12T16:32:07.603Z",
+  "originalPlanVersion": "2026-08-16T14:49:12.000Z",
   "baselineAccommodations": {
     "grenoble": {
       "startDate": "2026-09-24",
@@ -1592,8 +1622,8 @@ window.__TRIP_DATA__ = Object.freeze({
     },
     "falset": {
       "startDate": "2026-10-01",
-      "endDate": "2026-10-03",
-      "nightCount": "2",
+      "endDate": "2026-10-02",
+      "nightCount": "1",
       "title": "Falset",
       "firstChoice": "Hotel-Hostal Sport",
       "firstChoiceUrl": "https://www.hotelpriorat-hostalsport.com/en/hotel-hostal-sport-your-hotel-priorat",
@@ -1601,8 +1631,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "alternativeUrl": "https://www.theoriginhotels.com/es/priorat-aparthotel"
     },
     "albarracin": {
-      "startDate": "2026-10-03",
-      "endDate": "2026-10-05",
+      "startDate": "2026-10-02",
+      "endDate": "2026-10-04",
       "nightCount": "2",
       "title": "Albarracín",
       "firstChoice": "Hotel Doña Blanca",
@@ -1611,8 +1641,8 @@ window.__TRIP_DATA__ = Object.freeze({
       "alternativeUrl": "https://hotelalbarran.es/"
     },
     "alboraya": {
-      "startDate": "2026-10-05",
-      "endDate": "2026-10-07",
+      "startDate": "2026-10-04",
+      "endDate": "2026-10-06",
       "nightCount": "2",
       "title": "La Patacona",
       "firstChoice": "Olympia Hotel, Events & Spa · Alboraya",
@@ -1623,14 +1653,25 @@ window.__TRIP_DATA__ = Object.freeze({
       "hideBaseline": "true"
     },
     "altea": {
-      "startDate": "2026-10-07",
-      "endDate": "2026-10-08",
+      "startDate": "2026-10-06",
+      "endDate": "2026-10-07",
       "nightCount": "1",
       "title": "Altea",
       "firstChoice": "Hotel Cap Negret",
       "firstChoiceUrl": "https://www.hotelcapnegret.es/servicios/",
       "alternative": "Hotel Altaia",
       "alternativeUrl": "https://hotelaltaia.es/"
+    },
+    "aguilas": {
+      "startDate": "2026-10-07",
+      "endDate": "2026-10-08",
+      "nightCount": "1",
+      "title": "Águilas",
+      "firstChoice": "Senator Águilas",
+      "firstChoiceUrl": "https://www.senatorhr.com/senator-aguilas/",
+      "alternative": "Hotel El Paso",
+      "alternativeUrl": "https://www.turismoregiondemurcia.es/es/hotel/el-paso-2118/",
+      "note": "Senator liegt direkt am Meer und verfügt laut offizieller Tourismusinformation über Privatparkplatz; einen geschützten Platz für zwei Motorräder vor der Buchung bestätigen. Hotel El Paso nennt ausdrücklich eine kostenpflichtige Garage."
     },
     "monachil": {
       "startDate": "2026-10-08",

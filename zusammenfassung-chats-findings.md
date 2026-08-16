@@ -1,6 +1,6 @@
 # Zusammenfassung Chats, Findings und Projektstand
 
-Stand: 03.08.2026  
+Stand: 16.08.2026
 Projekt: Festland-Motorradroute Spanien  
 Hinweis: Im Projektordner liegen keine eigentlichen Chat-Protokolle. Diese Zusammenfassung basiert auf den vorhandenen Arbeitsdateien, Roadbook-Dateien, Karten-/KML-Dateien, Unterkunftsseite und den darin dokumentierten Findings.
 
@@ -8,7 +8,7 @@ Hinweis: Im Projektordner liegen keine eigentlichen Chat-Protokolle. Diese Zusam
 
 Die Planung ist inzwischen von einer aelteren 28-Tage-Grundroute auf ein massgebliches 30-Tage-Roadbook umgestellt. Die Reise laeuft vom 24.09. bis 23.10.2026, Start und Ziel sind Berikon AG. Geplant sind zwei Triumph-Motorraeder, keine Offroad-Strecken und bewusst ruhige Tagesetappen mit mehreren Reserve-, Stadt- und Wettertagen.
 
-Massgeblich ist `reise-roadbook-2026.html`. Die Datei `reiseplanung-verfeinert-2026.md` ist als Archiv der aelteren 28-Tage-Planung markiert. Der spaetere Start wurde aufgefangen, indem der fruehere Altea-Flex-/Ruhetag gestrichen wurde; Faehre, Monachil, Ronda und Rueckreise bleiben dadurch auf ihren absoluten Daten.
+Massgeblich sind die kanonischen Daten in `data/trip-spanien-2026.js`, die im Roadbook dargestellt werden. Die Datei `reiseplanung-verfeinert-2026.md` ist als Archiv der aelteren 28-Tage-Planung markiert. Eine zweite Falset-Nacht wurde zugunsten einer Küstenübernachtung in Águilas verschoben; Faehre, Monachil, Ronda und Rueckreise bleiben auf ihren absoluten Daten.
 
 ## Leitentscheidungen
 
@@ -31,14 +31,14 @@ Massgeblich ist `reise-roadbook-2026.html`. Die Datei `reiseplanung-verfeinert-2
 | 5 | Nîmes - Carcassonne | Languedoc | Carcassonne |
 | 6 | Carcassonne - Castelldefels | Transfer | Castelldefels |
 | 7 | Castelldefels / Barcelona | Ruhetag / Stadt optional | Castelldefels |
-| 8 | Castelldefels - Falset | Kueste / Priorat | Falset |
-| 9 | Priorat-Runde | Kurventag | Falset |
-| 10 | Falset - Albarracín | Inland | Albarracín |
-| 11 | Albarracín-Runde | Flex / Kurventag | Albarracín |
-| 12 | Albarracín - La Patacona | Transfer | La Patacona |
-| 13 | La Patacona / Valencia | Ruhetag / Stadt optional | La Patacona |
-| 14 | La Patacona - Altea | Costa-Blanca-Hinterland | Altea |
-| 15 | Altea - Monachil | Transfer | Monachil |
+| 8 | Castelldefels - Priorat - Falset | Kueste / Priorat | Falset |
+| 9 | Falset - Albarracín | Inland | Albarracín |
+| 10 | Albarracín-Runde | Flex / Kurventag | Albarracín |
+| 11 | Albarracín - La Patacona | Transfer | La Patacona |
+| 12 | La Patacona / Valencia | Ruhetag / Stadt optional | La Patacona |
+| 13 | La Patacona - Altea | Costa-Blanca-Hinterland | Altea |
+| 14 | Altea - Cartagena - Águilas | Kueste / Mittelmeer | Águilas |
+| 15 | Águilas - Monachil | Transfer | Monachil |
 | 16 | Monachil / Granada | Ruhetag / Stadt optional | Monachil |
 | 17 | Alpujarras-Runde ab Monachil | Kurventag | Monachil |
 | 18 | Monachil - Ronda | Transfer | Ronda |
@@ -63,15 +63,16 @@ Massgeblich ist `reise-roadbook-2026.html`. Die Datei `reiseplanung-verfeinert-2
 - Digne-les-Bains ist kein Pflichtpunkt mehr. Die klarere Linie fuehrt ueber Chateau-Arnoux/Malijai, Forcalquier, Cereste und Apt.
 - Camargue nur auf asphaltierten Strassen fahren: D570, D38, D58, D979. Digue a la Mer, Salinenpisten, Strandzufahrten und Schutzgebietswege vermeiden.
 - Carcassonne - Castelldefels wurde gegenueber der alten Barcelona-Logik entschaerft: Castelldefels ist Aussenbasis fuer Barcelona, die Motorraeder bleiben dort sicherer stehen.
-- Priorat bleibt eine kurze, kurvige Asphalt-Runde. Siurana nur bewusst als Stichstrasse einbauen.
+- Die wichtigsten Priorat-Punkte Porrera und Gratallops sind in Tag 8 integriert; Falset bleibt nur eine Nacht.
 - Albarracín nicht in die Altstadt routen. Die Runde nur fahren, wenn Google klar auf Asphalt bleibt.
 - Valencia wird als La Patacona / Alboraya geplant, nicht als Innenstadtbasis.
+- Tag 14 fuehrt ueber Cartagena-Hafen, La Azohía und Puerto de Mazarrón nach Águilas. Der folgende Transfer nach Monachil ist dadurch auf rund 244 km verkuerzt.
 - Granada wird als Monachil geplant, um Stadtzentrum und ZBE-/Parkierungsstress zu vermeiden.
 - In der Alpujarras-Runde ist Pampaneira der sinnvolle Wendepunkt; Trevelez nicht erzwingen. Im Roadbook sind aktuelle Google-Sperrhinweise auf der A-348 vermerkt, spaeter neu pruefen.
 - Ronda enthaelt bewusst einen Wetter- und Erholungstag. Die Grazalema-/Puerto-de-las-Palomas-Runde nur bei trockener, offener Strasse und guter Sicht fahren.
 - Úbeda/Baeza, Cuenca und Zaragoza sind als ruhige Rueckwegstationen gesetzt. Cuenca bekam einen zusaetzlichen Puffertag.
 - Barcelona - Genua ist als Faehre geplant, nicht als Strassenroute.
-- Nach der Faehre wird wetterabhaengig zwischen Aosta und Como entschieden. Aosta ist bei trockenem Wetter die motorradfreundlichere Variante, Como bleibt Schlechtwetter-/Gotthard-Alternative.
+- Nach der Faehre ist Aosta der verbindliche Übernachtungsort; bei ungeeignetem Alpenwetter wird nur die Heimroute neu geplant.
 
 ## Faehre
 
@@ -97,13 +98,13 @@ Die Unterkunftsseite priorisiert nicht nur Lage und Komfort, sondern vor allem s
 | Albarracín | Hotel Dona Blanca | Parkplatz hinter Schranke und Videoueberwachung |
 | Alboraya / La Patacona | Olympia Hotel, Events & Spa | Metro-nahe Valencia-Aussenbasis, Kundenparking klaeren |
 | Altea | Hotel Cap Negret | gut anfahrbar, privater ueberdachter Parkplatz moeglich |
+| Águilas | Senator Águilas | direkt am Meer, Privatparkplatz ausgewiesen; geschuetzten Motorradplatz bestaetigen |
 | Monachil | La Almunia del Valle | ruhige Aussenbasis, Parkplatzdetails fuer zwei Motorraeder schriftlich klaeren |
 | Ronda | Hotel San Francisco | geschlossene Gaestegarage bestaetigt |
 | Úbeda | La Posada Boutique Hotel | Privatparkplatz bestaetigt; Tor/Nachtabschluss klaeren |
 | Cuenca / Arcas | Isis de Cuenca | explizit motorradfreundlich, nachts geschlossenes Gelaende |
 | Zaragoza | Hotel Sauce | geschlossene Garage, zwei Motorraeder pro Platz moeglich |
 | Aosta | Hotel Le Pageot | kostenlose Tiefgarage fuer Motorraeder |
-| Como | Park Hotel Como | private Garage reservierbar; als Wetteralternative |
 
 ## Buchungsprioritaeten
 
@@ -111,6 +112,7 @@ Jetzt beziehungsweise frueh reservieren:
 
 - Grenoble.
 - Beide Aufenthalte in Castelldefels.
+- Águilas.
 - Monachil.
 - Ronda.
 - Zaragoza.

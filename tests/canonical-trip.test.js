@@ -14,24 +14,27 @@ test("published trip has one unambiguous sequence of 30 calendar days", () => {
 });
 
 test("original plan is a complete, fixed fallback snapshot", () => {
-  assert.equal(tripData.originalPlanVersion, "2026-08-12T16:32:07.603Z");
+  assert.equal(tripData.originalPlanVersion, "2026-08-16T14:49:12.000Z");
   assert.equal(tripData.baselineDays.length, 30);
   assert.deepEqual(tripData.baselineDays.map((day) => day.id), Array.from({ length: 30 }, (_, index) => `day-${index + 1}`));
-  assert.equal(tripData.baselineDays[11].overnight, "La Patacona");
-  assert.match(tripData.baselineDays[11].destination, /Olympia Hotel/);
+  assert.equal(tripData.baselineDays[10].overnight, "La Patacona");
+  assert.match(tripData.baselineDays[10].destination, /Olympia Hotel/);
+  assert.equal(tripData.baselineDays[13].overnight, "Águilas");
   assert.equal(tripData.baselineDays[25].overnight, "Castelldefels");
   assert.equal(tripData.baselineDays[26].overnight, "Castelldefels");
-  assert.equal(Object.keys(tripData.baselineAccommodations).length, 18);
+  assert.equal(Object.keys(tripData.baselineAccommodations).length, 19);
   assert.equal(tripData.baselineAccommodations.alboraya.firstChoice, "Olympia Hotel, Events & Spa · Alboraya");
 });
 
 test("corrected destinations and overnight places are canonical", () => {
-  assert.equal(tripData.publishedDays[11].overnight, "La Patacona");
-  assert.match(tripData.publishedDays[11].destination, /Olympia Hotel/);
-  assert.match(tripData.publishedDays[13].origin, /Olympia Hotel/);
+  assert.equal(tripData.publishedDays[10].overnight, "La Patacona");
+  assert.match(tripData.publishedDays[10].destination, /Olympia Hotel/);
+  assert.match(tripData.publishedDays[12].origin, /Olympia Hotel/);
   assert.deepEqual(tripData.places.laPatacona, { name: "La Patacona", latitude: 39.4953, longitude: -0.3525 });
+  assert.equal(tripData.publishedDays[13].overnight, "Águilas");
+  assert.match(tripData.publishedDays[13].destination, /Senator Águilas/);
   assert.equal(tripData.publishedDays[14].overnight, "Monachil");
-  assert.match(tripData.publishedDays[14].destination, /Monachil/);
+  assert.match(tripData.publishedDays[14].origin, /Senator Águilas/);
   assert.equal(tripData.publishedDays[25].title, "Zaragoza – Castelldefels");
   assert.equal(tripData.publishedDays[25].overnight, "Castelldefels");
   assert.equal(tripData.publishedDays[26].title, "Castelldefels / Fährvorbereitung");
@@ -56,7 +59,7 @@ test("accommodation schedule covers exactly 29 consecutive nights", () => {
   const stays = Object.entries(tripData.accommodations)
     .map(([id, stay]) => ({ id, ...stay }))
     .sort((left, right) => left.startDate.localeCompare(right.startDate));
-  assert.equal(stays.length, 18);
+  assert.equal(stays.length, 19);
   assert.equal(stays[0].startDate, tripData.trip.startDate);
   assert.equal(stays.at(-1).endDate, tripData.trip.endDate);
   assert.equal(stays.reduce((sum, stay) => sum + Math.round((Date.parse(stay.endDate) - Date.parse(stay.startDate)) / 86400000), 0), 29);
@@ -64,6 +67,8 @@ test("accommodation schedule covers exactly 29 consecutive nights", () => {
   assert.equal(tripData.accommodations.alboraya.title, "La Patacona");
   assert.equal(tripData.accommodations.alboraya.firstChoice, "Olympia Hotel, Events & Spa · Alboraya");
   assert.equal(tripData.accommodations.alboraya.alternative, "La Mozaira · Alboraya");
+  assert.equal(tripData.accommodations.aguilas.firstChoice, "Senator Águilas");
+  assert.equal(tripData.accommodations.aguilas.alternative, "Hotel El Paso");
   assert.equal(tripData.accommodations["castelldefels-2"].title, "Castelldefels");
   assert.equal(tripData.accommodations["castelldefels-2"].firstChoice, "ibis Barcelona Castelldefels");
   assert.equal(tripData.baselineAccommodations["castelldefels-2"].firstChoice, "ibis Barcelona Castelldefels");

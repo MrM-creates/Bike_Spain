@@ -45,13 +45,13 @@ Die Integration umfasst:
 
 ## Datenbrücke
 
-`data/trip-spanien-2026.js` ist die kanonische Quelle für veröffentlichten Stand, festen Originalplan, 30 Etappen, 18 Unterkunftsstopps und die drei geschützten Fixpunkte. Roadbook, Unterkunftsansicht und beide Publish-Endpunkte lesen beziehungsweise aktualisieren diese eine Quelle. `reise-roadbook-2026.html` stellt daraus den veröffentlichten Snapshot sowie eine schmale Entwurfsbrücke bereit. `assets/travel-model.js` überführt den Snapshot in `Trip`, `PlanRevision`, `Stage`, `RouteVariant`, `Stay`, `AccommodationOption`, `Booking`, `FixPoint`, `NarrativeSegment` und `PublishedRelease`.
+`data/trip-spanien-2026.js` ist die kanonische Quelle für veröffentlichten Stand, festen Originalplan, 30 Etappen, 19 Unterkunftsstopps und die drei geschützten Fixpunkte. Roadbook, Unterkunftsansicht und beide Publish-Endpunkte lesen beziehungsweise aktualisieren diese eine Quelle. `reise-roadbook-2026.html` stellt daraus den veröffentlichten Snapshot sowie eine schmale Entwurfsbrücke bereit. `assets/travel-model.js` überführt den Snapshot in `Trip`, `PlanRevision`, `Stage`, `RouteVariant`, `Stay`, `AccommodationOption`, `Booking`, `FixPoint`, `NarrativeSegment` und `PublishedRelease`.
 
 Der Import prüft die Parität zwischen den 30 bestehenden Reisetagen und den 30 erzeugten Etappen. Tagesnummern dienen nur der Anzeige; Beziehungen verwenden stabile IDs.
 
 `scripts/generate-roadbook-routes.js` reproduziert `assets/roadbook-routes.geojson` aus den KML-Ankern. Dabei werden optionale Zusatzrunden von der Hauptlinie getrennt, Ortsanker ohne Wendeschleifen passiert und die portablen Exporte `reiseplanung-verfeinert-2026-export.kml` sowie `reiseplanung-verfeinert-2026.gpx` erzeugt. Übersicht und Roadbook filtern daraus dieselben `original`-Geometrien; nur eine ausdrücklich gewählte Routenvorschau blendet die passende `direct`-Variante ein.
 
-La Patacona, Monachil, Castelldefels und Aosta sind als eindeutige Übernachtungsorte hinterlegt. Für La Patacona ist das Olympia Hotel in Alboraya die konkrete erste Wahl; Kartenmarker, Anfahrt, Abfahrt und Exporte verwenden dessen Hotelanker statt eines Valencia-Innenstadt- oder allgemeinen Strandpunkts. Der Heimweg von Aosta nach Berikon verwendet Martigny und Lausanne als Korridor. Der zuvor irrtümlich gesetzte Sion-Anker wurde entfernt, damit die Route keinen Hin-und-zurück-Abstecher mehr enthält.
+La Patacona, Águilas, Monachil, Castelldefels und Aosta sind als eindeutige Übernachtungsorte hinterlegt. Für La Patacona ist das Olympia Hotel in Alboraya die konkrete erste Wahl; in Águilas ist es das Senator Águilas direkt am Meer. Kartenmarker, Anfahrten, Abfahrten und Exporte verwenden die konkreten Zielanker. Der Heimweg von Aosta nach Berikon verwendet Martigny und Lausanne als Korridor.
 
 ## Entwurfs- und Prüfzustände
 

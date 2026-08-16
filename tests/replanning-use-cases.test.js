@@ -76,7 +76,7 @@ test("moving an accommodation to another place is rejected until adjacent stages
 });
 
 test("replanning preserves the selected boundary and all protected fix points", () => {
-  const selectedIndex = 11;
+  const selectedIndex = 10;
   const candidate = structuredClone(tripData.publishedDays);
   candidate[selectedIndex].origin = "Barcelona";
   assert.match(routeContinuityIssue(candidate, selectedIndex, 27), /beginnt in Barcelona/);
@@ -133,9 +133,13 @@ test("all route replanning requests produce bounded local drafts", async () => {
     });
     if (type === "Aufenthalt verlaengern" || type === "Aufenthalt verkuerzen") {
       const target = input.requestedChange.targetNightsAtPlace;
-      setTransfer(days[0], input.previousDay.overnight, "Falset");
-      for (let index = 1; index < target; index += 1) setRest(days[index], "Falset");
-      if (days[target]) setTransfer(days[target], "Falset", "Barcelona");
+      if (target === 0) {
+        setTransfer(days[0], input.previousDay.overnight, "Barcelona");
+      } else {
+        setTransfer(days[0], input.previousDay.overnight, "Falset");
+        for (let index = 1; index < target; index += 1) setRest(days[index], "Falset");
+        if (days[target]) setTransfer(days[target], "Falset", "Barcelona");
+      }
       for (let index = target + 1; index < days.length; index += 1) setRest(days[index], "Barcelona");
     } else if (type === "Etappe oder Ausflug auslassen") {
       setRest(days[0], days[0].overnight, "skipped");
@@ -154,9 +158,9 @@ test("all route replanning requests produce bounded local drafts", async () => {
   };
   try {
     const cases = [
-      { change: { type: "extend", place: "Falset", nights: 1 }, expectedStart: 8, nights: 3 },
-      { change: { type: "shorten", place: "Falset", nights: 1 }, expectedStart: 8, nights: 1 },
-      { change: { type: "skip", place: "Priorat-Runde" }, expectedStart: 9, skipped: true },
+      { change: { type: "extend", place: "Falset", nights: 1 }, expectedStart: 8, expectedNights: 2 },
+      { change: { type: "shorten", place: "Falset", nights: 1 }, expectedStart: 8, expectedNights: 0 },
+      { change: { type: "skip", place: "Albarracín-Runde" }, expectedStart: 10, skipped: true },
       { change: { type: "reroute", startDay: 12, instruction: "Ab Valencia Richtung Norden neu planen" }, expectedStart: 12 },
       { change: { type: "free", startDay: 14, instruction: "Ruhetag verschieben und Etappen kürzen" }, expectedStart: 14 }
     ];
@@ -176,7 +180,7 @@ test("all route replanning requests produce bounded local drafts", async () => {
       );
       assert.equal(result.body.draft.days[27].title, "Fähre Barcelona – Genua");
       assert.equal(result.body.draft.days[29].destination, "Berikon, Switzerland");
-      if (useCase.nights) assert.equal(result.body.draft.lockedStay.nights, useCase.nights);
+      if (useCase.expectedNights !== undefined) assert.equal(result.body.draft.lockedStay.nights, useCase.expectedNights);
       if (useCase.skipped) assert.equal(result.body.draft.days[useCase.expectedStart - 1].status, "skipped");
     }
     assert.deepEqual(seen.map((change) => change.type), [

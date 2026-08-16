@@ -11,7 +11,8 @@ const originals = routes.features.filter((feature) => feature.properties.variant
 const direct = routes.features.filter((feature) => feature.properties.variant === "direct");
 const roadOriginals = originals.filter((feature) => !feature.properties.ferry);
 const publishedRoutes = originals.filter((feature) => !feature.properties.optional);
-const day12 = originals.find((feature) => feature.properties.day === 12);
+const day11 = originals.find((feature) => feature.properties.day === 11);
+const day14 = originals.find((feature) => feature.properties.day === 14);
 const day15 = originals.find((feature) => feature.properties.day === 15);
 const day26 = originals.find((feature) => feature.properties.day === 26);
 const distanceKilometers = (a, b) => {
@@ -33,11 +34,12 @@ assert.ok(roadOriginals.every((feature) => feature.geometry.type === "LineString
 assert.ok(roadOriginals.every((feature) => feature.geometry.coordinates.length >= 20));
 assert.ok(roadOriginals.every((feature) => feature.properties.source.startsWith("osrm-driving")));
 assert.ok(originals.find((feature) => feature.properties.day === 1).geometry.coordinates.length > 100);
-assert.equal(day12.properties.name, "12 Albarracin - La Patacona");
-assert.ok(distanceKilometers(day12.geometry.coordinates.at(-1), [-0.3525, 39.4953]) < 1);
-assert.equal(day15.properties.name, "15 Altea - Monachil");
+assert.equal(day11.properties.name, "11 Albarracin - La Patacona");
+assert.ok(distanceKilometers(day11.geometry.coordinates.at(-1), [-0.3525, 39.4953]) < 1);
+assert.equal(day14.properties.name, "14 Altea - Cartagena - Aguilas");
+assert.ok(distanceKilometers(day14.geometry.coordinates.at(-1), [-1.6, 37.397]) < 1);
+assert.equal(day15.properties.name, "15 Aguilas - Monachil");
 assert.ok(distanceKilometers(day15.geometry.coordinates.at(-1), [-3.5398, 37.1322]) < 1);
-assert.ok(Math.min(...day15.geometry.coordinates.map((coordinate) => distanceKilometers(coordinate, [-1.1307, 37.9922]))) > 2);
 assert.equal(day26.properties.name, "26 Zaragoza - Castelldefels");
 assert.ok(Math.abs(day26.geometry.coordinates.at(-1)[0] - 1.9794) < 0.01);
 assert.ok(Math.abs(day26.geometry.coordinates.at(-1)[1] - 41.2787) < 0.01);
