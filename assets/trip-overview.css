@@ -247,6 +247,14 @@ body.generic-trip-enabled.generic-roadbook-view #legacy-roadbook > .intro { disp
 .generic-export-options { display: grid; gap: 9px; padding: 20px; }
 .generic-export-options > span { margin: -3px 0 5px; color: var(--muted); font-size: 10px; text-align: center; }
 .generic-export-options [aria-disabled="true"] { pointer-events: none; opacity: .45; }
+.generic-original-copy { padding: 20px; }
+.generic-original-copy strong { display: block; font-size: 13px; }
+.generic-original-copy p { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+.generic-original-copy .generic-original-feedback { min-height: 17px; color: #9a3d35; font-weight: 700; }
+.generic-original-actions { justify-content: flex-end; }
+.generic-original-actions .generic-primary,
+.generic-original-actions .generic-secondary { white-space: nowrap; }
+.generic-original-actions button:disabled { opacity: .56; cursor: wait; }
 @media (max-width: 980px) {
   .generic-trip-nav { grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr); }
   .generic-status { display: none; }
@@ -265,6 +273,8 @@ body.generic-trip-enabled.generic-roadbook-view #legacy-roadbook > .intro { disp
   .generic-trip-tab { min-height: 32px; font-size: 11px; }
   .generic-primary { min-height: 42px; }
   .generic-more-button { min-height: 42px; }
+  .generic-original-actions { align-items: stretch; flex-direction: column-reverse; }
+  .generic-original-actions button { width: 100%; }
   #trip-overview-root { width: calc(100% - 24px); padding: 24px 0 40px; }
   .generic-overview-heading { display: block; margin-bottom: 16px; }
   .generic-overview-heading h1 { font-size: 29px; }

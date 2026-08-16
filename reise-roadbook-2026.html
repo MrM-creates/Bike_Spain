@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/roadbook-icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/trip-overview.css?v=20260816safari">
+  <link rel="stylesheet" href="/assets/trip-overview.css?v=20260816originalfix">
   <style>
     :root {
       --bg: #f4f5f0;
@@ -3115,17 +3115,38 @@ Wichtig fuer das Import-JSON:
       return { changes: clone(existingChanges), verified: false };
     };
 
+    const originalDraftActive = () => Boolean(draft?.days?.length && draft.request?.type === "restore-original");
+
     window.__ROADBOOK_READ_MODEL__ = Object.freeze({
-      getRouteStyleDrafts: async () => routeStyleDraftState(),
+      getRouteStyleDrafts: async () => originalDraftActive() ? [] : routeStyleDraftState(),
       saveRouteStyleDraft,
+      loadOriginalDraft: async () => {
+        await createOriginalDraft();
+        return { loaded: originalDraftActive() };
+      },
+      discardOriginalDraft: async () => {
+        if (!originalDraftActive()) return { discarded: false };
+        draft = null;
+        localStorage.removeItem(DRAFT_KEY);
+        state.days = clone(currentPlanDays);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ days: state.days }));
+        render();
+        return { discarded: true };
+      },
+      publishOriginalDraft: async () => {
+        if (!originalDraftActive()) return { published: false };
+        await publishDraft();
+        return { published: !originalDraftActive() };
+      },
       getPublishedSnapshot: async () => {
         let accommodations = [];
         try { accommodations = await loadAccommodationContext(); } catch (error) { console.warn("Unterkunftsstand fuer Reiseuebersicht nicht verfuegbar", error); }
+        const useOriginalDraft = originalDraftActive();
         return {
           publishedVersion: currentPublishedVersion,
-          planKind: currentPlanKind,
+          planKind: useOriginalDraft ? "original-draft" : currentPlanKind,
           originalDays: clone(originalBaseline),
-          days: clone(currentPlanDays),
+          days: clone(useOriginalDraft ? draft.days : currentPlanDays),
           accommodations: clone(accommodations),
           trip: {
             ...clone(canonicalTripData.trip),
@@ -3160,6 +3181,6 @@ Wichtig fuer das Import-JSON:
     }
   </script>
   <script src="/assets/travel-model.js?v=20260816final"></script>
-  <script src="/assets/trip-overview.js?v=20260816safari"></script>
+  <script src="/assets/trip-overview.js?v=20260816originalfix"></script>
 </body>
 </html>

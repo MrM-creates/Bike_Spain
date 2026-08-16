@@ -73,9 +73,9 @@
   const updateDraftChrome = () => {
     const count = confirmedRouteStyleDrafts.size;
     const status = navRoot.querySelector(".generic-status");
-    if (status) status.textContent = count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : `${planLabel()} · veröffentlicht`;
+    if (status) status.textContent = count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : (isOriginalDraft() ? "Originalplan · Entwurf" : `${planLabel()} · veröffentlicht`);
     const loaded = root.querySelector(".generic-loaded-plan strong");
-    if (loaded) loaded.textContent = count ? "Entwurf lokal gespeichert" : "Veröffentlicht";
+    if (loaded) loaded.textContent = count || isOriginalDraft() ? "Entwurf lokal gespeichert" : "Veröffentlicht";
   };
 
   const persistRouteStyle = async (stageIndex, style) => {
@@ -122,8 +122,10 @@
     return { startIndex, endIndex, label: dayRangeLabel(startIndex, endIndex) };
   };
   const stayMarkerGroups = () => modelApi.groupStayRanges(model.revision.stays, model.revision.stages);
-  const planLabel = () => model.source?.planKind === "adjusted" ? "Angepasster Plan" : "Veröffentlichter Plan";
+  const isOriginalDraft = () => model?.source?.planKind === "original-draft";
+  const planLabel = () => isOriginalDraft() ? "Originalplan (Entwurf)" : (model.source?.planKind === "adjusted" ? "Angepasster Plan" : "Veröffentlichter Plan");
   const planVersionLabel = () => {
+    if (isOriginalDraft()) return "Nur auf diesem Gerät · noch nicht veröffentlicht";
     const value = model.source?.publishedVersion;
     if (!value) return "Stand unbekannt";
     const date = new Date(value);
@@ -228,7 +230,7 @@
     navRoot.innerHTML = `
       <div class="generic-trip-nav-left"><button class="generic-back" id="generic-journeys" type="button"><span aria-hidden="true">←</span> Reisen</button><div class="generic-trip-identity"><strong>${escapeHtml(model.trip.name)}</strong><span>${escapeHtml(dateRange())} · ${model.revision.stages.length} Tage</span></div></div>
       <nav class="generic-trip-tabs" role="tablist" aria-label="Ansicht der Reise"><button class="generic-trip-tab" type="button" role="tab" aria-selected="true" data-generic-view="overview">Übersicht</button><button class="generic-trip-tab" type="button" role="tab" aria-selected="false" data-generic-view="roadbook">Roadbook</button></nav>
-      <div class="generic-trip-nav-actions"><span class="generic-status">${escapeHtml(planLabel())} · veröffentlicht</span><button class="generic-primary" id="generic-adjust" type="button">Reise anpassen</button><div class="generic-more"><button class="generic-more-button" id="generic-more" type="button" aria-label="Weitere Aktionen" aria-expanded="false">•••</button><div class="generic-more-menu" id="generic-more-menu" hidden><button type="button" id="generic-export">Exportieren</button><button type="button" id="generic-accommodations">Unterkünfte</button><button type="button" id="generic-help">Hilfe</button><button type="button" id="generic-original-plan">Originalplan laden</button></div></div></div>`;
+      <div class="generic-trip-nav-actions"><span class="generic-status">${escapeHtml(isOriginalDraft() ? "Originalplan · Entwurf" : `${planLabel()} · veröffentlicht`)}</span><button class="generic-primary" id="generic-adjust" type="button">${isOriginalDraft() ? "Originalplan prüfen" : "Reise anpassen"}</button><div class="generic-more"><button class="generic-more-button" id="generic-more" type="button" aria-label="Weitere Aktionen" aria-expanded="false">•••</button><div class="generic-more-menu" id="generic-more-menu" hidden><button type="button" id="generic-export">Exportieren</button><button type="button" id="generic-accommodations">Unterkünfte</button><button type="button" id="generic-help">Hilfe</button><button type="button" id="generic-original-plan">${isOriginalDraft() ? "Originalplan verwalten" : "Originalplan laden"}</button></div></div></div>`;
 
     const dialog = document.createElement("dialog");
     dialog.className = "generic-journeys-dialog";
@@ -244,8 +246,65 @@
     exportDialog.innerHTML = `<div class="generic-dialog-head"><div><h2>Route exportieren</h2><p>Die gewählte Tagesroute in Google Maps öffnen oder die gesamte Reise als Datei laden.</p></div><button class="generic-dialog-close" type="button" aria-label="Export schließen">×</button></div><div class="generic-export-options"><a class="generic-action-button primary" id="generic-export-google" target="_blank" rel="noopener">Tagesroute in Google Maps öffnen ↗</a><span id="generic-export-day"></span><a class="generic-action-button" href="/reiseplanung-verfeinert-2026-export.kml" download>Gesamtreise als KML</a><a class="generic-action-button" href="/reiseplanung-verfeinert-2026.gpx" download>Gesamtreise als GPX</a></div>`;
     document.body.append(exportDialog);
     exportDialog.querySelector(".generic-dialog-close").addEventListener("click", () => exportDialog.close());
+    const originalDialog = document.createElement("dialog");
+    originalDialog.className = "generic-journeys-dialog generic-original-dialog";
+    originalDialog.id = "generic-original-dialog";
+    const renderOriginalDialog = () => {
+      const active = isOriginalDraft();
+      originalDialog.innerHTML = active
+        ? `<div class="generic-dialog-head"><div><h2>Originalplan bereit</h2><p>Route und Unterkünfte werden jetzt als lokaler Entwurf angezeigt.</p></div><button class="generic-dialog-close" type="button" aria-label="Originalplan schließen">×</button></div><div class="generic-original-copy"><strong>Der gemeinsame Plan ist noch unverändert.</strong><p>Prüfe den Originalplan in Übersicht und Roadbook. Veröffentlicht wird er erst nach PIN-Eingabe.</p><p class="generic-original-feedback" aria-live="polite"></p></div><div class="generic-dialog-foot generic-original-actions"><button class="generic-secondary" id="generic-original-discard" type="button">Beim aktuellen Plan bleiben</button><button class="generic-secondary" id="generic-original-review" type="button">Weiter prüfen</button><button class="generic-primary" id="generic-original-publish" type="button">Originalplan veröffentlichen</button></div>`
+        : `<div class="generic-dialog-head"><div><h2>Originalplan laden?</h2><p>Der festgelegte Rückfallplan wird zuerst nur auf diesem Gerät geladen.</p></div><button class="generic-dialog-close" type="button" aria-label="Originalplan schließen">×</button></div><div class="generic-original-copy"><strong>Der gemeinsame Plan bleibt unverändert.</strong><p>Nach dem Laden kannst du Route und Unterkünfte prüfen und den Entwurf wieder verwerfen.</p><p class="generic-original-feedback" aria-live="polite"></p></div><div class="generic-dialog-foot generic-original-actions"><button class="generic-secondary" id="generic-original-cancel" type="button">Abbrechen</button><button class="generic-primary" id="generic-original-load" type="button">Als Entwurf laden</button></div>`;
+      originalDialog.querySelector(".generic-dialog-close").addEventListener("click", () => originalDialog.close());
+      originalDialog.querySelector("#generic-original-cancel")?.addEventListener("click", () => originalDialog.close());
+      originalDialog.querySelector("#generic-original-review")?.addEventListener("click", () => originalDialog.close());
+      originalDialog.querySelector("#generic-original-load")?.addEventListener("click", async (event) => {
+        const button = event.currentTarget;
+        const feedback = originalDialog.querySelector(".generic-original-feedback");
+        button.disabled = true;
+        button.textContent = "Wird geladen …";
+        try {
+          const result = await bridge.loadOriginalDraft?.();
+          if (!result?.loaded) throw new Error("Der Entwurf konnte nicht angelegt werden.");
+          const target = new URL(window.location.href);
+          target.searchParams.set("originalDraft", "ready");
+          window.location.href = target.toString();
+        } catch (error) {
+          feedback.textContent = `Originalplan konnte nicht geladen werden: ${error.message}`;
+          button.disabled = false;
+          button.textContent = "Als Entwurf laden";
+        }
+      });
+      originalDialog.querySelector("#generic-original-discard")?.addEventListener("click", async (event) => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        button.textContent = "Wird zurückgesetzt …";
+        const result = await bridge.discardOriginalDraft?.();
+        if (result?.discarded) window.location.reload();
+        else {
+          originalDialog.querySelector(".generic-original-feedback").textContent = "Der aktuelle Plan konnte nicht wiederhergestellt werden.";
+          button.disabled = false;
+          button.textContent = "Beim aktuellen Plan bleiben";
+        }
+      });
+      originalDialog.querySelector("#generic-original-publish")?.addEventListener("click", async (event) => {
+        const button = event.currentTarget;
+        button.disabled = true;
+        button.textContent = "Veröffentlichung wird vorbereitet …";
+        const result = await bridge.publishOriginalDraft?.();
+        if (result?.published) window.location.reload();
+        else {
+          button.disabled = false;
+          button.textContent = "Originalplan veröffentlichen";
+        }
+      });
+    };
+    const showOriginalDialog = () => {
+      renderOriginalDialog();
+      originalDialog.showModal();
+    };
+    document.body.append(originalDialog);
     navRoot.querySelectorAll("[data-generic-view]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.genericView)));
-    navRoot.querySelector("#generic-adjust").addEventListener("click", openExistingPlanner);
+    navRoot.querySelector("#generic-adjust").addEventListener("click", () => isOriginalDraft() ? showOriginalDialog() : openExistingPlanner());
     const moreButton = navRoot.querySelector("#generic-more");
     const moreMenu = navRoot.querySelector("#generic-more-menu");
     const closeMore = () => { moreMenu.hidden = true; moreButton.setAttribute("aria-expanded", "false"); };
@@ -265,7 +324,7 @@
     navRoot.querySelector("#generic-help").addEventListener("click", () => { document.querySelector("#nav-help")?.click(); closeMore(); });
     navRoot.querySelector("#generic-original-plan").addEventListener("click", () => {
       closeMore();
-      document.querySelector("#reset-plan")?.click();
+      showOriginalDialog();
     });
     moreButton.addEventListener("click", (event) => {
       event.stopPropagation();
@@ -274,6 +333,12 @@
       moreButton.setAttribute("aria-expanded", String(open));
     });
     document.addEventListener("click", (event) => { if (!event.target.closest(".generic-more")) closeMore(); });
+    if (isOriginalDraft() && params.get("originalDraft") === "ready") {
+      const readyUrl = new URL(window.location.href);
+      readyUrl.searchParams.delete("originalDraft");
+      history.replaceState(null, "", readyUrl);
+      window.setTimeout(showOriginalDialog, 0);
+    }
   }
 
   function renderOverview() {
@@ -285,7 +350,7 @@
     const requested = revision.bookings.filter((booking) => booking.status === "requested").length;
     const open = Math.max(0, revision.stays.length - booked - requested);
     root.innerHTML = `<section id="generic-overview-panel">
-      <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">Kurven, Küsten und spanisches Hinterland</h1><p>Eine ausgedehnte Motorradreise von den Westalpen über Südfrankreich bis nach Andalusien. Kurvige Berg- und Küstenstraßen wechseln sich mit entspannten Ruhetagen ab; die gebuchte Fähre von Barcelona nach Genua setzt den festen Schlusspunkt in Spanien.</p></div><div class="generic-overview-date">${escapeHtml(planLabel())} · veröffentlicht<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
+      <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">Kurven, Küsten und spanisches Hinterland</h1><p>Eine ausgedehnte Motorradreise von den Westalpen über Südfrankreich bis nach Andalusien. Kurvige Berg- und Küstenstraßen wechseln sich mit entspannten Ruhetagen ab; die gebuchte Fähre von Barcelona nach Genua setzt den festen Schlusspunkt in Spanien.</p></div><div class="generic-overview-date">${escapeHtml(planLabel())}${isOriginalDraft() ? "" : " · veröffentlicht"}<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
       <section class="generic-route-card" aria-label="Karte und Reiseverlauf"><div class="generic-map-wrap"><div id="trip-overview-map" aria-label="Interaktive Übersichtskarte"></div><div class="generic-map-loading">Karte und veröffentlichte Route werden geladen …</div><span class="generic-map-label" id="generic-overview-map-label">${escapeHtml(planLabel())} · dieselbe Route wie im Roadbook</span><button class="generic-map-reset" id="generic-map-reset" type="button">Gesamte Route</button></div><div class="generic-route-story"><h2>Reiseverlauf</h2><p>Karte und Beschreibung sind miteinander verbunden.</p>${revision.narrativeSegments.map((segment, index) => `<button class="generic-story-segment" type="button" data-story="${index}" aria-current="${index === 0}"><strong>${escapeHtml(segment.title)}</strong>${escapeHtml(segment.text)}</button>`).join("")}</div></section>
       <section class="generic-overview-stats" aria-label="Eckdaten"><div class="generic-overview-stat"><strong>${revision.stages.length} Tage</strong><span>Gesamtdauer</span></div><div class="generic-overview-stat"><strong>${rideCount}</strong><span>Fahretappen</span></div><div class="generic-overview-stat"><strong>${restCount}</strong><span>Ruhetage</span></div><div class="generic-overview-stat"><strong>${km.format(totalDistance)} km</strong><span>Planwerte</span></div><div class="generic-overview-stat"><strong>${trip.motorcycleCount} Motorräder</strong><span>Reiseparameter</span></div></section>
       <section class="generic-overview-details"><article class="generic-overview-card"><div class="generic-card-head"><h2>Fixpunkte</h2><span>Automatisch geschützt</span></div><ul class="generic-fix-list">${revision.fixPoints.map((fix) => `<li><span class="generic-fix-icon">${fix.kind === "transport" ? "⚓" : fix.kind === "start" ? "●" : "◎"}</span><span><strong>${escapeHtml(fix.title)}</strong><small>${escapeHtml(fix.startsAt ? formatDate(fix.startsAt.slice(0, 10)) : "Verbindlich")}</small></span><span class="generic-fix-tag">Geschützt</span></li>`).join("")}</ul></article><article class="generic-overview-card"><div class="generic-card-head"><h2>Unterkünfte</h2><span>${revision.stays.length} Stopps</span></div><div class="generic-booking-stats"><div><strong>${booked}</strong><span>Gebucht</span></div><div><strong>${requested}</strong><span>Angefragt</span></div><div><strong>${open}</strong><span>Offen</span></div></div><p class="generic-card-note">Unterkünfte, Alternativen und Buchungsstatus sind direkt mit dem Roadbook verbunden.</p><button class="generic-secondary" id="generic-overview-stays" type="button">Unterkünfte im Roadbook ansehen</button></article></section>
@@ -397,7 +462,7 @@
 
   function renderWorkspace() {
     const workspace = root.querySelector("#generic-workspace");
-    workspace.innerHTML = `<section class="generic-stage-panel" aria-labelledby="generic-list-title"><div class="generic-panel-head"><div class="generic-panel-title"><h2 id="generic-list-title">Reiseplan</h2><span id="generic-list-meta"></span></div><div class="generic-loaded-plan"><span>${escapeHtml(planLabel())}</span><strong>Veröffentlicht</strong><small>${escapeHtml(planVersionLabel())}</small></div><div class="generic-plan-switch" role="tablist" aria-label="Reiseplan-Ansicht"><button type="button" role="tab" aria-selected="true" data-list-mode="days">Tage <span>${model.revision.stages.length}</span></button><button type="button" role="tab" aria-selected="false" data-list-mode="stays">Unterkünfte <span>${model.revision.stays.length}</span></button></div></div><div class="generic-stage-list" id="generic-stage-list"></div></section>
+    workspace.innerHTML = `<section class="generic-stage-panel" aria-labelledby="generic-list-title"><div class="generic-panel-head"><div class="generic-panel-title"><h2 id="generic-list-title">Reiseplan</h2><span id="generic-list-meta"></span></div><div class="generic-loaded-plan"><span>${escapeHtml(planLabel())}</span><strong>${isOriginalDraft() ? "Entwurf lokal gespeichert" : "Veröffentlicht"}</strong><small>${escapeHtml(planVersionLabel())}</small></div><div class="generic-plan-switch" role="tablist" aria-label="Reiseplan-Ansicht"><button type="button" role="tab" aria-selected="true" data-list-mode="days">Tage <span>${model.revision.stages.length}</span></button><button type="button" role="tab" aria-selected="false" data-list-mode="stays">Unterkünfte <span>${model.revision.stays.length}</span></button></div></div><div class="generic-stage-list" id="generic-stage-list"></div></section>
       <section class="generic-work-map" aria-label="Interaktive Routenkarte"><div id="generic-work-map"></div><div class="generic-work-map-toolbar"><div class="generic-work-map-status"><strong id="generic-work-map-title">${escapeHtml(planLabel())}</strong><span id="generic-work-map-subtitle">Karte und Tagesliste sind synchronisiert.</span></div><button class="generic-compare" type="button" aria-pressed="false" disabled title="Verfügbar, sobald für diese Etappe eine Routenvorschau erstellt wurde"><span>Original vergleichen</span><i aria-hidden="true"></i></button></div><div class="generic-work-map-legend"><span><i class="route"></i>Tagesetappe</span><span><i class="stay"></i>Übernachtung</span><span>◆ Ruhetag</span><span>🔒 Fixpunkt</span><span class="generic-compare-legend" id="generic-compare-legend" hidden></span></div><div class="generic-map-hint">Ort oder Strecke anklicken, um Details zu sehen</div></section>
       <aside class="generic-inspector" id="generic-inspector" aria-live="polite" aria-label="Auswahldetails"></aside>`;
     workspace.querySelectorAll("[data-list-mode]").forEach((button) => button.addEventListener("click", () => setListMode(button.dataset.listMode)));
