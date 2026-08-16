@@ -1248,6 +1248,10 @@
   }
 
   function openExistingPlanner() {
+    if (typeof window.__ROADBOOK_OPEN_PLAN_CHANGE__ === "function") {
+      window.__ROADBOOK_OPEN_PLAN_CHANGE__({ type: "extend", startDay: Math.max(1, travelDayNumber(selectedStage)) });
+      return;
+    }
     document.querySelector("#nav-plan")?.click();
   }
 
