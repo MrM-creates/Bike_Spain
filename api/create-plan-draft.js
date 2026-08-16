@@ -162,7 +162,7 @@ const normalizeInputDay = (day) => ({
   time: cleanText(day?.time, 40),
   roads: cleanText(day?.roads, 300),
   points: cleanText(day?.points, 500),
-  note: cleanText(day?.note, 800),
+  note: cleanText(day?.note, 1800),
   travelNote: cleanText(day?.travelNote, 500),
   rest: Boolean(day?.rest),
   origin: cleanText(day?.origin, 180),
@@ -578,7 +578,7 @@ module.exports = async (request, response) => {
         schema: routeSchema,
         web: true,
         reasoningEffort: routeStyleOnly ? "low" : "medium",
-        instructions: verificationInstructions,
+        instructions: `${verificationInstructions} requestedChange enthaelt die Nutzerpraeferenzen und ist verbindlich. Wenn dort ein Kilometerbereich oder ein ruhiger Rhythmus gefordert wird, muss die korrigierte Etappe diesen einhalten; entferne dafuer optionale Wegpunkte oder Umwege, ohne Start, Tagesziel oder Uebernachtung zu aendern.`,
         input: JSON.stringify({
           requestedChange: payload.change || {},
           replaceFromDay: chunkStart + 1,
