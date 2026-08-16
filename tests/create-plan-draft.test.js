@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { Readable } = require("node:stream");
 const handler = require("../api/create-plan-draft");
-const { ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
+const { accommodationContextWithSlots, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
 
 const days = [
   { overnight: "Castelldefels" },
@@ -58,6 +58,12 @@ assert.match(routeDetailIssue(checkedRoute, 1, 3), /Bonaigua/);
 assert.throws(() => verifyAccommodationState(checkedRoute, {}), /Übernachtungsblöcken/);
 assert.equal(protectedStartIssue([{ origin: "Berikon, Switzerland", overnight: "Grenoble" }], { place: "Berikon" }), "");
 assert.match(protectedStartIssue([{ origin: "Zürich", overnight: "Grenoble" }], { place: "Berikon" }), /geschützten Startpunkt Berikon/);
+const expandedSlots = accommodationContextWithSlots(
+  [{ title: "A" }, { title: "B" }, { title: "C" }],
+  [{ id: "existing", title: "A" }]
+);
+assert.deepEqual(expandedSlots.allSlotIds, ["existing", "replanned-stop-1", "replanned-stop-2"]);
+assert.equal(expandedSlots.expandedContext.length, 3, "replanning may add accommodation display slots");
 
 console.log("create-plan-draft tests passed");
 

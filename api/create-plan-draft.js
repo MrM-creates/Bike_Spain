@@ -452,12 +452,26 @@ const preservedStay = (expected, current) => {
   };
 };
 
+const accommodationContextWithSlots = (expected, accommodationContext) => {
+  const allSlotIds = accommodationContext.map((stay) => cleanText(stay.id, 80)).filter(Boolean);
+  let generatedIndex = 1;
+  while (allSlotIds.length < expected.length) {
+    const id = `replanned-stop-${generatedIndex}`;
+    generatedIndex += 1;
+    if (!allSlotIds.includes(id)) allSlotIds.push(id);
+  }
+  const expandedContext = [
+    ...accommodationContext,
+    ...allSlotIds.filter((id) => !accommodationContext.some((stay) => stay.id === id)).map((id) => ({ id }))
+  ];
+  return { allSlotIds, expandedContext };
+};
+
 const createAccommodationPlan = async ({ draftDays, accommodationContext, routeSummary }) => {
   const expected = expectedStays(draftDays);
-  const allSlotIds = accommodationContext.map((stay) => cleanText(stay.id, 80)).filter(Boolean);
-  if (expected.length > allSlotIds.length) throw new Error("Der Entwurf benötigt mehr Unterkunftsstopps als die aktuelle Unterkunftsliste aufnehmen kann.");
-  const slotPlan = assignAccommodationSlots(expected, accommodationContext);
-  const currentById = new Map(accommodationContext.map((stay) => [stay.id, stay]));
+  const { allSlotIds, expandedContext } = accommodationContextWithSlots(expected, accommodationContext);
+  const slotPlan = assignAccommodationSlots(expected, expandedContext);
+  const currentById = new Map(expandedContext.map((stay) => [stay.id, stay]));
   const researchStays = slotPlan.assigned.filter((stay) => {
     const current = currentById.get(stay.slotId) || {};
     return stay.slotId !== "ferry" && (!placesMatch(stay.title, current.title) || !current.currentFirstChoice);
@@ -842,4 +856,4 @@ module.exports = async (request, response) => {
   }
 };
 
-module.exports._test = { contiguousPlaceNights, expectedStays, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, placeIndexOf, placesMatch, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
+module.exports._test = { accommodationContextWithSlots, contiguousPlaceNights, expectedStays, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, placeIndexOf, placesMatch, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
