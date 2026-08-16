@@ -939,7 +939,7 @@
     workspaceInitialised = true;
     try {
       const [L, { xml, routes }] = await Promise.all([loadLeaflet(), loadMapData()]);
-      workspaceMap = L.map("generic-work-map", { zoomControl: true, scrollWheelZoom: false, preferCanvas: true }).setView([42.2, 2.1], 5);
+      workspaceMap = L.map("generic-work-map", { zoomControl: true, scrollWheelZoom: true, preferCanvas: true }).setView([42.2, 2.1], 5);
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(workspaceMap);
       const pointCoordinates = kmlPoints(xml);
       const dayEnds = new Map();

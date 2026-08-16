@@ -5,9 +5,17 @@ body.generic-trip-enabled {
 }
 
 body.generic-trip-enabled .topbar-inner { display: none; }
-body.generic-trip-enabled .topbar { z-index: 1200; }
+body.generic-trip-enabled .topbar {
+  z-index: 1200;
+  background: #f4f5f0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+body.generic-trip-enabled.generic-roadbook-view .topbar { position: relative; }
 
 .generic-trip-nav {
+  position: relative;
+  z-index: 1;
   width: min(1180px, calc(100% - 32px));
   min-height: 70px;
   display: grid;
@@ -68,7 +76,14 @@ body.generic-trip-enabled .topbar { z-index: 1200; }
 }
 
 .generic-trip-nav button,
-.generic-trip-nav a { position: relative; touch-action: manipulation; -webkit-tap-highlight-color: rgba(23,107,70,.14); }
+.generic-trip-nav a {
+  position: relative;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: rgba(23,107,70,.14);
+}
 
 .generic-trip-tab[aria-selected="true"] {
   background: #fff;
@@ -112,9 +127,10 @@ body.generic-trip-enabled .topbar { z-index: 1200; }
   padding: 6px;
   border: 1px solid var(--generic-line);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.97);
+  background: #fff;
   box-shadow: var(--generic-shadow);
-  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .generic-more-menu button,
@@ -238,6 +254,7 @@ body.generic-trip-enabled.generic-roadbook-view #legacy-roadbook > .intro { disp
 }
 
 @media (max-width: 760px) {
+  body.generic-trip-enabled.generic-roadbook-view #trip-overview-root { height: calc(100svh - 105px); }
   .generic-trip-nav { width: calc(100% - 24px); grid-template-columns: minmax(0, 1fr) auto; gap: 8px; padding: 9px 0; }
   .generic-trip-nav-left { gap: 7px; }
   .generic-back { min-width: 36px; padding: 0 8px 0 0; font-size: 0; }
@@ -382,10 +399,10 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
   overflow: hidden;
   border: 1px solid rgba(255,255,255,.9);
   border-radius: 16px;
-  background: rgba(255,255,255,.97);
+  background: #fff;
   box-shadow: 0 20px 58px rgba(23,32,25,.28);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 .generic-workspace.is-inspector-open .generic-inspector { display: flex; }
 .generic-inspector-windowbar {
@@ -518,6 +535,16 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
   .generic-map-hint { display: none; }
   .generic-inspector-windowbar > span { display: none; }
   .generic-route-review-change { gap: 7px; }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .generic-map-label,
+  .generic-work-map-status,
+  .generic-work-map-legend {
+    background: #fff;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
