@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { Readable } = require("node:stream");
 const handler = require("../api/create-plan-draft");
-const { accommodationContextWithSlots, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
+const { accommodationContextWithSlots, accommodationNameIssue, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
 
 const days = [
   { overnight: "Castelldefels" },
@@ -64,6 +64,8 @@ const expandedSlots = accommodationContextWithSlots(
 );
 assert.deepEqual(expandedSlots.allSlotIds, ["existing", "replanned-stop-1", "replanned-stop-2"]);
 assert.equal(expandedSlots.expandedContext.length, 3, "replanning may add accommodation display slots");
+assert.equal(accommodationNameIssue({ firstChoice: "Hotel Test", alternative: "Hotel Zwei" }), undefined);
+assert.equal(accommodationNameIssue({ firstChoice: "Hotel Test mit Parkplatz und Adresse im Namensfeld" }), "firstChoice");
 
 console.log("create-plan-draft tests passed");
 

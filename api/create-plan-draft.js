@@ -467,6 +467,11 @@ const accommodationContextWithSlots = (expected, accommodationContext) => {
   return { allSlotIds, expandedContext };
 };
 
+const accommodationNameIssue = (stay) => ["firstChoice", "alternative"].find((field) => {
+  const value = cleanText(stay?.[field], 500);
+  return value && (value.length > 120 || /https?:\/\//i.test(value) || /(?:adresse|address|parkplatz|parking|zufahrt|motorrad)/i.test(value));
+});
+
 const createAccommodationPlan = async ({ draftDays, accommodationContext, routeSummary }) => {
   const expected = expectedStays(draftDays);
   const { allSlotIds, expandedContext } = accommodationContextWithSlots(expected, accommodationContext);
@@ -487,12 +492,15 @@ const createAccommodationPlan = async ({ draftDays, accommodationContext, routeS
       name: `roadbook_accommodation_draft_${chunkIndex + 1}`,
       schema: accommodationSchema,
       web: true,
-      instructions: `Du planst nur die neuen oder unpassenden Unterkuenfte eines bereits validierten Motorrad-Roadbooks. Gib fuer jeden bereitgestellten Uebernachtungsblock genau einen Eintrag in gleicher Reihenfolge aus und verwende dafuer die bereitgestellte slotId. Suche eine konkrete erste Wahl und Alternative und liefere fuer beide einen direkten HTTPS-Link zur offiziellen Unterkunftsseite oder einer serioesen Buchungsseite. Wichtig sind sichere Abstellung fuer zwei beladene Motorraeder, einfache asphaltierte Zufahrt, keine problematische Altstadt- oder ZBE-Zufahrt und moeglichst stornierbare Tarife. Verfuegbarkeit und Preis gelten immer als zu pruefen. Gib ausschliesslich das strukturierte Ergebnis aus.`,
+      instructions: `Du planst nur die neuen oder unpassenden Unterkuenfte eines bereits validierten Motorrad-Roadbooks. Gib fuer jeden bereitgestellten Uebernachtungsblock genau einen Eintrag in gleicher Reihenfolge aus und verwende dafuer die bereitgestellte slotId. Suche eine konkrete erste Wahl und Alternative und liefere fuer beide einen direkten HTTPS-Link zur offiziellen Unterkunftsseite oder einer serioesen Buchungsseite. firstChoice und alternative enthalten ausschliesslich den offiziellen kurzen Hotelnamen, niemals Adresse, Sterne, Begruendung, Parkingtext oder andere Beschreibung. Alle Details gehoeren in note. Schreibe keine Quellenlinks, Zitate oder Markdown in Namen, note, summary oder openItems; die separaten URL-Felder enthalten die Links. Wichtig sind sichere Abstellung fuer zwei beladene Motorraeder, einfache asphaltierte Zufahrt, keine problematische Altstadt- oder ZBE-Zufahrt und moeglichst stornierbare Tarife. Verfuegbarkeit und Preis gelten immer als zu pruefen. Gib ausschliesslich das strukturierte Ergebnis aus.`,
       input: JSON.stringify({ expectedStays, routeChanges: routeSummary })
     })));
     researchResults.forEach((result, index) => {
       if (result.stays.length !== researchChunks[index].length) {
         throw new Error(`ChatGPT hat in Unterkunftsgruppe ${index + 1} ${result.stays.length} statt ${researchChunks[index].length} Stopps geliefert.`);
+      }
+      if (result.stays.some(accommodationNameIssue)) {
+        throw new Error(`ChatGPT hat in Unterkunftsgruppe ${index + 1} eine Beschreibung statt eines konkreten Hotelnamens geliefert.`);
       }
     });
     researched = {
@@ -856,4 +864,4 @@ module.exports = async (request, response) => {
   }
 };
 
-module.exports._test = { accommodationContextWithSlots, contiguousPlaceNights, expectedStays, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, placeIndexOf, placesMatch, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
+module.exports._test = { accommodationContextWithSlots, accommodationNameIssue, contiguousPlaceNights, expectedStays, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, placeIndexOf, placesMatch, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
