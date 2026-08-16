@@ -349,7 +349,7 @@
     const booked = revision.bookings.filter((booking) => booking.status === "booked").length;
     const requested = revision.bookings.filter((booking) => booking.status === "requested").length;
     const open = Math.max(0, revision.stays.length - booked - requested);
-    root.innerHTML = `<section id="generic-overview-panel">
+    root.innerHTML = `${isOriginalDraft() ? `<section class="generic-original-draft-banner" aria-label="Aktionen für den Originalplan"><div><strong>Originalplan als Entwurf geladen</strong><span>Der gemeinsame Plan bleibt unverändert, bis du ihn veröffentlichst.</span><small class="generic-original-bar-feedback" aria-live="polite"></small></div><div><button class="generic-secondary" id="generic-original-bar-discard" type="button">Beim aktuellen Plan bleiben</button><button class="generic-primary" id="generic-original-bar-publish" type="button">Originalplan veröffentlichen</button></div></section>` : ""}<section id="generic-overview-panel">
       <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">Kurven, Küsten und spanisches Hinterland</h1><p>Eine ausgedehnte Motorradreise von den Westalpen über Südfrankreich bis nach Andalusien. Kurvige Berg- und Küstenstraßen wechseln sich mit entspannten Ruhetagen ab; die gebuchte Fähre von Barcelona nach Genua setzt den festen Schlusspunkt in Spanien.</p></div><div class="generic-overview-date">${escapeHtml(planLabel())}${isOriginalDraft() ? "" : " · veröffentlicht"}<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
       <section class="generic-route-card" aria-label="Karte und Reiseverlauf"><div class="generic-map-wrap"><div id="trip-overview-map" aria-label="Interaktive Übersichtskarte"></div><div class="generic-map-loading">Karte und veröffentlichte Route werden geladen …</div><span class="generic-map-label" id="generic-overview-map-label">${escapeHtml(planLabel())} · dieselbe Route wie im Roadbook</span><button class="generic-map-reset" id="generic-map-reset" type="button">Gesamte Route</button></div><div class="generic-route-story"><h2>Reiseverlauf</h2><p>Karte und Beschreibung sind miteinander verbunden.</p>${revision.narrativeSegments.map((segment, index) => `<button class="generic-story-segment" type="button" data-story="${index}" aria-current="${index === 0}"><strong>${escapeHtml(segment.title)}</strong>${escapeHtml(segment.text)}</button>`).join("")}</div></section>
       <section class="generic-overview-stats" aria-label="Eckdaten"><div class="generic-overview-stat"><strong>${revision.stages.length} Tage</strong><span>Gesamtdauer</span></div><div class="generic-overview-stat"><strong>${rideCount}</strong><span>Fahretappen</span></div><div class="generic-overview-stat"><strong>${restCount}</strong><span>Ruhetage</span></div><div class="generic-overview-stat"><strong>${km.format(totalDistance)} km</strong><span>Planwerte</span></div><div class="generic-overview-stat"><strong>${trip.motorcycleCount} Motorräder</strong><span>Reiseparameter</span></div></section>
@@ -357,6 +357,30 @@
     </section><section class="generic-workspace" id="generic-workspace" hidden></section>`;
     root.querySelectorAll(".generic-story-segment").forEach((button) => button.addEventListener("click", () => activateOverviewStory(Number(button.dataset.story), true)));
     root.querySelector("#generic-overview-stays").addEventListener("click", () => { setView("roadbook"); setListMode("stays"); });
+    root.querySelector("#generic-original-bar-discard")?.addEventListener("click", async (event) => {
+      const button = event.currentTarget;
+      const feedback = root.querySelector(".generic-original-bar-feedback");
+      button.disabled = true;
+      button.textContent = "Wird zurückgesetzt …";
+      const result = await bridge.discardOriginalDraft?.();
+      if (result?.discarded) window.location.reload();
+      else {
+        feedback.textContent = "Der aktuelle Plan konnte nicht wiederhergestellt werden.";
+        button.disabled = false;
+        button.textContent = "Beim aktuellen Plan bleiben";
+      }
+    });
+    root.querySelector("#generic-original-bar-publish")?.addEventListener("click", async (event) => {
+      const button = event.currentTarget;
+      button.disabled = true;
+      button.textContent = "Veröffentlichung wird vorbereitet …";
+      const result = await bridge.publishOriginalDraft?.();
+      if (result?.published) window.location.reload();
+      else {
+        button.disabled = false;
+        button.textContent = "Originalplan veröffentlichen";
+      }
+    });
     renderWorkspace();
     initialiseOverviewMap(revision.narrativeSegments);
   }
@@ -1176,6 +1200,7 @@
       const snapshot = await bridge.getPublishedSnapshot();
       model = modelApi.importLegacyRoadbook(snapshot);
       modelApi.assertLegacyParity(model, { sourceDays: 30, stages: 30 });
+      document.body.classList.toggle("generic-original-draft", isOriginalDraft());
       await hydrateRouteStyleDrafts();
       window.__GENERIC_TRIP_MODEL__ = model;
       renderNavigation();
