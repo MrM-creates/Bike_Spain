@@ -224,7 +224,7 @@
     navRoot.innerHTML = `
       <div class="generic-trip-nav-left"><button class="generic-back" id="generic-journeys" type="button"><span aria-hidden="true">←</span> Reisen</button><div class="generic-trip-identity"><strong>${escapeHtml(model.trip.name)}</strong><span>${escapeHtml(dateRange())} · ${model.revision.stages.length} Tage</span></div></div>
       <nav class="generic-trip-tabs" role="tablist" aria-label="Ansicht der Reise"><button class="generic-trip-tab" type="button" role="tab" aria-selected="true" data-generic-view="overview">Übersicht</button><button class="generic-trip-tab" type="button" role="tab" aria-selected="false" data-generic-view="roadbook">Roadbook</button></nav>
-      <div class="generic-trip-nav-actions"><span class="generic-status">${escapeHtml(planLabel())} · veröffentlicht</span><button class="generic-primary" id="generic-adjust" type="button">Reise anpassen</button><div class="generic-more"><button class="generic-more-button" id="generic-more" type="button" aria-label="Weitere Aktionen" aria-expanded="false">•••</button><div class="generic-more-menu" id="generic-more-menu" hidden><button type="button" id="generic-export">Exportieren</button><button type="button" id="generic-accommodations">Unterkünfte</button><button type="button" id="generic-help">Hilfe</button><button type="button" id="generic-legacy">Bisherige Ansicht</button></div></div></div>`;
+      <div class="generic-trip-nav-actions"><span class="generic-status">${escapeHtml(planLabel())} · veröffentlicht</span><button class="generic-primary" id="generic-adjust" type="button">Reise anpassen</button><div class="generic-more"><button class="generic-more-button" id="generic-more" type="button" aria-label="Weitere Aktionen" aria-expanded="false">•••</button><div class="generic-more-menu" id="generic-more-menu" hidden><button type="button" id="generic-export">Exportieren</button><button type="button" id="generic-accommodations">Unterkünfte</button><button type="button" id="generic-help">Hilfe</button><button type="button" id="generic-original-plan">Originalplan laden</button></div></div></div>`;
 
     const dialog = document.createElement("dialog");
     dialog.className = "generic-journeys-dialog";
@@ -298,10 +298,9 @@
     });
     navRoot.querySelector("#generic-accommodations").addEventListener("click", () => { setView("roadbook"); setListMode("stays"); closeMore(); });
     navRoot.querySelector("#generic-help").addEventListener("click", () => { document.querySelector("#nav-help")?.click(); closeMore(); });
-    navRoot.querySelector("#generic-legacy").addEventListener("click", () => {
-      const target = new URL(window.location.href);
-      target.searchParams.delete("tripOverview");
-      window.location.href = target.toString();
+    navRoot.querySelector("#generic-original-plan").addEventListener("click", () => {
+      closeMore();
+      document.querySelector("#reset-plan")?.click();
     });
     moreButton.addEventListener("click", (event) => {
       event.stopPropagation();
