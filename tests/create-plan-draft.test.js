@@ -137,6 +137,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
     modelRequests.push(request);
     const input = JSON.parse(request.input);
     const styleOnly = input.requestedChange?.scope === "route-style";
+    const verification = Array.isArray(input.candidateSegment);
     const responseDays = styleOnly ? [{
       ...input.candidateSegment[0],
       km: "118 km",
@@ -146,15 +147,15 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
       note: "Aktuelle Verkehrslage vor Abfahrt prüfen.",
       waypoints: [],
       routeStyle: "direct"
-    }] : routeDays;
+    }] : (verification ? input.candidateSegment : routeDays);
     return {
       ok: true,
       json: async () => ({
         output_text: JSON.stringify({
           summary: ["Route angepasst"],
           decision: "changed",
-          replaceFromDay: 2,
-          replaceCount: styleOnly ? 1 : 26,
+          replaceFromDay: input.replaceFromDay,
+          replaceCount: input.replaceCount,
           days: responseDays,
           openItems: []
         })
@@ -190,8 +191,12 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.equal(verifiedResult.body.verifiedDraft.phase, "route");
   assert.equal(verifiedResult.body.verifiedDraft.verified, true);
   assert.equal(verifiedResult.body.verifiedDraft.verificationVersion, 2);
-  assert.equal(fetchCount, 2, "route verification should call the model exactly once");
-  assert.deepEqual(modelRequests[1].tools, [{ type: "web_search" }], "route verification should use web search");
+  assert.equal(fetchCount, 8, "long route verification should check seven bounded chunks");
+  modelRequests.slice(1, 8).forEach((request) => {
+    assert.deepEqual(request.tools, [{ type: "web_search" }], "route verification should use web search");
+    assert.equal(request.reasoning.effort, "medium", "long route chunks should receive deeper verification");
+    assert.ok(JSON.parse(request.input).candidateSegment.length <= 4, "verification chunks should stay bounded");
+  });
 
   const movedStartDays = currentDays.map((day) => ({ ...day }));
   movedStartDays[0] = makeCheckedDay("Zürich – Basisort", "Basisort", false, {
@@ -203,7 +208,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
     return {
       ok: true,
       json: async () => ({ output_text: JSON.stringify({
-        summary: ["Route geprüft"], decision: "changed", replaceFromDay: 1, replaceCount: 27,
+        summary: ["Route geprüft"], decision: "changed", replaceFromDay: input.replaceFromDay, replaceCount: input.replaceCount,
         days: input.candidateSegment, openItems: []
       }) })
     };
@@ -246,8 +251,8 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.equal(styleVerifiedResult.body.verifiedDraft.replaceCount, 1);
   assert.equal(styleVerifiedResult.body.verifiedDraft.days[1].routeStyle, "direct");
   assert.equal(styleVerifiedResult.body.verifiedDraft.days[2].overnight, "Zielort", "the following day must remain unchanged");
-  assert.deepEqual(modelRequests[2].tools, [{ type: "web_search" }], "route-style verification should use web search");
-  assert.equal(JSON.parse(modelRequests[2].input).candidateSegment.length, 1, "only the selected stage should be verified");
+  assert.deepEqual(modelRequests[8].tools, [{ type: "web_search" }], "route-style verification should use web search");
+  assert.equal(JSON.parse(modelRequests[8].input).candidateSegment.length, 1, "only the selected stage should be verified");
 
   global.fetch = async () => { throw new Error("accommodation stage unexpectedly called the model"); };
   const unverifiedAccommodationResult = await callApi({
@@ -275,7 +280,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.ok(accommodationResult.body.accommodationPlan.accommodations.base);
   assert.equal(accommodationResult.body.accommodationAudit.version, 1);
   assert.match(accommodationResult.body.accommodationAudit.summary[0], /Ort, Reihenfolge, Datum und Nächtezahl/);
-  assert.equal(fetchCount, 3, "accommodation stage should not recalculate the route");
+  assert.equal(fetchCount, 9, "accommodation stage should not recalculate the route");
 
   const accommodationVerificationResult = await callApi({
     secret: "test-pin",

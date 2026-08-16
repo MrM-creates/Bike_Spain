@@ -566,22 +566,50 @@ module.exports = async (request, response) => {
       const replaceCount = routeStyleOnly ? 1 : ferryIndex - startIndex;
       const endIndex = startIndex + replaceCount;
       const verificationStartedAt = Date.now();
-      const verifiedPlan = await createStructuredResponse({
-        name: "roadbook_verified_route",
+      const verificationInstructions = `Du bist die unabhaengige Qualitaetspruefung fuer ein Motorrad-Roadbook. Pruefe den Kandidaten mit Websuche und korrigiere ihn direkt, bevor der Nutzer ihn sieht. Start, Ziel und Uebernachtung jedes bereitgestellten Tages sind feste Grenzen und duerfen nicht veraendert werden. ${routeStyleOnly ? "Pruefe ausschliesslich die einzelne ausgewaehlte Tagesetappe. Halte die in routeStyle verlangte Routenart ein: direct bedeutet eine nachvollziehbare direkte Strassenverbindung ohne landschaftliche Umwege; scenic bedeutet eine kurvige, asphaltierte Motorradroute mit konkreten sinnvollen Wegpunkten." : "Pruefe jeden bereitgestellten Fahrtag vollstaendig."} Verifiziere die geografisch zusammenhaengende Strassenfolge, die Reihenfolge der Wegpunkte, plausible Kilometer und Fahrzeit sowie asphaltierte, fuer zwei beladene Motorraeder geeignete Strassen. Behandle roads als lueckenlose, geordnete Kette: Jede genannte Strasse muss an die naechste anschliessen, jeden Wegpunkt tatsaechlich erreichen und bis zum Ziel fuehren. Ergaenze alle fehlenden Anschluss- und Rueckwegstrassen. Verwende keine unbestimmten Angaben wie lokale Verbindungen, nach Tagesform oder Strasse A / Strasse B. Pruefe Rundtouren besonders streng: Die Strassenfolge muss am Uebernachtungsort beginnen, alle Wegpunkte in der angegebenen Reihenfolge erreichen und mit einer konkret genannten Rueckfahrt wieder am selben Ort enden; bei einer Stichfahrt kennzeichne dieselbe Strasse ausdruecklich als Hin- und Rueckweg. Hochpaesse und anspruchsvolle Schluchten muessen realistisch benannt sein. Fuer wetterkritische Hochgebirgsetappen braucht es eine geografisch korrekte Alternative mit vollstaendiger geordneter Strassenfolge auf tieferen Hauptstrassen, die am selben Start beginnt und am selben Tagesziel endet. Eine Etappe ueber die C-28 nach Vielha muss Poert dera Bonaigua mit Hoehe benennen und als tiefere Schlechtwetteralternative die Verbindung ueber N-230 und Vielha-Tunnel konkret ausweisen. Eine Runde ueber Puerto de San Glorio muss eine geografisch geschlossene, tiefere Alternative ab demselben Uebernachtungsort nennen. Keine Offroad-, Pisten-, Strand-, Wald- oder unnoetig schmalen Abenteuerstrassen. Bevorzuge offizielle Strassen-, Verkehrs- und Tourismusquellen; Foren, Wikipedia und Motorradblogs duerfen keine alleinige Grundlage fuer Befahrbarkeit oder Sperrlage sein. Schreibe keine Quellenlinks, Zitate oder Markdown in die Roadbook-Felder. Behaupte keine ganzjaehrige Oeffnung, wenn sie nicht offiziell belegt ist. Der erste Tag beginnt am Uebernachtungsort von previousDay; jeder Folgetag beginnt am Uebernachtungsort des Vortags. Wenn nextDay vorhanden ist, muss der letzte gepruefte Tag weiterhin lueckenlos an dessen Start anschliessen. Der Faehren-Fixpunkt bleibt unveraendert. Gib den vollstaendig korrigierten Abschnitt mit exakt replaceFromDay, replaceCount und gleich vielen Tagen aus. Jeder Fahrtag braucht konkrete Strassen, eine auswertbare Kilometerangabe und Fahrzeit. Arbeite vor der Ausgabe fuer jeden Fahrtag intern die Checkliste Start, geordnete Strassenkette, Wegpunkte, Ziel, Kilometer, Zeit und gegebenenfalls vollstaendige Alternative ab. decision ist immer 'Vorgeschlagene Planaenderung'. Gib ausschliesslich das strukturierte Ergebnis aus.`;
+      const chunkSize = routeStyleOnly ? 1 : 4;
+      const chunks = [];
+      for (let chunkStart = startIndex; chunkStart < endIndex; chunkStart += chunkSize) {
+        const chunkEnd = Math.min(endIndex, chunkStart + chunkSize);
+        chunks.push({ chunkStart, chunkEnd });
+      }
+      const verifiedChunks = await Promise.all(chunks.map(({ chunkStart, chunkEnd }, index) => createStructuredResponse({
+        name: `roadbook_verified_route_${index + 1}`,
         schema: routeSchema,
         web: true,
-        reasoningEffort: "medium",
-        instructions: `Du bist die unabhaengige Qualitaetspruefung fuer ein Motorrad-Roadbook. Pruefe den Kandidaten mit Websuche und korrigiere ihn direkt, bevor der Nutzer ihn sieht. Behalte Reiseidee, Tageszahl und sinnvolle Teile unveraendert. ${routeStyleOnly ? "Pruefe ausschliesslich die einzelne ausgewaehlte Tagesetappe. Start, Ziel, Uebernachtung und alle anderen Reisetage muessen exakt unveraendert bleiben. Halte die in routeStyle verlangte Routenart ein: direct bedeutet eine nachvollziehbare direkte Strassenverbindung ohne landschaftliche Umwege; scenic bedeutet eine kurvige, asphaltierte Motorradroute mit konkreten sinnvollen Wegpunkten." : "Pruefe den gesamten angegebenen Aenderungsabschnitt."} Verifiziere fuer jeden Fahrtag die geografisch zusammenhaengende Strassenfolge, die Reihenfolge der Wegpunkte, plausible Kilometer und Fahrzeit sowie asphaltierte, fuer zwei beladene Motorraeder geeignete Strassen. Behandle roads als lueckenlose, geordnete Kette: Jede genannte Strasse muss an die naechste anschliessen, jeden Wegpunkt tatsaechlich erreichen und bis zum Ziel fuehren. Ergaenze alle fehlenden Anschluss- und Rueckwegstrassen. Verwende keine unbestimmten Angaben wie lokale Verbindungen, nach Tagesform oder Strasse A / Strasse B. Pruefe Rundtouren besonders streng: Die Strassenfolge muss am Uebernachtungsort beginnen, alle Wegpunkte in der angegebenen Reihenfolge erreichen und mit einer konkret genannten Rueckfahrt wieder am selben Ort enden; bei einer Stichfahrt kennzeichne dieselbe Strasse ausdruecklich als Hin- und Rueckweg. Hochpaesse und anspruchsvolle Schluchten muessen realistisch benannt sein. Fuer wetterkritische Hochgebirgsetappen braucht es eine geografisch korrekte Alternative mit vollstaendiger geordneter Strassenfolge auf tieferen Hauptstrassen, die am selben Start beginnt und am selben Tagesziel endet. Eine Etappe ueber die C-28 nach Vielha muss Poert dera Bonaigua mit Hoehe benennen und als tiefere Schlechtwetteralternative die Verbindung ueber N-230 und Vielha-Tunnel konkret ausweisen. Eine Runde ueber Puerto de San Glorio muss eine geografisch geschlossene, tiefere Alternative ab demselben Uebernachtungsort nennen. Keine Offroad-, Pisten-, Strand-, Wald- oder unnoetig schmalen Abenteuerstrassen. Bevorzuge bei der Webpruefung offizielle Strassen-, Verkehrs- und Tourismusquellen; Foren, Wikipedia und Motorradblogs duerfen keine alleinige Grundlage fuer Befahrbarkeit oder Sperrlage sein. Schreibe keine Quellenlinks, Zitate oder Markdown in die Roadbook-Felder. Behaupte keine ganzjaehrige Oeffnung, wenn sie nicht offiziell belegt ist. Der erste Tag beginnt am Uebernachtungsort von previousDay; jeder Folgetag beginnt am Uebernachtungsort des Vortags. Der Faehren-Fixpunkt bleibt unveraendert. Gib den vollstaendig korrigierten Abschnitt mit exakt replaceFromDay, replaceCount und gleich vielen Tagen aus. Jeder Fahrtag braucht konkrete Strassen, eine auswertbare Kilometerangabe und Fahrzeit. Arbeite vor der Ausgabe fuer jeden Fahrtag intern die Checkliste Start, geordnete Strassenkette, Wegpunkte, Ziel, Kilometer, Zeit und gegebenenfalls vollstaendige Alternative ab. summary darf keine pauschalen Sicherheitsbehauptungen enthalten; nenne stattdessen konkrete wesentliche Korrekturen und kritische Alternativen. Technische Fehler duerfen nicht als offene Aufgabe an den Nutzer weitergegeben werden. decision ist immer 'Vorgeschlagene Planaenderung'. Gib ausschliesslich das strukturierte Ergebnis aus.`,
+        reasoningEffort: routeStyleOnly ? "low" : "medium",
+        instructions: verificationInstructions,
         input: JSON.stringify({
           requestedChange: payload.change || {},
-          replaceFromDay,
-          replaceCount,
-          previousDay: currentDays[startIndex - 1] || null,
+          replaceFromDay: chunkStart + 1,
+          replaceCount: chunkEnd - chunkStart,
+          previousDay: currentDays[chunkStart - 1] || null,
           fixedFerry: { day: ferryIndex + 1, date: FERRY_DATE, checkIn: "08:30", dayData: currentDays[ferryIndex] },
-          nextDay: currentDays[endIndex] || null,
-          candidateSegment: currentDays.slice(startIndex, endIndex)
+          nextDay: currentDays[chunkEnd] || null,
+          candidateSegment: currentDays.slice(chunkStart, chunkEnd)
         })
+      })));
+      verifiedChunks.forEach((plan, index) => {
+        const { chunkStart, chunkEnd } = chunks[index];
+        if (plan.replaceFromDay !== chunkStart + 1 || plan.replaceCount !== chunkEnd - chunkStart || plan.days.length !== chunkEnd - chunkStart) {
+          throw new Error(`Die automatische Routenpruefung hat in Teil ${index + 1} nicht alle benoetigten Reisetage zurueckgegeben.`);
+        }
+        plan.days.forEach((day, dayIndex) => {
+          const candidate = currentDays[chunkStart + dayIndex];
+          const checked = normalizeInputDay(day);
+          const movedBoundary = !placesMatch(candidate.overnight, checked.overnight)
+            || ["origin", "destination"].some((field) => candidate[field] && !placesMatch(candidate[field], checked[field]));
+          if (movedBoundary || candidate.rest !== checked.rest) {
+            throw new Error(`Die automatische Routenpruefung hat in Teil ${index + 1} Start, Ziel oder Uebernachtung veraendert.`);
+          }
+        });
       });
+      const verifiedPlan = {
+        replaceFromDay,
+        replaceCount,
+        days: verifiedChunks.flatMap((plan) => plan.days),
+        openItems: verifiedChunks.flatMap((plan) => plan.openItems || [])
+      };
       if (verifiedPlan.replaceFromDay !== replaceFromDay || verifiedPlan.replaceCount !== replaceCount || verifiedPlan.days.length !== replaceCount) {
         throw new Error("Die automatische Routenprüfung hat nicht alle benötigten Reisetage zurückgegeben.");
       }
