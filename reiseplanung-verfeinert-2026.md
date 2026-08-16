@@ -18,8 +18,8 @@ Archivstand: Diese Datei beschreibt die aeltere 28-Tage-Grundplanung. Massgeblic
 |---:|---|---|---|---|
 | 1 | Berikon - Grenoble, direkter Autobahnkorridor A1/A41 | Grenoble; bei spaeter Abfahrt Annecy oder Chambery | Anreise | Keine Stadtzentren als Zwischenziele setzen. Bis Grenoble effizient auf Autobahnen, kein Kurventag. Crit'Air/ZFE fuer Grenoble pruefen. Eine fruehere Uebernachtung verschiebt den Beginn der N85 am Folgetag. |
 | 2 | Grenoble - Vizille - Laffrey - La Mure - Corps - Gap - Sisteron | Sisteron | Route Napoleon | N85 als Hauptstrasse halten, keine kleinen Seitenpaesse bei schlechtem Wetter. Gorges de la Meouge nur als separate trockene Zusatzrunde ab Sisteron. |
-| 3 | Sisteron - Chateau-Arnoux/Malijai - Forcalquier - Cereste - Apt - Bonnieux/Lourmarin | Lourmarin oder Aix-en-Provence | Provence/Luberon | Etablierte Strassen halten. Digne nur als bewusste Zusatzschleife; Manosque ist eine alternative Hauptachsen-Variante. Altortkerne nicht als Ziel setzen. |
-| 4 | Luberon/Aix - Arles - Pont de Gau - Saintes-Maries-de-la-Mer - Aigues-Mortes - Nimes | Nimes oder Uzes | Camargue | Nur asphaltierte D570/D38/D58/D979. Keine Digue a la Mer, Salinenpisten oder Strandzufahrten. |
+| 3 | Sisteron - Chateau-Arnoux/Malijai - Forcalquier - Cereste - Apt - Bonnieux/Lourmarin | Lourmarin | Provence/Luberon | Etablierte Strassen halten. Digne nur als bewusste Zusatzschleife; Manosque ist eine alternative Hauptachsen-Variante. Altortkerne nicht als Ziel setzen. |
+| 4 | Lourmarin - Arles - Pont de Gau - Saintes-Maries-de-la-Mer - Aigues-Mortes - Nimes | Nimes | Camargue | Nur asphaltierte D570/D38/D58/D979. Keine Digue a la Mer, Salinenpisten oder Strandzufahrten. |
 | 5 | Nimes - Sommieres - Pezenas - Beziers - Capestang - Carcassonne | Carcassonne | Languedoc | Bei Verkehr oder Wetter abschnittsweise A9/A61 nutzen. |
 | 6 | Carcassonne - Narbonne - Collioure - Figueres - Girona - Barcelona | Barcelona | Mittelmeer/Transfer | Collioure optional. Keine Pyrenaeen-Kleinststrassen als Pflichtprogramm. |
 | 7 | Barcelona | Barcelona | Ruhetag | Motorrader sicher abstellen. Umweltzone und Hotelgarage vorab klaeren. |
@@ -42,8 +42,8 @@ Archivstand: Diese Datei beschreibt die aeltere 28-Tage-Grundplanung. Massgeblic
 | 24 | Cuenca - Molina de Aragon - Calatayud - Zaragoza | Zaragoza | Rueckverbindung | Landschaftlich, aber nicht zu klein routen. Bei Wetter direkter fahren. |
 | 25 | Zaragoza - Lleida - Montblanc - Barcelona | Barcelona | Rueckkehr | Montblanc kurzer Fotostopp. Barcelona-Garage fuer zwei Naechte sinnvoll. |
 | 26 | Barcelona / Faehrpuffer | Faehre oder Barcelona | Puffer | Faehrtermin, Motorradbuchung, Kabine und Check-in-Zeit pruefen. |
-| 27 | Ankunft Italien - Savona/Genua - Aosta/Como | Aosta oder Como | Heimweg Teil 1 | Nicht nach Nachtfaehre ueberziehen. Grosse Strassen, Alpenquerung nur nach Wetterlage. |
-| 28 | Aosta/Como - Berikon | Berikon | Heimfahrt | Je nach Wetter Gotthard/San Bernardino/Autobahnkorridor waehlen. |
+| 27 | Genua - Aosta | Aosta | Heimweg Teil 1 | Nach der Faehre nicht ueberziehen. Direkte Autobahnroute nach Aosta. |
+| 28 | Aosta - Berikon | Berikon | Heimfahrt | Alpenwetter und Passstatus vor der Abfahrt pruefen. |
 
 ## Sinnvolle Uebernachtungsorte
 
@@ -51,8 +51,8 @@ Die Orte sind bewusst so gewaehlt, dass die Motorrader abends nicht durch sehr e
 
 - Grenoble: praktisch fuer Start Route Napoleon, aber Umweltzone/Crit'Air und Garage pruefen.
 - Sisteron: kompakter Stopp direkt an der N85.
-- Lourmarin/Aix: Lourmarin ruhiger und touriger, Aix urbaner mit besserer Infrastruktur.
-- Nimes/Uzes: Nimes praktischer nach Camargue, Uzes ruhiger.
+- Lourmarin: verbindlicher Übernachtungsort im Luberon.
+- Nimes: verbindlicher Übernachtungsort nach der Camargue.
 - Barcelona/Valencia/Granada: nur mit gesicherter Garage planen.
 - Falset: gute Basis fuer Priorat, weniger Stadtstress als Tarragona/Reus.
 - Albarracin: sehr schoen, aber nicht in die Altstadt navigieren.

@@ -4,7 +4,7 @@
     <name>Festland-Motorradroute Spanien - Suedfrankreich-Variante</name>
     <description><![CDATA[
 Grobe Orientierungsroute fuer die suedlichere Frankreich-Variante:
-Bellikon - Grenoble/Chambery - Sisteron/Digne-les-Bains - Aix/Luberon - Nimes/Uzes - Carcassonne - Barcelona - Priorat/Falset - Albarracin - Valencia - Altea - Granada - Ronda - Ubeda/Baeza - Cuenca - Zaragoza - Barcelona - Faehre Genua - Bellikon.
+Bellikon - Grenoble/Chambery - Sisteron/Digne-les-Bains - Lourmarin - Nimes - Carcassonne - Barcelona - Priorat/Falset - Albarracin - Valencia - Altea - Granada - Ronda - Ubeda/Baeza - Cuenca - Zaragoza - Barcelona - Faehre Genua - Bellikon.
 
 Hinweis: Diese KML ist eine Verlaufslinie mit nummerierten Stopps, keine turn-by-turn Navigation. Marseille/Toulon werden bewusst ausgelassen. Fuer die Detailplanung pro Tag Haupt- und Regionalstrassen bevorzugen, unbefestigte Strassen vermeiden und mittelalterliche Ortskerne nicht als Zielpunkt setzen.
 ]]></description>
@@ -62,7 +62,7 @@ Hinweis: Diese KML ist eine Verlaufslinie mit nummerierten Stopps, keine turn-by
         <Point><coordinates>5.4474,43.5297,0</coordinates></Point>
       </Placemark>
       <Placemark>
-        <name>05 Nimes / Uzes</name>
+        <name>05 Nimes</name>
         <description>Stadtbasis Nimes oder kleinerer Standort Uzes; Pont du Gard als einfacher Ausflug.</description>
         <styleUrl>#stopMarker</styleUrl>
         <Point><coordinates>4.3601,43.8367,0</coordinates></Point>

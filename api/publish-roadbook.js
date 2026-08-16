@@ -1,7 +1,7 @@
 const DEFAULT_REPO = "MrM-creates/Bike_Spain";
 const DEFAULT_BRANCH = "main";
-const ROADBOOK_PATH = "reise-roadbook-2026.html";
-const ACCOMMODATIONS_PATH = "unterkuenfte-2026.html";
+const TRIP_DATA_PATH = "data/trip-spanien-2026.js";
+const { parseTripData, serializeTripData, normalizePlanKind } = require("../lib/trip-data");
 
 const json = (response, status, body) => {
   response.statusCode = status;
@@ -82,81 +82,6 @@ const normalizeAccommodationState = (input) => {
   );
 };
 
-const findArrayEnd = (source, startIndex) => {
-  let depth = 0;
-  let quote = "";
-  let escape = false;
-  for (let index = startIndex; index < source.length; index += 1) {
-    const char = source[index];
-    if (quote) {
-      if (escape) escape = false;
-      else if (char === "\\") escape = true;
-      else if (char === quote) quote = "";
-      continue;
-    }
-    if (char === '"' || char === "'" || char === "`") {
-      quote = char;
-      continue;
-    }
-    if (char === "[") depth += 1;
-    if (char === "]") {
-      depth -= 1;
-      if (depth === 0) return index;
-    }
-  }
-  throw new Error("currentDays konnte nicht vollständig gelesen werden.");
-};
-
-const replaceCurrentDays = (html, days) => {
-  const marker = "const currentDays = ";
-  const start = html.indexOf(marker);
-  if (start < 0) throw new Error("const currentDays wurde nicht gefunden.");
-  const arrayStart = html.indexOf("[", start);
-  if (arrayStart < 0) throw new Error("currentDays Array wurde nicht gefunden.");
-  const arrayEnd = findArrayEnd(html, arrayStart);
-  const serialized = JSON.stringify(days, null, 6).replace(/\n/g, "\n    ");
-  return `${html.slice(0, start)}const currentDays = ${serialized};${html.slice(arrayEnd + 2)}`;
-};
-
-const bumpStorageKey = (html) => {
-  const stamp = new Date().toISOString().replace(/[-:.TZ]/g, "").slice(0, 12);
-  return html.replace(
-    /const STORAGE_KEY = "spanien-roadbook-2026-plan-[^"]+";/,
-    `const STORAGE_KEY = "spanien-roadbook-2026-plan-${stamp}";`
-  );
-};
-
-const publishedVersion = (html) => html.match(/const PUBLISHED_VERSION = "([^"]+)";/)?.[1] || "legacy";
-
-const publishedPlanKind = (html) => html.match(/const PUBLISHED_PLAN_KIND = "([^"]+)";/)?.[1] || "adjusted";
-
-const bumpPublishedVersion = (html, version) => {
-  const statement = `const PUBLISHED_VERSION = "${version}";`;
-  if (/const PUBLISHED_VERSION = "[^"]+";/.test(html)) {
-    return html.replace(/const PUBLISHED_VERSION = "[^"]+";/, statement);
-  }
-  return html.replace(/(const STORAGE_KEY = "[^"]+";)/, `${statement}\n    $1`);
-};
-
-const setPublishedPlanKind = (html, kind) => {
-  const value = kind === "original" ? "original" : "adjusted";
-  const statement = `const PUBLISHED_PLAN_KIND = "${value}";`;
-  if (/const PUBLISHED_PLAN_KIND = "[^"]+";/.test(html)) {
-    return html.replace(/const PUBLISHED_PLAN_KIND = "[^"]+";/, statement);
-  }
-  return html.replace(/(const PUBLISHED_VERSION = "[^"]+";)/, `$1\n    ${statement}`);
-};
-
-const replacePublishedAccommodationState = (html, state) => {
-  const marker = "const publishedAccommodationState = ";
-  const start = html.indexOf(marker);
-  if (start < 0) throw new Error("publishedAccommodationState wurde nicht gefunden.");
-  const statementEnd = html.indexOf(";\n", start);
-  if (statementEnd < 0) throw new Error("publishedAccommodationState konnte nicht vollstaendig gelesen werden.");
-  const serialized = JSON.stringify(state, null, 6).replace(/\n/g, "\n    ");
-  return `${html.slice(0, start)}const publishedAccommodationState = ${serialized};${html.slice(statementEnd + 1)}`;
-};
-
 const createCommit = async ({ repo, branch, message, files }) => {
   const refPath = `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`;
   const ref = await githubRequest(refPath);
@@ -215,41 +140,28 @@ module.exports = async (request, response) => {
     const accommodations = payload.accommodations ? normalizeAccommodationState(payload.accommodations) : null;
     const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
     const branch = process.env.GITHUB_BRANCH || DEFAULT_BRANCH;
-    const [currentRoadbook, currentAccommodations] = await Promise.all([
-      githubRequest(`/repos/${repo}/contents/${encodeURIComponent(ROADBOOK_PATH)}?ref=${encodeURIComponent(branch)}`),
-      accommodations ? githubRequest(`/repos/${repo}/contents/${encodeURIComponent(ACCOMMODATIONS_PATH)}?ref=${encodeURIComponent(branch)}`) : null
-    ]);
-    const roadbookHtml = Buffer.from(currentRoadbook.content, "base64").toString("utf8");
-    const currentVersion = publishedVersion(roadbookHtml);
-    const planKind = ["original", "adjusted"].includes(payload.planKind)
-      ? payload.planKind
-      : publishedPlanKind(roadbookHtml);
+    const current = await githubRequest(`/repos/${repo}/contents/${encodeURIComponent(TRIP_DATA_PATH)}?ref=${encodeURIComponent(branch)}`);
+    const tripData = parseTripData(Buffer.from(current.content, "base64").toString("utf8"));
+    const currentVersion = tripData.publishedVersion || "legacy";
+    const planKind = normalizePlanKind(payload.planKind, tripData.planKind);
     if (payload.baseVersion && String(payload.baseVersion) !== currentVersion) {
       json(response, 409, { error: "Der Online-Plan wurde inzwischen geändert. Lade den aktuellen Stand und erstelle den Entwurf erneut." });
       return;
     }
     const nextVersion = new Date().toISOString();
-    const updatedRoadbookHtml = setPublishedPlanKind(
-      bumpPublishedVersion(bumpStorageKey(replaceCurrentDays(roadbookHtml, days)), nextVersion),
-      planKind
-    );
+    tripData.publishedDays = days;
+    if (accommodations) {
+      if (!tripData.baselineAccommodations) tripData.baselineAccommodations = tripData.accommodations;
+      tripData.accommodations = accommodations;
+    }
+    tripData.publishedVersion = nextVersion;
+    tripData.planKind = planKind;
 
     const message = payload.reason
       ? `Update roadbook plan: ${String(payload.reason).slice(0, 140)}`
       : "Update roadbook plan";
 
-    const files = [{ path: ROADBOOK_PATH, content: updatedRoadbookHtml }];
-    if (accommodations) {
-      const accommodationHtml = Buffer.from(currentAccommodations.content, "base64").toString("utf8");
-      const updatedAccommodationHtml = setPublishedPlanKind(
-        bumpPublishedVersion(
-          replacePublishedAccommodationState(accommodationHtml, accommodations),
-          nextVersion
-        ),
-        planKind
-      );
-      files.push({ path: ACCOMMODATIONS_PATH, content: updatedAccommodationHtml });
-    }
+    const files = [{ path: TRIP_DATA_PATH, content: serializeTripData(tripData) }];
     const result = await createCommit({ repo, branch, message, files });
 
     json(response, 200, {

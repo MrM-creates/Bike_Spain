@@ -31,4 +31,4 @@ Status und Tagesnotizen koennen weiterhin direkt beim Reisetag erfasst werden. S
 
 ## Hilfe und Sicherungen
 
-Unter `Hilfe` liegen der unveraenderte Originalplan, lokale Sicherungen und der manuelle ChatGPT-/JSON-Ablauf. `Originalplan als Entwurf` stellt Route und Unterkuenfte gemeinsam zur Pruefung bereit. Erst `Aenderungen uebernehmen & veroeffentlichen` macht ihn zum gemeinsamen Online-Plan.
+Unter `Hilfe` liegen der feste Originalplan, lokale Sicherungen und der manuelle ChatGPT-/JSON-Ablauf. `Originalplan laden` stellt Route und Unterkuenfte gemeinsam als Entwurf zur Pruefung bereit. Erst `Originalplan veroeffentlichen` macht ihn zum gemeinsamen Online-Plan.

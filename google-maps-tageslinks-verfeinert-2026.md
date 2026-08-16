@@ -22,7 +22,7 @@ N85 als Hauptstrasse kontrollieren.
 
 Die Meouge-Runde nur trocken und ausgeruht fahren. Sie ist nicht Teil der Hauptetappe.
 
-## Tag 3 - Sisteron nach Lourmarin/Aix
+## Tag 3 - Sisteron nach Lourmarin
 
 [Hauptstrecke nach Lourmarin](https://www.google.com/maps/dir/?api=1&origin=Sisteron%2C%20France&destination=Lourmarin%2C%20France&waypoints=Ch%C3%A2teau-Arnoux-Saint-Auban%2C%20France%7CMalijai%2C%20France%7CForcalquier%2C%20France%7CC%C3%A9reste%2C%20France%7CApt%2C%20France%7CParking%20Bonnieux%2C%20France&travelmode=driving)
 
@@ -126,14 +126,10 @@ A-92 bis Antequera, danach A-384 und A-367 kontrollieren.
 
 Kein Fahrlink. Terminal, Faehrlinie, Kabine, zwei Motorrader und Check-in-Zeit direkt beim Anbieter pruefen.
 
-## Tag 27 - Italienhafen nach Aosta oder Como
+## Tag 27 - Genua nach Aosta
 
-[Option Savona/Genua nach Aosta](https://www.google.com/maps/dir/?api=1&origin=Savona%2C%20Italy&destination=Aosta%2C%20Italy&waypoints=Genoa%2C%20Italy%7CAlexandria%2C%20Italy&travelmode=driving)
+[Genua nach Aosta](https://www.google.com/maps/dir/?api=1&origin=Genoa%2C%20Italy&destination=Aosta%2C%20Italy&travelmode=driving)
 
-[Option Genua nach Como](https://www.google.com/maps/dir/?api=1&origin=Genoa%2C%20Italy&destination=Como%2C%20Italy&waypoints=Milan%2C%20Italy&travelmode=driving)
-
-## Tag 28 - Aosta/Como nach Berikon
+## Tag 28 - Aosta nach Berikon
 
 [Aosta nach Berikon](https://www.google.com/maps/dir/?api=1&origin=Aosta%2C%20Italy&destination=Berikon%2C%20Switzerland&waypoints=Martigny%2C%20Switzerland%7CLausanne%2C%20Switzerland&travelmode=driving)
-
-[Como nach Berikon](https://www.google.com/maps/dir/?api=1&origin=Como%2C%20Italy&destination=Berikon%2C%20Switzerland&waypoints=Lugano%2C%20Switzerland&travelmode=driving)

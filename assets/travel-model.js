@@ -55,6 +55,29 @@
     return `https://www.google.com/maps/dir/?${params.toString()}`;
   };
 
+  const groupStayRanges = (stays = [], stages = []) => {
+    const stageIndexByDate = new Map(stages.map((stage, index) => [stage.date, index]));
+    const dayNumber = (index) => stages[index]?.dayNumber || index + 1;
+    const groups = new Map();
+    stays.forEach((stay, stayIndex) => {
+      const startIndex = stageIndexByDate.get(stay.startDate);
+      if (!Number.isInteger(startIndex)) return;
+      const nightCount = Math.max(1, Number(stay.nightCount) || 1);
+      const endIndex = Math.min(stages.length - 1, startIndex + nightCount - 1);
+      const label = startIndex === endIndex
+        ? String(dayNumber(startIndex))
+        : `${dayNumber(startIndex)}–${dayNumber(endIndex)}`;
+      const key = stay.placeId || stay.id || `stay-${stayIndex}`;
+      const group = groups.get(key) || { placeId: stay.placeId || null, stays: [] };
+      group.stays.push({ stay, stayIndex, startIndex, endIndex, label });
+      groups.set(key, group);
+    });
+    return Array.from(groups.values()).map((group) => ({
+      ...group,
+      label: group.stays.map((entry) => entry.label).join(" · ")
+    }));
+  };
+
   function importLegacyRoadbook(input) {
     if (!input || !Array.isArray(input.days) || !input.days.length) {
       throw new Error("Der Legacy-Import braucht mindestens einen Reisetag.");
@@ -118,6 +141,7 @@
       }
       return {
         id,
+        dayNumber: index + 1,
         date,
         kind,
         title: String(source.title || `Tag ${index + 1}`),
@@ -145,10 +169,10 @@
     const bookings = [];
     stages.forEach((stage, index) => {
       const source = input.days[index];
-      const overnight = canonicalPlaceName(source.overnight || getPlace(stage.destinationPlaceId).name, aliases);
+      const legacyAccommodation = accommodationByDate.get(stage.date) || null;
+      const overnight = canonicalPlaceName(legacyAccommodation?.title || source.overnight || endPlace.name, aliases);
       if (index === stages.length - 1 && normalizeText(overnight) === normalizeText(endPlace.name)) return;
       const place = getPlace(overnight);
-      const legacyAccommodation = accommodationByDate.get(stage.date) || null;
       const previous = stays[stays.length - 1];
       if (previous && previous.placeId === place.id && previous.endDate === stage.date) {
         previous.endDate = addDays(stage.date, 1);
@@ -211,9 +235,15 @@
     });
 
     const fixPoints = (config.fixPoints || []).map((item) => {
-      const matchingStage = item.stageTitlePattern
-        ? stages.find((stage) => new RegExp(item.stageTitlePattern, "i").test(stage.title))
-        : null;
+      const matchingStage = Number.isInteger(item.stageDay)
+        ? stages[item.stageDay - 1] || null
+        : item.stageTitlePattern
+          ? stages.find((stage) => new RegExp(item.stageTitlePattern, "i").test(stage.title))
+          : item.kind === "start"
+            ? stages[0]
+            : item.kind === "end"
+              ? stages[stages.length - 1]
+              : null;
       const place = item.place ? getPlace(item.place) : null;
       return {
         id: item.id || stableId("fix", `${config.id}-${item.kind}-${item.title}`),
@@ -328,5 +358,5 @@
     return true;
   }
 
-  return { importLegacyRoadbook, assertLegacyParity, stableId, addDays, parseDistanceMeters, parseDurationSeconds, normalizeText };
+  return { importLegacyRoadbook, assertLegacyParity, groupStayRanges, stableId, addDays, parseDistanceMeters, parseDurationSeconds, normalizeText };
 });

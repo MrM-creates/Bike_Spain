@@ -52,7 +52,7 @@ Sisteron - Malijai - Digne-les-Bains - Forcalquier - Manosque - Apt - Bonnieux -
 Hinweis:
 Falls euch Aix zu urban ist, statt Aix lieber Lourmarin, Bonnieux, Apt oder Isle-sur-la-Sorgue als Uebernachtung waehlen.
 
-## 5. Luberon/Aix - Arles - Saintes-Maries-de-la-Mer - Aigues-Mortes - Nimes/Uzes
+## 5. Lourmarin - Arles - Saintes-Maries-de-la-Mer - Aigues-Mortes - Nimes
 
 [Google Maps: Camargue-Abstecher](https://www.google.com/maps/dir/?api=1&origin=Aix-en-Provence%2C%20France&destination=N%C3%AEmes%2C%20France&waypoints=Arles%2C%20France%7CParc%20ornithologique%20du%20Pont%20de%20Gau%2C%20Saintes-Maries-de-la-Mer%2C%20France%7CSaintes-Maries-de-la-Mer%2C%20France%7CAigues-Mortes%2C%20France&travelmode=driving)
 
@@ -62,7 +62,7 @@ Arles - D570 - Parc ornithologique du Pont de Gau - Saintes-Maries-de-la-Mer - D
 Vermeiden:
 Digue a la Mer, Strandzufahrten, Salinenpisten, Schutzgebietswege, Privatwege.
 
-## 6. Nimes/Uzes - Pezenas - Beziers - Minervois - Carcassonne
+## 6. Nimes - Pezenas - Beziers - Minervois - Carcassonne
 
 [Google Maps: Nimes nach Carcassonne](https://www.google.com/maps/dir/?api=1&origin=N%C3%AEmes%2C%20France&destination=Carcassonne%2C%20France&waypoints=Sommi%C3%A8res%2C%20France%7CP%C3%A9zenas%2C%20France%7CB%C3%A9ziers%2C%20France%7CCapestang%2C%20France%7CMinervois%2C%20France&travelmode=driving)
 

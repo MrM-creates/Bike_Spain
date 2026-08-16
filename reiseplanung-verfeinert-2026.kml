@@ -2,7 +2,7 @@
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
     <name>Verfeinerte Motorradreise Spanien 2026</name>
-    <description>28 Reisetage ab Ende September 2026. Korridor-KML fuer My Maps; Google-Maps-Tageslinks fuer echte Navigation verwenden.</description>
+    <description>30 Reisetage ab Ende September 2026. Korridor-KML fuer My Maps; Google-Maps-Tageslinks fuer echte Navigation verwenden.</description>
     <Style id="overnight"><IconStyle><color>ff1f78b4</color><scale>1.1</scale><Icon><href>http://maps.google.com/mapfiles/kml/paddle/blu-circle.png</href></Icon></IconStyle></Style>
     <Style id="route"><LineStyle><color>ff0066cc</color><width>4</width></LineStyle></Style>
     <Style id="ferry"><LineStyle><color>ff994400</color><width>4</width></LineStyle></Style>
@@ -10,22 +10,22 @@
       <name>Uebernachtungen und Tagesanker</name>
       <Placemark><name>Tag 1 Grenoble</name><description>Standard-Anreiseziel ueber Autobahnkorridor; Annecy/Chambery nur Ausweichuebernachtung; Crit'Air/ZFE und Garage pruefen</description><styleUrl>#overnight</styleUrl><Point><coordinates>5.7245,45.1885,0</coordinates></Point></Placemark>
       <Placemark><name>Tag 2 Sisteron</name><description>Route Napoleon N85; Gorges de la Meouge nur separate trockene Zusatzrunde</description><styleUrl>#overnight</styleUrl><Point><coordinates>5.9462,44.1984,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 3 Lourmarin/Aix</name><description>Luberon-Basis</description><styleUrl>#overnight</styleUrl><Point><coordinates>5.3639,43.7638,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 4 Nimes/Uzes</name><description>Nach Camargue</description><styleUrl>#overnight</styleUrl><Point><coordinates>4.3601,43.8367,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 3 Lourmarin</name><description>Luberon-Basis</description><styleUrl>#overnight</styleUrl><Point><coordinates>5.3639,43.7638,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 4 Nimes</name><description>Nach Camargue</description><styleUrl>#overnight</styleUrl><Point><coordinates>4.3601,43.8367,0</coordinates></Point></Placemark>
       <Placemark><name>Tag 5 Carcassonne</name><styleUrl>#overnight</styleUrl><Point><coordinates>2.3510,43.2130,0</coordinates></Point></Placemark>
       <Placemark><name>Tag 6-7 Castelldefels</name><description>Garage beim Hotel; Barcelona per R2-Bahn</description><styleUrl>#overnight</styleUrl><Point><coordinates>1.9794,41.2787,0</coordinates></Point></Placemark>
       <Placemark><name>Tag 8-9 Falset</name><description>Priorat-Basis</description><styleUrl>#overnight</styleUrl><Point><coordinates>0.8200,41.1460,0</coordinates></Point></Placemark>
       <Placemark><name>Tag 10-11 Albarracin</name><description>Nicht in Altstadt routen</description><styleUrl>#overnight</styleUrl><Point><coordinates>-1.4440,40.4070,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 12-13 Valencia</name><description>Garage/ZBE pruefen</description><styleUrl>#overnight</styleUrl><Point><coordinates>-0.3763,39.4699,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 14-15 Altea</name><styleUrl>#overnight</styleUrl><Point><coordinates>-0.0450,38.6029,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 16-18 Granada</name><description>Garage/ZBE pruefen</description><styleUrl>#overnight</styleUrl><Point><coordinates>-3.5990,37.1770,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 19-20 Ronda</name><styleUrl>#overnight</styleUrl><Point><coordinates>-5.1610,36.7460,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 12-13 Olympia Hotel Alboraya / La Patacona</name><description>Valencia-Aussenbasis im Olympia Hotel; sichere Abstellung fuer zwei Motorraeder bestaetigen</description><styleUrl>#overnight</styleUrl><Point><coordinates>-0.3525,39.4953,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 14 Altea</name><styleUrl>#overnight</styleUrl><Point><coordinates>-0.0450,38.6029,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 15-17 Monachil</name><description>Basis am Rand der Sierra Nevada; Granada ist Ausflugsziel</description><styleUrl>#overnight</styleUrl><Point><coordinates>-3.5398,37.1322,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 18-20 Ronda</name><styleUrl>#overnight</styleUrl><Point><coordinates>-5.1610,36.7460,0</coordinates></Point></Placemark>
       <Placemark><name>Tag 21-22 Ubeda</name><styleUrl>#overnight</styleUrl><Point><coordinates>-3.3710,38.0110,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 23 Cuenca</name><styleUrl>#overnight</styleUrl><Point><coordinates>-2.1370,40.0700,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 24 Zaragoza</name><styleUrl>#overnight</styleUrl><Point><coordinates>-0.8891,41.6488,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 25-26 Castelldefels</name><description>Faehrpuffer; Motorräder bleiben beim Hotel</description><styleUrl>#overnight</styleUrl><Point><coordinates>1.9794,41.2787,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 27 Aosta/Como</name><description>Heimweg Teil 1, je nach Faehrhafen und Wetter</description><styleUrl>#overnight</styleUrl><Point><coordinates>7.3201,45.7370,0</coordinates></Point></Placemark>
-      <Placemark><name>Tag 28 Berikon</name><styleUrl>#overnight</styleUrl><Point><coordinates>8.3722,47.3507,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 23-24 Cuenca</name><styleUrl>#overnight</styleUrl><Point><coordinates>-2.1370,40.0700,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 25 Zaragoza</name><styleUrl>#overnight</styleUrl><Point><coordinates>-0.8891,41.6488,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 26-27 Castelldefels</name><description>Faehrpuffer; Motorräder bleiben beim Hotel</description><styleUrl>#overnight</styleUrl><Point><coordinates>1.9794,41.2787,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 29 Aosta</name><description>Heimweg Teil 1 ab Genua</description><styleUrl>#overnight</styleUrl><Point><coordinates>7.3201,45.7370,0</coordinates></Point></Placemark>
+      <Placemark><name>Tag 30 Berikon</name><styleUrl>#overnight</styleUrl><Point><coordinates>8.3722,47.3507,0</coordinates></Point></Placemark>
     </Folder>
     <Folder>
       <name>Tageskorridore</name>
@@ -40,19 +40,19 @@
       <Placemark><name>09 Priorat-Runde</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>0.8200,41.1460,0 0.7750,41.1920,0 0.7634,41.2206,0 0.8115,41.2551,0 0.9056,41.2652,0 0.8565,41.1881,0 0.8200,41.1460,0</coordinates></LineString></Placemark>
       <Placemark><name>10 Falset - Albarracin</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>0.8200,41.1460,0 0.4387,41.0533,0 -0.1333,41.0500,0 -1.1065,40.3456,0 -1.4440,40.4070,0</coordinates></LineString></Placemark>
       <Placemark><name>11 Albarracin-Runde</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-1.4440,40.4070,0 -1.6541,40.5506,0 -1.5895,40.5110,0 -1.5978,40.4626,0 -1.5682,40.4301,0 -1.4440,40.4070,0</coordinates></LineString></Placemark>
-      <Placemark><name>12 Albarracin - Valencia</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-1.4440,40.4070,0 -1.1065,40.3456,0 -0.4884,39.8518,0 -0.3763,39.4699,0</coordinates></LineString></Placemark>
-      <Placemark><name>14 Valencia - Altea</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-0.3763,39.4699,0 -0.5180,38.9903,0 -0.6089,38.7661,0 -0.4736,38.6987,0 -0.1970,38.6760,0 -0.0450,38.6029,0</coordinates></LineString></Placemark>
-      <Placemark><name>16 Altea - Monachil</name><description>Direkter Transfer über A-7/A-92N; Murcia, Lorca und Guadix nur passieren, nicht in die Zentren routen</description><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-0.0450,38.6029,0 -3.5990,37.1770,0</coordinates></LineString></Placemark>
-      <Placemark><name>18 Alpujarras-Runde</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-3.5990,37.1770,0 -3.4816,36.9185,0 -3.4235,36.9028,0 -3.3603,36.9407,0 -3.5990,37.1770,0</coordinates></LineString></Placemark>
-      <Placemark><name>19 Granada - Ronda Hauptlinie</name><description>Via Antequera und Campillos; A-92/A-384/A-367 kontrollieren</description><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-3.5990,37.1770,0 -4.5612,37.0194,0 -4.8633,37.0483,0 -5.1610,36.7460,0</coordinates></LineString></Placemark>
-      <Placemark><name>20 Grazalema-Runde</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-5.1610,36.7460,0 -5.3656,36.7580,0 -5.4375,36.8290,0 -5.3912,36.8403,0 -5.5067,36.7584,0 -5.4460,36.6778,0 -5.1610,36.7460,0</coordinates></LineString></Placemark>
+      <Placemark><name>12 Albarracin - La Patacona</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-1.4440,40.4070,0 -1.1065,40.3456,0 -0.4884,39.8518,0 -0.3525,39.4953,0</coordinates></LineString></Placemark>
+      <Placemark><name>14 La Patacona - Altea</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-0.3525,39.4953,0 -0.5180,38.9903,0 -0.6089,38.7661,0 -0.4736,38.6987,0 -0.1970,38.6760,0 -0.0450,38.6029,0</coordinates></LineString></Placemark>
+      <Placemark><name>15 Altea - Monachil</name><description>Direkter Transfer über A-7/A-92N; Murcia, Lorca und Guadix nur passieren, nicht in die Zentren routen</description><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-0.0450,38.6029,0 -3.5398,37.1322,0</coordinates></LineString></Placemark>
+      <Placemark><name>17 Alpujarras-Runde ab Monachil</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-3.5398,37.1322,0 -3.4816,36.9185,0 -3.4235,36.9028,0 -3.3603,36.9407,0 -3.5398,37.1322,0</coordinates></LineString></Placemark>
+      <Placemark><name>18 Monachil - Ronda Hauptlinie</name><description>Via Antequera und Campillos; A-92/A-384/A-367 kontrollieren</description><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-3.5398,37.1322,0 -4.5612,37.0194,0 -4.8633,37.0483,0 -5.1610,36.7460,0</coordinates></LineString></Placemark>
+      <Placemark><name>19 Grazalema-Runde</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-5.1610,36.7460,0 -5.3656,36.7580,0 -5.4375,36.8290,0 -5.3912,36.8403,0 -5.5067,36.7584,0 -5.4460,36.6778,0 -5.1610,36.7460,0</coordinates></LineString></Placemark>
       <Placemark><name>21 Ronda - Ubeda</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-5.1610,36.7460,0 -4.5612,37.0194,0 -3.7849,37.7796,0 -3.4681,37.9938,0 -3.3710,38.0110,0</coordinates></LineString></Placemark>
       <Placemark><name>23 Ubeda - Cuenca</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-3.3710,38.0110,0 -1.8585,38.9943,0 -1.4297,39.1930,0 -2.1370,40.0700,0</coordinates></LineString></Placemark>
-      <Placemark><name>24 Cuenca - Zaragoza</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-2.1370,40.0700,0 -1.8871,40.8433,0 -1.6432,41.3535,0 -0.8891,41.6488,0</coordinates></LineString></Placemark>
-      <Placemark><name>25 Zaragoza - Castelldefels</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-0.8891,41.6488,0 0.6200,41.6176,0 1.1616,41.3760,0 1.9794,41.2787,0</coordinates></LineString></Placemark>
-      <Placemark><name>26 Barcelona - Italien per Faehre</name><description>Symbolisch; genaue Faehre pruefen</description><styleUrl>#ferry</styleUrl><LineString><tessellate>1</tessellate><coordinates>2.1686,41.3874,0 8.9463,44.4056,0</coordinates></LineString></Placemark>
-      <Placemark><name>27 Italienhafen - Aosta</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>8.9463,44.4056,0 8.9339,44.4071,0 8.6156,44.9125,0 7.3201,45.7370,0</coordinates></LineString></Placemark>
-      <Placemark><name>28 Aosta - Berikon</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>7.3201,45.7370,0 7.0722,46.1028,0 6.6323,46.5197,0 8.3722,47.3507,0</coordinates></LineString></Placemark>
+      <Placemark><name>25 Cuenca - Zaragoza</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-2.1370,40.0700,0 -1.8871,40.8433,0 -1.6432,41.3535,0 -0.8891,41.6488,0</coordinates></LineString></Placemark>
+      <Placemark><name>26 Zaragoza - Castelldefels</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>-0.8891,41.6488,0 0.6200,41.6176,0 1.1616,41.3760,0 1.9794,41.2787,0</coordinates></LineString></Placemark>
+      <Placemark><name>28 Barcelona - Genua per Faehre</name><description>Symbolisch; genaue Faehre pruefen</description><styleUrl>#ferry</styleUrl><LineString><tessellate>1</tessellate><coordinates>2.1677,41.3523,0 8.9463,44.4056,0</coordinates></LineString></Placemark>
+      <Placemark><name>29 Genua - Aosta</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>8.9463,44.4056,0 8.9339,44.4071,0 8.6156,44.9125,0 7.3201,45.7370,0</coordinates></LineString></Placemark>
+      <Placemark><name>30 Aosta - Berikon</name><styleUrl>#route</styleUrl><LineString><tessellate>1</tessellate><coordinates>7.3201,45.7370,0 7.0722,46.1028,0 6.6323,46.5197,0 8.3722,47.3507,0</coordinates></LineString></Placemark>
     </Folder>
   </Document>
 </kml>

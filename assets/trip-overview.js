@@ -16,6 +16,7 @@
   const leafletJs = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
   const colours = ["#176b46", "#b06024", "#6d58a7", "#26758a", "#b14d55", "#68733b", "#2d67a2", "#9b6515"];
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[char]);
+  const hotelIcon = (secondary = false) => `<span class="generic-hotel-icon${secondary ? " secondary" : ""}" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V5.5A1.5 1.5 0 0 1 6.5 4h11A1.5 1.5 0 0 1 19 5.5V20M3 20h18M9 20v-4h6v4M8 8h2m4 0h2m-8 4h2m4 0h2"/></svg></span>`;
   const normalize = (value) => modelApi.normalizeText(value || "");
   const km = new Intl.NumberFormat("de-CH", { maximumFractionDigits: 0 });
   const formatDate = (value, options = { day: "2-digit", month: "long", year: "numeric" }) => {
@@ -104,7 +105,20 @@
   const dateRange = () => `${formatDate(model.revision.stages[0].date)} – ${formatDate(model.revision.stages.at(-1).date)}`;
   const bookingLabel = (booking) => booking?.status === "booked" ? "Gebucht" : booking?.status === "requested" ? "Angefragt" : "Offen";
   const bookingClass = (booking) => booking?.status === "booked" ? "booked" : booking?.status === "requested" ? "requested" : "open";
-  const planLabel = () => model.source?.planKind === "original" ? "Originalplan" : "Angepasster Plan";
+  const parkingLabel = (accommodation, stay) => /fahre|kabine/.test(normalize(`${place(stay?.placeId).name} ${accommodation?.name || ""}`))
+    ? "Motorradverladung gemäss Reederei"
+    : accommodation?.motorcycleParking === "confirmed" ? "Motorradgarage bestätigt" : "Sichere Abstellung prüfen";
+  const travelDayNumber = (stageIndex) => model.revision.stages[stageIndex]?.dayNumber || stageIndex + 1;
+  const dayRangeLabel = (startIndex, endIndex = startIndex) => startIndex === endIndex
+    ? String(travelDayNumber(startIndex))
+    : `${travelDayNumber(startIndex)}–${travelDayNumber(endIndex)}`;
+  const dayRangeForStay = (stay) => {
+    const startIndex = stageForStay(stay);
+    const endIndex = Math.min(model.revision.stages.length - 1, startIndex + Math.max(1, stay.nightCount) - 1);
+    return { startIndex, endIndex, label: dayRangeLabel(startIndex, endIndex) };
+  };
+  const stayMarkerGroups = () => modelApi.groupStayRanges(model.revision.stays, model.revision.stages);
+  const planLabel = () => model.source?.planKind === "adjusted" ? "Angepasster Plan" : "Veröffentlichter Plan";
   const planVersionLabel = () => {
     const value = model.source?.publishedVersion;
     if (!value) return "Stand unbekannt";
@@ -278,7 +292,7 @@
       const googleLink = exportDialog.querySelector("#generic-export-google");
       googleLink.href = googleMapsUrl || "#";
       googleLink.setAttribute("aria-disabled", String(!googleMapsUrl));
-      exportDialog.querySelector("#generic-export-day").textContent = `Tag ${stage.legacy?.day || selectedStage + 1} · ${stage.title} · ${routeStyleLabel(selectedStyle)} ausgewählt. Google Maps berechnet den Verlauf beim Öffnen neu.`;
+      exportDialog.querySelector("#generic-export-day").textContent = `Tag ${travelDayNumber(selectedStage)} · ${stage.title} · ${routeStyleLabel(selectedStyle)} ausgewählt. Google Maps berechnet den Verlauf beim Öffnen neu.`;
       exportDialog.showModal();
       closeMore();
     });
@@ -329,12 +343,12 @@
       const allRoutes = L.featureGroup().addTo(overviewMap);
       const overviewDayEnds = new Map();
       routes.features.filter((feature) => !feature.properties.optional && !(feature.properties.ferry && feature.properties.variant === "direct")).forEach((feature) => {
-        const { name, ferry, day, variant } = feature.properties;
+        const { name, ferry, variant } = feature.properties;
         const groupIndex = kmlGroupForName(name);
         if (groupIndex < 0 || !overviewGroups[groupIndex]) return;
         const index = stageIndexForFeature(feature);
         routeGeometryData.set(`${index}:${variant}`, feature.properties);
-        const polyline = L.polyline(leafletCoordinates(feature), { className: `generic-route-line route-${variant} route-stage-${index}`, color: ferry ? "#9a6118" : colours[index % colours.length], weight: ferry ? 4 : 5, opacity: .9, dashArray: ferry ? "9 8" : variant === "direct" ? "9 7" : null, lineCap: "round", isFerry: ferry }).bindTooltip(`Tag ${day} · ${model.revision.stages[index]?.title || name}`, { sticky: true });
+        const polyline = L.polyline(leafletCoordinates(feature), { className: `generic-route-line route-${variant} route-stage-${index}`, color: ferry ? "#9a6118" : colours[index % colours.length], weight: ferry ? 4 : 5, opacity: .9, dashArray: ferry ? "9 8" : variant === "direct" ? "9 7" : null, lineCap: "round", isFerry: ferry }).bindTooltip(`Tag ${travelDayNumber(index)} · ${model.revision.stages[index]?.title || name}`, { sticky: true });
         polyline.on("click", () => activateOverviewStory(groupIndex, true));
         if (!overviewRoutes.has(index)) overviewRoutes.set(index, { groupIndex, original: null, direct: null });
         overviewRoutes.get(index)[variant] = polyline;
@@ -345,18 +359,29 @@
         }
       });
       const points = kmlPoints(xml);
-      model.revision.stays.forEach((stay, stayIndex) => {
-        const name = place(stay.placeId).name;
-        const stageIndex = stageForStay(stay);
-        const day = model.revision.stages[stageIndex]?.legacy?.day || stageIndex + 1;
-        let coordinate = pointCoordinateFor(points, name, day) || overviewDayEnds.get(stageIndex);
+      stayMarkerGroups().forEach((group) => {
+        const first = group.stays[0];
+        const name = place(group.placeId).name;
+        const legacyDay = model.revision.stages[first.startIndex]?.legacy?.day || travelDayNumber(first.startIndex);
+        const labels = group.stays.map((entry) => entry.label);
+        const markerLabel = group.label;
+        let coordinate = pointCoordinateFor(points, name, legacyDay) || overviewDayEnds.get(first.startIndex);
         for (let offset = 1; !coordinate && offset <= 4; offset += 1) {
-          coordinate = overviewDayEnds.get(stageIndex - offset) || overviewDayEnds.get(stageIndex + offset);
+          coordinate = overviewDayEnds.get(first.startIndex - offset) || overviewDayEnds.get(first.startIndex + offset);
         }
         if (!coordinate) return;
-        const icon = L.divIcon({ className: "generic-stay-marker-shell", html: `<span>${day}</span>`, iconSize: [28, 28], iconAnchor: [14, 14] });
-        L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${day} · ${name}`).on("click", () => { selectedStay = stayIndex; setView("roadbook"); setListMode("stays"); }).addTo(overviewMap);
+        const markerWidth = Math.max(32, 12 + markerLabel.length * 7);
+        const icon = L.divIcon({ className: "generic-stay-marker-shell range", html: `<span>${escapeHtml(markerLabel)}</span>`, iconSize: [markerWidth, 28], iconAnchor: [markerWidth / 2, 14] });
+        L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${labels.join(" und ")} · ${name}`).on("click", () => { selectedStay = first.stayIndex; setView("roadbook"); setListMode("stays"); }).addTo(overviewMap);
       });
+      const finalIndex = model.revision.stages.length - 1;
+      const finalCoordinate = overviewDayEnds.get(finalIndex);
+      if (finalCoordinate) {
+        const finalStage = model.revision.stages[finalIndex];
+        const finalLabel = String(travelDayNumber(finalIndex));
+        const icon = L.divIcon({ className: "generic-stay-marker-shell final", html: `<span>${finalLabel}</span>`, iconSize: [28, 28], iconAnchor: [14, 14] });
+        L.marker(finalCoordinate, { icon, zIndexOffset: 510 }).bindTooltip(`Tag ${finalLabel} · ${finalStage.title}`).on("click", () => { selectedStage = finalIndex; setView("roadbook"); setListMode("days"); }).addTo(overviewMap);
+      }
       overviewBounds = allRoutes.getBounds();
       if (overviewBounds.isValid()) overviewMap.fitBounds(overviewBounds, { padding: [24, 24] });
       loading?.remove();
@@ -444,7 +469,7 @@
         const route = routeFor(stage);
         const fixed = fixedForStage(stage);
         const overnight = stage.legacy?.overnight || place(stage.destinationPlaceId).name;
-        return `<button class="generic-stage-row ${stage.kind === "rest" ? "rest" : ""} ${fixed ? "fixed" : ""}" type="button" data-stage-index="${index}" aria-current="${index === selectedStage}" style="--stage-colour:${colours[index % colours.length]}"><span class="generic-day-number">${stage.legacy?.day || index + 1}</span><span class="generic-stage-copy"><strong>${escapeHtml(stage.title)}</strong><span>${fixed ? "🔒 Geschützter Fixpunkt" : escapeHtml(overnight)}</span></span><span class="generic-stage-distance">${stage.kind === "rest" ? "Ruhetag" : route?.distanceMeters ? `${km.format(route.distanceMeters / 1000)} km` : stage.kind === "transport" ? "Fähre" : "–"}</span></button>`;
+        return `<button class="generic-stage-row ${stage.kind === "rest" ? "rest" : ""} ${fixed ? "fixed" : ""}" type="button" data-stage-index="${index}" aria-current="${index === selectedStage}" style="--stage-colour:${colours[index % colours.length]}"><span class="generic-day-number">${travelDayNumber(index)}</span><span class="generic-stage-copy"><strong>${escapeHtml(stage.title)}</strong><span>${fixed ? "🔒 Geschützter Fixpunkt" : escapeHtml(overnight)}</span></span><span class="generic-stage-distance">${stage.kind === "rest" ? "Ruhetag" : route?.distanceMeters ? `${km.format(route.distanceMeters / 1000)} km` : stage.kind === "transport" ? "Fähre" : "–"}</span></button>`;
       }).join("");
       list.querySelectorAll("[data-stage-index]").forEach((button) => button.addEventListener("click", () => selectStage(Number(button.dataset.stageIndex), true)));
     } else {
@@ -454,7 +479,8 @@
         const startIndex = stageForStay(stay);
         const option = optionsFor(stay)[0];
         const booking = bookingFor(stay);
-        return `<button class="generic-stage-row stay" type="button" data-stay-index="${index}" aria-current="${index === selectedStay}"><span class="generic-day-number">${model.revision.stages[startIndex]?.legacy?.day || startIndex + 1}</span><span class="generic-stage-copy"><strong>${escapeHtml(place(stay.placeId).name)}</strong><span>${escapeHtml(option?.name || "Unterkunft offen")}</span><small class="generic-booking-badge ${bookingClass(booking)}">${bookingLabel(booking)}</small></span><span class="generic-stage-distance">${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></button>`;
+        const range = dayRangeForStay(stay);
+        return `<button class="generic-stage-row stay" type="button" data-stay-index="${index}" aria-current="${index === selectedStay}"><span class="generic-day-number">${range.label}</span><span class="generic-stage-copy"><strong>${escapeHtml(place(stay.placeId).name)}</strong><span>${escapeHtml(option?.name || "Unterkunft offen")}</span><small class="generic-booking-badge ${bookingClass(booking)}">${bookingLabel(booking)}</small></span><span class="generic-stage-distance">${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></button>`;
       }).join("");
       list.querySelectorAll("[data-stay-index]").forEach((button) => button.addEventListener("click", () => selectStay(Number(button.dataset.stayIndex), true)));
     }
@@ -532,7 +558,7 @@
   function showRouteStyleDialog(stage, route, previewStyle, previousStyle) {
     const dialog = document.querySelector("#generic-route-style-dialog");
     if (!dialog) return;
-    const day = stage.legacy?.day || selectedStage + 1;
+    const day = travelDayNumber(selectedStage);
     const preview = previewMetricsFor(selectedStage, route);
     const metrics = (value) => value?.distanceMeters
       ? `${km.format(value.distanceMeters / 1000)} km · ${formatDuration(value.durationSeconds)}`
@@ -579,7 +605,7 @@
     if (legend) {
       legend.hidden = !(hasSelectedPreview && compareOriginal);
       if (hasSelectedPreview && route) {
-        legend.innerHTML = `<span><i class="compare-line original" style="--compare-colour:${colours[selectedStage % colours.length]}"></i>${escapeHtml(routeStyleLabel(route.style))} · Original</span><span><i class="compare-line preview"></i>${escapeHtml(routeStyleLabel(previewStyle))} · Vorschau</span>`;
+        legend.innerHTML = `<span><i class="compare-line original" style="--compare-colour:${colours[selectedStage % colours.length]}"></i>${escapeHtml(routeStyleLabel(route.style))} · Originalplan</span><span><i class="compare-line preview"></i>${escapeHtml(routeStyleLabel(previewStyle))} · Vorschau</span>`;
       } else {
         legend.innerHTML = "";
       }
@@ -598,7 +624,7 @@
     const stage = model.revision.stages[selectedStage];
     const route = routeFor(stage);
     const previewStyle = routeStyleDrafts.get(selectedStage);
-    const dayLabel = stage.legacy?.day || selectedStage + 1;
+    const dayLabel = travelDayNumber(selectedStage);
     const fixed = fixedForStage(stage);
     const previewText = previewStyle
       ? ` Die Routenart soll von ${route?.style === "scenic" ? "Kurvig & schön" : "Direkt"} auf ${previewStyle === "scenic" ? "Kurvig & schön" : "Direkt"} wechseln.`
@@ -618,7 +644,7 @@
     const stay = model.revision.stays[selectedStay];
     const startIndex = stageForStay(stay);
     const location = place(stay.placeId).name;
-    const dayLabel = model.revision.stages[startIndex]?.legacy?.day || startIndex + 1;
+    const dayLabel = travelDayNumber(startIndex);
     if (action === "night") {
       openPlanContext({
         title: "Aufenthalt verlängern",
@@ -658,12 +684,12 @@
       const routePreviewConfirmed = confirmedRouteStyleDrafts.has(selectedStage);
       const displayedRoute = previewMetricsFor(selectedStage, route);
       const googleMapsUrl = googleMapsUrlForSelection(stage, route);
-      inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Tag ${stage.legacy?.day || selectedStage + 1} · ${stage.kind === "rest" ? "Ruhetag" : stage.kind === "transport" ? "Transport" : stage.kind === "loop" ? "Rundfahrt" : "Motorradetappe"}</span><h2>${escapeHtml(stage.title)}</h2><span>${escapeHtml(formatDate(stage.date, { weekday: "long", day: "2-digit", month: "long" }))}</span></div>
+      inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Tag ${travelDayNumber(selectedStage)} · ${stage.kind === "rest" ? "Ruhetag" : stage.kind === "transport" ? "Transport" : stage.kind === "loop" ? "Rundfahrt" : "Motorradetappe"}</span><h2>${escapeHtml(stage.title)}</h2><span>${escapeHtml(formatDate(stage.date, { weekday: "long", day: "2-digit", month: "long" }))}</span></div>
         ${fixed ? `<div class="generic-fixed-notice"><strong>🔒 Geschützter Fixpunkt</strong>${escapeHtml(fixed.title)} kann nur nach ausdrücklicher Bestätigung verändert werden.</div>` : ""}
         <div class="generic-metrics"><div><strong>${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km` : "–"}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Strecke"}</span></div><div><strong>${formatDuration(displayedRoute?.durationSeconds)}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Fahrzeit"}</span></div><div><strong>${escapeHtml(destination)}</strong><span>Übernachtung</span></div></div>
         ${route ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt sofort eine Vorschau und fragt anschließend, ob du sie übernehmen möchtest.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Lokal gespeichert · Prüfung ausstehend" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
         <div class="generic-detail-block"><h3>Streckenhinweise</h3><p>${escapeHtml(routeHintsFor(stage, route, activeStyle))}</p></div>
-        <div class="generic-detail-block"><h3>Unterkunft</h3>${accommodation ? `<div class="generic-hotel"><span class="generic-hotel-icon">⌂</span><div><strong>${escapeHtml(accommodation.name)}</strong><span>${bookingLabel(booking)} · ${accommodation.motorcycleParking === "confirmed" ? "Motorradgarage bestätigt" : "Abstellung prüfen"}</span>${accommodation.url ? `<a class="generic-hotel-link" href="${escapeHtml(accommodation.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : ""}${alternative ? `<small>Alternative: ${escapeHtml(alternative.name)}</small>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : ""}` : ""}</div></div>` : `<p>Für diesen Tag ist noch keine Unterkunft hinterlegt.</p>`}${stay ? `<button class="generic-context-link" type="button" id="generic-show-stay">Unterkunft dieses Tages ansehen →</button>` : ""}</div>
+        <div class="generic-detail-block"><h3>Unterkunft</h3>${accommodation ? `<div class="generic-hotel">${hotelIcon()}<div><strong>${escapeHtml(accommodation.name)}</strong><span>${bookingLabel(booking)} · ${parkingLabel(accommodation, stay)}</span>${accommodation.url ? `<a class="generic-hotel-link" href="${escapeHtml(accommodation.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : ""}${alternative ? `<small>Alternative: ${escapeHtml(alternative.name)}</small>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : ""}` : ""}</div></div>` : `<p>Für diesen Tag ist noch keine Unterkunft hinterlegt.</p>`}${stay ? `<button class="generic-context-link" type="button" id="generic-show-stay">Unterkunft dieses Tages ansehen →</button>` : ""}</div>
         <div class="generic-inspector-actions">${googleMapsUrl ? `<a class="generic-action-button" href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div>`;
       inspector.querySelectorAll("[data-route-style]").forEach((button) => button.addEventListener("click", () => previewRouteStyle(button.dataset.routeStyle)));
       inspector.querySelector("#generic-discard-route-preview")?.addEventListener("click", discardRoutePreview);
@@ -677,11 +703,11 @@
       const alternative = optionsFor(stay)[1];
       const booking = bookingFor(stay);
       const protectedBooking = Boolean(booking?.protected);
-      inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Unterkunft · ab Tag ${model.revision.stages[startIndex]?.legacy?.day || startIndex + 1}</span><h2>${escapeHtml(place(stay.placeId).name)}</h2><span>${formatDate(stay.startDate)} · ${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div>
+      inspector.innerHTML = `<div class="generic-inspector-head"><span class="generic-inspector-type">Unterkunft · Tag ${dayRangeForStay(stay).label}</span><h2>${escapeHtml(place(stay.placeId).name)}</h2><span>${formatDate(stay.startDate)} · ${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div>
         ${protectedBooking ? `<div class="generic-fixed-notice"><strong>🔒 Buchung geschützt</strong>Eine Änderung benötigt deine ausdrückliche Bestätigung und eine Prüfung der angrenzenden Route.</div>` : ""}
         <div class="generic-metrics two"><div><strong>${bookingLabel(booking)}</strong><span>Buchungsstatus</span></div><div><strong>${stay.nightCount}</strong><span>${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div></div>
-        <div class="generic-detail-block"><h3>${option ? "Unterkunft" : "Unterkunft offen"}</h3>${option ? `<div class="generic-hotel"><span class="generic-hotel-icon">⌂</span><div><strong>${escapeHtml(option.name)}</strong><span>${option.motorcycleParking === "confirmed" ? "Motorradgarage bestätigt" : "Sichere Abstellung prüfen"}</span>${option.url ? `<a class="generic-hotel-link" href="${escapeHtml(option.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : `<small>Kein Hotel-Link hinterlegt</small>`}</div></div>` : `<p>Es ist noch keine erste Wahl hinterlegt.</p>`}</div>
-        <div class="generic-detail-block"><h3>Alternative</h3>${alternative ? `<div class="generic-hotel"><span class="generic-hotel-icon secondary">2</span><div><strong>${escapeHtml(alternative.name)}</strong><span>Noch nicht ausgewählt</span>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : `<small>Kein Link hinterlegt</small>`}</div></div>` : `<p>Noch keine Alternative hinterlegt.</p>`}<p class="generic-context-note">Zuerst am gleichen Ort suchen. Nur ein Ortswechsel löst eine Prüfung der angrenzenden Etappen aus.</p></div>
+        <div class="generic-detail-block"><h3>${option ? "Unterkunft" : "Unterkunft offen"}</h3>${option ? `<div class="generic-hotel">${hotelIcon()}<div><strong>${escapeHtml(option.name)}</strong><span>${parkingLabel(option, stay)}</span>${option.url ? `<a class="generic-hotel-link" href="${escapeHtml(option.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : `<small>Kein Hotel-Link hinterlegt</small>`}</div></div>` : `<p>Es ist noch keine erste Wahl hinterlegt.</p>`}</div>
+        <div class="generic-detail-block"><h3>Alternative</h3>${alternative ? `<div class="generic-hotel">${hotelIcon(true)}<div><strong>${escapeHtml(alternative.name)}</strong><span>Noch nicht ausgewählt</span>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : `<small>Kein Link hinterlegt</small>`}</div></div>` : `<p>Noch keine Alternative hinterlegt.</p>`}<p class="generic-context-note">Zuerst am gleichen Ort suchen. Nur ein Ortswechsel löst eine Prüfung der angrenzenden Etappen aus.</p></div>
         <div class="generic-inspector-actions"><button class="generic-action-button primary" type="button" id="generic-find-accommodation">Neue Unterkunft suchen</button><button class="generic-action-button" type="button" id="generic-add-night">Nacht hinzufügen</button><button class="generic-context-link" type="button" id="generic-show-adjacent">Angrenzende Etappen ansehen →</button></div>`;
       inspector.querySelector("#generic-find-accommodation")?.addEventListener("click", () => openStayPlanContext("search"));
       inspector.querySelector("#generic-add-night")?.addEventListener("click", () => openStayPlanContext("night"));
@@ -738,25 +764,30 @@
           dayEnds.set(index, coordinates.at(-1));
         }
       });
-      model.revision.stays.forEach((stay, stayIndex) => {
-        const stageIndex = stageForStay(stay);
-        const name = place(stay.placeId).name;
-        const day = model.revision.stages[stageIndex]?.legacy?.day || stageIndex + 1;
-        let coordinate = pointCoordinateFor(pointCoordinates, name, day) || dayEnds.get(stageIndex);
+      stayMarkerGroups().forEach((group) => {
+        const first = group.stays[0];
+        const name = place(group.placeId).name;
+        const legacyDay = model.revision.stages[first.startIndex]?.legacy?.day || travelDayNumber(first.startIndex);
+        const dayLabel = group.label;
+        let coordinate = pointCoordinateFor(pointCoordinates, name, legacyDay) || dayEnds.get(first.startIndex);
         for (let offset = 1; !coordinate && offset <= 4; offset += 1) {
-          coordinate = dayEnds.get(stageIndex - offset) || dayEnds.get(stageIndex + offset);
+          coordinate = dayEnds.get(first.startIndex - offset) || dayEnds.get(first.startIndex + offset);
         }
         if (!coordinate) return;
-        const icon = L.divIcon({ className: "generic-stay-marker-shell", html: `<span>${day}</span>`, iconSize: [28, 28], iconAnchor: [14, 14] });
-        const marker = L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${day} · ${name}`);
-        marker.on("click", () => selectStay(stayIndex, true));
+        const markerWidth = Math.max(32, 12 + dayLabel.length * 7);
+        const icon = L.divIcon({ className: "generic-stay-marker-shell range", html: `<span>${escapeHtml(dayLabel)}</span>`, iconSize: [markerWidth, 28], iconAnchor: [markerWidth / 2, 14] });
+        const marker = L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${group.stays.map((entry) => entry.label).join(" und ")} · ${name}`);
+        const stayIndexes = group.stays.map((entry) => entry.stayIndex);
+        const stageIndexes = group.stays.flatMap((entry) => Array.from({ length: entry.endIndex - entry.startIndex + 1 }, (_, offset) => entry.startIndex + offset));
+        marker.on("click", () => selectStay(stayIndexes.includes(selectedStay) ? selectedStay : stayIndexes[0], true));
         marker.addTo(workspaceMap);
         if (marker.getElement()) {
-          marker.getElement().dataset.stayIndex = String(stayIndex);
+          marker.getElement().dataset.stayIndex = String(stayIndexes[0]);
+          marker.getElement().dataset.stayIndexes = stayIndexes.join(",");
           marker.getElement().dataset.latitude = String(coordinate[0]);
           marker.getElement().dataset.longitude = String(coordinate[1]);
         }
-        workspaceMarkers.push({ marker, stayIndex, stageIndex });
+        workspaceMarkers.push({ marker, stayIndexes, stageIndexes });
       });
       if (workspaceBounds.isValid()) workspaceMap.fitBounds(workspaceBounds, { padding: [32, 32] });
       renderInspector();
@@ -777,11 +808,11 @@
       const route = routeFor(stage);
       const previewStyle = routeStyleDrafts.get(selectedStage);
       const previewMetrics = previewMetricsFor(selectedStage, route);
-      title.textContent = `${previewStyle ? (compareOriginal ? "Routenvergleich" : "Routenvorschau") : planLabel()} · Tag ${stage.legacy?.day || selectedStage + 1}`;
+      title.textContent = `${previewStyle ? (compareOriginal ? "Routenvergleich" : "Routenvorschau") : planLabel()} · Tag ${travelDayNumber(selectedStage)}`;
       subtitle.textContent = previewStyle
         ? compareOriginal
           ? `${routeStyleLabel(route?.style)} (Original) und ${routeStyleLabel(previewStyle)} (Vorschau).`
-          : `${routeStyleLabel(previewStyle)} neu berechnet${previewMetrics?.distanceMeters ? ` · ${km.format(previewMetrics.distanceMeters / 1000)} km · ${formatDuration(previewMetrics.durationSeconds)}` : ""}. Originalplan bleibt unverändert.`
+          : `${routeStyleLabel(previewStyle)} neu berechnet${previewMetrics?.distanceMeters ? ` · ${km.format(previewMetrics.distanceMeters / 1000)} km · ${formatDuration(previewMetrics.durationSeconds)}` : ""}. Der veröffentlichte Plan bleibt unverändert.`
         : `${stage.title} · veröffentlichter Stand.`;
       workspaceRoutes.forEach((variants, index) => {
         const draftUsesDirect = index === selectedStage && previewStyle === "direct";
@@ -798,7 +829,7 @@
         }));
         variants.direct.eachLayer((layer) => layer.setStyle({ color: "#202822", weight: 8, opacity: .96, dashArray: "9 7" }));
       });
-      workspaceMarkers.forEach(({ marker, stageIndex }) => marker.getElement()?.classList.toggle("is-active", stageIndex === selectedStage));
+      workspaceMarkers.forEach(({ marker, stageIndexes }) => marker.getElement()?.classList.toggle("is-active", stageIndexes.includes(selectedStage)));
       const selected = workspaceRoutes.get(selectedStage);
       const selectedGroup = previewStyle === "direct" ? selected?.direct : selected?.original;
       if (fit && selectedGroup?.getBounds().isValid()) workspaceMap.fitBounds(selectedGroup.getBounds(), { padding: [70, 70], maxZoom: 9 });
@@ -812,8 +843,8 @@
         if (workspaceMap.hasLayer(variants.direct)) workspaceMap.removeLayer(variants.direct);
         variants.original.eachLayer((layer) => layer.setStyle({ weight: [startIndex, startIndex + 1].includes(index) ? 6 : 3, opacity: [startIndex, startIndex + 1].includes(index) ? .42 : .05 }));
       });
-      workspaceMarkers.forEach(({ marker, stayIndex }) => marker.getElement()?.classList.toggle("is-active", stayIndex === selectedStay));
-      const selectedMarker = workspaceMarkers.find((item) => item.stayIndex === selectedStay)?.marker;
+      workspaceMarkers.forEach(({ marker, stayIndexes }) => marker.getElement()?.classList.toggle("is-active", stayIndexes.includes(selectedStay)));
+      const selectedMarker = workspaceMarkers.find((item) => item.stayIndexes.includes(selectedStay))?.marker;
       if (fit && selectedMarker) workspaceMap.setView(selectedMarker.getLatLng(), 8, { animate: true });
     }
   }

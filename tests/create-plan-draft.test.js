@@ -236,7 +236,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
     accommodations: [
       { id: "base", title: "Basisort", currentFirstChoice: "Basis Hotel" },
       { id: "ferry", title: "Kabine auf der Fähre", currentFirstChoice: "Fährkabine" },
-      { id: "aosta-como", title: "Aosta", currentFirstChoice: "Aosta Hotel" }
+      { id: "aosta", title: "Aosta", currentFirstChoice: "Aosta Hotel" }
     ]
   });
   assert.equal(accommodationResult.status, 200);

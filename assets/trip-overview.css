@@ -377,6 +377,8 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
 .generic-map-hint { position: absolute; z-index: 600; left: 50%; bottom: 56px; transform: translateX(-50%); padding: 8px 12px; border-radius: 99px; background: rgba(29,29,31,.76); color: #fff; font-size: 10px; white-space: nowrap; backdrop-filter: blur(12px); }
 .generic-stay-marker-shell { border: 0; background: transparent; }
 .generic-stay-marker-shell span { width: 28px; height: 28px; display: grid; place-items: center; border: 3px solid var(--accent); border-radius: 50%; background: #fff; color: var(--accent); box-shadow: 0 3px 12px rgba(0,0,0,.18); font-size: 10px; font-weight: 850; transition: transform var(--fast), background var(--fast); }
+.generic-stay-marker-shell.range span { box-sizing: border-box; width: 100%; min-width: 32px; padding: 0 7px; border-radius: 99px; white-space: nowrap; }
+.generic-stay-marker-shell.final span { border-color: #9b6a13; color: #7c510d; }
 .generic-stay-marker-shell.is-active span { transform: scale(1.2); border-color: #fff; background: var(--accent); color: #fff; }
 
 .generic-inspector { overflow: auto; }
@@ -412,8 +414,8 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
 .generic-route-preview button { grid-column: 2; grid-row: 1 / 3; border: 0; background: transparent; color: var(--accent); font-size: 10px; font-weight: 750; cursor: pointer; }
 .generic-context-note { margin-top: 9px !important; color: var(--muted) !important; font-size: 10px !important; }
 .generic-hotel { display: flex; align-items: center; gap: 11px; }
-.generic-hotel-icon { width: 40px; height: 40px; display: grid; place-items: center; flex: 0 0 40px; align-self: center; border-radius: 11px; background: var(--accent-soft); color: var(--accent); font-size: 19px; font-weight: 800; line-height: 1; text-align: center; }
-.generic-hotel-icon.secondary { font-size: 13px; }
+.generic-hotel .generic-hotel-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; flex: 0 0 48px; align-self: center; border-radius: 13px; background: var(--accent-soft); color: var(--accent); }
+.generic-hotel-icon svg { width: 27px; height: 27px; display: block; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .generic-hotel-icon.secondary { background: #f0f0f2; color: var(--muted); }
 .generic-hotel strong,
 .generic-hotel span,

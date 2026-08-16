@@ -26,8 +26,8 @@ Massgeblich ist `reise-roadbook-2026.html`. Die Datei `reiseplanung-verfeinert-2
 |---:|---|---|---|
 | 1 | Berikon - Grenoble | Anreise | Grenoble |
 | 2 | Grenoble - Sisteron | Route Napoleon | Sisteron |
-| 3 | Sisteron - Lourmarin | Provence / Luberon | Lourmarin oder Aix-en-Provence |
-| 4 | Lourmarin - Camargue - Nîmes | Camargue | Nîmes oder Uzès |
+| 3 | Sisteron - Lourmarin | Provence / Luberon | Lourmarin |
+| 4 | Lourmarin - Camargue - Nîmes | Camargue | Nîmes |
 | 5 | Nîmes - Carcassonne | Languedoc | Carcassonne |
 | 6 | Carcassonne - Castelldefels | Transfer | Castelldefels |
 | 7 | Castelldefels / Barcelona | Ruhetag / Stadt optional | Castelldefels |
@@ -35,8 +35,8 @@ Massgeblich ist `reise-roadbook-2026.html`. Die Datei `reiseplanung-verfeinert-2
 | 9 | Priorat-Runde | Kurventag | Falset |
 | 10 | Falset - Albarracín | Inland | Albarracín |
 | 11 | Albarracín-Runde | Flex / Kurventag | Albarracín |
-| 12 | Albarracín - La Patacona | Transfer | La Patacona / Alboraya |
-| 13 | La Patacona / Valencia | Ruhetag / Stadt optional | La Patacona / Alboraya |
+| 12 | Albarracín - La Patacona | Transfer | La Patacona |
+| 13 | La Patacona / Valencia | Ruhetag / Stadt optional | La Patacona |
 | 14 | La Patacona - Altea | Costa-Blanca-Hinterland | Altea |
 | 15 | Altea - Monachil | Transfer | Monachil |
 | 16 | Monachil / Granada | Ruhetag / Stadt optional | Monachil |
@@ -50,10 +50,10 @@ Massgeblich ist `reise-roadbook-2026.html`. Die Datei `reiseplanung-verfeinert-2
 | 24 | Cuenca | Ruhetag / Wetterreserve | Cuenca |
 | 25 | Cuenca - Zaragoza | Rueckverbindung | Zaragoza |
 | 26 | Zaragoza - Castelldefels | Transfer | Castelldefels |
-| 27 | Barcelona Kueste / Faehrvorbereitung | Reservetag fuer die Faehre | Raum Barcelona, vorzugsweise Castelldefels |
-| 28 | Faehre Barcelona - Genua | Faehrtag | Kabine auf der Faehre |
-| 29 | Genua - Aosta oder Como | Heimweg | Aosta oder Como |
-| 30 | Aosta oder Como - Berikon | Heimfahrt | Berikon |
+| 27 | Castelldefels / Faehrvorbereitung | Reservetag fuer die Faehre | Castelldefels |
+| 28 | Faehre Barcelona - Genua | Faehrtag | Kabine an Bord |
+| 29 | Genua - Aosta | Heimweg | Aosta |
+| 30 | Aosta - Berikon | Heimfahrt | Berikon |
 
 ## Wichtige Routen-Findings
 

@@ -335,7 +335,7 @@ const assignAccommodationSlots = (expected, current) => {
   const assigned = expected.map((stay) => {
     let id = "";
     if (stay.startDate === FERRY_DATE || /fahre|kabine/.test(placeKey(stay.title))) id = "ferry";
-    else if (stay.startDate >= "2026-10-22") id = "aosta-como";
+    else if (stay.startDate >= "2026-10-22") id = "aosta";
     if (!unused.has(id)) id = "";
     if (!id) {
       const target = placeKey(stay.title);
@@ -346,7 +346,7 @@ const assignAccommodationSlots = (expected, current) => {
       });
       id = match?.id || "";
     }
-    if (!id) id = Array.from(unused).find((candidate) => !["ferry", "aosta-como"].includes(candidate)) || "";
+    if (!id) id = Array.from(unused).find((candidate) => !["ferry", "aosta"].includes(candidate)) || "";
     if (!id) throw new Error("Für einen Unterkunftsstopp ist kein freier Anzeigeplatz verfügbar.");
     unused.delete(id);
     return { ...stay, slotId: id };

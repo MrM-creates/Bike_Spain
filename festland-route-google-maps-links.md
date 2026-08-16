@@ -7,7 +7,7 @@ Diese Links sind bewusst grobe Routengerueste. Google Maps kann je nach Verkehr,
 [Google Maps Teilstrecke 1](https://www.google.com/maps/dir/?api=1&origin=Bellikon%2C%20Switzerland&destination=Barcelona%2C%20Spain&waypoints=Lyon%2C%20France%7CVallon-Pont-d%27Arc%2C%20France%7CN%C3%AEmes%2C%20France%7CCarcassonne%2C%20France&travelmode=driving)
 
 Empfohlene Tageslogik:
-Bellikon - Lyon | Lyon - Vallon-Pont-d'Arc | Vallon-Pont-d'Arc - Nimes/Uzes | Nimes - Carcassonne | Carcassonne - Barcelona.
+Bellikon - Lyon | Lyon - Vallon-Pont-d'Arc | Vallon-Pont-d'Arc - Nimes | Nimes - Carcassonne | Carcassonne - Barcelona.
 
 ## 2. Barcelona - Priorat/Falset - Albarracin - Valencia
 
@@ -41,7 +41,7 @@ Die Strecke Barcelona - Genua ist als Faehre gedacht und deshalb kein normaler G
 1. Bellikon
 2. Lyon
 3. Vallon-Pont-d'Arc
-4. Nimes oder Uzes
+4. Nimes
 5. Carcassonne
 6. Barcelona
 7. Falset / Priorat

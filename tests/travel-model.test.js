@@ -2,13 +2,15 @@ const assert = require("node:assert/strict");
 const {
   importLegacyRoadbook,
   assertLegacyParity,
+  groupStayRanges,
+  addDays,
   parseDistanceMeters,
   parseDurationSeconds
 } = require("../assets/travel-model");
 
 const days = [
   { id: "d1", title: "Berikon – Grenoble", type: "Anreise", origin: "Berikon, Switzerland", destination: "Grenoble, France", overnight: "Grenoble", km: "404 km", time: "4 h 20", roads: "A1 · A41" },
-  { id: "d2", title: "Grenoble", type: "Ruhetag", overnight: "Grenoble", rest: true, roads: "Keine Fahrroute" },
+  { id: "d2", day: 1.5, title: "Grenoble", type: "Ruhetag", overnight: "Grenoble", rest: true, roads: "Keine Fahrroute" },
   { id: "d3", title: "Grenoble – Barcelona", type: "Fahrtag", origin: "Grenoble, France", destination: "Barcelona, Spain", overnight: "Barcelona", km: "ca. 620 km", time: "6 h 30", routeStyle: "direct" },
   { id: "d4", title: "Fähre Barcelona – Genua", type: "Fährtag", origin: "Barcelona, Spain", destination: "Genua, Italy", overnight: "Kabine auf der Fähre" }
 ];
@@ -41,6 +43,8 @@ assert.equal(model.source.publishedVersion, "2026-08-15T08:00:00.000Z");
 assert.equal(model.trip.publishedRevisionId, model.revision.id);
 assert.equal(model.revision.phase, "ready");
 assert.equal(model.revision.stages[0].date, "2026-09-24");
+assert.deepEqual(model.revision.stages.map((stage) => stage.dayNumber), [1, 2, 3, 4]);
+assert.equal(model.revision.stages[1].legacy.day, 1.5);
 assert.equal(model.revision.stages[1].kind, "rest");
 assert.equal(model.revision.stages[3].kind, "transport");
 assert.equal(model.revision.routeVariants[0].style, "direct");
@@ -53,7 +57,17 @@ assert.equal(model.revision.bookings[1].protected, true);
 assert.equal(model.revision.stays[0].accommodationOptionIds.length, 2);
 assert.equal(model.revision.accommodationOptions[1].name, "Hotel Alternative");
 assert.equal(model.revision.fixPoints[1].targetRef.id, model.revision.stages[3].id);
+assert.equal(model.revision.fixPoints[0].targetRef.id, model.revision.stages[0].id);
+assert.equal(model.revision.fixPoints[2].targetRef.id, model.revision.stages[3].id);
 assert.equal(model.revision.narrativeSegments[0].stageIds.length, 4);
+const markerStages = Array.from({ length: 30 }, (_, index) => ({ date: addDays("2026-09-24", index), dayNumber: index + 1 }));
+const markerGroups = groupStayRanges([
+  { id: "castelldefels-first", placeId: "castelldefels", startDate: "2026-09-29", nightCount: 2 },
+  { id: "castelldefels-return", placeId: "castelldefels", startDate: "2026-10-20", nightCount: 1 }
+], markerStages);
+assert.equal(markerGroups.length, 1);
+assert.equal(markerGroups[0].label, "6–7 · 27");
+assert.deepEqual(markerGroups[0].stays.map((stay) => [stay.startIndex, stay.endIndex, stay.label]), [[5, 6, "6–7"], [26, 26, "27"]]);
 assert.equal(parseDistanceMeters("ca. 180–200 km"), 200000);
 assert.equal(parseDurationSeconds("ca. 4 h 25"), 15900);
 

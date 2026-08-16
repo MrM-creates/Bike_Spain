@@ -29,7 +29,7 @@ Das ist keine fertige Abbiege-Navigation. Jede Tagesetappe vor der Fahrt pruefen
       <Placemark><name>05 Arles</name><description>Camargue-Basis.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.6278,43.6766,0</coordinates></Point></Placemark>
       <Placemark><name>06 Saintes-Maries-de-la-Mer</name><description>D570; keine Pisten/Schutzgebietswege.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.4290,43.4523,0</coordinates></Point></Placemark>
       <Placemark><name>07 Aigues-Mortes</name><description>D38/D58; danach D979 Richtung Nimes.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.1906,43.5669,0</coordinates></Point></Placemark>
-      <Placemark><name>08 Nimes / Uzes</name><description>Basis nach Camargue.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.3601,43.8367,0</coordinates></Point></Placemark>
+      <Placemark><name>08 Nimes</name><description>Verbindliche Basis nach der Camargue.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>4.3601,43.8367,0</coordinates></Point></Placemark>
       <Placemark><name>09 Carcassonne</name><description>Zwischenstopp Richtung Barcelona.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>2.3510,43.2130,0</coordinates></Point></Placemark>
       <Placemark><name>10 Barcelona</name><description>Stadtstopp; Garage.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>2.1686,41.3874,0</coordinates></Point></Placemark>
       <Placemark><name>11 Falset / Priorat</name><description>Priorat-Basis.</description><styleUrl>#stopMarker</styleUrl><Point><coordinates>0.8200,41.1460,0</coordinates></Point></Placemark>

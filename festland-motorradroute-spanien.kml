@@ -4,7 +4,7 @@
     <name>Festland-Motorradroute Spanien - grober Verlauf</name>
     <description><![CDATA[
 Grobe Orientierungsroute fuer eine 4-Wochen-Motorradreise:
-Bellikon - Lyon - Ardeche/Vallon-Pont-d'Arc - Nimes/Uzes - Carcassonne - Barcelona - Priorat/Falset - Albarracin - Valencia - Altea - Granada - Ronda - Ubeda/Baeza - Cuenca - Zaragoza - Barcelona - Faehre Genua - Bellikon.
+Bellikon - Lyon - Ardeche/Vallon-Pont-d'Arc - Nimes - Carcassonne - Barcelona - Priorat/Falset - Albarracin - Valencia - Altea - Granada - Ronda - Ubeda/Baeza - Cuenca - Zaragoza - Barcelona - Faehre Genua - Bellikon.
 
 Hinweis: Diese KML ist eine Verlaufslinie mit nummerierten Stopps, keine turn-by-turn Navigation. Fuer die Detailplanung pro Tag Haupt- und Regionalstrassen bevorzugen, unbefestigte Strassen vermeiden und mittelalterliche Ortskerne nicht als Zielpunkt setzen.
 ]]></description>
@@ -56,7 +56,7 @@ Hinweis: Diese KML ist eine Verlaufslinie mit nummerierten Stopps, keine turn-by
         <Point><coordinates>4.3940,44.4070,0</coordinates></Point>
       </Placemark>
       <Placemark>
-        <name>04 Nimes / Uzes</name>
+        <name>04 Nimes</name>
         <description>Stadtbasis Nimes oder kleinerer Standort Uzes; Pont du Gard als einfacher Ausflug.</description>
         <styleUrl>#stopMarker</styleUrl>
         <Point><coordinates>4.3601,43.8367,0</coordinates></Point>

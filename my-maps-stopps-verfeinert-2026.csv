@@ -1,8 +1,8 @@
 Tag,Typ,Name,Adresse_Ort,Latitude,Longitude,Notiz
 1,Uebernachtung,Grenoble,"Grenoble, France",45.1885,5.7245,"Standard-Anreiseziel; direkte Autobahnroute ohne Stadtzentrum-Zwischenziele; Crit'Air/ZFE und Garage pruefen; Annecy/Chambery nur Ausweichuebernachtung"
 2,Uebernachtung,Sisteron,"Sisteron, France",44.1984,5.9462,"Route Napoleon N85; Meouge nur separate trockene Zusatzrunde"
-3,Uebernachtung,Lourmarin oder Aix,"Lourmarin, France",43.7638,5.3639,"Via Chateau-Arnoux, Forcalquier, Cereste und Apt; Altortkern meiden; Aix urbane Alternative"
-4,Uebernachtung,Nimes oder Uzes,"Nimes, France",43.8367,4.3601,"Nach Camargue; Uzes ruhiger"
+3,Uebernachtung,Lourmarin,"Lourmarin, France",43.7638,5.3639,"Via Chateau-Arnoux, Forcalquier, Cereste und Apt; Altortkern meiden"
+4,Uebernachtung,Nimes,"Nimes, France",43.8367,4.3601,"Verbindlicher Übernachtungsort nach der Camargue"
 5,Uebernachtung,Carcassonne,"Carcassonne, France",43.2130,2.3510,"Zwischenstopp vor Barcelona"
 6,Uebernachtung,Barcelona,"Barcelona, Spain",41.3874,2.1686,"Garage/ZBE pruefen"
 7,Ruhetag,Barcelona,"Barcelona, Spain",41.3874,2.1686,"Ruhetag"
@@ -25,5 +25,5 @@ Tag,Typ,Name,Adresse_Ort,Latitude,Longitude,Notiz
 24,Uebernachtung,Zaragoza,"Zaragoza, Spain",41.6488,-0.8891,"Rueckweg"
 25,Uebernachtung,Barcelona,"Barcelona, Spain",41.3874,2.1686,"Vor Faehrpuffer"
 26,Faehre,Barcelona Hafen,"Terminal Grimaldi, Muelle de Costa, Barcelona, Spain",41.3540,2.1730,"Faehrroute noch direkt pruefen"
-27,Uebernachtung,Aosta oder Como,"Aosta, Italy",45.7370,7.3201,"Heimweg Teil 1; Alternative Como"
+27,Uebernachtung,Aosta,"Aosta, Italy",45.7370,7.3201,"Verbindlicher Übernachtungsort auf dem Heimweg"
 28,Ziel,Berikon,"Berikon AG, Switzerland",47.3507,8.3722,"Ziel"

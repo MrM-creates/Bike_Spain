@@ -1,6 +1,7 @@
 const DEFAULT_REPO = "MrM-creates/Bike_Spain";
 const DEFAULT_BRANCH = "main";
-const ACCOMMODATIONS_PATH = "unterkuenfte-2026.html";
+const TRIP_DATA_PATH = "data/trip-spanien-2026.js";
+const { parseTripData, serializeTripData } = require("../lib/trip-data");
 
 const json = (response, status, body) => {
   response.statusCode = status;
@@ -61,16 +62,6 @@ const normalizeState = (input) => {
   );
 };
 
-const replacePublishedState = (html, state) => {
-  const marker = "const publishedAccommodationState = ";
-  const start = html.indexOf(marker);
-  if (start < 0) throw new Error("publishedAccommodationState wurde nicht gefunden.");
-  const statementEnd = html.indexOf(";\n", start);
-  if (statementEnd < 0) throw new Error("publishedAccommodationState konnte nicht vollstaendig gelesen werden.");
-  const serialized = JSON.stringify(state, null, 6).replace(/\n/g, "\n    ");
-  return `${html.slice(0, start)}const publishedAccommodationState = ${serialized};${html.slice(statementEnd + 1)}`;
-};
-
 module.exports = async (request, response) => {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
@@ -95,11 +86,14 @@ module.exports = async (request, response) => {
     const state = normalizeState(payload.accommodations);
     const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
     const branch = process.env.GITHUB_BRANCH || DEFAULT_BRANCH;
-    const encodedPath = encodeURIComponent(ACCOMMODATIONS_PATH);
+    const encodedPath = encodeURIComponent(TRIP_DATA_PATH);
     const contentPath = `/repos/${repo}/contents/${encodedPath}`;
     const current = await githubRequest(`${contentPath}?ref=${encodeURIComponent(branch)}`);
-    const html = Buffer.from(current.content, "base64").toString("utf8");
-    const updatedHtml = replacePublishedState(html, state);
+    const tripData = parseTripData(Buffer.from(current.content, "base64").toString("utf8"));
+    if (!tripData.baselineAccommodations) tripData.baselineAccommodations = tripData.accommodations;
+    tripData.accommodations = state;
+    tripData.publishedVersion = new Date().toISOString();
+    const updatedContent = serializeTripData(tripData);
 
     const message = payload.reason
       ? `Update accommodations: ${String(payload.reason).slice(0, 140)}`
@@ -109,7 +103,7 @@ module.exports = async (request, response) => {
       method: "PUT",
       body: JSON.stringify({
         message,
-        content: Buffer.from(updatedHtml, "utf8").toString("base64"),
+        content: Buffer.from(updatedContent, "utf8").toString("base64"),
         sha: current.sha,
         branch
       })
@@ -121,7 +115,8 @@ module.exports = async (request, response) => {
       message,
       branch,
       repo,
-      path: ACCOMMODATIONS_PATH
+      path: TRIP_DATA_PATH,
+      version: tripData.publishedVersion
     });
   } catch (error) {
     json(response, error.status || 500, {

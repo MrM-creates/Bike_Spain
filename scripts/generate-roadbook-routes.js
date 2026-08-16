@@ -152,6 +152,10 @@ async function main() {
     sourceKml: path.basename(sourcePath),
     features
   };
+  const unroutedRoads = features.filter((feature) => !feature.properties.ferry && !feature.properties.source.startsWith("osrm-driving"));
+  if (unroutedRoads.length) {
+    throw new Error(`${unroutedRoads.length} Routen konnten nicht straßenfolgend berechnet werden; bestehende Exporte bleiben unverändert.`);
+  }
   fs.writeFileSync(outputPath, `${JSON.stringify(collection)}\n`);
   writePortableExports(features);
   console.log(`Generated ${features.length} route variants in ${path.relative(root, outputPath)}`);

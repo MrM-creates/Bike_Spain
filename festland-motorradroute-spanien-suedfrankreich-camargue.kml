@@ -4,7 +4,7 @@
     <name>Festland-Motorradroute Spanien - Suedfrankreich mit Camargue</name>
     <description><![CDATA[
 Grobe Orientierungsroute fuer die suedlichere Frankreich-Variante mit Camargue:
-Bellikon - Grenoble/Chambery - Sisteron/Digne-les-Bains - Aix/Luberon - Arles - Saintes-Maries-de-la-Mer - Aigues-Mortes - Nimes/Uzes - Carcassonne - Barcelona - Priorat/Falset - Albarracin - Valencia - Altea - Granada - Ronda - Ubeda/Baeza - Cuenca - Zaragoza - Barcelona - Faehre Genua - Bellikon.
+Bellikon - Grenoble/Chambery - Sisteron/Digne-les-Bains - Lourmarin - Arles - Saintes-Maries-de-la-Mer - Aigues-Mortes - Nimes - Carcassonne - Barcelona - Priorat/Falset - Albarracin - Valencia - Altea - Granada - Ronda - Ubeda/Baeza - Cuenca - Zaragoza - Barcelona - Faehre Genua - Bellikon.
 
 Hinweis: Diese KML ist eine Verlaufslinie mit nummerierten Stopps, keine turn-by-turn Navigation. Marseille/Toulon und die komplette Cote d'Azur werden bewusst ausgelassen. In der Camargue nur asphaltierte Haupt- und Regionalstrassen verwenden; kleine Pisten, Schutzgebietswege, Privatwege und Sackgassen vermeiden.
 ]]></description>
@@ -87,7 +87,7 @@ Hinweis: Diese KML ist eine Verlaufslinie mit nummerierten Stopps, keine turn-by
         <Point><coordinates>4.1906,43.5669,0</coordinates></Point>
       </Placemark>
       <Placemark>
-        <name>08 Nimes / Uzes</name>
+        <name>08 Nimes</name>
         <description>Stadtbasis Nimes oder kleinerer Standort Uzes; Pont du Gard als einfacher Ausflug.</description>
         <styleUrl>#stopMarker</styleUrl>
         <Point><coordinates>4.3601,43.8367,0</coordinates></Point>

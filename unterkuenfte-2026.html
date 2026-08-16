@@ -585,7 +585,7 @@
         <p>Eine konkrete erste Wahl und eine Alternative je Reisestopp. Entscheidend sind sichere Motorradabstellung, einfache Zufahrt und eine sinnvolle Lage zur Tagesroute.</p>
       </div>
       <div class="intro-actions">
-        <span class="count">16 Stopps · 28 Nächte + Fähre</span>
+        <span class="count">17 Stopps · 28 Nächte + Fähre</span>
       </div>
     </section>
 
@@ -621,7 +621,7 @@
         <div class="booking-levels">
           <div class="booking-level"><strong>Jetzt reservieren</strong><p>Grenoble, beide Aufenthalte in Castelldefels, Monachil, Ronda und Zaragoza. Nur stornierbare Tarife wählen und die neue Abfahrt am 24. September berücksichtigen.</p></div>
           <div class="booking-level"><strong>Flexibel reservieren</strong><p>Die übrigen festen Basen in den nächsten Wochen buchen. Unterwegs jeweils drei Tage voraus prüfen und nötigenfalls rechtzeitig ändern.</p></div>
-          <div class="booking-level"><strong>Später entscheiden</strong><p>Aosta oder Como erst wenige Tage vorher nach Wetter, Alpenroute und Energie definitiv festlegen.</p></div>
+          <div class="booking-level"><strong>Später entscheiden</strong><p>Aosta erst wenige Tage vorher nach Wetter, Alpenroute und Energie definitiv buchen.</p></div>
         </div>
         <p class="booking-source">Grund: Der 12. Oktober ist ein Feiertag und fällt 2026 auf einen Montag; Monachil und Ronda liegen damit im langen Wochenende. Zaragoza feiert vom 10. bis 18. Oktober die Fiestas del Pilar, und ihr kommt am letzten Festtag an. Quellen: <a href="https://www.juntadeandalucia.es/temas/trabajar/relaciones/calendario.html" target="_blank" rel="noopener">Junta de Andalucía</a> · <a href="https://zaragoza.es/sede/portal/cultura/fiestas-pilar/index" target="_blank" rel="noopener">Stadt Zaragoza</a></p>
       </div>
@@ -930,19 +930,18 @@
         </div>
       </article>
 
-      <article class="stay" data-stay="aosta-como">
+      <article class="stay" data-stay="aosta">
         <div class="stay-date"><strong>22.–23. Oktober</strong><span>1 Nacht</span></div>
         <div class="stay-content">
-          <div class="stay-head"><div><h2>Aosta oder Como</h2><div class="base-note">Wetterabhängige Heimreise-Entscheidung nach der Fähre</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
+          <div class="stay-head"><div><h2>Aosta</h2><div class="base-note">Verbindlicher Übernachtungsort nach der Fähre</div></div><div class="booking-state"><button class="state-button" data-state="asked">Angefragt</button><button class="state-button" data-state="booked">Gebucht</button></div></div>
           <div class="options">
-            <div class="hotel primary"><div class="hotel-label">Aosta-Variante</div><h3>Hotel Le Pageot</h3><div class="parking">Kostenlose Tiefgarage für Motorräder</div><p>Sehr klare Motorradlösung und praktische Lage für die Heimfahrt via Grosser St. Bernhard. Kein Frühstück im Haus.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.lepageot.it/en/services-2/" target="_blank" rel="noopener">Parkinfo</a></div></div>
-            <div class="hotel"><div class="hotel-label">Como-Variante</div><h3>Park Hotel Como</h3><div class="parking">Private Garage · reservierbar</div><p>Garage gegen Gebühr, Platz muss reserviert werden. Vor Buchung bestätigen, dass beide Motorräder einen Platz teilen dürfen.</p><div class="hotel-actions"><a class="hotel-link" href="https://www.parkhotelcomo.it/en/faq/" target="_blank" rel="noopener">Parkinfo</a></div></div>
+            <div class="hotel primary"><div class="hotel-label">Erste Wahl</div><h3>Hotel Le Pageot</h3><div class="parking">Kostenlose Tiefgarage für Motorräder</div><p>Sehr klare Motorradlösung und praktische Lage für die Heimfahrt via Grosser St. Bernhard. Kein Frühstück im Haus.</p><div class="hotel-actions"><a class="hotel-link primary-link" href="https://www.lepageot.it/en/services-2/" target="_blank" rel="noopener">Parkinfo</a></div></div>
           </div>
         </div>
       </article>
     </section>
 
-    <div class="branch"><strong>Empfehlung für den letzten Abend:</strong> Aosta ist bei trockener Route über den Grossen St. Bernhard die motorradfreundlichere Wahl. Como bleibt die Schlechtwetter- oder Simplon/Gotthard-Alternative. Erst wenige Tage vorher definitiv buchen, sofern die Tarife stornierbar bleiben.</div>
+    <div class="branch"><strong>Letzter Abend:</strong> Aosta ist als verbindlicher Übernachtungsort im veröffentlichten Plan hinterlegt. Bei ungeeignetem Alpenwetter wird die Heimroute bewusst als Reiseänderung neu geplant.</div>
   </main>
 
   <footer>
@@ -1020,10 +1019,11 @@
     </form>
   </dialog>
 
+  <script src="/data/trip-spanien-2026.js?v=20260816final"></script>
   <script>
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
-    const PUBLISHED_VERSION = "2026-08-12T16:32:07.603Z";
-    const PUBLISHED_PLAN_KIND = "original";
+    const PUBLISHED_VERSION = window.__TRIP_DATA__.publishedVersion;
+    const PUBLISHED_PLAN_KIND = window.__TRIP_DATA__.planKind;
     let displayedPlanKind = PUBLISHED_PLAN_KIND;
     const planningVersionFormatter = new Intl.DateTimeFormat("de-CH", {
       day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
@@ -1031,7 +1031,7 @@
     });
     const showPlanningVersion = (version = PUBLISHED_VERSION) => {
       const date = new Date(version);
-      const planLabel = displayedPlanKind === "original" ? "Originalplan" : "Angepasster Plan";
+      const planLabel = displayedPlanKind === "adjusted" ? "Angepasster Plan" : "Veröffentlichter Plan";
       document.querySelector("#planning-version").textContent = Number.isNaN(date.getTime())
         ? `${planLabel} · Stand: unbekannt`
         : `${planLabel} · Stand: ${planningVersionFormatter.format(date)}`;
@@ -1041,185 +1041,7 @@
     const accommodationReviewKey = "spanien-roadbook-2026-accommodation-review-v1";
     const accommodationHandoffKey = "spanien-roadbook-2026-accommodation-handoff-v1";
     const draftKey = "spanien-roadbook-2026-draft-v1";
-    const publishedAccommodationState = {
-          "grenoble": {
-                "startDate": "2026-09-24",
-                "endDate": "2026-09-25",
-                "nightCount": "1",
-                "title": "Grenoble",
-                "firstChoice": "Logis Hôtel Le Néron",
-                "firstChoiceUrl": "https://www.hotel-grenoble-nord.fr/",
-                "alternative": "Maison Barbillon",
-                "alternativeUrl": "https://maisonbarbillon.com/en/planning-your-stay-faq/"
-          },
-          "sisteron": {
-                "startDate": "2026-09-25",
-                "endDate": "2026-09-26",
-                "nightCount": "1",
-                "title": "Sisteron",
-                "firstChoice": "Hôtel Les Chênes",
-                "firstChoiceUrl": "https://www.hotel-les-chenes.com/",
-                "alternative": "Hôtel Tivoli",
-                "alternativeUrl": "https://www.hoteltivoli-sisteron.fr/fr/hotel"
-          },
-          "lourmarin": {
-                "startDate": "2026-09-26",
-                "endDate": "2026-09-27",
-                "nightCount": "1",
-                "title": "Lourmarin",
-                "firstChoice": "Le Moulin, Beaumier",
-                "firstChoiceUrl": "https://www.beaumier.com/en/properties/le-moulin-hotel/faq/",
-                "alternative": "Aix-en-Provence am Stadtrand"
-          },
-          "nimes": {
-                "startDate": "2026-09-27",
-                "endDate": "2026-09-28",
-                "nightCount": "1",
-                "title": "Nîmes",
-                "firstChoice": "Nimotel",
-                "firstChoiceUrl": "https://www.nimotel.com/",
-                "alternative": "Royal Hôtel",
-                "alternativeUrl": "https://www.royalhotel-nimes.com/en/services"
-          },
-          "carcassonne": {
-                "startDate": "2026-09-28",
-                "endDate": "2026-09-29",
-                "nightCount": "1",
-                "title": "Carcassonne",
-                "firstChoice": "Hôtel Montségur",
-                "firstChoiceUrl": "https://hotelmontsegur.com/parking.html",
-                "alternative": "Hôtel Espace Cité",
-                "alternativeUrl": "https://www.tourisme-carcassonne.fr/en/accomodation/hotel-espace-cite/"
-          },
-          "castelldefels-1": {
-                "startDate": "2026-09-29",
-                "endDate": "2026-10-01",
-                "nightCount": "2",
-                "title": "Castelldefels",
-                "firstChoice": "ibis Barcelona Castelldefels",
-                "firstChoiceUrl": "https://all.accor.com/hotel/3208/index.es.shtml",
-                "alternative": "Hotel nach Wahl + Central Park",
-                "alternativeUrl": "https://www.centralparkcastelldefels.com/"
-          },
-          "falset": {
-                "startDate": "2026-10-01",
-                "endDate": "2026-10-03",
-                "nightCount": "2",
-                "title": "Falset",
-                "firstChoice": "Hotel-Hostal Sport",
-                "firstChoiceUrl": "https://www.hotelpriorat-hostalsport.com/en/hotel-hostal-sport-your-hotel-priorat",
-                "alternative": "Priorat Aparthotel",
-                "alternativeUrl": "https://www.theoriginhotels.com/es/priorat-aparthotel"
-          },
-          "albarracin": {
-                "startDate": "2026-10-03",
-                "endDate": "2026-10-05",
-                "nightCount": "2",
-                "title": "Albarracín",
-                "firstChoice": "Hotel Doña Blanca",
-                "firstChoiceUrl": "https://www.albarracindonablanca.com/",
-                "alternative": "Hotel Albarrán",
-                "alternativeUrl": "https://hotelalbarran.es/"
-          },
-          "alboraya": {
-                "startDate": "2026-10-05",
-                "endDate": "2026-10-07",
-                "nightCount": "2",
-                "title": "Alboraya / La Patacona",
-                "firstChoice": "Olympia Hotel, Events & Spa",
-                "firstChoiceUrl": "https://www.olympiahotelvalencia.com/",
-                "alternative": "La Mozaira",
-                "alternativeUrl": "https://www.lamozaira.com/"
-          },
-          "altea": {
-                "startDate": "2026-10-07",
-                "endDate": "2026-10-08",
-                "nightCount": "1",
-                "title": "Altea",
-                "firstChoice": "Hotel Cap Negret",
-                "firstChoiceUrl": "https://www.hotelcapnegret.es/servicios/",
-                "alternative": "Hotel Altaia",
-                "alternativeUrl": "https://hotelaltaia.es/"
-          },
-          "monachil": {
-                "startDate": "2026-10-08",
-                "endDate": "2026-10-11",
-                "nightCount": "3",
-                "title": "Monachil",
-                "firstChoice": "La Almunia del Valle",
-                "firstChoiceUrl": "https://www.laalmuniadelvalle.com/en/service/parking-2/",
-                "alternative": "Hotel Rural Huerta del Laurel",
-                "alternativeUrl": "https://monachil.es/donde-dormir"
-          },
-          "ronda": {
-                "startDate": "2026-10-11",
-                "endDate": "2026-10-14",
-                "nightCount": "3",
-                "title": "Ronda",
-                "firstChoice": "Hotel San Francisco",
-                "firstChoiceUrl": "https://hotelsanfrancisco-ronda.com/en/services/",
-                "alternative": "Hotel Andalucía",
-                "alternativeUrl": "https://www.hotel-andalucia.net/en/"
-          },
-          "ubeda": {
-                "startDate": "2026-10-14",
-                "endDate": "2026-10-16",
-                "nightCount": "2",
-                "title": "Úbeda",
-                "firstChoice": "La Posada Boutique Hotel",
-                "firstChoiceUrl": "https://www.laposadaubeda.es/en",
-                "alternative": "Hotel Rosaleda de Don Pedro",
-                "alternativeUrl": "https://www.hotelrosaledadonpedro.com/"
-          },
-          "cuenca": {
-                "startDate": "2026-10-16",
-                "endDate": "2026-10-18",
-                "nightCount": "2",
-                "title": "Cuenca / Arcas",
-                "firstChoice": "Isis de Cuenca",
-                "firstChoiceUrl": "https://www.booking.com/hotel/es/hostal-isis.html",
-                "alternative": "Hotel Torremangana",
-                "alternativeUrl": "https://www.hoteltorremangana.com/"
-          },
-          "zaragoza": {
-                "startDate": "2026-10-18",
-                "endDate": "2026-10-19",
-                "nightCount": "1",
-                "title": "Zaragoza",
-                "firstChoice": "Hotel Sauce",
-                "firstChoiceUrl": "https://www.hotelsauce.com/en/information/faqs/hotel-sauce-saragossa/parking-en/",
-                "alternative": "Hotel Río Arga",
-                "alternativeUrl": "https://www.hotelrioarga.es/"
-          },
-          "castelldefels-2": {
-                "startDate": "2026-10-19",
-                "endDate": "2026-10-21",
-                "nightCount": "2",
-                "title": "Castelldefels · Fährenbasis",
-                "firstChoice": "Dasselbe Hotel wie am 29. September",
-                "firstChoiceUrl": "https://all.accor.com/hotel/3208/index.es.shtml",
-                "alternative": "Central Park Castelldefels",
-                "alternativeUrl": "https://www.centralparkcastelldefels.com/"
-          },
-          "ferry": {
-                "startDate": "2026-10-21",
-                "endDate": "2026-10-22",
-                "nightCount": "1",
-                "title": "Fähre Barcelona–Genua",
-                "firstChoice": "Kabine an Bord",
-                "alternative": "Hafen Barcelona"
-          },
-          "aosta-como": {
-                "startDate": "2026-10-22",
-                "endDate": "2026-10-23",
-                "nightCount": "1",
-                "title": "Aosta oder Como",
-                "firstChoice": "Hotel Le Pageot",
-                "firstChoiceUrl": "https://www.lepageot.it/en/services-2/",
-                "alternative": "Park Hotel Como",
-                "alternativeUrl": "https://www.parkhotelcomo.it/en/faq/"
-          }
-    };
+    const publishedAccommodationState = JSON.parse(JSON.stringify(window.__TRIP_DATA__.accommodations));
     let state = { ...publishedAccommodationState };
     let appliedAccommodationVersion = PUBLISHED_VERSION;
     let accommodationHandoff = null;
@@ -1238,26 +1060,7 @@
     let editingStayId = "";
     const dayMs = 86400000;
     const fixedStayId = "ferry";
-    const baseSchedule = [
-      ["grenoble", "2026-09-24", "2026-09-25"],
-      ["sisteron", "2026-09-25", "2026-09-26"],
-      ["lourmarin", "2026-09-26", "2026-09-27"],
-      ["nimes", "2026-09-27", "2026-09-28"],
-      ["carcassonne", "2026-09-28", "2026-09-29"],
-      ["castelldefels-1", "2026-09-29", "2026-10-01"],
-      ["falset", "2026-10-01", "2026-10-03"],
-      ["albarracin", "2026-10-03", "2026-10-05"],
-      ["alboraya", "2026-10-05", "2026-10-07"],
-      ["altea", "2026-10-07", "2026-10-08"],
-      ["monachil", "2026-10-08", "2026-10-11"],
-      ["ronda", "2026-10-11", "2026-10-14"],
-      ["ubeda", "2026-10-14", "2026-10-16"],
-      ["cuenca", "2026-10-16", "2026-10-18"],
-      ["zaragoza", "2026-10-18", "2026-10-19"],
-      ["castelldefels-2", "2026-10-19", "2026-10-21"],
-      ["ferry", "2026-10-21", "2026-10-22"],
-      ["aosta-como", "2026-10-22", "2026-10-23"]
-    ];
+    const baseSchedule = Object.entries(publishedAccommodationState).map(([id, stay]) => [id, stay.startDate, stay.endDate]);
     const scheduleById = new Map(baseSchedule.map(([id, startDate, endDate]) => [id, { startDate, endDate }]));
     const monthNames = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
     const shortMonthNames = ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni", "Juli", "Aug.", "Sept.", "Okt.", "Nov.", "Dez."];
@@ -1576,7 +1379,7 @@ Wichtig fuer das Import-JSON:
     } catch (_) {}
     if (accommodationHandoff) {
       state = { ...state, ...accommodationHandoff.accommodations };
-      displayedPlanKind = accommodationHandoff.planKind === "original" ? "original" : "adjusted";
+      displayedPlanKind = accommodationHandoff.planKind === "adjusted" ? "adjusted" : "published";
       showPlanningVersion(accommodationHandoff.version);
     }
     let sharedAccommodationState = { ...state };
@@ -1713,7 +1516,7 @@ Wichtig fuer das Import-JSON:
         stay.querySelector(".options").before(warning);
       }
       const ferrySchedule = staySchedule(fixedStayId);
-      const overlapsFerry = id !== fixedStayId && id !== "aosta-como" && schedule.endDate > ferrySchedule.startDate;
+      const overlapsFerry = id !== fixedStayId && id !== "aosta" && schedule.endDate > ferrySchedule.startDate;
       warning.textContent = overlapsFerry
         ? `Konflikt mit der fixen Fähre am ${dateRangeLabel(ferrySchedule.startDate, ferrySchedule.endDate)}. Vor der Veröffentlichung Route neu planen oder vorher eine Nacht streichen.`
         : "";
@@ -1728,7 +1531,7 @@ Wichtig fuer das Import-JSON:
       zaragoza: ["Jetzt reservieren · Fiestas del Pilar", "now"],
       "castelldefels-2": ["Jetzt reservieren · Fährenanker", "now"],
       ferry: ["Bereits gebucht", ""],
-      "aosta-como": ["Später entscheiden · wetterabhängig", "later"]
+      "aosta": ["Später buchen · stornierbarer Tarif", "later"]
     };
 
     const openStayEditor = (stay) => {
@@ -1740,7 +1543,7 @@ Wichtig fuer das Import-JSON:
       stayEditorForm.elements.startDate.value = data.startDate || "";
       stayEditorForm.elements.nightCount.value = data.nightCount || 1;
       document.querySelector("#edit-shift-following").checked = editingStayId !== fixedStayId;
-      document.querySelector("#edit-shift-following").disabled = editingStayId === fixedStayId || editingStayId === "aosta-como";
+      document.querySelector("#edit-shift-following").disabled = editingStayId === fixedStayId || editingStayId === "aosta";
       document.querySelector("#stay-editor-title").textContent = `${data.title || "Unterkunft"} bearbeiten`;
       stayEditor.showModal();
       stayEditorForm.elements.startDate.focus();
@@ -1817,7 +1620,7 @@ Wichtig fuer das Import-JSON:
       if (savedHandoff?.version > appliedAccommodationVersion && savedHandoff.accommodations && typeof savedHandoff.accommodations === "object") {
         sharedAccommodationState = { ...publishedAccommodationState, ...savedHandoff.accommodations };
         appliedAccommodationVersion = savedHandoff.version;
-        displayedPlanKind = savedHandoff.planKind === "original" ? "original" : "adjusted";
+        displayedPlanKind = savedHandoff.planKind === "adjusted" ? "adjusted" : "published";
         showPlanningVersion(savedHandoff.version);
       }
       try {
