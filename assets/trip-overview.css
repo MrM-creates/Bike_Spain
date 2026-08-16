@@ -5,6 +5,7 @@ body.generic-trip-enabled {
 }
 
 body.generic-trip-enabled .topbar-inner { display: none; }
+body.generic-trip-enabled .topbar { z-index: 1200; }
 
 .generic-trip-nav {
   width: min(1180px, calc(100% - 32px));
@@ -65,6 +66,9 @@ body.generic-trip-enabled .topbar-inner { display: none; }
   font-weight: 760;
   cursor: pointer;
 }
+
+.generic-trip-nav button,
+.generic-trip-nav a { position: relative; touch-action: manipulation; -webkit-tap-highlight-color: rgba(23,107,70,.14); }
 
 .generic-trip-tab[aria-selected="true"] {
   background: #fff;
@@ -227,7 +231,13 @@ body.generic-trip-enabled.generic-roadbook-view #legacy-roadbook > .intro { disp
 .generic-export-options { display: grid; gap: 9px; padding: 20px; }
 .generic-export-options > span { margin: -3px 0 5px; color: var(--muted); font-size: 10px; text-align: center; }
 .generic-export-options [aria-disabled="true"] { pointer-events: none; opacity: .45; }
-.generic-route-style-dialog { width: min(520px, calc(100% - 28px)); }
+.generic-route-style-dialog { position: fixed; z-index: 1100; inset: auto; width: min(520px, calc(100% - 28px)); margin: 0; overflow: auto; }
+.generic-route-style-dialog::backdrop { display: none; }
+.generic-route-style-dialog.compact .generic-dialog-head,
+.generic-route-style-dialog.compact .generic-route-confirm-body { padding: 14px; }
+.generic-route-style-dialog.compact .generic-route-confirm-change { grid-template-columns: 1fr; gap: 7px; }
+.generic-route-style-dialog.compact .generic-route-confirm-change > i { transform: rotate(90deg); text-align: center; }
+.generic-route-style-dialog.compact .generic-route-confirm-actions { padding: 12px 14px; }
 .generic-route-confirm-body { padding: 20px; }
 .generic-route-confirm-body > p { margin: 15px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .generic-route-confirm-change { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 12px; align-items: center; }
@@ -440,78 +450,53 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
 .plan-change-context span { color: var(--accent); font-size: 9px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
 .plan-change-context strong { font-size: 12px; }
 
-@media (max-width: 1240px) {
-  .generic-workspace { grid-template-columns: minmax(270px, 34%) minmax(0, 1fr); }
-  .generic-inspector {
-    position: absolute;
-    z-index: 901;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: min(430px, calc(100% - 72px));
-    box-shadow: -18px 0 46px rgba(23,32,25,.2);
-    transform: translateX(102%);
-    visibility: hidden;
-    pointer-events: none;
-    transition: transform 180ms ease, visibility 0s linear 180ms;
-  }
-  .generic-workspace.is-inspector-open .generic-inspector {
-    transform: translateX(0);
-    visibility: visible;
-    pointer-events: auto;
-    transition-delay: 0s;
-  }
-  .generic-inspector-scrim {
-    position: absolute;
-    z-index: 900;
-    inset: 0;
-    display: block;
-    border: 0;
-    padding: 0;
-    background: rgba(17,25,20,.22);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 180ms ease, visibility 0s linear 180ms;
-  }
-  .generic-workspace.is-inspector-open .generic-inspector-scrim {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transition-delay: 0s;
-  }
-  .generic-inspector-close {
-    position: sticky;
-    z-index: 3;
-    top: 0;
-    width: 100%;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border: 0;
-    border-bottom: 1px solid var(--generic-line);
-    padding: 0 16px;
-    background: rgba(255,255,255,.96);
-    color: var(--accent);
-    font-size: 12px;
-    font-weight: 780;
-    text-align: left;
-    backdrop-filter: blur(16px);
-    cursor: pointer;
-  }
-  .generic-inspector-close span { font-size: 17px; }
+@media (max-width: 1240px) and (min-width: 901px) {
+  body:not(.generic-compact-workspace) .generic-workspace { grid-template-columns: 240px minmax(360px, 1fr) 260px; }
 }
 
-@media (max-width: 860px) {
-  .generic-workspace {
+body.generic-compact-workspace .generic-workspace { grid-template-columns: minmax(280px, 35%) minmax(0, 1fr); }
+body.generic-compact-workspace .generic-inspector { display: none; }
+body.generic-compact-workspace .generic-workspace.is-inspector-open .generic-stage-panel { display: none; }
+body.generic-compact-workspace .generic-workspace.is-inspector-open .generic-inspector {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  grid-column: 1;
+  grid-row: 1;
+  overflow: auto;
+}
+body.generic-compact-workspace .generic-inspector-close {
+  position: sticky;
+  z-index: 3;
+  top: 0;
+  width: 100%;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-bottom: 1px solid var(--generic-line);
+  padding: 0 16px;
+  background: rgba(255,255,255,.96);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 780;
+  text-align: left;
+  backdrop-filter: blur(16px);
+  cursor: pointer;
+}
+body.generic-compact-workspace .generic-inspector-close span { font-size: 17px; }
+
+@media (max-width: 900px) {
+  body.generic-compact-workspace .generic-workspace {
     grid-template-columns: 1fr;
     grid-template-rows: minmax(270px, 42%) minmax(330px, 58%);
   }
-  .generic-stage-panel { height: auto; }
+  body.generic-compact-workspace .generic-stage-panel { height: auto; grid-column: 1; grid-row: 1; }
+  body.generic-compact-workspace .generic-work-map { grid-column: 1; grid-row: 2; }
+  body.generic-compact-workspace .generic-workspace.is-inspector-open .generic-inspector { grid-column: 1; grid-row: 1; }
   .generic-work-map,
   #generic-work-map { min-height: 0; height: 100%; }
-  .generic-inspector { width: min(480px, 100%); }
 }
 
 @media (max-width: 520px) {
@@ -520,18 +505,13 @@ body.generic-trip-enabled.generic-roadbook-view #trip-overview-root {
   .generic-panel-head { padding: 12px; }
   .generic-loaded-plan { display: none; }
   .generic-stage-row { padding: 9px 8px; }
-  .generic-inspector { width: 100%; }
-  .generic-inspector-scrim { background: rgba(17,25,20,.14); }
   .generic-work-map-toolbar { left: 54px; }
   .generic-compare { position: absolute; top: 68px; right: 0; }
   .generic-work-map-status { max-width: calc(100vw - 82px); }
   .generic-work-map-legend { right: 12px; gap: 7px; }
   .generic-map-hint { display: none; }
-  .generic-route-confirm-change { grid-template-columns: 1fr; }
-  .generic-route-confirm-change > i { transform: rotate(90deg); text-align: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .generic-inspector,
-  .generic-inspector-scrim { transition: none; }
+  .generic-inspector { transition: none; }
 }

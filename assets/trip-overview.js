@@ -470,8 +470,9 @@
     const inspector = root.querySelector("#generic-inspector");
     if (!workspace || !inspector) return;
     workspace.classList.toggle("is-inspector-open", inspectorOpen);
-    const usesDrawer = window.matchMedia("(max-width: 1240px)").matches;
-    if (usesDrawer) inspector.setAttribute("aria-hidden", String(!inspectorOpen));
+    const usesCompactDetails = document.body.classList.contains("generic-touch-device") || window.matchMedia("(max-width: 900px)").matches;
+    document.body.classList.toggle("generic-compact-workspace", usesCompactDetails);
+    if (usesCompactDetails) inspector.setAttribute("aria-hidden", String(!inspectorOpen));
     else inspector.removeAttribute("aria-hidden");
   }
 
@@ -614,7 +615,17 @@
     dialog.querySelector("#generic-route-style-original-metrics").textContent = metrics(previousMetrics);
     dialog.querySelector("#generic-route-style-preview").textContent = routeStyleLabel(previewStyle);
     dialog.querySelector("#generic-route-style-preview-metrics").textContent = metrics(preview);
-    dialog.showModal();
+    const inspector = root.querySelector("#generic-inspector");
+    const inspectorBounds = inspector?.getBoundingClientRect();
+    if (dialog.open) dialog.close();
+    dialog.classList.toggle("compact", Boolean(inspectorBounds && inspectorBounds.width < 420));
+    if (inspectorBounds) {
+      dialog.style.left = `${Math.round(inspectorBounds.left + 10)}px`;
+      dialog.style.top = `${Math.round(inspectorBounds.top + 10)}px`;
+      dialog.style.width = `${Math.max(260, Math.round(inspectorBounds.width - 20))}px`;
+      dialog.style.maxHeight = `${Math.max(300, Math.round(inspectorBounds.height - 20))}px`;
+    }
+    dialog.show();
     dialog.querySelector("#generic-route-style-confirm").focus();
   }
 
@@ -925,6 +936,7 @@
 
   async function start() {
     document.body.classList.add("generic-trip-enabled");
+    document.body.classList.toggle("generic-touch-device", navigator.maxTouchPoints > 1);
     try {
       const snapshot = await bridge.getPublishedSnapshot();
       model = modelApi.importLegacyRoadbook(snapshot);
