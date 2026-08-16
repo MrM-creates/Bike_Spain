@@ -406,13 +406,16 @@ body.generic-trip-enabled.generic-roadbook-view.generic-original-draft .generic-
 
 .generic-work-map { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: #dce9e5; }
 #generic-work-map { width: 100%; height: 100%; min-height: 620px; }
-.generic-work-map-toolbar { position: absolute; z-index: 600; top: 14px; left: 54px; right: 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; pointer-events: none; }
-.generic-work-map-toolbar > * { pointer-events: auto; }
+.generic-work-map-toolbar { position: absolute; z-index: 600; top: 14px; left: 54px; right: 14px; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; pointer-events: auto; }
+.generic-work-map-status { pointer-events: none; }
 .generic-work-map-status { max-width: 430px; padding: 10px 12px; border: 1px solid rgba(255,255,255,.76); border-radius: 13px; background: rgba(255,255,255,.88); box-shadow: 0 6px 22px rgba(23,32,25,.12); backdrop-filter: blur(18px); }
 .generic-work-map-status strong,
 .generic-work-map-status span { display: block; }
 .generic-work-map-status strong { font-size: 13px; }
 .generic-work-map-status span { margin-top: 2px; color: var(--muted); font-size: 10px; }
+.generic-work-map-actions { display: flex; align-items: center; gap: 8px; }
+.generic-show-all-route { min-height: 34px; display: flex; align-items: center; justify-content: center; margin-top: 10px; border: 1px solid var(--generic-line); border-radius: 9px; background: #fff; color: var(--accent); font-size: 10px; font-weight: 760; text-decoration: none; }
+.generic-show-all-route:hover { border-color: #9fc6b0; background: var(--accent-soft); }
 .generic-compare { min-height: 38px; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,.9); border-radius: 12px; padding: 0 11px; background: rgba(255,255,255,.96); color: var(--text); box-shadow: 0 6px 20px rgba(23,32,25,.12); font-size: 11px; font-weight: 750; cursor: pointer; opacity: 1; transition: background var(--fast), color var(--fast), border var(--fast), opacity var(--fast); }
 .generic-compare:disabled { cursor: default; opacity: .55; }
 .generic-compare[hidden] { display: none; }
@@ -570,6 +573,10 @@ body.generic-trip-enabled.generic-roadbook-view.generic-original-draft .generic-
   .generic-route-review-actions { grid-column: 1; }
 }
 
+@media (max-width: 760px) {
+  .generic-work-map-actions { position: absolute; top: 68px; right: 0; }
+}
+
 @media (max-width: 520px) {
   body.generic-trip-enabled.generic-roadbook-view #trip-overview-root { height: calc(100svh - 105px); }
   .generic-workspace { min-height: 0; grid-template-rows: minmax(230px, 45%) minmax(260px, 55%); }
@@ -577,7 +584,7 @@ body.generic-trip-enabled.generic-roadbook-view.generic-original-draft .generic-
   .generic-loaded-plan { display: none; }
   .generic-stage-row { padding: 9px 8px; }
   .generic-work-map-toolbar { left: 54px; }
-  .generic-compare { position: absolute; top: 68px; right: 0; }
+  .generic-work-map-actions { position: absolute; top: 68px; right: 0; }
   .generic-work-map-status { max-width: calc(100vw - 82px); }
   .generic-work-map-legend { right: 12px; gap: 7px; }
   .generic-map-hint { display: none; }
