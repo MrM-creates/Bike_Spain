@@ -174,7 +174,9 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.equal(routeResult.body.draft.verified, false);
   assert.equal(routeResult.body.draft.accommodations, undefined);
   assert.equal(fetchCount, 1, "route stage should call the model exactly once");
-  assert.equal(modelRequests[0].tools, undefined, "initial route generation should not use web search");
+  assert.deepEqual(modelRequests[0].tools, [{ type: "web_search" }], "initial route generation should research the route on the web");
+  assert.match(modelRequests[0].instructions, /offizielle Strassenbehoerden/);
+  assert.match(modelRequests[0].instructions, /temporaeren Sperrung/);
 
   const verifiedResult = await callApi({
     secret: "test-pin",
