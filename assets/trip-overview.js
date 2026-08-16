@@ -50,7 +50,9 @@
   let workspaceInitialised = false;
   let compareOriginal = false;
   let inspectorOpen = false;
-  let routeStyleDialogTimer = null;
+  let inspectorWindowMode = "detail";
+  let inspectorReviewRestoreRect = null;
+  let inspectorControlRestoreRect = null;
   let mapDataPromise = null;
   const routeGeometryData = new Map();
   const routeStyleDrafts = new Map();
@@ -242,45 +244,6 @@
     exportDialog.innerHTML = `<div class="generic-dialog-head"><div><h2>Route exportieren</h2><p>Die gewählte Tagesroute in Google Maps öffnen oder die gesamte Reise als Datei laden.</p></div><button class="generic-dialog-close" type="button" aria-label="Export schließen">×</button></div><div class="generic-export-options"><a class="generic-action-button primary" id="generic-export-google" target="_blank" rel="noopener">Tagesroute in Google Maps öffnen ↗</a><span id="generic-export-day"></span><a class="generic-action-button" href="/reiseplanung-verfeinert-2026-export.kml" download>Gesamtreise als KML</a><a class="generic-action-button" href="/reiseplanung-verfeinert-2026.gpx" download>Gesamtreise als GPX</a></div>`;
     document.body.append(exportDialog);
     exportDialog.querySelector(".generic-dialog-close").addEventListener("click", () => exportDialog.close());
-    const routeStyleDialog = document.createElement("dialog");
-    routeStyleDialog.className = "generic-journeys-dialog generic-route-style-dialog";
-    routeStyleDialog.id = "generic-route-style-dialog";
-    routeStyleDialog.setAttribute("aria-labelledby", "generic-route-style-title");
-    routeStyleDialog.innerHTML = `<div class="generic-dialog-head"><div><h2 id="generic-route-style-title">Routenart übernehmen?</h2><p id="generic-route-style-context"></p></div></div><div class="generic-route-confirm-body"><div class="generic-route-confirm-change"><div><span>Bisher</span><strong id="generic-route-style-original"></strong><small id="generic-route-style-original-metrics"></small></div><i aria-hidden="true">→</i><div><span>Vorschau</span><strong id="generic-route-style-preview"></strong><small id="generic-route-style-preview-metrics"></small></div></div><p>Start, Ziel und Unterkunft bleiben gleich. Die Änderung wird zunächst als Entwurf vorgemerkt; der veröffentlichte Plan bleibt unverändert.</p></div><div class="generic-route-confirm-actions"><button class="generic-action-button" type="button" id="generic-route-style-discard">Verwerfen</button><button class="generic-action-button primary" type="button" id="generic-route-style-confirm">Übernehmen</button></div>`;
-    document.body.append(routeStyleDialog);
-    routeStyleDialog.querySelector("#generic-route-style-discard").addEventListener("click", () => {
-      routeStyleDialog.close();
-      cancelPendingRouteStyleChange();
-    });
-    routeStyleDialog.querySelector("#generic-route-style-confirm").addEventListener("click", async () => {
-      const confirmButton = routeStyleDialog.querySelector("#generic-route-style-confirm");
-      const stageIndex = pendingRouteStyleChange?.stageIndex;
-      const style = pendingRouteStyleChange?.previewStyle;
-      confirmButton.disabled = true;
-      confirmButton.textContent = "Wird gespeichert …";
-      try {
-        if (Number.isInteger(stageIndex) && style) await persistRouteStyle(stageIndex, style);
-        pendingRouteStyleChange = null;
-        routeStyleDialog.close();
-        renderInspector();
-        updateCompareControl();
-        applyWorkspaceMapFocus(false);
-        applyOverviewRouteStyles();
-        updateDraftChrome();
-      } catch (error) {
-        cancelPendingRouteStyleChange();
-        routeStyleDialog.close();
-        window.alert(`Die Routenänderung konnte nicht gespeichert werden: ${error.message}`);
-      } finally {
-        confirmButton.disabled = false;
-        confirmButton.textContent = "Übernehmen";
-      }
-    });
-    routeStyleDialog.addEventListener("cancel", (event) => {
-      event.preventDefault();
-      routeStyleDialog.close();
-      cancelPendingRouteStyleChange();
-    });
     navRoot.querySelectorAll("[data-generic-view]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.genericView)));
     navRoot.querySelector("#generic-adjust").addEventListener("click", openExistingPlanner);
     const moreButton = navRoot.querySelector("#generic-more");
@@ -436,11 +399,13 @@
     const workspace = root.querySelector("#generic-workspace");
     workspace.innerHTML = `<section class="generic-stage-panel" aria-labelledby="generic-list-title"><div class="generic-panel-head"><div class="generic-panel-title"><h2 id="generic-list-title">Reiseplan</h2><span id="generic-list-meta"></span></div><div class="generic-loaded-plan"><span>${escapeHtml(planLabel())}</span><strong>Veröffentlicht</strong><small>${escapeHtml(planVersionLabel())}</small></div><div class="generic-plan-switch" role="tablist" aria-label="Reiseplan-Ansicht"><button type="button" role="tab" aria-selected="true" data-list-mode="days">Tage <span>${model.revision.stages.length}</span></button><button type="button" role="tab" aria-selected="false" data-list-mode="stays">Unterkünfte <span>${model.revision.stays.length}</span></button></div></div><div class="generic-stage-list" id="generic-stage-list"></div></section>
       <section class="generic-work-map" aria-label="Interaktive Routenkarte"><div id="generic-work-map"></div><div class="generic-work-map-toolbar"><div class="generic-work-map-status"><strong id="generic-work-map-title">${escapeHtml(planLabel())}</strong><span id="generic-work-map-subtitle">Karte und Tagesliste sind synchronisiert.</span></div><button class="generic-compare" type="button" aria-pressed="false" disabled title="Verfügbar, sobald für diese Etappe eine Routenvorschau erstellt wurde"><span>Original vergleichen</span><i aria-hidden="true"></i></button></div><div class="generic-work-map-legend"><span><i class="route"></i>Tagesetappe</span><span><i class="stay"></i>Übernachtung</span><span>◆ Ruhetag</span><span>🔒 Fixpunkt</span><span class="generic-compare-legend" id="generic-compare-legend" hidden></span></div><div class="generic-map-hint">Ort oder Strecke anklicken, um Details zu sehen</div></section>
-      <button class="generic-inspector-scrim" type="button" aria-label="Details schließen" tabindex="-1"></button><aside class="generic-inspector" id="generic-inspector" aria-live="polite"></aside>`;
+      <aside class="generic-inspector" id="generic-inspector" aria-live="polite" aria-label="Auswahldetails"></aside>`;
     workspace.querySelectorAll("[data-list-mode]").forEach((button) => button.addEventListener("click", () => setListMode(button.dataset.listMode)));
-    workspace.querySelector(".generic-inspector-scrim").addEventListener("click", closeInspector);
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && inspectorOpen && !document.querySelector("dialog[open]")) closeInspector();
+      if (event.key === "Escape" && inspectorOpen && !document.querySelector("dialog[open]")) {
+        if (pendingRouteStyleChange) cancelPendingRouteStyleChange();
+        else closeInspector();
+      }
     });
     window.addEventListener("resize", syncInspectorState);
     workspace.querySelector(".generic-compare").addEventListener("click", () => {
@@ -455,6 +420,7 @@
   }
 
   function setListMode(mode) {
+    if (pendingRouteStyleChange) cancelPendingRouteStyleChange();
     listMode = mode === "stays" ? "stays" : "days";
     compareOriginal = false;
     closeInspector();
@@ -470,14 +436,20 @@
     const inspector = root.querySelector("#generic-inspector");
     if (!workspace || !inspector) return;
     workspace.classList.toggle("is-inspector-open", inspectorOpen);
-    const usesCompactDetails = document.body.classList.contains("generic-touch-device") || window.matchMedia("(max-width: 900px)").matches;
-    document.body.classList.toggle("generic-compact-workspace", usesCompactDetails);
-    if (usesCompactDetails) inspector.setAttribute("aria-hidden", String(!inspectorOpen));
-    else inspector.removeAttribute("aria-hidden");
+    document.body.classList.remove("generic-compact-workspace");
+    inspector.setAttribute("aria-hidden", String(!inspectorOpen));
+    if (inspectorOpen) window.requestAnimationFrame(() => constrainInspectorWindow());
   }
 
   function openInspector() {
     inspectorOpen = true;
+    const inspector = root.querySelector("#generic-inspector");
+    if (inspector?.classList.contains("is-minimized")) {
+      inspector.classList.remove("is-minimized");
+      setInspectorRect(inspectorControlRestoreRect || defaultInspectorRect());
+      inspectorControlRestoreRect = null;
+    }
+    if (inspector && !inspector.style.width) setInspectorRect(savedInspectorRect() || defaultInspectorRect());
     syncInspectorState();
     window.setTimeout(() => workspaceMap?.invalidateSize(), 220);
   }
@@ -486,6 +458,155 @@
     inspectorOpen = false;
     syncInspectorState();
     window.setTimeout(() => workspaceMap?.invalidateSize(), 220);
+  }
+
+  function inspectorMapBounds() {
+    const workspace = root.querySelector("#generic-workspace");
+    const map = root.querySelector(".generic-work-map");
+    if (!workspace || !map) return null;
+    const workspaceBounds = workspace.getBoundingClientRect();
+    const mapBounds = map.getBoundingClientRect();
+    return {
+      left: mapBounds.left - workspaceBounds.left,
+      top: mapBounds.top - workspaceBounds.top,
+      width: mapBounds.width,
+      height: mapBounds.height
+    };
+  }
+
+  function currentInspectorRect() {
+    const inspector = root.querySelector("#generic-inspector");
+    const workspace = root.querySelector("#generic-workspace");
+    if (!inspector || !workspace) return null;
+    const rect = inspector.getBoundingClientRect();
+    const parent = workspace.getBoundingClientRect();
+    return { x: rect.left - parent.left, y: rect.top - parent.top, width: rect.width, height: rect.height };
+  }
+
+  function setInspectorRect(rect, persist = false) {
+    const inspector = root.querySelector("#generic-inspector");
+    const map = inspectorMapBounds();
+    if (!inspector || !map) return;
+    const margin = 10;
+    const maxWidth = Math.max(280, map.width - margin * 2);
+    const fullMapHeight = Math.max(120, map.height - margin * 2);
+    const maxHeight = inspector.classList.contains("is-maximized") || inspectorWindowMode === "review"
+      ? fullMapHeight
+      : Math.max(220, Math.min(fullMapHeight, map.height * .82));
+    const width = Math.min(Math.max(280, rect.width), maxWidth);
+    const minimumHeight = inspector.classList.contains("is-minimized") ? 48 : inspectorWindowMode === "review" ? 132 : 180;
+    const height = Math.min(Math.max(minimumHeight, rect.height), maxHeight);
+    const x = Math.min(Math.max(map.left + margin, rect.x), map.left + map.width - width - margin);
+    const y = Math.min(Math.max(map.top + margin, rect.y), map.top + map.height - height - margin);
+    Object.assign(inspector.style, { left: `${Math.round(x)}px`, top: `${Math.round(y)}px`, width: `${Math.round(width)}px`, height: `${Math.round(height)}px` });
+    if (persist && inspectorWindowMode === "detail" && !inspector.classList.contains("is-minimized") && !inspector.classList.contains("is-maximized")) {
+      try { localStorage.setItem("spanien-roadbook-detail-window", JSON.stringify({ x, y, width, height })); } catch (_) { /* Browser-Speicher ist optional. */ }
+    }
+  }
+
+  function defaultInspectorRect() {
+    const map = inspectorMapBounds();
+    if (!map) return { x: 0, y: 0, width: 360, height: 560 };
+    const width = Math.min(380, Math.max(280, map.width - 20));
+    const height = Math.min(560, Math.max(220, map.height * .76));
+    return { x: map.left + map.width - width - 14, y: map.top + 14, width, height };
+  }
+
+  function savedInspectorRect() {
+    try {
+      const value = JSON.parse(localStorage.getItem("spanien-roadbook-detail-window") || "null");
+      return value && [value.x, value.y, value.width, value.height].every(Number.isFinite) ? value : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function constrainInspectorWindow() {
+    const inspector = root.querySelector("#generic-inspector");
+    if (!inspector || !inspectorOpen) return;
+    if (inspectorWindowMode === "review") {
+      const map = inspectorMapBounds();
+      if (!map) return;
+      const width = Math.min(560, Math.max(280, map.width - 20));
+      const desiredHeight = map.width <= 900 ? 240 : 190;
+      const height = Math.min(desiredHeight, Math.max(132, map.height - 20));
+      setInspectorRect({ x: map.left + map.width - width - 10, y: map.top + 10, width, height });
+      return;
+    }
+    const current = currentInspectorRect();
+    setInspectorRect(inspector.style.width && current?.width > 100 ? current : savedInspectorRect() || defaultInspectorRect());
+  }
+
+  function inspectorChrome(label) {
+    return `<div class="generic-inspector-windowbar" data-inspector-drag><strong>${escapeHtml(label)}</strong><span>Verschieben</span><div class="generic-inspector-window-actions"><button type="button" data-inspector-minimize aria-label="Detailfenster minimieren" title="Minimieren">−</button><button type="button" data-inspector-maximize aria-label="Detailfenster vergrössern" title="Vergrössern">□</button><button type="button" data-inspector-close aria-label="Detailfenster schliessen" title="Schliessen">×</button></div></div>`;
+  }
+
+  function attachInspectorWindowInteractions() {
+    const inspector = root.querySelector("#generic-inspector");
+    const dragHandle = inspector?.querySelector("[data-inspector-drag]");
+    const resizeHandle = inspector?.querySelector("[data-inspector-resize]");
+    if (!inspector || !dragHandle) return;
+    const startPointerAction = (event, mode) => {
+      if (event.target.closest("button")) return;
+      event.preventDefault();
+      const start = currentInspectorRect();
+      if (!start) return;
+      inspector.classList.remove("is-maximized", "is-minimized");
+      const pointerId = event.pointerId;
+      const originX = event.clientX;
+      const originY = event.clientY;
+      event.currentTarget.setPointerCapture?.(pointerId);
+      const move = (moveEvent) => {
+        if (moveEvent.pointerId !== pointerId) return;
+        const dx = moveEvent.clientX - originX;
+        const dy = moveEvent.clientY - originY;
+        setInspectorRect(mode === "drag"
+          ? { ...start, x: start.x + dx, y: start.y + dy }
+          : { ...start, width: start.width + dx, height: start.height + dy });
+      };
+      const end = (endEvent) => {
+        if (endEvent.pointerId !== pointerId) return;
+        window.removeEventListener("pointermove", move);
+        window.removeEventListener("pointerup", end);
+        const rect = currentInspectorRect();
+        if (rect) setInspectorRect(rect, true);
+      };
+      window.addEventListener("pointermove", move);
+      window.addEventListener("pointerup", end);
+    };
+    dragHandle.addEventListener("pointerdown", (event) => startPointerAction(event, "drag"));
+    resizeHandle?.addEventListener("pointerdown", (event) => startPointerAction(event, "resize"));
+    inspector.querySelector("[data-inspector-close]")?.addEventListener("click", () => {
+      if (pendingRouteStyleChange) cancelPendingRouteStyleChange();
+      closeInspector();
+    });
+    inspector.querySelector("[data-inspector-minimize]")?.addEventListener("click", () => {
+      if (inspector.classList.contains("is-minimized")) {
+        inspector.classList.remove("is-minimized");
+        setInspectorRect(inspectorControlRestoreRect || defaultInspectorRect());
+        inspectorControlRestoreRect = null;
+      } else {
+        inspectorControlRestoreRect = currentInspectorRect();
+        inspector.classList.remove("is-maximized");
+        inspector.classList.add("is-minimized");
+        const rect = currentInspectorRect() || defaultInspectorRect();
+        setInspectorRect({ ...rect, width: Math.min(320, rect.width), height: 48 });
+      }
+    });
+    inspector.querySelector("[data-inspector-maximize]")?.addEventListener("click", () => {
+      const map = inspectorMapBounds();
+      if (!map) return;
+      if (inspector.classList.contains("is-maximized")) {
+        inspector.classList.remove("is-maximized");
+        setInspectorRect(inspectorControlRestoreRect || defaultInspectorRect());
+        inspectorControlRestoreRect = null;
+      } else {
+        inspectorControlRestoreRect = currentInspectorRect();
+        inspector.classList.remove("is-minimized");
+        inspector.classList.add("is-maximized");
+        setInspectorRect({ x: map.left + 10, y: map.top + 10, width: map.width - 20, height: map.height - 20 });
+      }
+    });
   }
 
   function renderWorkList() {
@@ -541,18 +662,15 @@
       routeStyleDrafts.set(selectedStage, style);
       confirmedRouteStyleDrafts.delete(selectedStage);
     }
-    compareOriginal = false;
+    const inspector = root.querySelector("#generic-inspector");
+    inspectorReviewRestoreRect = currentInspectorRect();
+    inspectorWindowMode = "review";
+    inspector?.classList.remove("is-minimized", "is-maximized");
+    compareOriginal = true;
     renderInspector();
     updateCompareControl();
     applyWorkspaceMapFocus(true);
-    if (routeStyleDialogTimer) window.clearTimeout(routeStyleDialogTimer);
-    window.requestAnimationFrame(() => {
-      routeStyleDialogTimer = window.setTimeout(() => {
-        routeStyleDialogTimer = null;
-        if (pendingRouteStyleChange?.stageIndex !== selectedStage || pendingRouteStyleChange?.previewStyle !== style) return;
-        showRouteStyleDialog(stage, route, style, previousStyle);
-      }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 180);
-    });
+    constrainInspectorWindow();
   }
 
   async function discardRoutePreview() {
@@ -581,8 +699,6 @@
 
   function cancelPendingRouteStyleChange() {
     if (!pendingRouteStyleChange) return;
-    if (routeStyleDialogTimer) window.clearTimeout(routeStyleDialogTimer);
-    routeStyleDialogTimer = null;
     const { stageIndex, previousDraftStyle, previousConfirmed } = pendingRouteStyleChange;
     pendingRouteStyleChange = null;
     if (previousDraftStyle) routeStyleDrafts.set(stageIndex, previousDraftStyle);
@@ -590,43 +706,41 @@
     if (previousConfirmed) confirmedRouteStyleDrafts.add(stageIndex);
     else confirmedRouteStyleDrafts.delete(stageIndex);
     compareOriginal = false;
+    inspectorWindowMode = "detail";
     renderInspector();
+    if (inspectorReviewRestoreRect) setInspectorRect(inspectorReviewRestoreRect);
+    inspectorReviewRestoreRect = null;
+    inspectorControlRestoreRect = null;
     updateCompareControl();
     applyWorkspaceMapFocus(true);
     applyOverviewRouteStyles();
     updateDraftChrome();
   }
 
-  function showRouteStyleDialog(stage, route, previewStyle, previousStyle) {
-    const dialog = document.querySelector("#generic-route-style-dialog");
-    if (!dialog) return;
-    const day = travelDayNumber(selectedStage);
-    const preview = previewMetricsFor(selectedStage, route);
-    const metrics = (value) => value?.distanceMeters
-      ? `${km.format(value.distanceMeters / 1000)} km · ${formatDuration(value.durationSeconds)}`
-      : "Wird beim Übernehmen berechnet";
-    dialog.dataset.stageIndex = String(selectedStage);
-    dialog.querySelector("#generic-route-style-title").textContent = `${routeStyleLabel(previousStyle)} → ${routeStyleLabel(previewStyle)}?`;
-    dialog.querySelector("#generic-route-style-context").textContent = `Routenart ändern · Tag ${day} · ${stage.title}`;
-    const previousMetrics = previousStyle === route.style
-      ? route
-      : geometryFor(selectedStage, previousStyle === "direct" ? "direct" : "original") || route;
-    dialog.querySelector("#generic-route-style-original").textContent = routeStyleLabel(previousStyle);
-    dialog.querySelector("#generic-route-style-original-metrics").textContent = metrics(previousMetrics);
-    dialog.querySelector("#generic-route-style-preview").textContent = routeStyleLabel(previewStyle);
-    dialog.querySelector("#generic-route-style-preview-metrics").textContent = metrics(preview);
-    const inspector = root.querySelector("#generic-inspector");
-    const inspectorBounds = inspector?.getBoundingClientRect();
-    if (dialog.open) dialog.close();
-    dialog.classList.toggle("compact", Boolean(inspectorBounds && inspectorBounds.width < 420));
-    if (inspectorBounds) {
-      dialog.style.left = `${Math.round(inspectorBounds.left + 10)}px`;
-      dialog.style.top = `${Math.round(inspectorBounds.top + 10)}px`;
-      dialog.style.width = `${Math.max(260, Math.round(inspectorBounds.width - 20))}px`;
-      dialog.style.maxHeight = `${Math.max(300, Math.round(inspectorBounds.height - 20))}px`;
+  async function confirmPendingRouteStyleChange() {
+    const confirmButton = root.querySelector("#generic-route-review-confirm");
+    const stageIndex = pendingRouteStyleChange?.stageIndex;
+    const style = pendingRouteStyleChange?.previewStyle;
+    if (!Number.isInteger(stageIndex) || !style || !confirmButton) return;
+    confirmButton.disabled = true;
+    confirmButton.textContent = "Wird gespeichert …";
+    try {
+      await persistRouteStyle(stageIndex, style);
+      pendingRouteStyleChange = null;
+      compareOriginal = false;
+      inspectorWindowMode = "detail";
+      renderInspector();
+      if (inspectorReviewRestoreRect) setInspectorRect(inspectorReviewRestoreRect);
+      inspectorReviewRestoreRect = null;
+      inspectorControlRestoreRect = null;
+      updateCompareControl();
+      applyWorkspaceMapFocus(false);
+      applyOverviewRouteStyles();
+      updateDraftChrome();
+    } catch (error) {
+      cancelPendingRouteStyleChange();
+      window.alert(`Die Routenänderung konnte nicht gespeichert werden: ${error.message}`);
     }
-    dialog.show();
-    dialog.querySelector("#generic-route-style-confirm").focus();
   }
 
   function routeHintsFor(stage, route, activeStyle) {
@@ -650,6 +764,7 @@
     const route = stage ? routeFor(stage) : null;
     const previewStyle = routeStyleDrafts.get(selectedStage);
     const legend = root.querySelector("#generic-compare-legend");
+    control.hidden = Boolean(pendingRouteStyleChange);
     control.disabled = !hasSelectedPreview;
     control.setAttribute("aria-pressed", String(hasSelectedPreview && compareOriginal));
     control.querySelector("span").textContent = compareOriginal ? "Vergleich aktiv" : "Original vergleichen";
@@ -722,6 +837,31 @@
   function renderInspector() {
     const inspector = root.querySelector("#generic-inspector");
     if (!inspector) return;
+    inspector.classList.toggle("is-route-review", Boolean(pendingRouteStyleChange));
+    if (pendingRouteStyleChange && pendingRouteStyleChange.stageIndex === selectedStage) {
+      const stage = model.revision.stages[selectedStage];
+      const route = routeFor(stage);
+      const preview = previewMetricsFor(selectedStage, route);
+      const previousStyle = pendingRouteStyleChange.previousStyle;
+      const previewStyle = pendingRouteStyleChange.previewStyle;
+      const metrics = (value) => value?.distanceMeters
+        ? `${km.format(value.distanceMeters / 1000)} km · ${formatDuration(value.durationSeconds)}`
+        : "Wird beim Übernehmen berechnet";
+      const previousMetrics = previousStyle === route?.style
+        ? route
+        : geometryFor(selectedStage, previousStyle === "direct" ? "direct" : "original") || route;
+      inspector.innerHTML = `${inspectorChrome(`Routenvergleich · Tag ${travelDayNumber(selectedStage)}`)}<div class="generic-inspector-content generic-route-review-content"><div class="generic-route-review-change"><div><span>Bisher</span><strong>${escapeHtml(routeStyleLabel(previousStyle))}</strong><small>${escapeHtml(metrics(previousMetrics))}</small></div><i aria-hidden="true">→</i><div><span>Vorschau</span><strong>${escapeHtml(routeStyleLabel(previewStyle))}</strong><small>${escapeHtml(metrics(preview))}</small></div></div><button class="generic-route-review-compare" type="button" aria-pressed="${compareOriginal}" id="generic-route-review-compare"><i aria-hidden="true"></i><span>${compareOriginal ? "Beide Strecken sichtbar" : "Original zusätzlich anzeigen"}</span></button><div class="generic-route-review-actions"><button class="generic-action-button" type="button" id="generic-route-review-discard">Verwerfen</button><button class="generic-action-button primary" type="button" id="generic-route-review-confirm">Übernehmen</button></div></div><span class="generic-inspector-resize" data-inspector-resize aria-hidden="true"></span>`;
+      inspector.querySelector("#generic-route-review-compare")?.addEventListener("click", () => {
+        compareOriginal = !compareOriginal;
+        renderInspector();
+        updateCompareControl();
+        applyWorkspaceMapFocus(false);
+      });
+      inspector.querySelector("#generic-route-review-discard")?.addEventListener("click", cancelPendingRouteStyleChange);
+      inspector.querySelector("#generic-route-review-confirm")?.addEventListener("click", confirmPendingRouteStyleChange);
+      attachInspectorWindowInteractions();
+      return;
+    }
     if (listMode === "days") {
       const stage = model.revision.stages[selectedStage];
       const route = routeFor(stage);
@@ -736,15 +876,14 @@
       const routePreviewConfirmed = confirmedRouteStyleDrafts.has(selectedStage);
       const displayedRoute = previewMetricsFor(selectedStage, route);
       const googleMapsUrl = googleMapsUrlForSelection(stage, route);
-      inspector.innerHTML = `<button class="generic-inspector-close" type="button" aria-label="Zurück zur Route"><span aria-hidden="true">←</span> Zurück zur Route</button><div class="generic-inspector-head"><span class="generic-inspector-type">Tag ${travelDayNumber(selectedStage)} · ${stage.kind === "rest" ? "Ruhetag" : stage.kind === "transport" ? "Transport" : stage.kind === "loop" ? "Rundfahrt" : "Motorradetappe"}</span><h2>${escapeHtml(stage.title)}</h2><span>${escapeHtml(formatDate(stage.date, { weekday: "long", day: "2-digit", month: "long" }))}</span></div>
+      inspector.innerHTML = `${inspectorChrome(`Etappe · Tag ${travelDayNumber(selectedStage)}`)}<div class="generic-inspector-content"><div class="generic-inspector-head"><span class="generic-inspector-type">Tag ${travelDayNumber(selectedStage)} · ${stage.kind === "rest" ? "Ruhetag" : stage.kind === "transport" ? "Transport" : stage.kind === "loop" ? "Rundfahrt" : "Motorradetappe"}</span><h2>${escapeHtml(stage.title)}</h2><span>${escapeHtml(formatDate(stage.date, { weekday: "long", day: "2-digit", month: "long" }))}</span></div>
         ${fixed ? `<div class="generic-fixed-notice"><strong>🔒 Geschützter Fixpunkt</strong>${escapeHtml(fixed.title)} kann nur nach ausdrücklicher Bestätigung verändert werden.</div>` : ""}
         <div class="generic-metrics"><div><strong>${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km` : "–"}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Strecke"}</span></div><div><strong>${formatDuration(displayedRoute?.durationSeconds)}</strong><span>${hasRoutePreview ? "Neu berechnet" : "Fahrzeit"}</span></div><div><strong>${escapeHtml(destination)}</strong><span>Übernachtung</span></div></div>
-        ${route ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt sofort eine Vorschau und fragt anschließend, ob du sie übernehmen möchtest.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Lokal gespeichert · Prüfung ausstehend" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
+        ${route ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt beide Strecken auf der Karte und reduziert dieses Fenster auf die Entscheidung.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Lokal gespeichert · Prüfung ausstehend" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
         <div class="generic-detail-block"><h3>Streckenhinweise</h3><p>${escapeHtml(routeHintsFor(stage, route, activeStyle))}</p></div>
         <div class="generic-detail-block"><h3>Unterkunft</h3>${accommodation ? `<div class="generic-hotel">${hotelIcon()}<div><strong>${escapeHtml(accommodation.name)}</strong><span>${bookingLabel(booking)} · ${parkingLabel(accommodation, stay)}</span>${accommodation.url ? `<a class="generic-hotel-link" href="${escapeHtml(accommodation.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : ""}${alternative ? `<small>Alternative: ${escapeHtml(alternative.name)}</small>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : ""}` : ""}</div></div>` : `<p>Für diesen Tag ist noch keine Unterkunft hinterlegt.</p>`}${stay ? `<button class="generic-context-link" type="button" id="generic-show-stay">Unterkunft dieses Tages ansehen →</button>` : ""}</div>
-        <div class="generic-inspector-actions">${googleMapsUrl ? `<a class="generic-action-button" href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div>`;
+        <div class="generic-inspector-actions">${googleMapsUrl ? `<a class="generic-action-button" href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div></div><span class="generic-inspector-resize" data-inspector-resize aria-hidden="true"></span>`;
       inspector.querySelectorAll("[data-route-style]").forEach((button) => button.addEventListener("click", () => previewRouteStyle(button.dataset.routeStyle)));
-      inspector.querySelector(".generic-inspector-close").addEventListener("click", closeInspector);
       inspector.querySelector("#generic-discard-route-preview")?.addEventListener("click", discardRoutePreview);
       inspector.querySelector("#generic-adjust-stage")?.addEventListener("click", () => openStagePlanContext("stage"));
       inspector.querySelector("#generic-adjust-fixed")?.addEventListener("click", () => openStagePlanContext("fixed"));
@@ -756,17 +895,17 @@
       const alternative = optionsFor(stay)[1];
       const booking = bookingFor(stay);
       const protectedBooking = Boolean(booking?.protected);
-      inspector.innerHTML = `<button class="generic-inspector-close" type="button" aria-label="Zurück zur Route"><span aria-hidden="true">←</span> Zurück zur Route</button><div class="generic-inspector-head"><span class="generic-inspector-type">Unterkunft · Tag ${dayRangeForStay(stay).label}</span><h2>${escapeHtml(place(stay.placeId).name)}</h2><span>${formatDate(stay.startDate)} · ${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div>
+      inspector.innerHTML = `${inspectorChrome(`Unterkunft · Tag ${dayRangeForStay(stay).label}`)}<div class="generic-inspector-content"><div class="generic-inspector-head"><span class="generic-inspector-type">Unterkunft · Tag ${dayRangeForStay(stay).label}</span><h2>${escapeHtml(place(stay.placeId).name)}</h2><span>${formatDate(stay.startDate)} · ${stay.nightCount} ${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div>
         ${protectedBooking ? `<div class="generic-fixed-notice"><strong>🔒 Buchung geschützt</strong>Eine Änderung benötigt deine ausdrückliche Bestätigung und eine Prüfung der angrenzenden Route.</div>` : ""}
         <div class="generic-metrics two"><div><strong>${bookingLabel(booking)}</strong><span>Buchungsstatus</span></div><div><strong>${stay.nightCount}</strong><span>${stay.nightCount === 1 ? "Nacht" : "Nächte"}</span></div></div>
         <div class="generic-detail-block"><h3>${option ? "Unterkunft" : "Unterkunft offen"}</h3>${option ? `<div class="generic-hotel">${hotelIcon()}<div><strong>${escapeHtml(option.name)}</strong><span>${parkingLabel(option, stay)}</span>${option.url ? `<a class="generic-hotel-link" href="${escapeHtml(option.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : `<small>Kein Hotel-Link hinterlegt</small>`}</div></div>` : `<p>Es ist noch keine erste Wahl hinterlegt.</p>`}</div>
         <div class="generic-detail-block"><h3>Alternative</h3>${alternative ? `<div class="generic-hotel">${hotelIcon(true)}<div><strong>${escapeHtml(alternative.name)}</strong><span>Noch nicht ausgewählt</span>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : `<small>Kein Link hinterlegt</small>`}</div></div>` : `<p>Noch keine Alternative hinterlegt.</p>`}<p class="generic-context-note">Zuerst am gleichen Ort suchen. Nur ein Ortswechsel löst eine Prüfung der angrenzenden Etappen aus.</p></div>
-        <div class="generic-inspector-actions"><button class="generic-action-button primary" type="button" id="generic-find-accommodation">Neue Unterkunft suchen</button><button class="generic-action-button" type="button" id="generic-add-night">Nacht hinzufügen</button><button class="generic-context-link" type="button" id="generic-show-adjacent">Angrenzende Etappen ansehen →</button></div>`;
+        <div class="generic-inspector-actions"><button class="generic-action-button primary" type="button" id="generic-find-accommodation">Neue Unterkunft suchen</button><button class="generic-action-button" type="button" id="generic-add-night">Nacht hinzufügen</button><button class="generic-context-link" type="button" id="generic-show-adjacent">Angrenzende Etappen ansehen →</button></div></div><span class="generic-inspector-resize" data-inspector-resize aria-hidden="true"></span>`;
       inspector.querySelector("#generic-find-accommodation")?.addEventListener("click", () => openStayPlanContext("search"));
-      inspector.querySelector(".generic-inspector-close").addEventListener("click", closeInspector);
       inspector.querySelector("#generic-add-night")?.addEventListener("click", () => openStayPlanContext("night"));
       inspector.querySelector("#generic-show-adjacent")?.addEventListener("click", () => { selectedStage = Math.max(0, startIndex); setListMode("days"); openInspector(); });
     }
+    attachInspectorWindowInteractions();
   }
 
   function selectStage(index, fit) {
@@ -812,7 +951,7 @@
         const coordinates = leafletCoordinates(feature);
         routeGeometryData.set(`${index}:${variant}`, feature.properties);
         if (!workspaceRoutes.has(index)) workspaceRoutes.set(index, { original: L.featureGroup(), direct: L.featureGroup() });
-        const polyline = L.polyline(coordinates, { className: `generic-route-line route-${variant} route-stage-${index}`, color: ferry ? "#9a6118" : colours[index % colours.length], weight: 5, opacity: .78, dashArray: ferry ? "9 8" : null, lineCap: "round" }).bindTooltip(`Tag ${day} · ${model.revision.stages[index]?.title || name}`, { sticky: true });
+        const polyline = L.polyline(coordinates, { className: `generic-route-line route-${variant} route-stage-${index}`, color: ferry ? "#9a6118" : colours[index % colours.length], weight: 5, opacity: .78, dashArray: ferry ? "9 8" : null, lineCap: "round", isFerry: ferry }).bindTooltip(`Tag ${day} · ${model.revision.stages[index]?.title || name}`, { sticky: true });
         polyline.on("click", () => selectStage(index, true));
         workspaceRoutes.get(index)[variant].addLayer(polyline);
         if (variant === "original") {
@@ -872,24 +1011,55 @@
           : `${routeStyleLabel(previewStyle)} neu berechnet${previewMetrics?.distanceMeters ? ` · ${km.format(previewMetrics.distanceMeters / 1000)} km · ${formatDuration(previewMetrics.durationSeconds)}` : ""}. Der veröffentlichte Plan bleibt unverändert.`
         : `${stage.title} · veröffentlichter Stand.`;
       workspaceRoutes.forEach((variants, index) => {
-        const draftUsesDirect = index === selectedStage && previewStyle === "direct";
-        const showDirect = draftUsesDirect;
-        const showOriginal = !draftUsesDirect || compareOriginal;
+        const isSelectedPreview = index === selectedStage && Boolean(previewStyle);
+        const publishedStyle = index === selectedStage ? route?.style || "scenic" : "scenic";
+        const showDirect = isSelectedPreview
+          ? previewStyle === "direct" || (compareOriginal && publishedStyle === "direct")
+          : false;
+        const showOriginal = isSelectedPreview
+          ? previewStyle !== "direct" || (compareOriginal && publishedStyle !== "direct")
+          : true;
         if (showOriginal && !workspaceMap.hasLayer(variants.original)) variants.original.addTo(workspaceMap);
         if (!showOriginal && workspaceMap.hasLayer(variants.original)) workspaceMap.removeLayer(variants.original);
         if (showDirect && !workspaceMap.hasLayer(variants.direct)) variants.direct.addTo(workspaceMap);
         if (!showDirect && workspaceMap.hasLayer(variants.direct)) workspaceMap.removeLayer(variants.direct);
-        variants.original.eachLayer((layer) => layer.setStyle({
-          color: layer.options.dashArray ? "#9a6118" : colours[index % colours.length],
-          weight: index === selectedStage ? 8 : 4,
-          opacity: index === selectedStage ? (draftUsesDirect && compareOriginal ? .35 : .96) : .2
-        }));
-        variants.direct.eachLayer((layer) => layer.setStyle({ color: "#202822", weight: 8, opacity: .96, dashArray: "9 7" }));
+        variants.original.eachLayer((layer) => {
+          const isPreview = isSelectedPreview && previewStyle !== "direct";
+          const isComparedOriginal = isSelectedPreview && compareOriginal && publishedStyle !== "direct" && !isPreview;
+          layer.setStyle({
+            color: isPreview ? "#176b46" : isComparedOriginal ? "#737b76" : layer.options.isFerry ? "#9a6118" : colours[index % colours.length],
+            weight: isPreview ? 8 : isComparedOriginal ? 6 : index === selectedStage ? 8 : 4,
+            opacity: isPreview ? .98 : isComparedOriginal ? .82 : index === selectedStage ? .96 : .2,
+            dashArray: isComparedOriginal ? "7 7" : layer.options.isFerry ? "9 8" : null
+          });
+        });
+        variants.direct.eachLayer((layer) => {
+          const isPreview = isSelectedPreview && previewStyle === "direct";
+          const isComparedOriginal = isSelectedPreview && compareOriginal && publishedStyle === "direct" && !isPreview;
+          layer.setStyle({
+            color: isPreview ? "#176b46" : "#737b76",
+            weight: isPreview ? 8 : 6,
+            opacity: isPreview ? .98 : .82,
+            dashArray: isComparedOriginal ? "7 7" : null
+          });
+        });
       });
       workspaceMarkers.forEach(({ marker, stageIndexes }) => marker.getElement()?.classList.toggle("is-active", stageIndexes.includes(selectedStage)));
       const selected = workspaceRoutes.get(selectedStage);
       const selectedGroup = previewStyle === "direct" ? selected?.direct : selected?.original;
-      if (fit && selectedGroup?.getBounds().isValid()) workspaceMap.fitBounds(selectedGroup.getBounds(), { padding: [70, 70], maxZoom: 9 });
+      if (fit && selectedGroup?.getBounds().isValid()) {
+        const bounds = selectedGroup.getBounds();
+        const publishedGroup = route?.style === "direct" ? selected?.direct : selected?.original;
+        if (compareOriginal && publishedGroup?.getBounds().isValid()) bounds.extend(publishedGroup.getBounds());
+        const mapBounds = inspectorMapBounds();
+        const inspectorBounds = pendingRouteStyleChange ? currentInspectorRect() : null;
+        const fitOptions = { paddingTopLeft: [70, 70], paddingBottomRight: [70, 70], maxZoom: 9 };
+        if (mapBounds && inspectorBounds) {
+          if (inspectorBounds.width > mapBounds.width * .55) fitOptions.paddingTopLeft = [70, Math.min(mapBounds.height * .45, inspectorBounds.height + 28)];
+          else fitOptions.paddingBottomRight = [Math.min(mapBounds.width * .45, inspectorBounds.width + 28), 70];
+        }
+        workspaceMap.fitBounds(bounds, fitOptions);
+      }
     } else {
       const stay = model.revision.stays[selectedStay];
       const startIndex = stageForStay(stay);
