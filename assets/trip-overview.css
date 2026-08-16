@@ -440,6 +440,7 @@ body.generic-trip-enabled.generic-roadbook-view:is(.generic-original-draft, .gen
 .generic-stay-marker-shell { border: 0; background: transparent; }
 .generic-stay-marker-shell span { width: 28px; height: 28px; display: grid; place-items: center; border: 3px solid var(--accent); border-radius: 50%; background: #fff; color: var(--accent); box-shadow: 0 3px 12px rgba(0,0,0,.18); font-size: 10px; font-weight: 850; transition: transform var(--fast), background var(--fast); }
 .generic-stay-marker-shell.range span { box-sizing: border-box; width: 100%; min-width: 32px; padding: 0 7px; border-radius: 99px; white-space: nowrap; }
+.generic-stay-marker-shell.repeated::after { content: ""; position: absolute; top: 28px; left: 50%; width: 2px; height: 14px; transform: translateX(-1px); background: var(--accent); opacity: .7; }
 .generic-stay-marker-shell.final span { border-color: #9b6a13; color: #7c510d; }
 .generic-stay-marker-shell.is-active span { transform: scale(1.2); border-color: #fff; background: var(--accent); color: #fff; }
 

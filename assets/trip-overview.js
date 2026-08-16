@@ -16,6 +16,15 @@
   const colours = ["#176b46", "#b06024", "#6d58a7", "#26758a", "#b14d55", "#68733b", "#2d67a2", "#9b6515"];
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[char]);
   const hotelIcon = (secondary = false) => `<span class="generic-hotel-icon${secondary ? " secondary" : ""}" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V5.5A1.5 1.5 0 0 1 6.5 4h11A1.5 1.5 0 0 1 19 5.5V20M3 20h18M9 20v-4h6v4M8 8h2m4 0h2m-8 4h2m4 0h2"/></svg></span>`;
+  const stayMarkerIcon = (L, label, repeatedPlace = false) => {
+    const width = Math.max(32, 12 + label.length * 7);
+    return L.divIcon({
+      className: `generic-stay-marker-shell range${repeatedPlace ? " repeated" : ""}`,
+      html: `<span>${escapeHtml(label)}</span>`,
+      iconSize: [width, 28],
+      iconAnchor: [width / 2, repeatedPlace ? 42 : 14]
+    });
+  };
   const normalize = (value) => modelApi.normalizeText(value || "");
   const km = new Intl.NumberFormat("de-CH", { maximumFractionDigits: 0 });
   const formatDate = (value, options = { day: "2-digit", month: "long", year: "numeric" }) => {
@@ -471,8 +480,7 @@
           coordinate = overviewDayEnds.get(first.startIndex - offset) || overviewDayEnds.get(first.startIndex + offset);
         }
         if (!coordinate) return;
-        const markerWidth = Math.max(32, 12 + markerLabel.length * 7);
-        const icon = L.divIcon({ className: "generic-stay-marker-shell range", html: `<span>${escapeHtml(markerLabel)}</span>`, iconSize: [markerWidth, 28], iconAnchor: [markerWidth / 2, 14] });
+        const icon = stayMarkerIcon(L, markerLabel, group.stays.length > 1);
         L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${labels.join(" und ")} · ${name}`).on("click", () => { setView("roadbook"); selectStay(first.stayIndex, true); }).addTo(overviewMap);
       });
       const finalIndex = model.revision.stages.length - 1;
@@ -1118,8 +1126,7 @@
           coordinate = dayEnds.get(first.startIndex - offset) || dayEnds.get(first.startIndex + offset);
         }
         if (!coordinate) return;
-        const markerWidth = Math.max(32, 12 + dayLabel.length * 7);
-        const icon = L.divIcon({ className: "generic-stay-marker-shell range", html: `<span>${escapeHtml(dayLabel)}</span>`, iconSize: [markerWidth, 28], iconAnchor: [markerWidth / 2, 14] });
+        const icon = stayMarkerIcon(L, dayLabel, group.stays.length > 1);
         const marker = L.marker(coordinate, { icon, zIndexOffset: 500 }).bindTooltip(`Tag ${group.stays.map((entry) => entry.label).join(" und ")} · ${name}`);
         const stayIndexes = group.stays.map((entry) => entry.stayIndex);
         const stageIndexes = group.stays.flatMap((entry) => Array.from({ length: entry.endIndex - entry.startIndex + 1 }, (_, offset) => entry.startIndex + offset));
