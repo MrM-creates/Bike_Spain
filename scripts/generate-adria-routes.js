@@ -9,11 +9,18 @@ const outputPath = path.join(root, "assets", "adria-routes.geojson");
 const coordinates = {
   "Berikon, Switzerland": [8.372, 47.351],
   "Feldkirch, Austria": [9.598, 47.238],
+  "Arlberg Road Tunnel, Austria": [10.173, 47.129],
   "Innsbruck, Austria": [11.405, 47.269],
   "Brenner, Italy": [11.506, 47.004],
   "Brunico, Italy": [11.936, 46.797],
-  "Villach, Austria": [13.846, 46.614],
+  "Lienz, Austria": [12.769, 46.829],
+  "Spittal an der Drau, Austria": [13.497, 46.799],
+  "Nockalm Road, Austria": [13.747, 46.956],
+  "Murau, Austria": [14.169, 47.111],
+  "Graz, Austria": [15.439, 47.071],
+  "Maribor, Slovenia": [15.646, 46.554],
   "Ljubljana, Slovenia": [14.506, 46.056],
+  "Postojna, Slovenia": [14.203, 45.775],
   "Rijeka, Croatia": [14.442, 45.327],
   "Senj, Croatia": [14.905, 44.989],
   "Karlobag, Croatia": [15.074, 44.527],
@@ -33,13 +40,20 @@ const coordinates = {
   "Herceg Novi, Montenegro": [18.531, 42.453],
   "Perast, Montenegro": [18.699, 42.486],
   "Kotor, Montenegro": [18.771, 42.424],
-  "Šestanovac, Croatia": [16.914, 43.454],
-  "Gornja Ploča, Croatia": [15.685, 44.305],
-  "Plitvice Lakes, Croatia": [15.616, 44.880],
-  "Učka Tunnel, Croatia": [14.225, 45.315],
-  "Rovinj, Croatia": [13.638, 45.081],
-  "Trieste, Italy": [13.777, 45.649],
-  "Verona, Italy": [10.992, 45.438],
+  "Split Ferry Port, Croatia": [16.441, 43.503],
+  "Ancona, Italy": [13.510, 43.615],
+  "Fano, Italy": [13.016, 43.843],
+  "Gola del Furlo, Italy": [12.713, 43.640],
+  "Urbino, Italy": [12.636, 43.726],
+  "San Marino": [12.457, 43.943],
+  "Rimini, Italy": [12.568, 44.067],
+  "Ravenna, Italy": [12.204, 44.418],
+  "Comacchio, Italy": [12.184, 44.694],
+  "Chioggia, Italy": [12.279, 45.218],
+  "Arquà Petrarca, Italy": [11.718, 45.270],
+  "Valeggio sul Mincio, Italy": [10.735, 45.353],
+  "Iseo, Italy": [10.050, 45.659],
+  "Bergamo, Italy": [9.670, 45.698],
   "Como, Italy": [9.086, 45.808],
   "Gotthard Road Tunnel, Switzerland": [8.582, 46.546]
 };
@@ -71,6 +85,25 @@ async function main() {
       if (!coordinates[name]) throw new Error(`Koordinate fehlt: ${name}`);
       return coordinates[name];
     });
+    if (/fährtag/i.test(day.type)) {
+      features.push({
+        type: "Feature",
+        properties: {
+          name: `${day.day} ${day.title}`,
+          day: day.day,
+          variant: "original",
+          ferry: true,
+          transport: true,
+          optional: false,
+          anchorCount: points.length,
+          distanceMeters: null,
+          durationSeconds: null,
+          source: "official-ferry-timetable"
+        },
+        geometry: { type: "LineString", coordinates: points }
+      });
+      continue;
+    }
     const route = await routeThrough(points);
     features.push({
       type: "Feature",

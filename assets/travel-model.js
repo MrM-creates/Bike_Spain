@@ -289,6 +289,7 @@
       routeGeometryUrl: config.routeGeometryUrl || "",
       mapKmlUrl: config.mapKmlUrl || "",
       capabilities: clone(config.capabilities || {}),
+      planningAlternatives: clone(config.planningAlternatives || []),
       mode: "motorcycle",
       timezone: config.timezone || "Europe/Zurich",
       participantCount: config.participantCount || 1,
