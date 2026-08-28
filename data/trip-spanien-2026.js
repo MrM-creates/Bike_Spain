@@ -5,6 +5,8 @@ window.__TRIP_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_spanien_2026",
     "name": "Spanien 2026",
+    "characterTitle": "Kurven, Küsten und spanisches Hinterland",
+    "characterText": "Eine ausgedehnte Motorradreise von den Westalpen über Südfrankreich bis nach Andalusien. Kurvige Berg- und Küstenstraßen wechseln sich mit entspannten Ruhetagen ab; die gebuchte Fähre von Barcelona nach Genua setzt den festen Schlusspunkt in Spanien.",
     "startDate": "2026-09-24",
     "endDate": "2026-10-23",
     "startPlace": "Berikon",
@@ -12,7 +14,41 @@ window.__TRIP_DATA__ = Object.freeze({
     "timezone": "Europe/Zurich",
     "utcOffset": "+02:00",
     "participantCount": 2,
-    "motorcycleCount": 2
+    "motorcycleCount": 2,
+    "preferences": {
+      "routeStyle": "mixed",
+      "ridingRhythm": "relaxed",
+      "accommodationStyle": "Motorradfreundlich mit sicherer Abstellung",
+      "preferGoodWeather": true,
+      "asphaltOnly": true
+    },
+    "planningProfile": {
+      "countries": ["Schweiz", "Frankreich", "Spanien", "Italien"],
+      "seasonalRisks": [
+        "Hochpässe in Pyrenäen und Picos Anfang Oktober",
+        "Starkregen und Wind an Mittelmeer- und Atlantikküste",
+        "Umweltzonen und Zufahrtsbeschränkungen historischer Stadtkerne"
+      ],
+      "routeConstraints": [
+        "Etappen über Pässe oberhalb 1800 m benötigen eine konkrete tiefere Schlechtwetteralternative",
+        "Eine C-28-Etappe bei Vielha muss Pòrt dera Bonaigua und die Alternative über N-230 und Vielha-Tunnel prüfen",
+        "Eine Runde über Puerto de San Glorio benötigt eine geschlossene tiefere Alternative ab demselben Übernachtungsort"
+      ]
+    },
+    "transportMatchers": ["Fährtag", "Fähre Barcelona.*Genua"],
+    "placeAliases": {
+      "La Patacona / Alboraya": "La Patacona",
+      "Kabine auf der Fähre": "Fähre Barcelona–Genua"
+    },
+    "routeGeometryUrl": "/assets/roadbook-routes.geojson",
+    "mapKmlUrl": "/reiseplanung-verfeinert-2026.kml",
+    "capabilities": {
+      "storage": "server",
+      "fullReplanning": true,
+      "originalPlan": true,
+      "downloads": true,
+      "mapNarrativeSource": "kml"
+    }
   },
   "places": {
     "berikon": {
@@ -59,6 +95,7 @@ window.__TRIP_DATA__ = Object.freeze({
       "stageDay": 1,
       "place": "Berikon",
       "startsAt": "2026-09-24T08:00:00+02:00",
+      "locks": ["date", "origin"],
       "source": "import"
     },
     {
@@ -69,6 +106,7 @@ window.__TRIP_DATA__ = Object.freeze({
       "place": "Barcelona",
       "startsAt": "2026-10-21T08:30:00+02:00",
       "endsAt": "2026-10-22T09:00:00+02:00",
+      "locks": ["date", "time", "place", "stage", "route", "booking"],
       "source": "booking",
       "bookingRef": "legacy-ferry-booking"
     },
@@ -79,6 +117,7 @@ window.__TRIP_DATA__ = Object.freeze({
       "stageDay": 30,
       "place": "Berikon",
       "startsAt": "2026-10-23T18:00:00+02:00",
+      "locks": ["date", "destination", "overnight"],
       "source": "import"
     }
   ],

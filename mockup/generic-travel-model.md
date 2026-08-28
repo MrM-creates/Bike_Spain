@@ -1,6 +1,6 @@
 # Technische Spezifikation: generisches Motorrad-Reise- und Versionsmodell
 
-Status: Entwurf fuer die spaetere Production-Integration. Diese Spezifikation veraendert weder Production-Daten noch Publish-Endpunkte.
+Status: Aktiver Architekturvertrag. Der generische Planungskern und der Reisekatalog sind integriert; die serverseitige revisionsbasierte Persistenz bleibt der nächste Ausbauschritt.
 
 ## 1. Ziel und Grenzen
 
@@ -384,7 +384,7 @@ Der bestehende Production-Code bleibt in der ersten Migrationsphase unveraendert
 | `overnight` pro Tag | Zusammengefuehrte `Stay`-Bloecke. |
 | `publishedAccommodationState` | `AccommodationOption[]` und `Booking[]` je `Stay`. |
 | Erkennung der Faehre per Text | Expliziter `FixPoint(kind="transport")`. |
-| `FERRY_DATE` | Zeitfenster des Transport-Fixpunkts. |
+| Fest codiertes `FERRY_DATE` | Entfernt; Zeitfenster liegt ausschliesslich am beliebigen Transport-Fixpunkt der betreffenden Reise. |
 | `isoForDay()` mit festem Datum | `TripBrief.startDate` plus lokale Kalenderlogik. |
 | Spanien-spezifischer Storage-Key | `tripId` plus `revisionId`. |
 | HTML-Datei als Planstand | Compatibility-Renderer einer veroeffentlichten Revision. |

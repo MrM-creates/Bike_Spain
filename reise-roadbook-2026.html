@@ -1436,6 +1436,13 @@
 
     const PUBLISHED_VERSION = canonicalTripData.publishedVersion;
     const PUBLISHED_PLAN_KIND = canonicalTripData.planKind;
+    const REQUIRED_PLANNING_POLICY_VERSION = 4;
+    const planningTripContext = () => ({
+      ...clone(canonicalTripData.trip),
+      preferences: clone(canonicalTripData.trip.preferences || {}),
+      planningProfile: clone(canonicalTripData.trip.planningProfile || {}),
+      fixPoints: clone(canonicalTripData.fixPoints || [])
+    });
     let currentPublishedVersion = PUBLISHED_VERSION;
     let currentPlanKind = PUBLISHED_PLAN_KIND;
     const STORAGE_KEY = "spanien-roadbook-2026-plan-202608121632";
@@ -1749,7 +1756,7 @@
       const hasDraft = Boolean(draft?.days?.length);
       const isOriginalDraft = hasDraft && draft.request?.type === "restore-original";
       const isRouteDraft = hasDraft && !isOriginalDraft && draft.phase === "route";
-      const isUnverifiedRouteDraft = isRouteDraft && (draft.verified !== true || Number(draft.verificationVersion) < 2);
+      const isUnverifiedRouteDraft = isRouteDraft && (draft.verified !== true || Number(draft.verificationVersion) < REQUIRED_PLANNING_POLICY_VERSION);
       const hasTravelUpdates = !hasDraft && state.days.some((item, index) => {
         const published = currentPlanDays[index] || {};
         return item.status !== published.status || (item.travelNote || "") !== (published.travelNote || "");
@@ -1969,7 +1976,7 @@
           }
         };
         const generated = await requestStage(
-          { stage: "route", change, days: state.days },
+          { stage: "route", change, days: state.days, trip: planningTripContext() },
           "Der Routenentwurf konnte nicht erstellt werden."
         );
         document.querySelector("#planning-progress-title").textContent = "Route wird geprüft";
@@ -1980,7 +1987,8 @@
           replaceFromDay: generated.draft.replaceFromDay,
           change: generated.draft.request,
           lockedStay: generated.draft.lockedStay,
-          lockedStart: generated.draft.lockedStart
+          lockedStart: generated.draft.lockedStart,
+          trip: planningTripContext()
         }, "Die automatische Routenprüfung ist fehlgeschlagen.");
         draft = { ...verified.verifiedDraft, baseVersion: currentPublishedVersion };
         state.days = draft.days.map((item, index) => prepareDay(item, index, item.custom));
@@ -2012,7 +2020,7 @@
     };
 
     const verifyExistingRouteDraft = async (force = false) => {
-      if (!draft || draft.phase !== "route" || (!force && draft.verified === true && Number(draft.verificationVersion) >= 2)) return true;
+      if (!draft || draft.phase !== "route" || (!force && draft.verified === true && Number(draft.verificationVersion) >= REQUIRED_PLANNING_POLICY_VERSION)) return true;
       const secret = getPublishPin();
       if (!secret) return false;
       const publishButton = document.querySelector("#publish-draft");
@@ -2055,7 +2063,8 @@
               replaceFromDay: verificationStartDay,
               change: draft.request || {},
               lockedStay: draft.lockedStay || null,
-              lockedStart: draft.lockedStart || null
+              lockedStart: draft.lockedStart || null,
+              trip: planningTripContext()
             })
           });
         } finally {
@@ -2092,7 +2101,7 @@
 
     const createAccommodationDraft = async () => {
       if (!draft || draft.phase !== "route") return;
-      if (draft.verified !== true || Number(draft.verificationVersion) < 2) {
+      if (draft.verified !== true || Number(draft.verificationVersion) < REQUIRED_PLANNING_POLICY_VERSION) {
         await verifyExistingRouteDraft();
         return;
       }
@@ -2121,6 +2130,7 @@
             routeVerified: draft.verified === true,
             routeVerificationVersion: draft.verificationVersion,
             days: draft.days,
+            trip: planningTripContext(),
             accommodations,
             routeSummary: draft.summary
           })
@@ -2166,7 +2176,7 @@
         const response = await fetch("/api/create-plan-draft", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ secret, stage: "verify-accommodations", days: draft.days, accommodations: draft.accommodations })
+          body: JSON.stringify({ secret, stage: "verify-accommodations", days: draft.days, accommodations: draft.accommodations, trip: planningTripContext() })
         });
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.error || "Der Planabgleich ist fehlgeschlagen.");
@@ -2243,7 +2253,7 @@
     const publishDraft = async () => {
       if (!draft) return;
       const restoringOriginal = draft.request?.type === "restore-original";
-      if (!restoringOriginal && draft.phase === "route" && (draft.verified !== true || Number(draft.verificationVersion) < 2)) {
+      if (!restoringOriginal && draft.phase === "route" && (draft.verified !== true || Number(draft.verificationVersion) < REQUIRED_PLANNING_POLICY_VERSION)) {
         await verifyExistingRouteDraft();
         return;
       }
@@ -3148,7 +3158,7 @@ Wichtig fuer das Import-JSON:
       getPlanDraftStatus: async () => planDraftActive() ? {
         active: true,
         phase: draft.phase || "route",
-        verified: draft.verified === true && Number(draft.verificationVersion) >= 2,
+        verified: draft.verified === true && Number(draft.verificationVersion) >= REQUIRED_PLANNING_POLICY_VERSION,
         decision: draft.decision || "Vorgeschlagene Planänderung",
         summary: clone(draft.summary || []),
         openItems: clone(draft.openItems || [])
@@ -3169,6 +3179,31 @@ Wichtig fuer das Import-JSON:
         const result = await response.json();
         if (!response.ok) throw new Error(result.error || "Die Etappe konnte nicht geprüft werden.");
         return result.verifiedDraft;
+      },
+      planTripRoute: async ({ days, trip, change }) => {
+        const secret = getPublishPin();
+        if (!secret) throw new Error("Für die automatische Planung wird die Veröffentlichungs-PIN benötigt.");
+        const request = async (body, fallback) => {
+          const response = await fetch("/api/create-plan-draft", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ secret, ...body })
+          });
+          const result = await response.json();
+          if (!response.ok || !result.ok) throw new Error(result.error || fallback);
+          return result;
+        };
+        const generated = await request({ stage: "route", days: clone(days || []), trip: clone(trip || {}), change: clone(change || {}) }, "Der Routenentwurf konnte nicht erstellt werden.");
+        const verified = await request({
+          stage: "verify-route",
+          days: generated.draft.days,
+          replaceFromDay: generated.draft.replaceFromDay,
+          change: generated.draft.request,
+          lockedStay: generated.draft.lockedStay,
+          lockedStart: generated.draft.lockedStart,
+          trip: clone(trip || {})
+        }, "Die automatische Routenprüfung ist fehlgeschlagen.");
+        return verified.verifiedDraft;
       },
       discardPlanDraft: async () => {
         if (!planDraftActive()) return { discarded: false };
@@ -3203,17 +3238,6 @@ Wichtig fuer das Import-JSON:
           accommodations: clone(accommodations),
           trip: {
             ...clone(canonicalTripData.trip),
-            transportMatchers: ["Fährtag", "Fähre Barcelona.*Genua"],
-            preferences: {
-              routeStyle: "mixed",
-              ridingRhythm: "relaxed",
-              accommodationStyle: "Motorradfreundlich mit sicherer Abstellung",
-              preferGoodWeather: true
-            },
-            placeAliases: {
-              "La Patacona / Alboraya": "La Patacona",
-              "Kabine auf der Fähre": "Fähre Barcelona–Genua"
-            },
             fixPoints: clone(canonicalTripData.fixPoints),
             narrativeSegments: clone(canonicalTripData.narrativeSegments)
           }
@@ -3233,8 +3257,9 @@ Wichtig fuer das Import-JSON:
       openPlanChange();
     }
   </script>
-  <script src="/assets/travel-model.js?v=20260828multi1"></script>
-  <script src="/assets/adria-trip-2026.js?v=20260828multi1"></script>
-  <script src="/assets/trip-overview.js?v=20260828multi1"></script>
+  <script src="/assets/travel-model.js?v=20260829generic1"></script>
+  <script src="/data/trip-adria-2026.js?v=20260829generic1"></script>
+  <script src="/assets/trip-catalog.js?v=20260829generic1"></script>
+  <script src="/assets/trip-overview.js?v=20260829generic1"></script>
 </body>
 </html>

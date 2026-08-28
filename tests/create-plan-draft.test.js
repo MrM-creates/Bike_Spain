@@ -1,7 +1,7 @@
 const assert = require("node:assert/strict");
 const { Readable } = require("node:stream");
 const handler = require("../api/create-plan-draft");
-const { accommodationContextWithSlots, accommodationNameIssue, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
+const { accommodationContextWithSlots, accommodationNameIssue, isoForDay, maximumDistance, normalizeInputDay, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState } = handler._test;
 
 const days = [
   { overnight: "Castelldefels" },
@@ -20,9 +20,6 @@ const days = [
 ];
 
 assert.match(routeContinuityIssue(days, 1, 3), /Tag 2 beginnt in La Patacona/);
-assert.equal(ferryIndexOf([{ title: "Normaler Tag", type: "Fahrtag", overnight: "Ziel" }]), -1);
-assert.equal(ferryIndexOf([{ title: "Fähre Barcelona – Genua", type: "Fährtag", overnight: "Kabine auf der Fähre" }]), 0);
-
 days[1].origin = "Castelldefels, Spain";
 assert.equal(routeContinuityIssue(days, 1, 3), "");
 
@@ -53,7 +50,7 @@ assert.match(routeAuditSummary(checkedRoute, 1, 3), /Tag 2 „Start – Vielha�
 assert.match(routeVerificationSummary(checkedRoute, 1, 3)[1], /Vielha → Potes/);
 assert.match(routeVerificationSummary(checkedRoute, 1, 3)[2], /Tag 2 bis Tag 3/);
 checkedRoute[1].note = "Kurvige Fahrt nach Vielha.";
-assert.match(routeDetailIssue(checkedRoute, 1, 3), /Bonaigua/);
+assert.equal(routeDetailIssue(checkedRoute, 1, 3), "", "region-specific constraints belong to the trip policy, not the generic validator");
 
 assert.throws(() => verifyAccommodationState(checkedRoute, {}), /Übernachtungsblöcken/);
 assert.equal(protectedStartIssue([{ origin: "Berikon, Switzerland", overnight: "Grenoble" }], { place: "Berikon" }), "");
@@ -128,9 +125,18 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
   process.env.ROADBOOK_PUBLISH_SECRET = "test-pin";
   process.env.OPENAI_API_KEY = "test-key";
   const currentDays = Array.from({ length: 27 }, () => makeDay("Basis", "Basisort"));
-  currentDays.push(makeDay("Fähre Barcelona – Genua", "Kabine auf der Fähre", false));
-  currentDays.push(makeDay("Genua – Aosta", "Aosta"));
-  currentDays.push(makeDay("Aosta – Berikon", "Berikon"));
+  currentDays.push(makeCheckedDay("Fähre Barcelona – Genua", "Kabine auf der Fähre", false, { origin: "Basisort", destination: "Kabine auf der Fähre", km: "10 km", time: "1 h", roads: "Terminalzufahrt" }));
+  currentDays.push(makeCheckedDay("Genua – Aosta", "Aosta", false, { origin: "Kabine auf der Fähre", destination: "Aosta", km: "250 km", time: "3 h", roads: "A10 · A26 · A5" }));
+  currentDays.push(makeCheckedDay("Aosta – Berikon", "Berikon", false, { origin: "Aosta", destination: "Berikon", km: "300 km", time: "4 h", roads: "A5 · A4 · A2" }));
+  const spainTrip = {
+    id: "trip_spanien_2026", name: "Spanien 2026", startDate: "2026-09-24", startPlace: "Berikon", endPlace: "Berikon",
+    fixPoints: [
+      { kind: "start", title: "Start", stageDay: 1, place: "Berikon", locks: ["date", "place", "stage"] },
+      { kind: "transport", title: "Gebuchter Transport", stageDay: 28, locks: ["date", "place", "stage", "route"] },
+      { kind: "end", title: "Rückkehr", stageDay: 30, place: "Berikon", locks: ["date", "place", "stage"] }
+    ],
+    planningProfile: { countries: ["Spanien"] }
+  };
 
   const routeDays = Array.from({ length: 26 }, () => ({
     title: "Basis",
@@ -187,7 +193,8 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
     secret: "test-pin",
     stage: "route",
     change: { type: "reroute", startDay: 2, instruction: "Neue Richtung" },
-    days: currentDays
+    days: currentDays,
+    trip: spainTrip
   });
   assert.equal(routeResult.status, 200);
   assert.equal(routeResult.body.draft.phase, "route");
@@ -196,8 +203,8 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
   assert.equal(routeResult.body.draft.accommodations, undefined);
   assert.equal(fetchCount, 1, "route stage should call the model exactly once");
   assert.deepEqual(modelRequests[0].tools, [{ type: "web_search" }], "initial route generation should research the route on the web");
-  assert.match(modelRequests[0].instructions, /offizielle Strassenbehoerden/);
-  assert.match(modelRequests[0].instructions, /temporaeren Sperrung/);
+  assert.match(modelRequests[0].instructions, /motorcycle-roadbook-policy-v4/);
+  assert.match(modelRequests[0].instructions, /offizielle Quelle/);
 
   const verifiedResult = await callApi({
     secret: "test-pin",
@@ -205,12 +212,13 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
     days: routeResult.body.draft.days,
     replaceFromDay: routeResult.body.draft.replaceFromDay,
     change: routeResult.body.draft.request,
-    lockedStay: routeResult.body.draft.lockedStay
+    lockedStay: routeResult.body.draft.lockedStay,
+    trip: spainTrip
   });
   assert.equal(verifiedResult.status, 200);
   assert.equal(verifiedResult.body.verifiedDraft.phase, "route");
   assert.equal(verifiedResult.body.verifiedDraft.verified, true);
-  assert.equal(verifiedResult.body.verifiedDraft.verificationVersion, 3);
+  assert.equal(verifiedResult.body.verifiedDraft.verificationVersion, 4);
   assert.equal(fetchCount, 8, "long route verification should check seven bounded chunks");
   modelRequests.slice(1, 8).forEach((request) => {
     assert.deepEqual(request.tools, [{ type: "web_search" }], "route verification should use web search");
@@ -239,7 +247,8 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
     days: movedStartDays,
     replaceFromDay: 1,
     change: { type: "reroute", startDay: 1 },
-    lockedStart: { place: "Berikon" }
+    lockedStart: { place: "Berikon" },
+    trip: spainTrip
   });
   assert.equal(protectedStartResult.status, 500);
   assert.match(protectedStartResult.body.error, /geschützten Startpunkt Berikon/);
@@ -257,15 +266,14 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
     status: "changed"
   });
   styleDays[2] = makeCheckedDay("Zielort", "Zielort", true);
-  assert.equal(styleDays.findIndex((day) => /Fähre/.test(day.title)), 27);
-  assert.equal(ferryIndexOf(styleDays.map(normalizeInputDay)), 27);
   assert.equal(isoForDay(27), "2026-10-21");
   const styleVerifiedResult = await callApi({
     secret: "test-pin",
     stage: "verify-route",
     days: styleDays,
     replaceFromDay: 2,
-    change: { type: "route-style", scope: "route-style", startDay: 2 }
+    change: { type: "route-style", scope: "route-style", startDay: 2 },
+    trip: spainTrip
   });
   assert.equal(styleVerifiedResult.status, 200);
   assert.equal(styleVerifiedResult.body.verifiedDraft.replaceCount, 1);
@@ -282,12 +290,12 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
     secret: "test-pin",
     stage: "verify-route",
     days: adriaDays,
-    trip: { id: "trip_adria_2026", name: "Adria & Balkan 2026", startDate: "2026-09-24", fixPoints: [], planningProfile: { countries: ["Kroatien"], officialSources: ["HAK"], motorcycleSources: ["Motorradführer"] } },
+    trip: { id: "trip_adria_2026", name: "Adria & Balkan 2026", startDate: "2026-09-24", fixPoints: [], planningProfile: { countries: ["Kroatien"] } },
     replaceFromDay: 1,
     change: { type: "Etappe bearbeiten", scope: "stage" }
   });
   assert.equal(adriaVerifiedResult.status, 200, adriaVerifiedResult.body.error);
-  assert.equal(adriaVerifiedResult.body.verifiedDraft.verificationVersion, 3);
+  assert.equal(adriaVerifiedResult.body.verifiedDraft.verificationVersion, 4);
   assert.equal(adriaVerifiedResult.body.verifiedDraft.sourceChecks.length, 1);
 
   global.fetch = async () => { throw new Error("accommodation stage unexpectedly called the model"); };
@@ -295,7 +303,8 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
     secret: "test-pin",
     stage: "accommodations",
     days: routeResult.body.draft.days,
-    accommodations: []
+    accommodations: [],
+    trip: spainTrip
   });
   assert.equal(unverifiedAccommodationResult.status, 500);
   assert.match(unverifiedAccommodationResult.body.error, /aktuellen Prüfung/);
@@ -303,9 +312,10 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
     secret: "test-pin",
     stage: "accommodations",
     routeVerified: true,
-    routeVerificationVersion: 2,
+    routeVerificationVersion: 4,
     routeSummary: verifiedResult.body.verifiedDraft.summary,
     days: verifiedResult.body.verifiedDraft.days,
+    trip: spainTrip,
     accommodations: [
       { id: "base", title: "Basisort", currentFirstChoice: "Basis Hotel" },
       { id: "ferry", title: "Kabine auf der Fähre", currentFirstChoice: "Fährkabine" },
@@ -322,7 +332,8 @@ const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, inde
     secret: "test-pin",
     stage: "verify-accommodations",
     days: verifiedResult.body.verifiedDraft.days,
-    accommodations: accommodationResult.body.accommodationPlan.accommodations
+    accommodations: accommodationResult.body.accommodationPlan.accommodations,
+    trip: spainTrip
   });
   assert.equal(accommodationVerificationResult.status, 200);
   assert.equal(accommodationVerificationResult.body.accommodationAudit.version, 1);

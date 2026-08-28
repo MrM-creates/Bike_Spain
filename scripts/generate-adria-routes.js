@@ -3,7 +3,7 @@ const path = require("node:path");
 const vm = require("node:vm");
 
 const root = path.resolve(__dirname, "..");
-const sourcePath = path.join(root, "assets", "adria-trip-2026.js");
+const sourcePath = path.join(root, "data", "trip-adria-2026.js");
 const outputPath = path.join(root, "assets", "adria-routes.geojson");
 
 const coordinates = {
@@ -45,17 +45,10 @@ const coordinates = {
 };
 
 function loadDays() {
-  const storage = new Map();
-  const sandbox = {
-    URLSearchParams,
-    localStorage: {
-      getItem(key) { return storage.get(key) || null; },
-      setItem(key, value) { storage.set(key, String(value)); }
-    }
-  };
+  const sandbox = { URLSearchParams };
   sandbox.globalThis = sandbox;
   vm.runInNewContext(fs.readFileSync(sourcePath, "utf8"), sandbox, { filename: sourcePath });
-  return sandbox.MotorcycleTripCatalog.getSnapshot("trip_adria_2026", {}).days;
+  return sandbox.__TRIP_ADRIA_DATA__.days;
 }
 
 async function routeThrough(points) {

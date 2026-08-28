@@ -8,11 +8,13 @@ global.localStorage = {
   setItem(key, value) { storage.set(key, String(value)); }
 };
 
-require("../assets/adria-trip-2026.js");
+require("../data/trip-adria-2026.js");
+require("../assets/trip-catalog.js");
 
 const catalog = global.MotorcycleTripCatalog;
+const spain = { planKind: "published", trip: { id: "trip_spanien_2026", name: "Spanien 2026", startDate: "2026-09-24" }, days: Array.from({ length: 30 }, () => ({})) };
 assert.ok(catalog);
-assert.equal(catalog.list().length, 2);
+assert.equal(catalog.list(spain).length, 2);
 
 const adria = catalog.getSnapshot("trip_adria_2026", {});
 assert.equal(adria.days.length, 30);
@@ -30,7 +32,7 @@ const created = catalog.createTrip({
   endPlace: "Berikon"
 });
 assert.equal(created.days.length, 3);
-assert.equal(catalog.list().length, 3);
+assert.equal(catalog.list(spain).length, 3);
 assert.equal(catalog.getSnapshot(created.trip.id, {}).trip.name, "Testreise");
 
 const routes = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "assets", "adria-routes.geojson"), "utf8"));

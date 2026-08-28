@@ -11,6 +11,7 @@ const { parseTripData } = require("../lib/trip-data");
 const root = path.join(__dirname, "..");
 const source = fs.readFileSync(path.join(root, "data", "trip-spanien-2026.js"), "utf8");
 const tripData = parseTripData(source);
+const planningTrip = { ...tripData.trip, fixPoints: tripData.fixPoints };
 const { expectedStays, placesMatch, protectedStartIssue, routeContinuityIssue, verifyAccommodationState } = createPlanDraft._test;
 
 const call = async (handler, body) => {
@@ -169,7 +170,8 @@ test("all route replanning requests produce bounded local drafts", async () => {
         secret: "test-pin",
         stage: "route",
         change: useCase.change,
-        days: tripData.publishedDays
+        days: tripData.publishedDays,
+        trip: planningTrip
       });
       assert.equal(result.status, 200, result.body.error);
       assert.equal(result.body.draft.replaceFromDay, useCase.expectedStart);
@@ -216,21 +218,21 @@ test("invalid and incomplete replanning input leaves the current plan untouched"
   };
   try {
     const missingInstruction = await call(createPlanDraft, {
-      secret: "test-pin", stage: "route", change: { type: "reroute", startDay: 12 }, days: tripData.publishedDays
+      secret: "test-pin", stage: "route", change: { type: "reroute", startDay: 12 }, days: tripData.publishedDays, trip: planningTrip
     });
     assert.equal(missingInstruction.status, 500);
     assert.match(missingInstruction.body.error, /beschreibe/);
     assert.equal(modelCalls, 0);
 
     const missingPlace = await call(createPlanDraft, {
-      secret: "test-pin", stage: "route", change: { type: "skip", place: "Nicht vorhandener Ort" }, days: tripData.publishedDays
+      secret: "test-pin", stage: "route", change: { type: "skip", place: "Nicht vorhandener Ort" }, days: tripData.publishedDays, trip: planningTrip
     });
     assert.equal(missingPlace.status, 500);
     assert.match(missingPlace.body.error, /nicht gefunden/);
     assert.equal(modelCalls, 0);
 
     const incomplete = await call(createPlanDraft, {
-      secret: "test-pin", stage: "route", change: { type: "reroute", startDay: 12, instruction: "Neu planen" }, days: tripData.publishedDays
+      secret: "test-pin", stage: "route", change: { type: "reroute", startDay: 12, instruction: "Neu planen" }, days: tripData.publishedDays, trip: planningTrip
     });
     assert.equal(incomplete.status, 500);
     assert.match(incomplete.body.error, /statt .* benötigten Tagen/);

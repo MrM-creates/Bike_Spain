@@ -1,6 +1,14 @@
 const OPENAI_URL = "https://api.openai.com/v1/responses";
 const DEFAULT_MODEL = "gpt-5.1";
-const FERRY_DATE = "2026-10-21";
+const {
+  PLANNING_POLICY,
+  normalizeTripContext,
+  isoForTripDay,
+  nextProtectedAnchor,
+  fixPointIssue,
+  verificationInstructions,
+  routeDraftInstructions
+} = require("../lib/planning-policy");
 
 const json = (response, status, body) => {
   response.statusCode = status;
@@ -18,20 +26,7 @@ const readBody = async (request) => {
 
 const cleanText = (value, limit = 2000) => String(value || "").trim().slice(0, limit);
 
-const tripContext = (payload = {}) => {
-  const trip = payload.trip && typeof payload.trip === "object" ? payload.trip : {};
-  const fixPoints = Array.isArray(trip.fixPoints) ? trip.fixPoints.slice(0, 12).map((fix) => ({
-    kind: cleanText(fix?.kind, 40), title: cleanText(fix?.title, 180), place: cleanText(fix?.place, 160),
-    startsAt: cleanText(fix?.startsAt, 60), endsAt: cleanText(fix?.endsAt, 60), stageTitlePattern: cleanText(fix?.stageTitlePattern, 180)
-  })) : [];
-  const profile = trip.planningProfile && typeof trip.planningProfile === "object" ? trip.planningProfile : {};
-  const list = (value, limit = 20) => Array.isArray(value) ? value.slice(0, limit).map((item) => cleanText(item, 300)).filter(Boolean) : [];
-  return {
-    id: cleanText(trip.id, 120), name: cleanText(trip.name, 200), startDate: cleanText(trip.startDate, 40), endDate: cleanText(trip.endDate, 40),
-    startPlace: cleanText(trip.startPlace, 180), endPlace: cleanText(trip.endPlace, 180), fixPoints,
-    planningProfile: { countries: list(profile.countries), officialSources: list(profile.officialSources), motorcycleSources: list(profile.motorcycleSources), seasonalRisks: list(profile.seasonalRisks) }
-  };
-};
+const tripContext = (payload = {}) => normalizeTripContext(payload.trip || {});
 
 const daySchema = {
   type: "object",
@@ -149,15 +144,6 @@ const createStructuredResponse = async ({ instructions, input, schema, name, web
   return JSON.parse(responseText(body));
 };
 
-const ferryIndexOf = (days) => days.findIndex((day) => {
-  const title = cleanText(day?.title, 180);
-  const type = cleanText(day?.type, 100);
-  const overnight = cleanText(day?.overnight, 160);
-  return /^f(?:ä|ae)hre\b/i.test(title)
-    || /^f(?:ä|ae)hr(tag)?$/i.test(type)
-    || /kabine auf der f(?:ä|ae)hre/i.test(overnight);
-});
-
 const placeIndexOf = (days, place) => {
   const target = placeKey(place);
   if (!target) return -1;
@@ -190,15 +176,15 @@ const normalizeInputDay = (day) => ({
   routeStyle: ["direct", "scenic"].includes(day?.routeStyle) ? day.routeStyle : ""
 });
 
-const isoForDay = (index) => new Date(Date.UTC(2026, 8, 24) + index * 86400000).toISOString().slice(0, 10);
+const isoForDay = (index, context = normalizeTripContext({})) => isoForTripDay(context, index);
 
-const expectedStays = (days) => {
+const expectedStays = (days, context = normalizeTripContext({})) => {
   const blocks = [];
   days.forEach((day, index) => {
     const overnight = cleanText(day.overnight, 160);
     if (!overnight || /berikon/i.test(overnight)) return;
-    const startDate = isoForDay(index);
-    const endDate = isoForDay(index + 1);
+    const startDate = isoForDay(index, context);
+    const endDate = isoForDay(index + 1, context);
     const previous = blocks[blocks.length - 1];
     if (previous && placesMatch(previous.title, overnight) && previous.endDate === startDate) {
       previous.endDate = endDate;
@@ -304,15 +290,6 @@ const routeDetailIssue = (days, startIndex, endIndex) => {
     if (placesMatch(day.origin, day.destination) && day.waypoints.length < 2) {
       return `Die Rundtour an Tag ${dayNumber} benötigt mindestens zwei konkrete Wegpunkte.`;
     }
-    const routeText = [day.title, day.roads, day.points, day.note, ...day.waypoints].join(" ");
-    if (/\bC-?28\b/i.test(routeText) && /vielha|val d.?aran/i.test(routeText)) {
-      if (!/bonaigua/i.test(routeText) || !/(n-?230|tunnel|schlechtwetteralternative)/i.test(routeText)) {
-        return `Tag ${dayNumber} nutzt die C-28 bei Vielha, benennt aber Pòrt dera Bonaigua und die tiefere N-230-Tunnelalternative nicht konkret.`;
-      }
-    }
-    if (/san glorio/i.test(routeText) && !/(hermida|n-?627|schlechtwetteralternative)/i.test(routeText)) {
-      return `Tag ${dayNumber} nennt Puerto de San Glorio ohne konkrete tiefere Schlechtwetteralternative.`;
-    }
   }
   return "";
 };
@@ -344,7 +321,7 @@ const sourceCheckIssue = (plan, days, startIndex, endIndex) => {
   return "";
 };
 
-const routeVerificationSummary = (days, startIndex, endIndex, candidateDays = days, ferryIndex = endIndex) => {
+const routeVerificationSummary = (days, startIndex, endIndex, candidateDays = days, protectedAnchor = null) => {
   const segment = days.slice(startIndex, endIndex);
   const restDays = segment.filter((day) => day.rest).length;
   const overnightChain = segment
@@ -363,8 +340,8 @@ const routeVerificationSummary = (days, startIndex, endIndex, candidateDays = da
     routeAuditSummary(days, startIndex, endIndex),
     `Reiseverlauf: ${overnightChain.join(" → ")}.`,
     `Geprüfter Änderungsbereich: Tag ${startIndex + 1} bis Tag ${endIndex}; ${segment.length} Kalendertage mit ${restDays} Ruhe- oder Reservetagen.`,
-    ferryIndex >= 0
-      ? `Der feste Fährtag bleibt Tag ${ferryIndex + 1} am ${FERRY_DATE} mit Check-in 08:30.`
+    protectedAnchor
+      ? `Der nächste Fixpunkt bleibt unverändert: ${protectedAnchor.title} an Tag ${protectedAnchor.dayIndex + 1}.`
       : "Die festen Tagesgrenzen sowie Start, Ziel und Übernachtung der Etappe bleiben erhalten."
   ];
   if (correctedDays.length) {
@@ -374,15 +351,6 @@ const routeVerificationSummary = (days, startIndex, endIndex, candidateDays = da
   } else {
     details.push("Die automatische Prüfung hat keine technische Korrektur am vorgeschlagenen Tagesverlauf benötigt.");
   }
-  const routeText = segment.map((day) => [day.title, day.roads, day.points, day.note, ...day.waypoints].join(" ")).join(" ");
-  if (/san glorio/i.test(routeText)) {
-    details.push("Puerto de San Glorio und eine tiefere Schlechtwetteralternative sind im geprüften Tagesverlauf konkret ausgewiesen.");
-  }
-  if (/\bC-?28\b/i.test(routeText) && /vielha|val d.?aran/i.test(routeText)) {
-    details.push("Die C-28-Etappe bei Vielha weist Pòrt dera Bonaigua und die tiefere Alternative über N-230 und Vielha-Tunnel aus.");
-  } else if (/vielha|val d.?aran/i.test(routeText) && /\bN-?230\b/i.test(routeText)) {
-    details.push("Die geprüfte Verbindung nach Vielha nutzt die N-230-/Tunnelachse statt Pòrt dera Bonaigua.");
-  }
   return details;
 };
 
@@ -390,10 +358,7 @@ const assignAccommodationSlots = (expected, current) => {
   const unused = new Set(current.map((stay) => stay.id).filter(Boolean));
   const assigned = expected.map((stay) => {
     let id = "";
-    if (stay.startDate === FERRY_DATE || /fahre|kabine/.test(placeKey(stay.title))) id = "ferry";
-    else if (stay.startDate >= "2026-10-22") id = "aosta";
-    if (!unused.has(id)) id = "";
-    if (!id) {
+    {
       const target = placeKey(stay.title);
       const match = current.find((candidate) => {
         if (!unused.has(candidate.id)) return false;
@@ -402,7 +367,7 @@ const assignAccommodationSlots = (expected, current) => {
       });
       id = match?.id || "";
     }
-    if (!id) id = Array.from(unused).find((candidate) => !["ferry", "aosta"].includes(candidate)) || "";
+    if (!id) id = Array.from(unused)[0] || "";
     if (!id) throw new Error("Für einen Unterkunftsstopp ist kein freier Anzeigeplatz verfügbar.");
     unused.delete(id);
     return { ...stay, slotId: id };
@@ -433,8 +398,8 @@ const normalizeStayState = (stays, allIds) => {
   return state;
 };
 
-const verifyAccommodationState = (days, state) => {
-  const expected = expectedStays(days);
+const verifyAccommodationState = (days, state, context = normalizeTripContext({})) => {
+  const expected = expectedStays(days, context);
   const active = Object.entries(state || {})
     .filter(([, stay]) => stay && stay.inactive !== "true")
     .map(([id, stay]) => ({ id, ...stay, nightCount: Number(stay.nightCount || 0), order: Number(stay.order || 0) }))
@@ -509,8 +474,8 @@ const accommodationNameIssue = (stay) => ["firstChoice", "alternative"].find((fi
   return value && (value.length > 120 || /https?:\/\//i.test(value) || /(?:adresse|address|parkplatz|parking|zufahrt|motorrad)/i.test(value));
 });
 
-const createAccommodationPlan = async ({ draftDays, accommodationContext, routeSummary }) => {
-  const expected = expectedStays(draftDays);
+const createAccommodationPlan = async ({ draftDays, accommodationContext, routeSummary, context = normalizeTripContext({}) }) => {
+  const expected = expectedStays(draftDays, context);
   const { allSlotIds, expandedContext } = accommodationContextWithSlots(expected, accommodationContext);
   const slotPlan = assignAccommodationSlots(expected, expandedContext);
   const currentById = new Map(expandedContext.map((stay) => [stay.id, stay]));
@@ -592,29 +557,27 @@ module.exports = async (request, response) => {
     if (!Array.isArray(payload.days) || payload.days.length < 2) throw new Error("Der aktuelle Reiseplan fehlt.");
 
     const currentDays = payload.days.map(normalizeInputDay);
-    const ferryIndex = ferryIndexOf(currentDays);
     const context = tripContext(payload);
 
     if (payload.stage === "accommodations") {
-      if (ferryIndex < 0 || isoForDay(ferryIndex) !== FERRY_DATE) throw new Error("Der feste Fährtermin am 21.10.2026 wurde im aktuellen Plan nicht gefunden.");
-      if (payload.routeVerified !== true || Number(payload.routeVerificationVersion) < 2) {
+      if (payload.routeVerified !== true || Number(payload.routeVerificationVersion) < PLANNING_POLICY.version) {
         throw new Error("Die Route muss vor der Unterkunftsplanung mit der aktuellen Prüfung kontrolliert werden.");
       }
-      const continuityIssue = routeContinuityIssue(currentDays, 1, ferryIndex);
+      const continuityIssue = routeContinuityIssue(currentDays, 1, currentDays.length);
       if (continuityIssue) throw new Error(`Der bestätigte Routenentwurf ist nicht durchgängig: ${continuityIssue}`);
       const accommodationContext = Array.isArray(payload.accommodations) ? payload.accommodations.slice(0, 30) : [];
       const routeSummary = Array.isArray(payload.routeSummary)
         ? payload.routeSummary.slice(0, 30).map((item) => cleanText(item, 800)).filter(Boolean)
         : [];
-      const accommodationPlan = await createAccommodationPlan({ draftDays: currentDays, accommodationContext, routeSummary });
-      const accommodationAudit = verifyAccommodationState(currentDays, accommodationPlan.accommodations);
+      const accommodationPlan = await createAccommodationPlan({ draftDays: currentDays, accommodationContext, routeSummary, context });
+      const accommodationAudit = verifyAccommodationState(currentDays, accommodationPlan.accommodations, context);
       json(response, 200, { ok: true, accommodationPlan, accommodationAudit });
       console.log(JSON.stringify({ level: "info", message: "accommodation draft completed", ms: Date.now() - startedAt }));
       return;
     }
 
     if (payload.stage === "verify-accommodations") {
-      const accommodationAudit = verifyAccommodationState(currentDays, payload.accommodations || {});
+      const accommodationAudit = verifyAccommodationState(currentDays, payload.accommodations || {}, context);
       json(response, 200, { ok: true, accommodationAudit });
       console.log(JSON.stringify({ level: "info", message: "accommodation verification completed", ms: Date.now() - startedAt }));
       return;
@@ -623,14 +586,15 @@ module.exports = async (request, response) => {
     if (payload.stage === "verify-route") {
       const routeStyleOnly = payload.change?.scope === "route-style";
       const singleStage = routeStyleOnly || payload.change?.scope === "stage";
-      const boundaryIndex = ferryIndex >= 0 ? ferryIndex : currentDays.length;
       const replaceFromDay = Math.max(1, Math.min(currentDays.length, Number(payload.replaceFromDay) || 1));
       const startIndex = replaceFromDay - 1;
+      const protectedAnchor = nextProtectedAnchor(context, currentDays, startIndex);
+      const boundaryIndex = protectedAnchor?.dayIndex ?? currentDays.length;
       const replaceCount = singleStage ? 1 : boundaryIndex - startIndex;
       if (replaceCount < 1) throw new Error("Der gewählte Routenabschnitt ist leer.");
       const endIndex = startIndex + replaceCount;
       const verificationStartedAt = Date.now();
-      const verificationInstructions = `Du bist die unabhaengige Qualitaetspruefung fuer ein Motorrad-Roadbook. Pruefe den Kandidaten mit Websuche und korrigiere ihn direkt, bevor der Nutzer ihn sieht. Start, Ziel und Uebernachtung jedes bereitgestellten Tages sind feste Grenzen und duerfen nicht veraendert werden. ${singleStage ? "Pruefe ausschliesslich die einzelne ausgewaehlte Tagesetappe. Halte eine in routeStyle verlangte Routenart ein." : "Pruefe jeden bereitgestellten Fahrtag vollstaendig."} Verifiziere eine lueckenlose geografische Strassenfolge, Wegpunktreihenfolge, plausible Kilometer und Fahrzeit sowie asphaltierte, fuer zwei beladene Motorraeder geeignete Strassen. Keine Offroad-, Pisten-, Strand-, Wald- oder unnoetig schmalen Abenteuerstrassen. Pruefe aktuelle Sperren, Baustellen, Grenz- und Saisonrisiken. Nutze fuer jeden Fahrtag mindestens eine offizielle Verkehrs-, Strassen- oder Tourismusquelle UND zusaetzlich eine unabhaengige Motorradquelle. sourceChecks muss fuer jeden Fahrtag einen Eintrag mit der echten absoluten Tagesnummer, beiden HTTPS-URLs und einer kurzen routingEvidence enthalten, wie dieser Quercheck die konkrete Streckenwahl bestaetigt oder korrigiert hat. Foren, Wikipedia und Motorradblogs duerfen nie die alleinige Grundlage fuer Befahrbarkeit oder Sperrlage sein. Beachte tripContext mit Laendern, Fixpunkten und bevorzugten Quellen. Schreibe keine Quellenlinks in die Roadbook-Felder. Der erste Tag beginnt am Uebernachtungsort von previousDay; bei nextDay muss der Abschnitt lueckenlos anschliessen. ${ferryIndex >= 0 ? "Der Faehren-Fixpunkt bleibt unveraendert." : "Die Tagesgrenzen bleiben unveraendert."} Gib exakt replaceFromDay, replaceCount und gleich viele Tage aus. Jeder Fahrtag braucht konkrete Strassen, Kilometer und Fahrzeit. decision ist immer 'Vorgeschlagene Planaenderung'. Gib ausschliesslich das strukturierte Ergebnis aus.`;
+      const verificationPrompt = verificationInstructions({ context, singleStage, routeStyleOnly });
       const chunkSize = singleStage ? 1 : 4;
       const chunks = [];
       for (let chunkStart = startIndex; chunkStart < endIndex; chunkStart += chunkSize) {
@@ -642,14 +606,14 @@ module.exports = async (request, response) => {
         schema: routeSchema,
         web: true,
         reasoningEffort: routeStyleOnly ? "low" : "medium",
-        instructions: `${verificationInstructions} requestedChange enthaelt die Nutzerpraeferenzen und ist verbindlich. Wenn dort ein Kilometerbereich oder ein ruhiger Rhythmus gefordert wird, muss die korrigierte Etappe diesen einhalten; entferne dafuer optionale Wegpunkte oder Umwege, ohne Start, Tagesziel oder Uebernachtung zu aendern.`,
+        instructions: `${verificationPrompt} requestedChange enthält die Nutzerpräferenzen und ist verbindlich.`,
         input: JSON.stringify({
           requestedChange: payload.change || {},
           tripContext: context,
           replaceFromDay: chunkStart + 1,
           replaceCount: chunkEnd - chunkStart,
           previousDay: currentDays[chunkStart - 1] || null,
-          fixedFerry: ferryIndex >= 0 ? { day: ferryIndex + 1, date: FERRY_DATE, checkIn: "08:30", dayData: currentDays[ferryIndex] } : null,
+          protectedAnchor: protectedAnchor ? { ...protectedAnchor, day: protectedAnchor.dayIndex + 1, dayData: currentDays[protectedAnchor.dayIndex] } : null,
           nextDay: currentDays[chunkEnd] || null,
           candidateSegment: currentDays.slice(chunkStart, chunkEnd)
         })
@@ -695,10 +659,9 @@ module.exports = async (request, response) => {
         ...verifiedPlan.days.map(normalizeInputDay),
         ...currentDays.slice(endIndex)
       ];
-      const verifiedFerryIndex = ferryIndexOf(verifiedDays);
-      if (verifiedDays.length !== currentDays.length || (ferryIndex >= 0 && (verifiedFerryIndex !== ferryIndex || isoForDay(verifiedFerryIndex) !== FERRY_DATE))) {
-        throw new Error("Die automatisch geprüfte Route verletzt den festen Fährtermin.");
-      }
+      if (verifiedDays.length !== currentDays.length) throw new Error("Die automatische Routenprüfung hat die Tageszahl verändert.");
+      const protectedIssue = fixPointIssue(currentDays, verifiedDays, context);
+      if (protectedIssue) throw new Error(`Die automatische Routenprüfung verletzt einen Fixpunkt: ${protectedIssue}`);
       const lockedStart = payload.lockedStart && typeof payload.lockedStart === "object" ? payload.lockedStart : null;
       const startIssue = protectedStartIssue(verifiedDays, lockedStart);
       if (startIssue) throw new Error(`Die automatische Routenprüfung verletzt einen Fixpunkt: ${startIssue}`);
@@ -729,13 +692,14 @@ module.exports = async (request, response) => {
           createdAt: new Date().toISOString(),
           phase: "route",
           verified: true,
-          verificationVersion: 3,
+          verificationVersion: PLANNING_POLICY.version,
+          planningPolicyId: PLANNING_POLICY.id,
           replaceFromDay,
           replaceCount,
           lockedStay,
           lockedStart,
           request: payload.change || {},
-          summary: routeVerificationSummary(verifiedDays, startIndex, endIndex, currentDays, ferryIndex),
+          summary: routeVerificationSummary(verifiedDays, startIndex, endIndex, currentDays, protectedAnchor),
           decision,
           openItems: verifiedPlan.openItems,
           sourceChecks: verifiedPlan.sourceChecks,
@@ -746,8 +710,6 @@ module.exports = async (request, response) => {
       return;
     }
 
-    if (ferryIndex < 0 || isoForDay(ferryIndex) !== FERRY_DATE) throw new Error("Der feste Fährtermin am 21.10.2026 wurde im aktuellen Plan nicht gefunden.");
-
     const requestedType = cleanText(payload.change?.type, 80);
     const requestedPlace = cleanText(payload.change?.place, 160);
     const requestedInstruction = cleanText(payload.change?.instruction, 1200);
@@ -755,13 +717,16 @@ module.exports = async (request, response) => {
       throw new Error("Bitte beschreibe die gewünschte Richtung oder Anpassung.");
     }
     const placeBased = ["extend", "shorten", "skip"].includes(requestedType);
-    const placeIndex = placeBased ? placeIndexOf(currentDays.slice(0, ferryIndex), requestedPlace) : -1;
+    const placeIndex = placeBased ? placeIndexOf(currentDays, requestedPlace) : -1;
     if (placeBased && placeIndex < 0) throw new Error(`Ort oder Etappe „${requestedPlace || "unbekannt"}“ wurde im aktuellen Plan nicht gefunden.`);
     const startDay = placeBased
       ? placeIndex + 1
-      : Math.max(1, Math.min(ferryIndex, Number(payload.change?.startDay) || 1));
+      : Math.max(1, Math.min(currentDays.length, Number(payload.change?.startDay) || 1));
     const startIndex = startDay - 1;
-    const replaceCount = ferryIndex - startIndex;
+    const protectedAnchor = nextProtectedAnchor(context, currentDays, startIndex);
+    const boundaryIndex = protectedAnchor?.dayIndex ?? currentDays.length;
+    const replaceCount = boundaryIndex - startIndex;
+    if (replaceCount < 1) throw new Error("Hinter dem gewählten Tag liegt kein frei planbarer Abschnitt vor dem nächsten Fixpunkt.");
     const changeTypes = {
       extend: "Aufenthalt verlaengern",
       shorten: "Aufenthalt verkuerzen",
@@ -789,18 +754,18 @@ module.exports = async (request, response) => {
 
     const routeStartedAt = Date.now();
     const changeScopeInstruction = requestedType === "reroute"
-      ? "Der Nutzer will den Reiseverlauf ab replaceFromDay bewusst neu ausrichten. Behandle instruction als Zielbild fuer Richtung, Regionen und Wunschorte. Du darfst alle Tage ab dort bis zur Faehre neu aufbauen."
+      ? "Der Nutzer will den Reiseverlauf ab replaceFromDay bewusst neu ausrichten. Behandle instruction als Zielbild für Richtung, Regionen und Wunschorte. Du darfst alle Tage bis zum nächsten Fixpunkt neu aufbauen."
       : (requestedType === "free"
-        ? "Setze die beschriebene Anpassung ab replaceFromDay um. Behalte nicht betroffene Orte, Etappen und Ruhetage moeglichst unveraendert und aendere nur, was zur konsistenten Umsetzung notwendig ist."
-        : "Setze die konkrete Aenderung um und halte den uebrigen Verlauf so stabil wie sinnvoll.");
-    const routeInstructions = `Du planst eine reale Motorradreise fuer zwei Personen auf zwei beladenen Triumph-Motorraedern. Durchsuche fuer jede geaenderte Fahrtetappe aktuelle Websites, bevor du die Route festlegst. Bevorzuge offizielle Strassenbehoerden, Pass- und Verkehrsstellen, Faehrenbetreiber sowie serioese lokale Tourismus- und Kartenquellen. Pruefe Strassenverlauf, Asphaltierung, saisonale Passrisiken, dauerhafte Beschraenkungen, Umweltzonen und problematische Altstadtzufahrten. Unterscheide klar zwischen strukturellen oder saisonalen Risiken und einer nur heute bestehenden temporaeren Sperrung; eine aktuelle Tagesmeldung darf nicht ungeprueft als Zustand fuer September oder Oktober 2026 behandelt werden. Plane ruhig, sicher und motorradfreundlich, nicht als Kurvenmaximierung. Keine Offroad-Strecken, Pisten, Strand- oder Waldwege. Historische Ortskerne vermeiden. Die Faehre Barcelona-Genua am 21.10.2026 mit Check-in 08:30 ist ein unverrueckbarer Fixpunkt. Der Reiseplan muss gleich viele Kalendertage behalten. ${changeScopeInstruction} Wenn previousDay vorhanden ist, muss der erste neue Tag an dessen Uebernachtungsort beginnen. Danach muss jede Etappe am Uebernachtungsort des Vortags beginnen und am eigenen Uebernachtungsort enden; es darf keine Ortsluecken oder gedanklichen Transfers geben. Verwende nur tatsaechlich zusammenhaengende Strassen und plausible Distanzen. Bewerte Hochpaesse in den Pyrenaeen und Picos Anfang Oktober realistisch: Paesse ueber 1.800 m muessen in note ausdruecklich benannt werden und eine konkrete Schlechtwetteralternative auf tieferen Hauptstrassen erhalten. Bezeichne solche Etappen nicht als passfrei oder harmlos. Jede Rundtour braucht konkrete asphaltierte Wegpunkte in sinnvoller Reihenfolge. Bei Verlaengern oder Verkuerzen ist targetNightsAtPlace eine harte Vorgabe. Entscheide pragmatisch und erklaere den Ausgleich in summary. Bereits gefahrene Tage vor replaceFromDay werden nie geaendert. sourceChecks darf in diesem ersten Entwurf leer bleiben; der verbindliche doppelte Quellen-Quercheck folgt im separaten Pruefschritt. Gib ausschliesslich das geforderte strukturierte Ergebnis aus.`;
+        ? "Setze die beschriebene Anpassung ab replaceFromDay um. Behalte nicht betroffene Orte, Etappen und Ruhetage möglichst unverändert."
+        : "Setze die konkrete Änderung um und halte den übrigen Verlauf so stabil wie sinnvoll.");
+    const routeInstructions = routeDraftInstructions({ context, scopeInstruction: changeScopeInstruction });
     const routeInput = {
       requestedChange,
       replaceFromDay: startDay,
       replaceCount,
       previousDay: currentDays[startIndex - 1] || null,
-      fixedFerry: { day: ferryIndex + 1, date: FERRY_DATE, checkIn: "08:30", dayData: currentDays[ferryIndex] },
-      currentSegment: currentDays.slice(startIndex, ferryIndex)
+      protectedAnchor: protectedAnchor ? { ...protectedAnchor, day: protectedAnchor.dayIndex + 1, dayData: currentDays[protectedAnchor.dayIndex] } : null,
+      currentSegment: currentDays.slice(startIndex, boundaryIndex)
     };
     const requestRoutePlan = (input, instructions = routeInstructions) => createStructuredResponse({
       name: "roadbook_route_draft",
@@ -816,12 +781,11 @@ module.exports = async (request, response) => {
       const days = [
         ...currentDays.slice(0, startIndex),
         ...plan.days.map(normalizeInputDay),
-        ...currentDays.slice(ferryIndex)
+        ...currentDays.slice(boundaryIndex)
       ];
-      const draftFerryIndex = ferryIndexOf(days);
-      if (days.length !== currentDays.length || draftFerryIndex !== ferryIndex || isoForDay(draftFerryIndex) !== FERRY_DATE) {
-        throw new Error("Der Routenvorschlag verletzt den festen Fährtermin.");
-      }
+      if (days.length !== currentDays.length) throw new Error("Der Routenvorschlag verändert die Tageszahl.");
+      const protectedIssue = fixPointIssue(currentDays, days, context);
+      if (protectedIssue) throw new Error(`Der Routenvorschlag verletzt einen Fixpunkt: ${protectedIssue}`);
       return days;
     };
 
@@ -846,7 +810,7 @@ module.exports = async (request, response) => {
         }
       }
     }
-    let continuityIssue = routeContinuityIssue(draftDays, startIndex, ferryIndex);
+    let continuityIssue = routeContinuityIssue(draftDays, startIndex, boundaryIndex);
     if (continuityIssue) {
       routePlan = await requestRoutePlan({
         ...routeInput,
@@ -854,7 +818,7 @@ module.exports = async (request, response) => {
         correction: `Der vorherige Vorschlag hat eine unzulaessige Ortsluecke: ${continuityIssue} Korrigiere alle Tagesuebergaenge. Der erste neue Tag beginnt zwingend am Uebernachtungsort von previousDay.`
       }, `${routeInstructions} Der vorherige Vorschlag war geografisch nicht durchgaengig. Korrigiere die genannte Ortsluecke und pruefe danach jeden weiteren Tagesuebergang.`);
       draftDays = assembleDraftDays(routePlan);
-      continuityIssue = routeContinuityIssue(draftDays, startIndex, ferryIndex);
+      continuityIssue = routeContinuityIssue(draftDays, startIndex, boundaryIndex);
       if (continuityIssue) {
         throw new Error(`Der Routenvorschlag ist nicht durchgängig: ${continuityIssue} Der aktuelle Plan wurde nicht verändert.`);
       }
@@ -891,7 +855,7 @@ module.exports = async (request, response) => {
     }
 
     const accommodationContext = Array.isArray(payload.accommodations) ? payload.accommodations.slice(0, 30) : [];
-    const accommodationPlan = await createAccommodationPlan({ draftDays, accommodationContext, routeSummary: routePlan.summary });
+    const accommodationPlan = await createAccommodationPlan({ draftDays, accommodationContext, routeSummary: routePlan.summary, context });
 
     json(response, 200, {
       ok: true,
@@ -913,4 +877,4 @@ module.exports = async (request, response) => {
   }
 };
 
-module.exports._test = { accommodationContextWithSlots, accommodationNameIssue, contiguousPlaceNights, expectedStays, ferryIndexOf, isoForDay, maximumDistance, normalizeInputDay, placeIndexOf, placesMatch, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };
+module.exports._test = { accommodationContextWithSlots, accommodationNameIssue, contiguousPlaceNights, expectedStays, isoForDay, maximumDistance, normalizeInputDay, placeIndexOf, placesMatch, protectedStartIssue, routeAuditSummary, routeContinuityIssue, routeDetailIssue, routeVerificationSummary, verifyAccommodationState };

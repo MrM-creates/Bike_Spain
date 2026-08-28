@@ -4,7 +4,7 @@
   const params = new URLSearchParams(window.location.search);
   const requestedView = params.get("view") === "roadbook" ? "roadbook" : "overview";
   const catalog = window.MotorcycleTripCatalog;
-  const requestedTripId = params.get("trip") || catalog?.defaultTripId || "trip_spanien_2026";
+  const requestedTripId = params.get("trip") || catalog?.defaultTripId || window.__TRIP_DATA__?.trip?.id || "";
 
   const bridge = window.__ROADBOOK_READ_MODEL__;
   const modelApi = window.MotorcycleTravelModel;
@@ -48,6 +48,7 @@
 
   let model;
   let activeSnapshot;
+  let publishedDefaultSnapshot;
   let activeView = "overview";
   let listMode = "days";
   let selectedStage = 0;
@@ -74,10 +75,11 @@
   let pendingRouteStyleChange = null;
   let planDraftStatus = { active: false };
   let showPlanDraftDialog = () => {};
-  const isLegacyTrip = () => model?.trip?.id === "trip_spanien_2026";
+  const isServerManagedTrip = () => model?.trip?.capabilities?.storage === "server";
+  const usesKmlNarrative = () => model?.trip?.capabilities?.mapNarrativeSource === "kml";
 
   const hydrateRouteStyleDrafts = async () => {
-    if (!isLegacyTrip()) return;
+    if (!isServerManagedTrip()) return;
     if (typeof bridge.getRouteStyleDrafts !== "function") return;
     const changes = await bridge.getRouteStyleDrafts();
     (Array.isArray(changes) ? changes : []).forEach((change) => {
@@ -91,13 +93,13 @@
   const updateDraftChrome = () => {
     const count = confirmedRouteStyleDrafts.size;
     const status = navRoot.querySelector(".generic-status");
-    if (status) status.textContent = !isLegacyTrip() ? "Entwurf · lokal" : count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : planStatusLabel();
+    if (status) status.textContent = !isServerManagedTrip() ? "Entwurf · lokal" : count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : planStatusLabel();
     const loaded = root.querySelector(".generic-loaded-plan strong");
-    if (loaded) loaded.textContent = !isLegacyTrip() || count || isOriginalDraft() || isPlanDraft() ? "Lokaler Entwurf" : "Online";
+    if (loaded) loaded.textContent = !isServerManagedTrip() || count || isOriginalDraft() || isPlanDraft() ? "Lokaler Entwurf" : "Online";
   };
 
   const persistRouteStyle = async (stageIndex, style) => {
-    if (!isLegacyTrip()) throw new Error("Die Routenart dieser Reise wird über „Etappe anpassen“ geändert und dabei automatisch geprüft.");
+    if (!isServerManagedTrip()) throw new Error("Die Routenart dieser Reise wird über „Etappe anpassen“ geändert und dabei automatisch geprüft.");
     if (typeof bridge.saveRouteStyleDraft !== "function") return;
     const stage = model.revision.stages[stageIndex];
     const route = routeFor(stage);
@@ -128,8 +130,8 @@
   const dateRange = () => `${formatDate(model.revision.stages[0].date)} – ${formatDate(model.revision.stages.at(-1).date)}`;
   const bookingLabel = (booking) => booking?.status === "booked" ? "Gebucht" : booking?.status === "requested" ? "Angefragt" : "Offen";
   const bookingClass = (booking) => booking?.status === "booked" ? "booked" : booking?.status === "requested" ? "requested" : "open";
-  const parkingLabel = (accommodation, stay) => /fahre|kabine/.test(normalize(`${place(stay?.placeId).name} ${accommodation?.name || ""}`))
-    ? "Motorradverladung gemäss Reederei"
+  const parkingLabel = (accommodation, stay) => /fahre|kabine|nachtzug|transport/.test(normalize(`${place(stay?.placeId).name} ${accommodation?.name || ""}`))
+    ? "Motorradmitnahme gemäss Transportanbieter"
     : accommodation?.motorcycleParking === "confirmed" ? "Motorradgarage bestätigt" : "Sichere Abstellung prüfen";
   const travelDayNumber = (stageIndex) => model.revision.stages[stageIndex]?.dayNumber || stageIndex + 1;
   const dayRangeLabel = (startIndex, endIndex = startIndex) => startIndex === endIndex
@@ -143,7 +145,7 @@
   const stayMarkerGroups = () => modelApi.groupStayRanges(model.revision.stays, model.revision.stages);
   const isOriginalDraft = () => model?.source?.planKind === "original-draft";
   const isPlanDraft = () => model?.source?.planKind === "plan-draft";
-  const planLabel = () => !isLegacyTrip() ? "Reiseentwurf" : isOriginalDraft() ? "Originalplan" : (isPlanDraft() ? "Planentwurf" : "Aktueller Plan");
+  const planLabel = () => !isServerManagedTrip() ? "Reiseentwurf" : isOriginalDraft() ? "Originalplan" : (isPlanDraft() ? "Planentwurf" : "Aktueller Plan");
   const planStatusLabel = () => isOriginalDraft()
     ? "Originalplan · lokaler Entwurf"
     : (isPlanDraft() ? "Planentwurf · lokal" : "Aktueller Plan · online");
@@ -185,26 +187,21 @@
   });
 
   async function loadKml() {
-    const response = await fetch("/reiseplanung-verfeinert-2026.kml", { cache: "no-store" });
+    if (!model.trip.mapKmlUrl) return new DOMParser().parseFromString("<kml></kml>", "application/xml");
+    const response = await fetch(model.trip.mapKmlUrl, { cache: "no-store" });
     if (!response.ok) throw new Error("KML-Korridor konnte nicht geladen werden.");
     return new DOMParser().parseFromString(await response.text(), "application/xml");
   }
 
   async function loadMapData() {
     if (!mapDataPromise) {
-      if (!isLegacyTrip() && requestedTripId === "trip_adria_2026") {
-        mapDataPromise = fetch("/assets/adria-routes.geojson", { cache: "no-store" }).then((response) => {
-          if (!response.ok) throw new Error("Der Strassenverlauf der Balkanreise konnte nicht geladen werden.");
-          return response.json();
-        }).then((routes) => ({ xml: new DOMParser().parseFromString("<kml></kml>", "application/xml"), routes }));
-        return mapDataPromise;
-      }
+      const routeUrl = model.trip.routeGeometryUrl;
       mapDataPromise = Promise.all([
         loadKml(),
-        fetch("/assets/roadbook-routes.geojson", { cache: "no-store" }).then((response) => {
+        routeUrl ? fetch(routeUrl, { cache: "no-store" }).then((response) => {
           if (!response.ok) throw new Error("Straßenverlauf konnte nicht geladen werden.");
           return response.json();
-        })
+        }) : Promise.resolve({ type: "FeatureCollection", features: [] })
       ]).then(([xml, routes]) => ({ xml, routes }));
     }
     return mapDataPromise;
@@ -213,7 +210,7 @@
   const leafletCoordinates = (feature) => feature.geometry.coordinates.map(([longitude, latitude]) => [latitude, longitude]);
   const stageIndexForFeature = (feature) => {
     const day = Number(feature.properties.day);
-    const matched = feature.properties.ferry
+    const matched = feature.properties.transport || feature.properties.ferry
       ? model.revision.stages.findIndex((stage) => stage.kind === "transport")
       : model.revision.stages.findIndex((stage) => Number(stage.legacy?.day) === day);
     return matched >= 0 ? matched : Math.max(0, day - 1);
@@ -270,7 +267,7 @@
     const dialog = document.createElement("dialog");
     dialog.className = "generic-journeys-dialog";
     dialog.id = "generic-journeys-dialog";
-    const tripRows = (catalog?.list?.() || [{ id: model.trip.id, name: model.trip.name }]).map((trip) => {
+    const tripRows = (catalog?.list?.(publishedDefaultSnapshot) || [{ id: model.trip.id, name: model.trip.name }]).map((trip) => {
       const active = trip.id === model.trip.id;
       const range = trip.startDate && trip.endDate ? `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}` : "Reisedaten offen";
       return `<div class="generic-journey-row"><div><strong>${escapeHtml(trip.name)}</strong><span>${escapeHtml(range)} · ${trip.status === "draft" ? "Entwurf" : "veröffentlicht"}</span></div><button class="generic-secondary" type="button" data-trip-id="${escapeHtml(trip.id)}">${active ? "Geöffnet" : "Öffnen"}</button></div>`;
@@ -342,6 +339,40 @@
         submit.textContent = "Erneut prüfen & speichern";
       }
     });
+    const tripPlanner = document.createElement("dialog");
+    tripPlanner.className = "generic-journeys-dialog generic-stage-editor-dialog";
+    tripPlanner.id = "generic-trip-planner-dialog";
+    tripPlanner.innerHTML = `<form id="generic-trip-planner-form"><div class="generic-dialog-head"><div><h2>Reise anpassen</h2><p>Die Route wird ab dem gewählten Tag bis zum nächsten geschützten Fixpunkt neu geplant.</p></div><button class="generic-dialog-close" type="button" aria-label="Dialog schließen">×</button></div><div class="generic-form-grid"><label>Neu planen ab<select name="startDay" required></select></label><label class="wide">Was soll sich ändern?<textarea name="instruction" required placeholder="z. B. mehr kleine Küstenstrassen, zwei ruhige Tage in Montenegro und keine Autobahn"></textarea></label></div><p class="generic-context-note" id="generic-trip-planner-status">ChatGPT prüft den Entwurf mit offiziellen Stellen und mindestens einer unabhängigen Motorradquelle. Geschützte Fixpunkte bleiben erhalten.</p><div class="generic-dialog-foot"><span>Der bisherige Plan bleibt erhalten, bis die Prüfung erfolgreich ist.</span><button class="generic-primary" type="submit">Route erstellen &amp; prüfen</button></div></form>`;
+    document.body.append(tripPlanner);
+    tripPlanner.querySelector(".generic-dialog-close").addEventListener("click", () => tripPlanner.close());
+    tripPlanner.querySelector("#generic-trip-planner-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const submit = form.querySelector("button[type='submit']");
+      const status = form.querySelector("#generic-trip-planner-status");
+      submit.disabled = true;
+      submit.textContent = "Route wird geplant und geprüft …";
+      status.textContent = "Strassen, Fahrzeiten, saisonale Risiken, Fixpunkte und Quellen werden abgeglichen.";
+      try {
+        if (typeof bridge.planTripRoute !== "function") throw new Error("Die automatische Reiseplanung ist momentan nicht verfügbar.");
+        const startDay = Number(form.elements.startDay.value) || 1;
+        const verified = await bridge.planTripRoute({
+          days: activeSnapshot.days,
+          trip: activeSnapshot.trip,
+          change: { type: "reroute", startDay, instruction: form.elements.instruction.value.trim() }
+        });
+        activeSnapshot.days = verified.days;
+        activeSnapshot.verification = { verified: true, verificationVersion: verified.verificationVersion, checkedAt: verified.createdAt, summary: verified.summary || [], sourceChecks: verified.sourceChecks || [], openItems: verified.openItems || [] };
+        activeSnapshot.publishedVersion = new Date().toISOString();
+        catalog.saveSnapshot(activeSnapshot);
+        window.location.reload();
+      } catch (error) {
+        status.textContent = `Nicht gespeichert: ${error.message}`;
+        submit.disabled = false;
+        submit.textContent = "Erneut erstellen & prüfen";
+      }
+    });
+
     const exportDialog = document.createElement("dialog");
     exportDialog.className = "generic-journeys-dialog generic-export-dialog";
     exportDialog.id = "generic-export-dialog";
@@ -455,13 +486,13 @@
       googleLink.href = googleMapsUrl || "#";
       googleLink.setAttribute("aria-disabled", String(!googleMapsUrl));
       exportDialog.querySelector("#generic-export-day").textContent = `Tag ${travelDayNumber(selectedStage)} · ${stage.title} · ${routeStyleLabel(selectedStyle)} ausgewählt. Google Maps berechnet den Verlauf beim Öffnen neu.`;
-      exportDialog.querySelectorAll("a[download]").forEach((link) => { link.hidden = !isLegacyTrip(); });
+      exportDialog.querySelectorAll("a[download]").forEach((link) => { link.hidden = model.trip.capabilities?.downloads !== true; });
       exportDialog.showModal();
       closeMore();
     });
     navRoot.querySelector("#generic-accommodations").addEventListener("click", () => { setView("roadbook"); setListMode("stays"); closeMore(); });
     navRoot.querySelector("#generic-help").addEventListener("click", () => { document.querySelector("#nav-help")?.click(); closeMore(); });
-    navRoot.querySelector("#generic-original-plan").hidden = !isLegacyTrip();
+    navRoot.querySelector("#generic-original-plan").hidden = model.trip.capabilities?.originalPlan !== true;
     navRoot.querySelector("#generic-original-plan").addEventListener("click", () => {
       closeMore();
       showOriginalDialog();
@@ -490,7 +521,7 @@
     const requested = revision.bookings.filter((booking) => booking.status === "requested").length;
     const open = Math.max(0, revision.stays.length - booked - requested);
     root.innerHTML = `${isOriginalDraft() ? `<section class="generic-original-draft-banner" aria-label="Aktionen für den Originalplan"><div><strong>Originalplan als Entwurf geladen</strong><span>Der gemeinsame Plan bleibt unverändert, bis du ihn veröffentlichst.</span><small class="generic-original-bar-feedback" aria-live="polite"></small></div><div><button class="generic-secondary" id="generic-original-bar-discard" type="button">Beim aktuellen Plan bleiben</button><button class="generic-primary" id="generic-original-bar-publish" type="button">Originalplan veröffentlichen</button></div></section>` : (isPlanDraft() ? `<section class="generic-original-draft-banner generic-plan-draft-banner" aria-label="Aktionen für den Planentwurf"><div><strong>Planentwurf wird lokal angezeigt</strong><span>Der gemeinsame Plan bleibt unverändert, bis du ihn veröffentlichst.</span></div><div><button class="generic-secondary" id="generic-plan-bar-discard" type="button">Entwurf verwerfen</button><button class="generic-primary" id="generic-plan-bar-review" type="button">Entwurf prüfen</button></div></section>` : "")}<section id="generic-overview-panel">
-      <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">${escapeHtml(trip.characterTitle || "Kurven, Küsten und spanisches Hinterland")}</h1><p>${escapeHtml(trip.characterText || "Eine ausgedehnte Motorradreise von den Westalpen über Südfrankreich bis nach Andalusien. Kurvige Berg- und Küstenstraßen wechseln sich mit entspannten Ruhetagen ab; die gebuchte Fähre von Barcelona nach Genua setzt den festen Schlusspunkt in Spanien.")}</p></div><div class="generic-overview-date">${escapeHtml(planLabel())} · ${(!isLegacyTrip() || isOriginalDraft() || isPlanDraft()) ? "lokaler Entwurf" : "online"}<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
+      <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">${escapeHtml(trip.characterTitle || trip.name)}</h1><p>${escapeHtml(trip.characterText || "Motorradreise mit individuell geplanten Etappen, Aufenthalten und geschützten Fixpunkten.")}</p></div><div class="generic-overview-date">${escapeHtml(planLabel())} · ${(!isServerManagedTrip() || isOriginalDraft() || isPlanDraft()) ? "lokaler Entwurf" : "online"}<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
       <section class="generic-route-card" aria-label="Karte und Reiseverlauf"><div class="generic-map-wrap"><div id="trip-overview-map" aria-label="Interaktive Übersichtskarte"></div><div class="generic-map-loading">Karte und aktuelle Route werden geladen …</div><span class="generic-map-label" id="generic-overview-map-label">${escapeHtml(planLabel())} · dieselbe Route wie im Roadbook</span><button class="generic-map-reset" id="generic-map-reset" type="button">Gesamte Route</button></div><div class="generic-route-story"><h2>Reiseverlauf</h2><p>Karte und Beschreibung sind miteinander verbunden.</p>${revision.narrativeSegments.map((segment, index) => `<button class="generic-story-segment" type="button" data-story="${index}" aria-current="false"><strong>${escapeHtml(segment.title)}</strong>${escapeHtml(segment.text)}</button>`).join("")}</div></section>
       <section class="generic-overview-stats" aria-label="Eckdaten"><div class="generic-overview-stat"><strong>${revision.stages.length} Tage</strong><span>Gesamtdauer</span></div><div class="generic-overview-stat"><strong>${rideCount}</strong><span>Fahretappen</span></div><div class="generic-overview-stat"><strong>${restCount}</strong><span>Ruhetage</span></div><div class="generic-overview-stat"><strong>${km.format(totalDistance)} km</strong><span>Planwerte</span></div><div class="generic-overview-stat"><strong>${trip.motorcycleCount} Motorräder</strong><span>Reiseparameter</span></div></section>
       <section class="generic-overview-details"><article class="generic-overview-card"><div class="generic-card-head"><h2>Fixpunkte</h2><span>Automatisch geschützt</span></div><ul class="generic-fix-list">${revision.fixPoints.map((fix) => `<li><span class="generic-fix-icon">${fix.kind === "transport" ? "⚓" : fix.kind === "start" ? "●" : "◎"}</span><span><strong>${escapeHtml(fix.title)}</strong><small>${escapeHtml(fix.startsAt ? formatDate(fix.startsAt.slice(0, 10)) : "Verbindlich")}</small></span><span class="generic-fix-tag">Geschützt</span></li>`).join("")}</ul></article><article class="generic-overview-card"><div class="generic-card-head"><h2>Unterkünfte</h2><span>${revision.stays.length} Stopps</span></div><div class="generic-booking-stats"><div><strong>${booked}</strong><span>Gebucht</span></div><div><strong>${requested}</strong><span>Angefragt</span></div><div><strong>${open}</strong><span>Offen</span></div></div><p class="generic-card-note">Unterkünfte, Alternativen und Buchungsstatus sind direkt mit dem Roadbook verbunden.</p><button class="generic-secondary" id="generic-overview-stays" type="button">Unterkünfte im Roadbook ansehen</button></article></section>
@@ -544,7 +575,7 @@
       routes.features.filter((feature) => !feature.properties.optional && !(feature.properties.ferry && feature.properties.variant === "direct")).forEach((feature) => {
         const { name, ferry, variant } = feature.properties;
         const index = stageIndexForFeature(feature);
-        const groupIndex = isLegacyTrip() ? kmlGroupForName(name) : narrativeGroupForStage(index);
+        const groupIndex = usesKmlNarrative() ? kmlGroupForName(name) : narrativeGroupForStage(index);
         if (groupIndex < 0 || !overviewGroups[groupIndex]) return;
         routeGeometryData.set(`${index}:${variant}`, feature.properties);
         const polyline = L.polyline(leafletCoordinates(feature), { className: `generic-route-line route-${variant} route-stage-${index}`, color: ferry ? "#9a6118" : colours[index % colours.length], weight: ferry ? 4 : 5, opacity: .9, dashArray: ferry ? "9 8" : variant === "direct" ? "9 7" : null, lineCap: "round", isFerry: ferry }).bindTooltip(`Tag ${travelDayNumber(index)} · ${model.revision.stages[index]?.title || name}`, { sticky: true });
@@ -639,7 +670,7 @@
     const allRoutesUrl = new URL(window.location.href);
     allRoutesUrl.searchParams.set("view", "roadbook");
     allRoutesUrl.searchParams.set("map", "all");
-    workspace.innerHTML = `<section class="generic-stage-panel" aria-labelledby="generic-list-title"><div class="generic-panel-head"><div class="generic-panel-title"><h2 id="generic-list-title">Reiseplan</h2><span id="generic-list-meta"></span></div><div class="generic-loaded-plan"><span>${escapeHtml(planLabel())}</span><strong>${(!isLegacyTrip() || isOriginalDraft() || isPlanDraft()) ? "Lokaler Entwurf" : "Online"}</strong><small>${escapeHtml(planVersionLabel())}</small></div><div class="generic-plan-switch" role="tablist" aria-label="Reiseplan-Ansicht"><button type="button" role="tab" aria-selected="true" data-list-mode="days">Tage <span>${model.revision.stages.length}</span></button><button type="button" role="tab" aria-selected="false" data-list-mode="stays">Unterkünfte <span>${model.revision.stays.length}</span></button></div><a class="generic-show-all-route" href="${escapeHtml(allRoutesUrl.toString())}">Gesamte Route auf Karte</a></div><div class="generic-stage-list" id="generic-stage-list"></div></section>
+    workspace.innerHTML = `<section class="generic-stage-panel" aria-labelledby="generic-list-title"><div class="generic-panel-head"><div class="generic-panel-title"><h2 id="generic-list-title">Reiseplan</h2><span id="generic-list-meta"></span></div><div class="generic-loaded-plan"><span>${escapeHtml(planLabel())}</span><strong>${(!isServerManagedTrip() || isOriginalDraft() || isPlanDraft()) ? "Lokaler Entwurf" : "Online"}</strong><small>${escapeHtml(planVersionLabel())}</small></div><div class="generic-plan-switch" role="tablist" aria-label="Reiseplan-Ansicht"><button type="button" role="tab" aria-selected="true" data-list-mode="days">Tage <span>${model.revision.stages.length}</span></button><button type="button" role="tab" aria-selected="false" data-list-mode="stays">Unterkünfte <span>${model.revision.stays.length}</span></button></div><a class="generic-show-all-route" href="${escapeHtml(allRoutesUrl.toString())}">Gesamte Route auf Karte</a></div><div class="generic-stage-list" id="generic-stage-list"></div></section>
       <section class="generic-work-map" aria-label="Interaktive Routenkarte"><div id="generic-work-map"></div><div class="generic-work-map-toolbar"><div class="generic-work-map-status"><strong id="generic-work-map-title">Gesamte Route</strong><span id="generic-work-map-subtitle">Alle Etappen der Reise.</span></div><div class="generic-work-map-actions"><button class="generic-compare" type="button" aria-pressed="false" disabled title="Verfügbar, sobald für diese Etappe eine Routenvorschau erstellt wurde"><span>Original vergleichen</span><i aria-hidden="true"></i></button></div></div><div class="generic-work-map-legend"><span><i class="route"></i>Tagesetappe</span><span><i class="stay"></i>Übernachtung</span><span>◆ Ruhetag</span><span>🔒 Fixpunkt</span><span class="generic-compare-legend" id="generic-compare-legend" hidden></span></div><div class="generic-map-hint">Ort oder Strecke anklicken, um Details zu sehen</div></section>
       <aside class="generic-inspector" id="generic-inspector" aria-live="polite" aria-label="Auswahldetails"></aside>`;
     workspace.querySelectorAll("[data-list-mode]").forEach((button) => button.addEventListener("click", () => setListMode(button.dataset.listMode)));
@@ -871,7 +902,7 @@
         const route = routeFor(stage);
         const fixed = fixedForStage(stage);
         const overnight = stage.legacy?.overnight || place(stage.destinationPlaceId).name;
-        return `<button class="generic-stage-row ${stage.kind === "rest" ? "rest" : ""} ${fixed ? "fixed" : ""}" type="button" data-stage-index="${index}" aria-current="${index === selectedStage}" style="--stage-colour:${colours[index % colours.length]}"><span class="generic-day-number">${travelDayNumber(index)}</span><span class="generic-stage-copy"><strong>${escapeHtml(stage.title)}</strong><span>${fixed ? "🔒 Geschützter Fixpunkt" : escapeHtml(overnight)}</span></span><span class="generic-stage-distance">${stage.kind === "rest" ? "Ruhetag" : route?.distanceMeters ? `${km.format(route.distanceMeters / 1000)} km` : stage.kind === "transport" ? "Fähre" : "–"}</span></button>`;
+        return `<button class="generic-stage-row ${stage.kind === "rest" ? "rest" : ""} ${fixed ? "fixed" : ""}" type="button" data-stage-index="${index}" aria-current="${index === selectedStage}" style="--stage-colour:${colours[index % colours.length]}"><span class="generic-day-number">${travelDayNumber(index)}</span><span class="generic-stage-copy"><strong>${escapeHtml(stage.title)}</strong><span>${fixed ? "🔒 Geschützter Fixpunkt" : escapeHtml(overnight)}</span></span><span class="generic-stage-distance">${stage.kind === "rest" ? "Ruhetag" : route?.distanceMeters ? `${km.format(route.distanceMeters / 1000)} km` : stage.kind === "transport" ? "Transport" : "–"}</span></button>`;
       }).join("");
       list.querySelectorAll("[data-stage-index]").forEach((button) => button.addEventListener("click", () => selectStage(Number(button.dataset.stageIndex), true)));
     } else {
@@ -1030,7 +1061,7 @@
   }
 
   function openPlanContext(request) {
-    if (!isLegacyTrip()) {
+    if (!isServerManagedTrip()) {
       const index = Math.max(0, Math.min(activeSnapshot.days.length - 1, Number(request?.startDay || selectedStage + 1) - 1));
       selectedStage = index;
       const day = activeSnapshot.days[index];
@@ -1085,7 +1116,7 @@
         startDay: startIndex + 1,
         place: location,
         nights: 1,
-        instruction: `Den bestehenden Aufenthalt in ${location} um eine Nacht verlängern. Angrenzende Etappen und den geschützten Fährtermin prüfen.`
+        instruction: `Den bestehenden Aufenthalt in ${location} um eine Nacht verlängern. Angrenzende Etappen und den nächsten geschützten Fixpunkt prüfen.`
       });
       return;
     }
@@ -1370,9 +1401,17 @@
   }
 
   function openExistingPlanner() {
-    if (!isLegacyTrip()) {
-      setView("roadbook");
-      window.setTimeout(() => root.querySelector("#generic-stage-list")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+    if (!isServerManagedTrip()) {
+      const dialog = document.querySelector("#generic-trip-planner-dialog");
+      const form = dialog?.querySelector("#generic-trip-planner-form");
+      if (!dialog || !form) return;
+      form.elements.startDay.innerHTML = model.revision.stages.map((stage, index) => `<option value="${index + 1}"${index === selectedStage ? " selected" : ""}>Tag ${travelDayNumber(index)} · ${escapeHtml(stage.title)}</option>`).join("");
+      form.elements.instruction.value = "";
+      form.querySelector("#generic-trip-planner-status").textContent = "ChatGPT prüft den Entwurf mit offiziellen Stellen und mindestens einer unabhängigen Motorradquelle. Geschützte Fixpunkte bleiben erhalten.";
+      form.querySelector("button[type='submit']").disabled = false;
+      form.querySelector("button[type='submit']").textContent = "Route erstellen & prüfen";
+      dialog.showModal();
+      form.elements.instruction.focus();
       return;
     }
     if (typeof window.__ROADBOOK_OPEN_PLAN_CHANGE__ === "function") {
@@ -1411,12 +1450,13 @@
     document.body.classList.toggle("generic-touch-device", navigator.maxTouchPoints > 1);
     try {
       const publishedSnapshot = await bridge.getPublishedSnapshot();
+      publishedDefaultSnapshot = publishedSnapshot;
       const snapshot = catalog?.getSnapshot ? catalog.getSnapshot(requestedTripId, publishedSnapshot) : publishedSnapshot;
       activeSnapshot = snapshot;
-      planDraftStatus = requestedTripId === "trip_spanien_2026" && typeof bridge.getPlanDraftStatus === "function" ? await bridge.getPlanDraftStatus() : { active: false };
+      planDraftStatus = activeSnapshot.trip?.capabilities?.storage === "server" && typeof bridge.getPlanDraftStatus === "function" ? await bridge.getPlanDraftStatus() : { active: false };
       model = modelApi.importLegacyRoadbook(activeSnapshot);
       modelApi.assertLegacyParity(model, { sourceDays: activeSnapshot.days.length, stages: activeSnapshot.days.length });
-      if (!isLegacyTrip()) {
+      if (!isServerManagedTrip()) {
         const footer = document.querySelector("body > footer");
         if (footer) footer.textContent = "Kilometer und Fahrzeiten sind Planwerte ohne Pausen. Vor dem Speichern einer geänderten Fahretappe prüft die App die offizielle Verkehrslage und zusätzlich eine unabhängige Motorradquelle. Aktuelle Sperren, Wetter, Grenzen und Fahrzeit am Reisetag nochmals kontrollieren.";
       }
