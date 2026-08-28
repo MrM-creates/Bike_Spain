@@ -113,6 +113,17 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   };
 }
 
+const sourceChecksFor = (input, responseDays) => responseDays.flatMap((day, index) => day.rest ? [] : [{
+  day: Number(input.replaceFromDay) + index,
+  officialTitle: "Offizielle Verkehrsbehörde",
+  officialUrl: "https://official.example/traffic",
+  motorcycleTitle: "Motorrad-Routencheck",
+  motorcycleUrl: "https://motorcycle.example/route",
+  routingEvidence: "Straßenfolge, Sperrlage und Motorradtauglichkeit wurden gegengeprüft.",
+  checkedAt: "2026-08-28T12:00:00Z",
+  warnings: []
+}]);
+
 (async () => {
   process.env.ROADBOOK_PUBLISH_SECRET = "test-pin";
   process.env.OPENAI_API_KEY = "test-key";
@@ -165,7 +176,8 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
           replaceFromDay: input.replaceFromDay,
           replaceCount: input.replaceCount,
           days: responseDays,
-          openItems: []
+          openItems: [],
+          sourceChecks: sourceChecksFor(input, responseDays)
         })
       })
     };
@@ -198,7 +210,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.equal(verifiedResult.status, 200);
   assert.equal(verifiedResult.body.verifiedDraft.phase, "route");
   assert.equal(verifiedResult.body.verifiedDraft.verified, true);
-  assert.equal(verifiedResult.body.verifiedDraft.verificationVersion, 2);
+  assert.equal(verifiedResult.body.verifiedDraft.verificationVersion, 3);
   assert.equal(fetchCount, 8, "long route verification should check seven bounded chunks");
   modelRequests.slice(1, 8).forEach((request) => {
     assert.deepEqual(request.tools, [{ type: "web_search" }], "route verification should use web search");
@@ -217,7 +229,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
       ok: true,
       json: async () => ({ output_text: JSON.stringify({
         summary: ["Route geprüft"], decision: "changed", replaceFromDay: input.replaceFromDay, replaceCount: input.replaceCount,
-        days: input.candidateSegment, openItems: []
+        days: input.candidateSegment, openItems: [], sourceChecks: sourceChecksFor(input, input.candidateSegment)
       }) })
     };
   };
@@ -262,6 +274,22 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.deepEqual(modelRequests[8].tools, [{ type: "web_search" }], "route-style verification should use web search");
   assert.equal(JSON.parse(modelRequests[8].input).candidateSegment.length, 1, "only the selected stage should be verified");
 
+  const adriaDays = [
+    makeCheckedDay("Berikon – Senj", "Senj", false, { origin: "Berikon", destination: "Senj", km: "700 km", time: "8 h", roads: "A3 · A13 · A14 · A12 · A10 · A11 · A1 · D8", routeStyle: "direct" }),
+    makeCheckedDay("Senj", "Senj", true)
+  ];
+  const adriaVerifiedResult = await callApi({
+    secret: "test-pin",
+    stage: "verify-route",
+    days: adriaDays,
+    trip: { id: "trip_adria_2026", name: "Adria & Balkan 2026", startDate: "2026-09-24", fixPoints: [], planningProfile: { countries: ["Kroatien"], officialSources: ["HAK"], motorcycleSources: ["Motorradführer"] } },
+    replaceFromDay: 1,
+    change: { type: "Etappe bearbeiten", scope: "stage" }
+  });
+  assert.equal(adriaVerifiedResult.status, 200, adriaVerifiedResult.body.error);
+  assert.equal(adriaVerifiedResult.body.verifiedDraft.verificationVersion, 3);
+  assert.equal(adriaVerifiedResult.body.verifiedDraft.sourceChecks.length, 1);
+
   global.fetch = async () => { throw new Error("accommodation stage unexpectedly called the model"); };
   const unverifiedAccommodationResult = await callApi({
     secret: "test-pin",
@@ -288,7 +316,7 @@ function makeCheckedDay(title, overnight, rest, overrides = {}) {
   assert.ok(accommodationResult.body.accommodationPlan.accommodations.base);
   assert.equal(accommodationResult.body.accommodationAudit.version, 1);
   assert.match(accommodationResult.body.accommodationAudit.summary[0], /Ort, Reihenfolge, Datum und Nächtezahl/);
-  assert.equal(fetchCount, 9, "accommodation stage should not recalculate the route");
+  assert.equal(fetchCount, 10, "accommodation stage should not recalculate the route");
 
   const accommodationVerificationResult = await callApi({
     secret: "test-pin",

@@ -3,6 +3,8 @@
 
   const params = new URLSearchParams(window.location.search);
   const requestedView = params.get("view") === "roadbook" ? "roadbook" : "overview";
+  const catalog = window.MotorcycleTripCatalog;
+  const requestedTripId = params.get("trip") || catalog?.defaultTripId || "trip_spanien_2026";
 
   const bridge = window.__ROADBOOK_READ_MODEL__;
   const modelApi = window.MotorcycleTravelModel;
@@ -13,6 +15,8 @@
 
   const leafletCss = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
   const leafletJs = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+  const baseMapUrl = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}";
+  const baseMapOptions = { maxZoom: 19, attribution: "Tiles &copy; Esri &mdash; Sources: Esri, HERE, Garmin, FAO, NOAA, USGS, OpenStreetMap contributors and the GIS User Community" };
   const colours = ["#176b46", "#b06024", "#6d58a7", "#26758a", "#b14d55", "#68733b", "#2d67a2", "#9b6515"];
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[char]);
   const hotelIcon = (secondary = false) => `<span class="generic-hotel-icon${secondary ? " secondary" : ""}" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><path d="M5 20V5.5A1.5 1.5 0 0 1 6.5 4h11A1.5 1.5 0 0 1 19 5.5V20M3 20h18M9 20v-4h6v4M8 8h2m4 0h2m-8 4h2m4 0h2"/></svg></span>`;
@@ -43,6 +47,7 @@
   }).filter(([latitude, longitude]) => Number.isFinite(latitude) && Number.isFinite(longitude));
 
   let model;
+  let activeSnapshot;
   let activeView = "overview";
   let listMode = "days";
   let selectedStage = 0;
@@ -69,8 +74,10 @@
   let pendingRouteStyleChange = null;
   let planDraftStatus = { active: false };
   let showPlanDraftDialog = () => {};
+  const isLegacyTrip = () => model?.trip?.id === "trip_spanien_2026";
 
   const hydrateRouteStyleDrafts = async () => {
+    if (!isLegacyTrip()) return;
     if (typeof bridge.getRouteStyleDrafts !== "function") return;
     const changes = await bridge.getRouteStyleDrafts();
     (Array.isArray(changes) ? changes : []).forEach((change) => {
@@ -84,12 +91,13 @@
   const updateDraftChrome = () => {
     const count = confirmedRouteStyleDrafts.size;
     const status = navRoot.querySelector(".generic-status");
-    if (status) status.textContent = count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : planStatusLabel();
+    if (status) status.textContent = !isLegacyTrip() ? "Entwurf · lokal" : count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : planStatusLabel();
     const loaded = root.querySelector(".generic-loaded-plan strong");
     if (loaded) loaded.textContent = count || isOriginalDraft() || isPlanDraft() ? "Lokaler Entwurf" : "Online";
   };
 
   const persistRouteStyle = async (stageIndex, style) => {
+    if (!isLegacyTrip()) throw new Error("Die Routenart dieser Reise wird über „Etappe anpassen“ geändert und dabei automatisch geprüft.");
     if (typeof bridge.saveRouteStyleDraft !== "function") return;
     const stage = model.revision.stages[stageIndex];
     const route = routeFor(stage);
@@ -184,6 +192,13 @@
 
   async function loadMapData() {
     if (!mapDataPromise) {
+      if (!isLegacyTrip() && requestedTripId === "trip_adria_2026") {
+        mapDataPromise = fetch("/assets/adria-routes.geojson", { cache: "no-store" }).then((response) => {
+          if (!response.ok) throw new Error("Der Strassenverlauf der Balkanreise konnte nicht geladen werden.");
+          return response.json();
+        }).then((routes) => ({ xml: new DOMParser().parseFromString("<kml></kml>", "application/xml"), routes }));
+        return mapDataPromise;
+      }
       mapDataPromise = Promise.all([
         loadKml(),
         fetch("/assets/roadbook-routes.geojson", { cache: "no-store" }).then((response) => {
@@ -239,6 +254,11 @@
     if (day <= 23) return 2;
     return 3;
   };
+  const narrativeGroupForStage = (stageIndex) => {
+    const stageId = model.revision.stages[stageIndex]?.id;
+    const matched = model.revision.narrativeSegments.findIndex((segment) => segment.stageIds.includes(stageId));
+    return matched >= 0 ? matched : 0;
+  };
 
   function renderNavigation() {
     navRoot.hidden = false;
@@ -250,11 +270,78 @@
     const dialog = document.createElement("dialog");
     dialog.className = "generic-journeys-dialog";
     dialog.id = "generic-journeys-dialog";
-    dialog.innerHTML = `<div class="generic-dialog-head"><div><h2>Reisen</h2><p>Bestehende Reise öffnen oder später eine neue Motorradreise planen.</p></div><button class="generic-dialog-close" type="button" aria-label="Dialog schließen">×</button></div><div class="generic-journey-row"><div><strong>${escapeHtml(model.trip.name)}</strong><span>${escapeHtml(dateRange())} · ${model.revision.stages.length} Tage</span></div><button class="generic-secondary" type="button">Geöffnet</button></div><div class="generic-dialog-foot"><span>Die generische Neuerstellung folgt in einem späteren Integrationsschritt.</span><button class="generic-secondary" type="button" disabled>Neue Reise planen</button></div>`;
+    const tripRows = (catalog?.list?.() || [{ id: model.trip.id, name: model.trip.name }]).map((trip) => {
+      const active = trip.id === model.trip.id;
+      const range = trip.startDate && trip.endDate ? `${formatDate(trip.startDate)} – ${formatDate(trip.endDate)}` : "Reisedaten offen";
+      return `<div class="generic-journey-row"><div><strong>${escapeHtml(trip.name)}</strong><span>${escapeHtml(range)} · ${trip.status === "draft" ? "Entwurf" : "veröffentlicht"}</span></div><button class="generic-secondary" type="button" data-trip-id="${escapeHtml(trip.id)}">${active ? "Geöffnet" : "Öffnen"}</button></div>`;
+    }).join("");
+    dialog.innerHTML = `<div class="generic-dialog-head"><div><h2>Reisen</h2><p>Bestehende Reise oder vorbereiteten Entwurf öffnen.</p></div><button class="generic-dialog-close" type="button" aria-label="Dialog schließen">×</button></div><div class="generic-journey-list">${tripRows}</div><div class="generic-dialog-foot"><span>Spanien und Balkan bleiben vollständig getrennte Reisepläne.</span><button class="generic-secondary" id="generic-new-trip" type="button">Neue Reise planen</button></div>`;
     document.body.append(dialog);
     dialog.querySelector(".generic-dialog-close").addEventListener("click", () => dialog.close());
-    dialog.querySelector(".generic-journey-row button").addEventListener("click", () => dialog.close());
+    dialog.querySelectorAll("[data-trip-id]").forEach((button) => button.addEventListener("click", () => {
+      if (button.dataset.tripId === model.trip.id) { dialog.close(); return; }
+      const target = new URL(window.location.href);
+      target.searchParams.set("trip", button.dataset.tripId);
+      target.searchParams.delete("view");
+      window.location.href = target.toString();
+    }));
     navRoot.querySelector("#generic-journeys").addEventListener("click", () => dialog.showModal());
+
+    const newTripDialog = document.createElement("dialog");
+    newTripDialog.className = "generic-journeys-dialog";
+    newTripDialog.id = "generic-new-trip-dialog";
+    newTripDialog.innerHTML = `<form id="generic-new-trip-form"><div class="generic-dialog-head"><div><h2>Neue Reise planen</h2><p>Zuerst den Rahmen anlegen. Die einzelnen Tage werden danach im Roadbook aufgebaut.</p></div><button class="generic-dialog-close" type="button" aria-label="Dialog schließen">×</button></div><div class="generic-form-grid"><label>Reisename<input name="name" required placeholder="z. B. Sardinien im Frühling"></label><label>Startdatum<input name="startDate" type="date" required></label><label>Enddatum<input name="endDate" type="date" required></label><label>Startort<input name="startPlace" required value="Berikon"></label><label>Zielort<input name="endPlace" required value="Berikon"></label></div><div class="generic-dialog-foot"><span>Der neue Entwurf bleibt zunächst in diesem Browser.</span><button class="generic-primary" type="submit">Reise anlegen</button></div></form>`;
+    document.body.append(newTripDialog);
+    newTripDialog.querySelector(".generic-dialog-close").addEventListener("click", () => newTripDialog.close());
+    newTripDialog.querySelector("#generic-new-trip-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      try {
+        const created = catalog.createTrip(Object.fromEntries(new FormData(event.currentTarget)));
+        const target = new URL(window.location.href);
+        target.searchParams.set("trip", created.trip.id);
+        target.searchParams.set("view", "roadbook");
+        window.location.href = target.toString();
+      } catch (error) { window.alert(error.message); }
+    });
+    dialog.querySelector("#generic-new-trip").addEventListener("click", () => { dialog.close(); newTripDialog.showModal(); });
+
+    const stageEditor = document.createElement("dialog");
+    stageEditor.className = "generic-journeys-dialog generic-stage-editor-dialog";
+    stageEditor.id = "generic-stage-editor-dialog";
+    stageEditor.innerHTML = `<form id="generic-stage-editor-form"><div class="generic-dialog-head"><div><h2>Etappe bearbeiten</h2><p id="generic-stage-editor-date"></p></div><button class="generic-dialog-close" type="button" aria-label="Dialog schließen">×</button></div><div class="generic-form-grid"><label class="wide">Etappe<input name="title" required></label><label>Art des Tages<input name="type"></label><label>Übernachtung<input name="overnight" required></label><label>Kilometer<input name="km" placeholder="z. B. 220 km"></label><label>Fahrzeit<input name="time" placeholder="z. B. 3 h 30"></label><label class="wide">Strassen<input name="roads"></label><label>Start<input name="origin"></label><label>Ziel<input name="destination"></label><label class="wide">Zwischenziele, eines pro Zeile<textarea name="waypoints"></textarea></label><label class="wide">Planungshinweis<textarea name="note"></textarea></label><label class="generic-check"><input name="rest" type="checkbox"> Ruhetag / keine feste Route</label></div><p class="generic-context-note" id="generic-stage-editor-status">Vor dem Speichern prüft die App Strassenverlauf, offizielle Verkehrsinformationen und eine unabhängige Motorradquelle.</p><div class="generic-dialog-foot"><span>Gespeichert wird erst nach erfolgreicher Prüfung.</span><button class="generic-primary" type="submit">Prüfen &amp; speichern</button></div></form>`;
+    document.body.append(stageEditor);
+    stageEditor.querySelector(".generic-dialog-close").addEventListener("click", () => stageEditor.close());
+    stageEditor.querySelector("#generic-stage-editor-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const form = event.currentTarget;
+      const submit = form.querySelector("button[type='submit']");
+      const status = form.querySelector("#generic-stage-editor-status");
+      submit.disabled = true;
+      submit.textContent = "Quellen werden geprüft …";
+      try {
+        const values = Object.fromEntries(new FormData(form));
+        const day = activeSnapshot.days[selectedStage];
+        const waypoints = String(values.waypoints || "").split("\n").map((item) => item.trim()).filter(Boolean);
+        const updated = { ...day, ...values, rest: form.elements.rest.checked, waypoints, points: waypoints.join(" · "), status: "changed" };
+        if (!updated.rest && updated.origin && updated.destination) {
+          const routeParams = new URLSearchParams({ api: "1", origin: updated.origin, destination: updated.destination, travelmode: "driving" });
+          if (waypoints.length) routeParams.set("waypoints", waypoints.join("|"));
+          updated.main = `https://www.google.com/maps/dir/?${routeParams.toString()}`;
+        } else updated.main = "";
+        const candidateDays = activeSnapshot.days.map((item, index) => index === selectedStage ? updated : item);
+        if (typeof bridge.verifyTripRoute !== "function") throw new Error("Die automatische Routenprüfung ist momentan nicht verfügbar.");
+        const verified = await bridge.verifyTripRoute({ days: candidateDays, trip: activeSnapshot.trip, startDay: selectedStage + 1, change: { type: "Etappe bearbeiten", scope: "stage" } });
+        activeSnapshot.days = verified.days;
+        activeSnapshot.verification = { verified: true, verificationVersion: verified.verificationVersion, checkedAt: verified.createdAt, summary: verified.summary || [], sourceChecks: verified.sourceChecks || [], openItems: verified.openItems || [] };
+        activeSnapshot.publishedVersion = new Date().toISOString();
+        catalog.saveSnapshot(activeSnapshot);
+        window.location.reload();
+      } catch (error) {
+        status.textContent = `Nicht gespeichert: ${error.message}`;
+        submit.disabled = false;
+        submit.textContent = "Erneut prüfen & speichern";
+      }
+    });
     const exportDialog = document.createElement("dialog");
     exportDialog.className = "generic-journeys-dialog generic-export-dialog";
     exportDialog.id = "generic-export-dialog";
@@ -368,11 +455,13 @@
       googleLink.href = googleMapsUrl || "#";
       googleLink.setAttribute("aria-disabled", String(!googleMapsUrl));
       exportDialog.querySelector("#generic-export-day").textContent = `Tag ${travelDayNumber(selectedStage)} · ${stage.title} · ${routeStyleLabel(selectedStyle)} ausgewählt. Google Maps berechnet den Verlauf beim Öffnen neu.`;
+      exportDialog.querySelectorAll("a[download]").forEach((link) => { link.hidden = !isLegacyTrip(); });
       exportDialog.showModal();
       closeMore();
     });
     navRoot.querySelector("#generic-accommodations").addEventListener("click", () => { setView("roadbook"); setListMode("stays"); closeMore(); });
     navRoot.querySelector("#generic-help").addEventListener("click", () => { document.querySelector("#nav-help")?.click(); closeMore(); });
+    navRoot.querySelector("#generic-original-plan").hidden = !isLegacyTrip();
     navRoot.querySelector("#generic-original-plan").addEventListener("click", () => {
       closeMore();
       showOriginalDialog();
@@ -447,16 +536,16 @@
     try {
       const [L, { xml, routes }] = await Promise.all([loadLeaflet(), loadMapData()]);
       overviewMap = L.map("trip-overview-map", { zoomControl: true, scrollWheelZoom: true }).setView([42.2, 2.1], 5);
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(overviewMap);
+      L.tileLayer(baseMapUrl, baseMapOptions).addTo(overviewMap);
       overviewGroups = narrativeSegments.map(() => L.featureGroup().addTo(overviewMap));
       overviewRoutes = new Map();
       const allRoutes = L.featureGroup().addTo(overviewMap);
       const overviewDayEnds = new Map();
       routes.features.filter((feature) => !feature.properties.optional && !(feature.properties.ferry && feature.properties.variant === "direct")).forEach((feature) => {
         const { name, ferry, variant } = feature.properties;
-        const groupIndex = kmlGroupForName(name);
-        if (groupIndex < 0 || !overviewGroups[groupIndex]) return;
         const index = stageIndexForFeature(feature);
+        const groupIndex = isLegacyTrip() ? kmlGroupForName(name) : narrativeGroupForStage(index);
+        if (groupIndex < 0 || !overviewGroups[groupIndex]) return;
         routeGeometryData.set(`${index}:${variant}`, feature.properties);
         const polyline = L.polyline(leafletCoordinates(feature), { className: `generic-route-line route-${variant} route-stage-${index}`, color: ferry ? "#9a6118" : colours[index % colours.length], weight: ferry ? 4 : 5, opacity: .9, dashArray: ferry ? "9 8" : variant === "direct" ? "9 7" : null, lineCap: "round", isFerry: ferry }).bindTooltip(`Tag ${travelDayNumber(index)} · ${model.revision.stages[index]?.title || name}`, { sticky: true });
         polyline.on("click", () => activateOverviewStory(groupIndex, true));
@@ -941,6 +1030,21 @@
   }
 
   function openPlanContext(request) {
+    if (!isLegacyTrip()) {
+      const index = Math.max(0, Math.min(activeSnapshot.days.length - 1, Number(request?.startDay || selectedStage + 1) - 1));
+      selectedStage = index;
+      const day = activeSnapshot.days[index];
+      const dialog = document.querySelector("#generic-stage-editor-dialog");
+      const form = dialog?.querySelector("#generic-stage-editor-form");
+      if (!dialog || !form || !day) return;
+      dialog.querySelector("#generic-stage-editor-date").textContent = `Tag ${index + 1} · ${formatDate(model.revision.stages[index].date)}`;
+      ["title", "type", "overnight", "km", "time", "roads", "origin", "destination", "note"].forEach((name) => { form.elements[name].value = day[name] || ""; });
+      form.elements.waypoints.value = (day.waypoints || []).join("\n");
+      form.elements.rest.checked = Boolean(day.rest);
+      dialog.showModal();
+      form.elements.title.focus();
+      return;
+    }
     if (typeof window.__ROADBOOK_OPEN_PLAN_CHANGE__ === "function") {
       window.__ROADBOOK_OPEN_PLAN_CHANGE__(request);
       return;
@@ -1103,7 +1207,7 @@
     try {
       const [L, { xml, routes }] = await Promise.all([loadLeaflet(), loadMapData()]);
       workspaceMap = L.map("generic-work-map", { zoomControl: true, scrollWheelZoom: true, preferCanvas: true }).setView([42.2, 2.1], 5);
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }).addTo(workspaceMap);
+      L.tileLayer(baseMapUrl, baseMapOptions).addTo(workspaceMap);
       const pointCoordinates = kmlPoints(xml);
       const dayEnds = new Map();
       workspaceBounds = L.latLngBounds([]);
@@ -1266,6 +1370,11 @@
   }
 
   function openExistingPlanner() {
+    if (!isLegacyTrip()) {
+      setView("roadbook");
+      window.setTimeout(() => root.querySelector("#generic-stage-list")?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+      return;
+    }
     if (typeof window.__ROADBOOK_OPEN_PLAN_CHANGE__ === "function") {
       window.__ROADBOOK_OPEN_PLAN_CHANGE__({ type: "extend", startDay: Math.max(1, travelDayNumber(selectedStage)) });
       return;
@@ -1301,10 +1410,12 @@
     document.body.classList.add("generic-trip-enabled");
     document.body.classList.toggle("generic-touch-device", navigator.maxTouchPoints > 1);
     try {
-      const snapshot = await bridge.getPublishedSnapshot();
-      planDraftStatus = typeof bridge.getPlanDraftStatus === "function" ? await bridge.getPlanDraftStatus() : { active: false };
-      model = modelApi.importLegacyRoadbook(snapshot);
-      modelApi.assertLegacyParity(model, { sourceDays: 30, stages: 30 });
+      const publishedSnapshot = await bridge.getPublishedSnapshot();
+      const snapshot = catalog?.getSnapshot ? catalog.getSnapshot(requestedTripId, publishedSnapshot) : publishedSnapshot;
+      activeSnapshot = snapshot;
+      planDraftStatus = requestedTripId === "trip_spanien_2026" && typeof bridge.getPlanDraftStatus === "function" ? await bridge.getPlanDraftStatus() : { active: false };
+      model = modelApi.importLegacyRoadbook(activeSnapshot);
+      modelApi.assertLegacyParity(model, { sourceDays: activeSnapshot.days.length, stages: activeSnapshot.days.length });
       document.body.classList.toggle("generic-original-draft", isOriginalDraft());
       document.body.classList.toggle("generic-plan-draft", isPlanDraft());
       await hydrateRouteStyleDrafts();

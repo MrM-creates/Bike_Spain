@@ -8,7 +8,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/assets/roadbook-icon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/trip-overview.css?v=20260816overviewmarkers1">
+  <link rel="stylesheet" href="/assets/trip-overview.css?v=20260828multi1">
   <style>
     :root {
       --bg: #f4f5f0;
@@ -3153,6 +3153,23 @@ Wichtig fuer das Import-JSON:
         summary: clone(draft.summary || []),
         openItems: clone(draft.openItems || [])
       } : { active: false },
+      verifyTripRoute: async ({ days, trip, startDay, change }) => {
+        const response = await fetch("/api/create-plan-draft", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            secret: getPublishPin(),
+            stage: "verify-route",
+            days: clone(days || []),
+            trip: clone(trip || {}),
+            replaceFromDay: Number(startDay) || 1,
+            change: { ...(change || {}), scope: "stage" }
+          })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Die Etappe konnte nicht geprüft werden.");
+        return result.verifiedDraft;
+      },
       discardPlanDraft: async () => {
         if (!planDraftActive()) return { discarded: false };
         draft = null;
@@ -3216,7 +3233,8 @@ Wichtig fuer das Import-JSON:
       openPlanChange();
     }
   </script>
-  <script src="/assets/travel-model.js?v=20260816final"></script>
-  <script src="/assets/trip-overview.js?v=20260816overviewmarkers1"></script>
+  <script src="/assets/travel-model.js?v=20260828multi1"></script>
+  <script src="/assets/adria-trip-2026.js?v=20260828multi1"></script>
+  <script src="/assets/trip-overview.js?v=20260828multi1"></script>
 </body>
 </html>
