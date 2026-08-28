@@ -284,6 +284,8 @@
     const trip = {
       id: config.id,
       name: config.name,
+      characterTitle: config.characterTitle || "",
+      characterText: config.characterText || "",
       mode: "motorcycle",
       timezone: config.timezone || "Europe/Zurich",
       participantCount: config.participantCount || 1,
