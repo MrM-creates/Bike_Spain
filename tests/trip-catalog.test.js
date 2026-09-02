@@ -39,16 +39,24 @@ assert.match(adria.days[24].title, /Comacchio.*Ferrara/);
 assert.ok(!adria.days[24].title.includes("Chioggia"));
 assert.equal(adria.days[24].km, "ca. 150 km");
 assert.equal(adria.days[29].overnight, "Berikon");
-assert.equal(adria.accommodations.length, 2);
-assert.equal(adria.accommodations[0].startDate, "2026-10-06");
-assert.equal(adria.accommodations[0].endDate, "2026-10-09");
-assert.match(adria.accommodations[0].currentFirstChoice, /OSCAR Suite/);
-assert.match(adria.accommodations[0].currentAlternative, /Miss Mia/);
-assert.match(adria.accommodations[0].parking, /zwei Maschinen/);
-assert.equal(adria.accommodations[1].startDate, "2026-10-09");
-assert.equal(adria.accommodations[1].endDate, "2026-10-13");
-assert.match(adria.accommodations[1].currentFirstChoice, /sensationeller Aussicht/);
-assert.match(adria.accommodations[1].parking, /schriftlich bestätigen/);
+assert.equal(adria.accommodations.length, 3);
+const makarskaStay = adria.accommodations.find((stay) => stay.id === "makarska-base");
+const dubrovnikStay = adria.accommodations.find((stay) => stay.id === "dubrovnik-lapad");
+const kotorStay = adria.accommodations.find((stay) => stay.id === "kotor-dobrota");
+assert.equal(makarskaStay.startDate, "2026-10-03");
+assert.equal(makarskaStay.endDate, "2026-10-06");
+assert.match(makarskaStay.currentFirstChoice, /Villa Pehar/);
+assert.match(makarskaStay.currentAlternative, /Der Blick/);
+assert.match(makarskaStay.parking, /zwei Maschinen/);
+assert.equal(dubrovnikStay.startDate, "2026-10-06");
+assert.equal(dubrovnikStay.endDate, "2026-10-09");
+assert.match(dubrovnikStay.currentFirstChoice, /OSCAR Suite/);
+assert.match(dubrovnikStay.currentAlternative, /Miss Mia/);
+assert.match(dubrovnikStay.parking, /zwei Maschinen/);
+assert.equal(kotorStay.startDate, "2026-10-09");
+assert.equal(kotorStay.endDate, "2026-10-13");
+assert.match(kotorStay.currentFirstChoice, /sensationeller Aussicht/);
+assert.match(kotorStay.parking, /schriftlich bestätigen/);
 
 const created = catalog.createTrip({
   name: "Testreise",

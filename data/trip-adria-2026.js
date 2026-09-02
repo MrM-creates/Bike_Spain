@@ -99,11 +99,23 @@
   };
 
   const snapshot = {
-    publishedVersion: "2026-09-02T18:35:00.000Z",
+    publishedVersion: "2026-09-02T18:45:00.000Z",
     planKind: "draft",
     originalDays: days,
     days,
     accommodations: [
+      {
+        id: "makarska-base",
+        title: "Makarska",
+        startDate: "2026-10-03",
+        endDate: "2026-10-06",
+        booking: "open",
+        currentFirstChoice: "Villa Pehar · ruhige Wohnung mit Meer- und Biokovo-Blick",
+        currentFirstChoiceUrl: "https://www.airbnb.ch/rooms/35830801?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+        currentAlternative: "Der Blick · modernes Apartment mit zwei Schlafzimmern",
+        currentAlternativeUrl: "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+        parking: "Die private Abstellfläche vor der Buchung schriftlich für zwei Maschinen bestätigen lassen"
+      },
       {
         id: "dubrovnik-lapad",
         title: "Dubrovnik (Aussenbasis)",
@@ -132,7 +144,7 @@
     trip: {
       id: "trip_adria_2026",
       name: "Adria & Balkan 2026",
-      dataVersion: "2026-09-02.3",
+      dataVersion: "2026-09-02.4",
       characterTitle: "Adriawind, Küstenkurven und stille Buchten",
       characterText: "Ein schöner Alpenauftakt über Lienz, die Nockalmstraße und Graz führt nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
       startDate: "2026-09-24",
