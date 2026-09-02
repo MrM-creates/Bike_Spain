@@ -49,7 +49,7 @@ const coordinates = {
   "Rimini, Italy": [12.568, 44.067],
   "Ravenna, Italy": [12.204, 44.418],
   "Comacchio, Italy": [12.184, 44.694],
-  "Chioggia, Italy": [12.279, 45.218],
+  "Ferrara, Italy": [11.620, 44.838],
   "Arquà Petrarca, Italy": [11.718, 45.270],
   "Valeggio sul Mincio, Italy": [10.735, 45.353],
   "Iseo, Italy": [10.050, 45.659],
