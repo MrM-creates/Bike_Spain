@@ -34,6 +34,11 @@ assert.equal(adria.trip.planningAlternatives[0].id, "nightjet-feldkirch-graz");
 assert.ok(!adria.days.some((day) => /Nightjet|Nachtzug/i.test(day.title)));
 assert.ok(!adria.days.slice(20).some((day) => /Plitvice|Rovinj|Innsbruck|Splügen|Engadin/.test(day.title)));
 assert.equal(adria.days[29].overnight, "Berikon");
+assert.equal(adria.accommodations.length, 1);
+assert.equal(adria.accommodations[0].startDate, "2026-10-09");
+assert.equal(adria.accommodations[0].endDate, "2026-10-13");
+assert.match(adria.accommodations[0].currentFirstChoice, /sensationeller Aussicht/);
+assert.match(adria.accommodations[0].parking, /schriftlich bestätigen/);
 
 const created = catalog.createTrip({
   name: "Testreise",
