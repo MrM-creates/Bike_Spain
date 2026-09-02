@@ -99,11 +99,23 @@
   };
 
   const snapshot = {
-    publishedVersion: "2026-09-02T18:25:00.000Z",
+    publishedVersion: "2026-09-02T18:35:00.000Z",
     planKind: "draft",
     originalDays: days,
     days,
     accommodations: [
+      {
+        id: "dubrovnik-lapad",
+        title: "Dubrovnik (Aussenbasis)",
+        startDate: "2026-10-06",
+        endDate: "2026-10-09",
+        booking: "open",
+        currentFirstChoice: "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
+        currentFirstChoiceUrl: "https://www.airbnb.ch/rooms/648206203313909249?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
+        currentAlternative: "Miss Mia · Apartment mit Meerblick und Balkon",
+        currentAlternativeUrl: "https://www.airbnb.ch/rooms/599181579397214439?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
+        parking: "Den vorhandenen Innenstellplatz vor der Buchung schriftlich für zwei Maschinen bestätigen lassen"
+      },
       {
         id: "kotor-dobrota",
         title: "Kotor oder Perast",
@@ -120,7 +132,7 @@
     trip: {
       id: "trip_adria_2026",
       name: "Adria & Balkan 2026",
-      dataVersion: "2026-09-02.2",
+      dataVersion: "2026-09-02.3",
       characterTitle: "Adriawind, Küstenkurven und stille Buchten",
       characterText: "Ein schöner Alpenauftakt über Lienz, die Nockalmstraße und Graz führt nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
       startDate: "2026-09-24",
