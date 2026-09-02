@@ -50,7 +50,7 @@
   const days = [
     ride(1, "Berikon – Arlberg – Innsbruck", "Innsbruck", "ca. 310 km", "ca. 4 h 30", "A3 · A13 · A14 · S16 · A12", "Berikon, Switzerland", "Innsbruck, Austria", ["Feldkirch, Austria", "Arlberg Road Tunnel, Austria"], "Alpenauftakt auf verlässlichen Hauptachsen. Arlbergtunnel und Verkehrslage am Morgen bei ASFINAG prüfen; keine zusätzliche Passjagd.", "Alpenauftakt"),
     ride(2, "Innsbruck – Pustertal – Lienz", "Lienz", "ca. 180 km", "ca. 3 h 30", "A13 · A22 · SS49 · B100", "Innsbruck, Austria", "Lienz, Austria", ["Brenner, Italy", "Brunico, Italy"], "Ruhige Ost-West-Etappe durch das Pustertal. Die Luegbrücke ist 2026 im Regelfall einspurig; 30–45 Minuten Reserve einplanen und bei früher Kälte die Hauptstrassenlinie beibehalten.", "Alpenauftakt"),
-    ride(3, "Lienz – Nockalmstraße – Murau – Graz", "Graz", "ca. 310 km", "ca. 6 h 30", "B100 · A10 · B99 · Nockalmstraße · B95 · B96 · S36 · A2", "Lienz, Austria", "Graz, Austria", ["Spittal an der Drau, Austria", "Nockalm Road, Austria", "Murau, Austria"], "Die Nockalmstraße ist die landschaftliche Hauptvariante und wird nur bei trockener, offener Strecke gefahren. Für Motorräder letzte Einfahrt 17:15; deshalb früh starten. Wetteralternative über A10/A2 ohne Hochlagen.", "Alpenauftakt / Panoramastrasse"),
+    ride(3, "Lienz – Drautal – Wörthersee – Graz", "Graz", "ca. 285 km", "ca. 4 h 15", "B100 · A10 · B83 · A2 · A9 · B70", "Lienz, Austria", "Graz, Austria", ["Spittal an der Drau, Austria", "Velden am Wörther See, Austria"], "Durch das Drautal nach Spittal, danach überwiegend Autobahn mit Seepause in Velden. Rund 4¼ Stunden reine Fahrzeit als vorsichtiger Planwert; mit Pausen etwa 6–7 Stunden unterwegs, ohne grössere Verzögerungen. Nockalm und Murau entfallen wegen des Zeitbudgets vollständig. Vor Abfahrt Wetter und Baustellen auf A10/A2, insbesondere im Bereich Pack, bei ASFINAG prüfen; auch diese Strecke ist nicht wetterunabhängig.", "Transfer mit Seepause"),
     ride(4, "Graz – Maribor – Ljubljana", "Ljubljana", "ca. 195 km", "ca. 2 h 45", "A9 · A1 · A4 · A1", "Graz, Austria", "Ljubljana, Slovenia", ["Maribor, Slovenia"], "Kurzer grenzüberschreitender Fahrtag mit Zeit für Ljubljana. Slowenien ist Übernachtungsort und nicht bloss Transitland.", "Slowenien"),
     ride(5, "Ljubljana – Postojna – Rijeka – Senj", "Senj", "ca. 185 km", "ca. 3 h 15", "A1 · G6/E61 · A7 · D8", "Ljubljana, Slovenia", "Senj, Croatia", ["Postojna, Slovenia", "Rijeka, Croatia"], "Zügig ans Meer; ab Rijeka beginnt die kroatische Küstenlinie. Wegen der vielen slowenischen Autobahnbaustellen 2026 morgens Promet.si prüfen.", "Transfer zur Adria"),
     ride(6, "Senj – Karlobag – Starigrad – Zadar", "Zadar", "ca. 160 km", "ca. 3 h 30", "D8", "Senj, Croatia", "Zadar, Croatia", ["Karlobag, Croatia", "Starigrad, Croatia"], "Senj–Karlobag ist im offiziellen kroatischen Motorradführer als Panoramastrecke ausgewiesen und wird auch von aktuellen Motorradequellen als Höhepunkt bestätigt. Sehr bura-exponiert: Wind- und Sperrlage am Fahrtag bei HAK prüfen."),
@@ -101,7 +101,7 @@
   };
 
   const snapshot = {
-    publishedVersion: "2026-09-02T19:30:00.000Z",
+    publishedVersion: "2026-09-02T19:45:00.000Z",
     planKind: "draft",
     originalDays: days,
     days,
@@ -314,9 +314,9 @@
     trip: {
       id: "trip_adria_2026",
       name: "Adria & Balkan 2026",
-      dataVersion: "2026-09-02.5",
+      dataVersion: "2026-09-02.6",
       characterTitle: "Adriawind, Küstenkurven und stille Buchten",
-      characterText: "Ein schöner Alpenauftakt über Lienz, die Nockalmstraße und Graz führt nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
+      characterText: "Durch das Pustertal und Drautal, mit einer Pause am Wörthersee, führt die Reise über Graz nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
       startDate: "2026-09-24",
       startPlace: "Berikon",
       endPlace: "Berikon",
@@ -331,14 +331,23 @@
       preferences: {
         routeStyle: "mixed",
         ridingRhythm: "slow",
+        targetDailyRidingHours: 4,
+        maxDailyRidingHours: 5,
         accommodationStyle: "Motorradfreundlich mit sicherer Abstellung",
         preferGoodWeather: true,
         asphaltOnly: true
       },
       planningProfile: {
         countries: ["Schweiz", "Österreich", "Italien", "Slowenien", "Kroatien", "Montenegro"],
+        routeConstraints: [
+          "Pro Fahrtag rund 4 Stunden reine Fahrzeit anstreben; 5 Stunden reine Fahrzeit sind die Obergrenze, kein tägliches Ziel.",
+          "Pausen, Besichtigungen, Tanken, Verkehrspuffer sowie Grenz- und Fährwartezeiten zusätzlich ausweisen; 4–5 Stunden Fahrt können bereits 7 oder mehr Stunden unterwegs bedeuten.",
+          "Nicht durch optimistisch verkürzte Zeitangaben passend rechnen: Überschreitungen offen melden und die Strecke vereinfachen. Übernachtungen oder Reisedaten nur nach Rücksprache verschieben.",
+          "Nockalmstraße und Murau gehören nicht mehr zum Fahrtag Lienz–Graz, auch nicht als zusätzliche Schönwettervariante.",
+          "Vier Nächte Montenegro sowie die vorhandenen Ruhetage erhalten. Die bisherige Etappe Kotor–Makarska mit mehr als 5 Stunden ist noch zu überarbeiten, nicht als freigegeben behandeln."
+        ],
         seasonalRisks: [
-          "spätherbstliches Alpenwetter am Arlberg, im Pustertal und auf der Nockalmstraße",
+          "spätherbstliches Alpenwetter am Arlberg, im Pustertal und auf der A2 im Bereich Pack",
           "Bura an der Velebitküste und auf der D8",
           "Stau im Korridor Trogir–Split–Makarska",
           "Grenzwartezeiten Kroatien–Montenegro",
@@ -357,7 +366,7 @@
           id: "nightjet-feldkirch-graz",
           title: "Schlechtwetter-Alternative: Nightjet Feldkirch–Graz",
           status: "reserve",
-          summary: "Bei einer ungünstigen Alpenlage können die Motorräder in Feldkirch verladen werden. Graz bleibt damit Ausgangspunkt für Slowenien, ohne die Hauptplanung über Lienz und die Nockalmstraße zu ersetzen.",
+          summary: "Bei einer ungünstigen Alpenlage können die Motorräder in Feldkirch verladen werden. Graz bleibt damit Ausgangspunkt für Slowenien, ohne die Hauptplanung über Lienz und den Wörthersee zu ersetzen.",
           replacesDays: [1, 2, 3, 4],
           steps: [
             "Tag 1: Berikon–Feldkirch und Motorräder verladen",
@@ -390,7 +399,7 @@
         { id: "fix_adria_end", kind: "end", title: "Rückkehr nach Berikon", place: "Berikon", startsAt: "2026-10-23T18:00:00+02:00", locks: ["date", "destination", "overnight"], source: "draft" }
       ],
       narrativeSegments: [
-        { title: "Über die Alpen nach Slowenien.", text: "Arlberg, Pustertal, Nockalmstraße und Murau bilden die schöne Hauptstrecke nach Graz; Ljubljana bekommt eine eigene Nacht.", fromDay: 1, toDay: 5, mapGroup: 0 },
+        { title: "Über die Alpen nach Slowenien.", text: "Über Arlberg und Pustertal nach Lienz, dann durchs Drautal mit Seepause am Wörthersee nach Graz. Ljubljana bekommt eine eigene Nacht; die Nockalm entfällt zugunsten kürzerer Fahrtage.", fromDay: 1, toDay: 5, mapGroup: 0 },
         { title: "Dalmatien ohne Eile.", text: "Ab Senj folgt die Reise der D8. Zadar, Šibenik und Makarska werden zu echten Basen statt blossen Übernachtungsorten.", fromDay: 6, toDay: 12, mapGroup: 1 },
         { title: "Dubrovnik und die Bucht von Kotor.", text: "Der südliche Schwerpunkt bleibt unangetastet: Dubrovnik erhält drei, Kotor und Perast vier Nächte.", fromDay: 13, toDay: 19, mapGroup: 2 },
         { title: "Mit der Nachtfähre über die Adria.", text: "Von Kotor geht es mit einer Zwischenübernachtung in Makarska nach Split und über Nacht nach Ancona.", fromDay: 20, toDay: 21, mapGroup: 3 },

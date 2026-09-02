@@ -15,8 +15,7 @@ const coordinates = {
   "Brunico, Italy": [11.936, 46.797],
   "Lienz, Austria": [12.769, 46.829],
   "Spittal an der Drau, Austria": [13.497, 46.799],
-  "Nockalm Road, Austria": [13.747, 46.956],
-  "Murau, Austria": [14.169, 47.111],
+  "Velden am Wörther See, Austria": [14.0413, 46.6142],
   "Graz, Austria": [15.439, 47.071],
   "Maribor, Slovenia": [15.646, 46.554],
   "Ljubljana, Slovenia": [14.506, 46.056],
@@ -77,8 +76,18 @@ async function routeThrough(points) {
 }
 
 async function main() {
+  const args = process.argv.slice(2);
+  if (args.length > 1 || (args.length && !/^--day=([1-9]|[12][0-9]|30)$/.test(args[0]))) {
+    throw new Error("Aufruf: node scripts/generate-adria-routes.js [--day=1..30]");
+  }
+  const onlyDay = args.length ? Number(args[0].split("=")[1]) : null;
+  const existing = onlyDay ? JSON.parse(fs.readFileSync(outputPath, "utf8")) : null;
+  if (onlyDay && !existing.features.some((feature) => feature.properties.day === onlyDay)) {
+    throw new Error(`Keine vorhandene Fahrgeometrie für Tag ${onlyDay}`);
+  }
   const features = [];
   for (const day of loadDays()) {
+    if (onlyDay && day.day !== onlyDay) continue;
     if (day.rest || !day.origin || !day.destination) continue;
     const names = [day.origin, ...(day.waypoints || []), day.destination];
     const points = names.map((name) => {
@@ -121,14 +130,15 @@ async function main() {
       geometry: route.geometry
     });
   }
+  if (onlyDay && features.length !== 1) throw new Error(`Tag ${onlyDay} ist keine Fahrroute`);
   const collection = {
     type: "FeatureCollection",
     name: "Adria & Balkan 2026 – strassenfolgende Roadbook-Routen",
     generatedAt: new Date().toISOString(),
-    features
+    features: onlyDay ? existing.features.map((feature) => feature.properties.day === onlyDay ? features[0] : feature) : features
   };
   fs.writeFileSync(outputPath, `${JSON.stringify(collection)}\n`);
-  console.log(`Generated ${features.length} Adria routes in ${path.relative(root, outputPath)}`);
+  console.log(`Generated ${features.length} Adria routes in ${path.relative(root, outputPath)}${onlyDay ? ` (only day ${onlyDay}; other routes preserved)` : ""}`);
 }
 
 main().catch((error) => {
