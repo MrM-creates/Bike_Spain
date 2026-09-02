@@ -39,7 +39,24 @@ assert.match(adria.days[24].title, /Comacchio.*Ferrara/);
 assert.ok(!adria.days[24].title.includes("Chioggia"));
 assert.equal(adria.days[24].km, "ca. 150 km");
 assert.equal(adria.days[29].overnight, "Berikon");
-assert.equal(adria.accommodations.length, 3);
+const expectedAccommodationIds = [
+  "innsbruck-mutters", "lienz", "graz-west", "ljubljana-ring", "senj", "zadar", "sibenik",
+  "makarska-base", "dubrovnik-lapad", "kotor-dobrota", "makarska-return", "split-ancona-cabin",
+  "urbino-country", "ravenna", "arqua-petrarca", "iseo", "como-lazzago"
+];
+assert.deepEqual(adria.accommodations.map((stay) => stay.id), expectedAccommodationIds);
+assert.ok(adria.accommodations.every((stay) => stay.currentFirstChoice && stay.currentFirstChoiceUrl));
+assert.ok(adria.accommodations.every((stay) => stay.currentAlternative && stay.currentAlternativeUrl));
+assert.ok(adria.accommodations.every((stay) => /zwei Maschinen/.test(stay.parking)));
+const plannedNights = adria.accommodations.flatMap((stay) => {
+  const nights = [];
+  for (let date = new Date(`${stay.startDate}T00:00:00Z`); date < new Date(`${stay.endDate}T00:00:00Z`); date.setUTCDate(date.getUTCDate() + 1)) {
+    nights.push({ date: date.toISOString().slice(0, 10), title: stay.title });
+  }
+  return nights;
+});
+assert.equal(plannedNights.length, 29);
+assert.deepEqual(plannedNights.map((night) => night.title), adria.days.slice(0, -1).map((day) => day.overnight));
 const makarskaStay = adria.accommodations.find((stay) => stay.id === "makarska-base");
 const dubrovnikStay = adria.accommodations.find((stay) => stay.id === "dubrovnik-lapad");
 const kotorStay = adria.accommodations.find((stay) => stay.id === "kotor-dobrota");

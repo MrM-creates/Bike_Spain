@@ -7,6 +7,8 @@
     return `https://www.google.com/maps/dir/?${params.toString()}`;
   };
 
+  const booking = (country, slug, checkIn, checkOut) => `https://www.booking.com/hotel/${country}/${slug}.de.html?checkin=${checkIn}&checkout=${checkOut}&group_adults=2&no_rooms=1&group_children=0`;
+
   const rest = (day, title, overnight, note) => ({
     id: `adria-${day}`,
     day,
@@ -99,11 +101,95 @@
   };
 
   const snapshot = {
-    publishedVersion: "2026-09-02T18:45:00.000Z",
+    publishedVersion: "2026-09-02T19:30:00.000Z",
     planKind: "draft",
     originalDays: days,
     days,
     accommodations: [
+      {
+        id: "innsbruck-mutters",
+        title: "Innsbruck",
+        startDate: "2026-09-24",
+        endDate: "2026-09-25",
+        booking: "open",
+        currentFirstChoice: "Hotel dasMEI · Mutters",
+        currentFirstChoiceUrl: booking("at", "dasmei-medical-selfness", "2026-09-24", "2026-09-25"),
+        currentAlternative: "Muttererhof · Mutters",
+        currentAlternativeUrl: booking("at", "muttererhof", "2026-09-24", "2026-09-25"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "lienz",
+        title: "Lienz",
+        startDate: "2026-09-25",
+        endDate: "2026-09-26",
+        booking: "open",
+        currentFirstChoice: "Hotel Holunderhof · Lienz",
+        currentFirstChoiceUrl: booking("at", "holunderhof", "2026-09-25", "2026-09-26"),
+        currentAlternative: "Gasthof Schlossberghof · Lienz",
+        currentAlternativeUrl: booking("at", "gasthof-schlossberghof", "2026-09-25", "2026-09-26"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "graz-west",
+        title: "Graz",
+        startDate: "2026-09-26",
+        endDate: "2026-09-27",
+        booking: "open",
+        currentFirstChoice: "Hotel Steiermarkhof · Graz-Wetzelsdorf",
+        currentFirstChoiceUrl: booking("at", "steiermarkhof", "2026-09-26", "2026-09-27"),
+        currentAlternative: "Hotel AT HOME · Graz-Südost",
+        currentAlternativeUrl: booking("at", "athome", "2026-09-26", "2026-09-27"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "ljubljana-ring",
+        title: "Ljubljana",
+        startDate: "2026-09-27",
+        endDate: "2026-09-28",
+        booking: "open",
+        currentFirstChoice: "Urban Ring Hotel · Ljubljana-Rudnik",
+        currentFirstChoiceUrl: booking("si", "urban-ring", "2026-09-27", "2026-09-28"),
+        currentAlternative: "B&B Pod vrbo · Ljubljana-Trnovo",
+        currentAlternativeUrl: booking("si", "guesthouse-pod-vrbo", "2026-09-27", "2026-09-28"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "senj",
+        title: "Senj",
+        startDate: "2026-09-28",
+        endDate: "2026-09-29",
+        booking: "open",
+        currentFirstChoice: "Zora · ruhiges Apartment in Senj",
+        currentFirstChoiceUrl: booking("hr", "zora-senj", "2026-09-28", "2026-09-29"),
+        currentAlternative: "Beautiful Sea View Studio Danijela · Senj",
+        currentAlternativeUrl: booking("hr", "apartment-barbic", "2026-09-28", "2026-09-29"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "zadar",
+        title: "Zadar",
+        startDate: "2026-09-29",
+        endDate: "2026-10-01",
+        booking: "open",
+        currentFirstChoice: "Sky & Sun Luxury Rooms · privater Garagenplatz",
+        currentFirstChoiceUrl: booking("hr", "sky-amp-sun-lux-rooms", "2026-09-29", "2026-10-01"),
+        currentAlternative: "Vila Siega · Zadar",
+        currentAlternativeUrl: booking("hr", "vila-siega", "2026-09-29", "2026-10-01"),
+        parking: "Den vorhandenen Innenstellplatz vor der Buchung schriftlich für zwei Maschinen bestätigen lassen"
+      },
+      {
+        id: "sibenik",
+        title: "Šibenik",
+        startDate: "2026-10-01",
+        endDate: "2026-10-03",
+        booking: "open",
+        currentFirstChoice: "Maja Apartment · Šibenik",
+        currentFirstChoiceUrl: booking("hr", "maja-apartment-sibenik", "2026-10-01", "2026-10-03"),
+        currentAlternative: "Šibenik Style Suites",
+        currentAlternativeUrl: booking("hr", "sibenik-style-apartments", "2026-10-01", "2026-10-03"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
       {
         id: "makarska-base",
         title: "Makarska",
@@ -139,12 +225,96 @@
         currentAlternative: "Bright & Elegant Secret Vacation Home · Dobrota",
         currentAlternativeUrl: "https://www.airbnb.com/rooms/1138334092306069668?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2",
         parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen"
+      },
+      {
+        id: "makarska-return",
+        title: "Makarska",
+        startDate: "2026-10-13",
+        endDate: "2026-10-14",
+        booking: "open",
+        currentFirstChoice: "Romana Beach Resort · Makarska-Nord",
+        currentFirstChoiceUrl: booking("hr", "romana-beach-resort", "2026-10-13", "2026-10-14"),
+        currentAlternative: "Hotel Maritimo · Makarska",
+        currentAlternativeUrl: booking("hr", "maritimo", "2026-10-13", "2026-10-14"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "split-ancona-cabin",
+        title: "Ancona",
+        startDate: "2026-10-14",
+        endDate: "2026-10-15",
+        booking: "open",
+        currentFirstChoice: "Aussenkabine auf der Nachtfähre Split–Ancona",
+        currentFirstChoiceUrl: "https://www.jadrolinija.hr/de/reise-buchen",
+        currentAlternative: "Innenkabine auf der Nachtfähre Split–Ancona",
+        currentAlternativeUrl: "https://www.jadrolinija.hr/de/reise-buchen",
+        parking: "Kabine und Plätze für zwei Maschinen am 22. September gemeinsam bestätigen"
+      },
+      {
+        id: "urbino-country",
+        title: "Urbino",
+        startDate: "2026-10-15",
+        endDate: "2026-10-17",
+        booking: "open",
+        currentFirstChoice: "Country House Ca’ Balsomino · Urbino",
+        currentFirstChoiceUrl: booking("it", "country-house-ca-39-balsomino", "2026-10-15", "2026-10-17"),
+        currentAlternative: "Tenuta Santi Giacomo e Filippo · Urbino",
+        currentAlternativeUrl: booking("it", "urbino-resort", "2026-10-15", "2026-10-17"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "ravenna",
+        title: "Ravenna",
+        startDate: "2026-10-17",
+        endDate: "2026-10-18",
+        booking: "open",
+        currentFirstChoice: "Grand Hotel Mattei · Ravenna-Nord",
+        currentFirstChoiceUrl: booking("it", "holiday-inn-ravenna", "2026-10-17", "2026-10-18"),
+        currentAlternative: "Hotel Classicano · Ravenna-Süd",
+        currentAlternativeUrl: booking("it", "classicano", "2026-10-17", "2026-10-18"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "arqua-petrarca",
+        title: "Arquà Petrarca",
+        startDate: "2026-10-18",
+        endDate: "2026-10-20",
+        booking: "open",
+        currentFirstChoice: "La Giuggiola · Arquà Petrarca",
+        currentFirstChoiceUrl: booking("it", "la-giuggiola-arqua-petrarca", "2026-10-18", "2026-10-20"),
+        currentAlternative: "Borgo Petrarca · Arquà Petrarca",
+        currentAlternativeUrl: booking("it", "borgo-petrarca-arqua-petrarca", "2026-10-18", "2026-10-20"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "iseo",
+        title: "Lago d’Iseo",
+        startDate: "2026-10-20",
+        endDate: "2026-10-22",
+        booking: "open",
+        currentFirstChoice: "B&B La Castellina · Iseo",
+        currentFirstChoiceUrl: booking("it", "b-amp-b-la-castellina-iseo", "2026-10-20", "2026-10-22"),
+        currentAlternative: "Relais I Due Roccoli · Iseo",
+        currentAlternativeUrl: booking("it", "relais-i-due-roccoli", "2026-10-20", "2026-10-22"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      },
+      {
+        id: "como-lazzago",
+        title: "Como",
+        startDate: "2026-10-22",
+        endDate: "2026-10-23",
+        booking: "open",
+        currentFirstChoice: "L’Antica Corte Lazzago · Como-Süd",
+        currentFirstChoiceUrl: booking("it", "l-39-antica-corte-lazzago", "2026-10-22", "2026-10-23"),
+        currentAlternative: "SantAgata Bed & Breakfast · Como",
+        currentAlternativeUrl: booking("it", "santagata-bed-amp-breakfast", "2026-10-22", "2026-10-23"),
+        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
       }
     ],
     trip: {
       id: "trip_adria_2026",
       name: "Adria & Balkan 2026",
-      dataVersion: "2026-09-02.4",
+      dataVersion: "2026-09-02.5",
       characterTitle: "Adriawind, Küstenkurven und stille Buchten",
       characterText: "Ein schöner Alpenauftakt über Lienz, die Nockalmstraße und Graz führt nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
       startDate: "2026-09-24",
