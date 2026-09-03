@@ -17,7 +17,7 @@
   const builtInSnapshots = () => [root.__TRIP_ADRIA_DATA__].filter((item) => item?.trip?.id);
 
   root.MotorcycleTripCatalog = Object.freeze({
-    defaultTripId: "trip_spanien_2026",
+    defaultTripId: "trip_adria_2026",
     list(publishedDefaultSnapshot) {
       const builtIns = [publishedDefaultSnapshot, ...builtInSnapshots()].filter((item) => item?.trip?.id);
       const summaries = builtIns.map((item, index) => tripSummary(item, index === 0 ? "published" : (item.planKind || "draft")));

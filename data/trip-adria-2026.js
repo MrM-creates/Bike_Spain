@@ -72,7 +72,7 @@
     ride(13, "Makarska – Drvenik – Pelješac-Brücke – Ston – Dubrovnik", "Dubrovnik (Aussenbasis)", "ca. 175 km", "ca. 4 h", "D8 · Pelješac-Brücke · Zufahrt Ston", "Makarska, Croatia", "Dubrovnik, Croatia", ["43.155966,17.248725", "42.930204,17.534612", "Ston, Croatia"], "Auf der D8 südwärts mit kurzem Küstenstopp in Drvenik, weiter im Raum Ploče zur Pelješac-Brücke und über Ston nach Dubrovnik. Keine A1-Abkürzung und kein Neum-Transit. Der Brückenanker liegt direkt auf der Fahrbahn. Rund 4 Stunden reine Fahrt; mit Küstenstopps und Pausen etwa 6–7 Stunden unterwegs. Wind und Brückenfreigabe bei HAK vor Abfahrt prüfen. Das Ziel ist vorläufig ein Ortsanker ausserhalb der Altstadt; die genaue Zufahrt zur gewählten Aussenbasis folgt mit der Unterkunftsentscheidung."),
     rest(14, "Dubrovnik", "Dubrovnik (Aussenbasis)", "Stadttag ohne Motorradlogistik."),
     rest(15, "Dubrovnik / Reserve", "Dubrovnik (Aussenbasis)", "Zweiter voller Tag für Erholung, Wetter oder einen ruhigen Küstentag."),
-    ride(16, "Dubrovnik – Karasovići – Bucht von Kotor", "Kotor oder Perast", "ca. 100 km", "ca. 2 h 30 plus Grenze", "D8 · M1", "Dubrovnik, Croatia", "Kotor, Montenegro", ["Karasovići Border Crossing", "Herceg Novi, Montenegro", "Perast, Montenegro"], "Grenztag mit EES-Registrierung für Nicht-EU-Reisende und grosszügigem Verkehrspuffer; Karasovići kann stark schwanken. Die schöne Linie bleibt bewusst rund um die Bucht über Perast statt über die Kamenari-Fähre."),
+    ride(16, "Dubrovnik – Karasovići – Bucht von Kotor", "Kotor oder Perast", "ca. 100 km", "ca. 3 h plus Grenze", "D8 · M1", "Dubrovnik, Croatia", "Kotor, Montenegro", ["Karasovići Border Crossing", "Herceg Novi, Montenegro", "Perast, Montenegro"], "Grenztag: rund 3 Stunden reine Fahrt, Pausen und grosszügiger Grenzpuffer zusätzlich; Karasovići kann stark schwanken. EES gilt nicht für Schweizer Staatsangehörige und Inhaber gültiger Schengen-Aufenthaltstitel. Reisepass und gegebenenfalls Aufenthaltstitel im Original mitführen; Dokumentenprüfung und Wartezeiten bleiben bestehen. Montenegro hat eigene Einreiseregeln. Die schöne Linie bleibt bewusst rund um die Bucht über Perast statt über die Kamenari-Fähre. In Perast auf der Hauptstrasse bleiben, die historische Uferzone nur zu Fuss besuchen; Maps-Neuberechnung vor Abfahrt prüfen."),
     rest(17, "Kotor und Perast", "Kotor oder Perast", "Die vollständige Buchtrunde misst nur etwa 50–60 km, braucht auf der schmalen Uferstrasse aber Zeit. Perast und Risan ruhig angehen."),
     rest(18, "Bucht von Kotor", "Kotor oder Perast", "Ruhetag oder kurze Buchtrunde auf Hauptstrassen. Motorrad ausserhalb der engen Kerne abstellen."),
     rest(19, "Kotor / Wetter- und Entscheidungstag", "Kotor oder Perast", "Lovćen nur trocken, windarm und nach Tagesprüfung. Keine spontane Hin-und-zurück-Fahrt; alternativ ein weiterer ruhiger Tag an der Bucht."),
@@ -122,7 +122,7 @@
   };
 
   const snapshot = {
-    publishedVersion: "2026-09-03T08:46:37.000Z",
+    publishedVersion: "2026-09-03T08:57:32.000Z",
     planKind: "draft",
     originalDays: days,
     days,
@@ -372,7 +372,7 @@
     trip: {
       id: "trip_adria_2026",
       name: "Adria & Balkan 2026",
-      dataVersion: "2026-09-03.4",
+      dataVersion: "2026-09-03.5",
       characterTitle: "Adriawind, Küstenkurven und stille Buchten",
       characterText: "Durch das Pustertal und Drautal, mit einer Pause am Wörthersee, führt die Reise über Graz nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
       startDate: "2026-09-24",
