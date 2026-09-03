@@ -46,3 +46,13 @@ Vor Buchung schriftlich fragen: asphaltierte Zufahrt ohne steile/enge Problemste
 - Tag 22: Furlo-Anker liegt bislang nicht zuverlässig auf der gewünschten Schluchtstrasse; A14-Anteil mit Streckenbeschreibung abgleichen.
 
 Die Reise insgesamt wird durch diese Änderung nicht als vollständig streckengeprüft markiert.
+
+## Anzeigevertrag und Browser-Nachprüfung
+
+Zweck: Zwei Motorradreisende erkennen auch bei einem Transporttag die reale Landanfahrt und können sie separat navigieren. Die bestehende Navigation Reisen → Übersicht/Roadbook → Tage/Unterkünfte bleibt unverändert. Bestehender Header, Karte, Detailfenster und Footer werden weiterverwendet; keine neue Seite.
+
+Copy: Kennzahlen am Transporttag heissen „Landstrecke“ und „Reine Fahrzeit an Land“. Der vorhandene Google-Maps-Link führt zum Abfahrtshafen. Hinweise trennen Fahrt, Pausen, Grenze, Check-in und Überfahrt. Keine freie Direkt/Kurvig-Umschaltung am geschützten Transporttag.
+
+Design/Interaktion: bestehende Tokens, Systemschrift, Abstände, Buttons und grüner Akzent; keine neuen Farben oder Animationen. Etappenklick öffnet weiterhin dasselbe Detailfenster. Responsive: bestehendes Desktop-/Tablet-/Mobile-Raster und scrollbarer Detailinhalt. Accessibility: semantische Überschriften, Textlabels, Links und vorhandene Fokuszustände bleiben erhalten. Referenzen: mockup/ux-contract.md sowie Flider navigation-principles.md.
+
+Die erste Produktionsprüfung zeigte, dass Transporttage bislang keine Routenkennzahlen und keinen Maps-Link erhielten; zudem verdeckten kurze Strassenangaben die ausführlichen Tagesnotizen. Korrigiert: explizites roadApproach-Feld ermöglicht eine reine Landroutenvariante zusätzlich zum Transporttag, ohne den Transport-Fixpunkt oder reine Fährtage anderer Reisen zu verändern. Tagesnotizen werden nun zusätzlich zu Strassen/Wegpunkten angezeigt. Die Landanfahrt wird dadurch auch in der Gesamtfahrdistanz mitgezählt.

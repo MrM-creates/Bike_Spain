@@ -47,6 +47,17 @@ assert.deepEqual(model.revision.stages.map((stage) => stage.dayNumber), [1, 2, 3
 assert.equal(model.revision.stages[1].legacy.day, 1.5);
 assert.equal(model.revision.stages[1].kind, "rest");
 assert.equal(model.revision.stages[3].kind, "transport");
+assert.equal(model.revision.stages[3].activeRouteVariantId, null);
+const withApproach = importLegacyRoadbook({
+  days: [{ ...days[3], roadApproach: true, km: "ca. 185 km plus Nachtfähre", time: "ca. 3 h plus Check-in und Überfahrt", main: "https://www.google.com/maps/dir/?api=1&origin=Ston&destination=Split&waypoints=Peljesac", routeStyle: "direct" }],
+  trip: { id: "transport-approach", name: "Transport mit Landanfahrt", startDate: "2026-10-14", startPlace: "Ston", endPlace: "Ancona", transportMatchers: ["Fährtag"] }
+});
+assert.equal(withApproach.revision.stages[0].kind, "transport");
+assert.ok(withApproach.revision.stages[0].activeRouteVariantId);
+assert.equal(withApproach.revision.routeVariants[0].distanceScope, "road-approach-only");
+assert.equal(withApproach.revision.routeVariants[0].distanceMeters, 185000);
+assert.equal(withApproach.revision.routeVariants[0].durationSeconds, 10800);
+assert.match(withApproach.revision.routeVariants[0].providerRouteRef, /destination=Split/);
 assert.equal(model.revision.routeVariants[0].style, "direct");
 assert.equal(model.revision.routeVariants[1].style, "direct");
 assert.match(model.revision.routeVariants[0].providerRouteRef, /^https:\/\/www\.google\.com\/maps\/dir\/\?/);

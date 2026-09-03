@@ -120,7 +120,7 @@
       const kind = fixedTransport ? "transport" : isRest ? "rest" : samePlace ? "loop" : "ride";
       const id = stableId("stage", `${config.id}-${date}-${source.id || source.title}`);
       let activeRouteVariantId = null;
-      if (!isRest && !fixedTransport) {
+      if (!isRest && (!fixedTransport || source.roadApproach === true)) {
         const variant = {
           id: stableId("route", `${id}-active`),
           stageId: id,
@@ -129,6 +129,7 @@
             : (/anreise|transfer|heimweg|heimfahrt|rückweg|ruckweg|rückverbindung|ruckverbindung/i.test(`${source.type} ${source.title}`) ? "direct" : "scenic"),
           distanceMeters: parseDistanceMeters(source.km),
           durationSeconds: parseDurationSeconds(source.time),
+          distanceScope: fixedTransport ? "road-approach-only" : "road-route",
           geometry: null,
           waypointPlaceIds: (source.waypoints || []).map((name) => getPlace(name).id),
           roadSummary: String(source.roads || "").split(/[·;]/).map((item) => item.trim()).filter(Boolean),

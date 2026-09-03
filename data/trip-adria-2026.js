@@ -82,6 +82,8 @@
 
   // Navigation on ferry days covers the road approach, never an inferred drive to Italy.
   days[20].main = maps(days[20].origin, "Split Ferry Port, Croatia", days[20].waypoints.slice(0, -1));
+  days[20].roadApproach = true;
+  days[20].routeStyle = "direct";
   days[19].points = "Perast (M1 oberhalb des Ortes) · Karasovići · Dubrovnik-Umfahrung";
   days[20].points = "Pelješac-Brücke · A1 · Hafen Split";
 
@@ -107,7 +109,7 @@
   };
 
   const snapshot = {
-    publishedVersion: "2026-09-03T08:20:00.000Z",
+    publishedVersion: "2026-09-03T08:30:00.000Z",
     planKind: "draft",
     originalDays: days,
     days,
@@ -320,7 +322,7 @@
     trip: {
       id: "trip_adria_2026",
       name: "Adria & Balkan 2026",
-      dataVersion: "2026-09-03.1",
+      dataVersion: "2026-09-03.2",
       characterTitle: "Adriawind, Küstenkurven und stille Buchten",
       characterText: "Durch das Pustertal und Drautal, mit einer Pause am Wörthersee, führt die Reise über Graz nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
       startDate: "2026-09-24",
