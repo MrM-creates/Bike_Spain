@@ -67,6 +67,16 @@ assert.equal(model.revision.bookings[0].status, "booked");
 assert.equal(model.revision.bookings[1].protected, true);
 assert.equal(model.revision.stays[0].accommodationOptionIds.length, 2);
 assert.equal(model.revision.accommodationOptions[1].name, "Hotel Alternative");
+const unconfirmedParking = importLegacyRoadbook({
+  days,
+  accommodations: [{ title: "Grenoble", startDate: "2026-09-24", endDate: "2026-09-26", currentFirstChoice: "Wohnung mit Garage laut Inserat", currentAlternative: "Wohnung zwei", parking: "Garage noch für zwei Motorräder bestätigen", motorcycleParking: "unknown", currentFirstChoiceNotes: "Küche und Waschmaschine laut Inserat", currentAlternativeNotes: "Waschmaschine noch prüfen", reviewedAt: "2026-09-03", reviewNote: "Nicht gebucht", reviewSources: ["https://example.com/source"] }],
+  trip: { id: "unconfirmed-parking", name: "Unbestätigte Abstellung", startDate: "2026-09-24", startPlace: "Berikon", endPlace: "Genua" }
+});
+assert.equal(unconfirmedParking.revision.accommodationOptions[0].motorcycleParking, "unknown");
+assert.equal(unconfirmedParking.revision.accommodationOptions[0].notes, "Küche und Waschmaschine laut Inserat");
+assert.equal(unconfirmedParking.revision.accommodationOptions[1].notes, "Waschmaschine noch prüfen");
+assert.equal(unconfirmedParking.revision.stays[0].reviewNote, "Nicht gebucht");
+assert.deepEqual(unconfirmedParking.revision.stays[0].reviewSources, ["https://example.com/source"]);
 assert.equal(model.revision.fixPoints[1].targetRef.id, model.revision.stages[3].id);
 assert.equal(model.revision.fixPoints[0].targetRef.id, model.revision.stages[0].id);
 assert.equal(model.revision.fixPoints[2].targetRef.id, model.revision.stages[3].id);

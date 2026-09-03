@@ -66,6 +66,36 @@ assert.deepEqual(adria.accommodations.map((stay) => stay.id), expectedAccommodat
 assert.ok(adria.accommodations.every((stay) => stay.currentFirstChoice && stay.currentFirstChoiceUrl));
 assert.ok(adria.accommodations.every((stay) => stay.currentAlternative && stay.currentAlternativeUrl));
 assert.ok(adria.accommodations.every((stay) => /zwei Maschinen/.test(stay.parking)));
+const apartmentStays = adria.accommodations.filter((stay) => (Date.parse(stay.endDate) - Date.parse(stay.startDate)) / 86400000 >= 2);
+assert.equal(apartmentStays.length, 8);
+assert.equal(adria.trip.preferences.apartmentFromNights, 2);
+assert.equal(adria.trip.preferences.preferPrivateKitchen, true);
+assert.equal(adria.trip.preferences.preferWashingMachine, true);
+for (const stay of apartmentStays) {
+  assert.match(stay.currentFirstChoiceNotes, /Küche/);
+  assert.match(stay.currentAlternativeNotes, /Küche/);
+  assert.match(stay.currentFirstChoiceNotes, /Waschmaschine/);
+  assert.match(stay.currentAlternativeNotes, /Waschmaschine/);
+  assert.equal(stay.reviewedAt, "2026-09-03");
+  assert.equal(stay.motorcycleParking, "unknown", "Inseratsangabe ist keine bestätigte Motorradabstellung");
+  assert.match(stay.reviewNote, /nicht gebucht/);
+  for (const link of [stay.currentFirstChoiceUrl, stay.currentAlternativeUrl]) {
+    const url = new URL(link);
+    assert.equal(url.protocol, "https:");
+    assert.equal(url.searchParams.get("checkin") || url.searchParams.get("check_in"), stay.startDate);
+    assert.equal(url.searchParams.get("checkout") || url.searchParams.get("check_out"), stay.endDate);
+    assert.equal(url.searchParams.get("group_adults") || url.searchParams.get("adults"), "2");
+  }
+}
+const { importLegacyRoadbook } = require("../assets/travel-model");
+const reviewedModel = importLegacyRoadbook(adria);
+for (const stay of reviewedModel.revision.stays.filter((stay) => stay.nightCount >= 2)) {
+  assert.equal(stay.reviewedAt, "2026-09-03");
+  assert.match(stay.reviewNote, /Hauszufahrt/);
+  const options = reviewedModel.revision.accommodationOptions.filter((option) => option.stayId === stay.id);
+  assert.equal(options.length, 2);
+  assert.ok(options.every((option) => option.notes && option.checkedAt && option.motorcycleParking === "unknown"));
+}
 const plannedNights = adria.accommodations.flatMap((stay) => {
   const nights = [];
   for (let date = new Date(`${stay.startDate}T00:00:00Z`); date < new Date(`${stay.endDate}T00:00:00Z`); date.setUTCDate(date.getUTCDate() + 1)) {

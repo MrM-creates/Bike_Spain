@@ -9,6 +9,15 @@
 
   const booking = (country, slug, checkIn, checkOut) => `https://www.booking.com/hotel/${country}/${slug}.de.html?checkin=${checkIn}&checkout=${checkOut}&group_adults=2&no_rooms=1&group_children=0`;
 
+  const apartmentReview = (firstChoiceNotes, alternativeNotes, sources = []) => ({
+    reviewedAt: "2026-09-03",
+    motorcycleParking: "unknown",
+    currentFirstChoiceNotes: firstChoiceNotes,
+    currentAlternativeNotes: alternativeNotes,
+    reviewNote: "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+    reviewSources: sources
+  });
+
   const rest = (day, title, overnight, note) => ({
     id: `adria-${day}`,
     day,
@@ -113,7 +122,7 @@
   };
 
   const snapshot = {
-    publishedVersion: "2026-09-03T08:34:00.000Z",
+    publishedVersion: "2026-09-03T08:46:37.000Z",
     planKind: "draft",
     originalDays: days,
     days,
@@ -184,11 +193,16 @@
         startDate: "2026-09-29",
         endDate: "2026-10-01",
         booking: "open",
-        currentFirstChoice: "Sky & Sun Luxury Rooms · privater Garagenplatz",
-        currentFirstChoiceUrl: booking("hr", "sky-amp-sun-lux-rooms", "2026-09-29", "2026-10-01"),
-        currentAlternative: "Vila Siega · Zadar",
-        currentAlternativeUrl: booking("hr", "vila-siega", "2026-09-29", "2026-10-01"),
-        parking: "Den vorhandenen Innenstellplatz vor der Buchung schriftlich für zwei Maschinen bestätigen lassen"
+        currentFirstChoice: "Adria Concept Boutique Apartments · Diklo",
+        currentFirstChoiceUrl: booking("hr", "adria-concept-boutique-apartments", "2026-09-29", "2026-10-01"),
+        currentAlternative: "Diklo – Modern 2 bedroom apartments",
+        currentAlternativeUrl: booking("hr", "diklo-modern-2-bedroom-apartments", "2026-09-29", "2026-10-01"),
+        parking: "Erste Wahl: Garage laut Anbieter; Alternative: Privatparkplatz laut Inserat. Zugewiesenen Platz für zwei Maschinen schriftlich bestätigen lassen.",
+        ...apartmentReview(
+          "Wohnung in Diklo ausserhalb der Altstadt. Küche und Waschmaschine laut Anbieter; Garage für B4 beschrieben, nicht automatisch für jede Einheit. Am 03.09. für 29.09.–01.10. angezeigt: Standard-Erdgeschosswohnung, CHF 252 insgesamt, kostenlos stornierbar vor 22.09., ein Parkplatz inklusive. Garagenzuordnung und Waschmaschine dieser Einheit bestätigen.",
+          "Ganze Erdgeschosswohnung in Diklo mit Küche, Waschmaschine und privatem Parkplatz laut Inserat; keine Garage zugesichert. Am 03.09. für 29.09.–01.10. angezeigt: CHF 349 insgesamt, kostenlos stornierbar vor 15.09. Diese frühe Frist beachten; Platz für beide Motorräder bestätigen.",
+          ["https://booking.adria-concept.com/rentals/apartment-zadar-adria-concept-boutique-apartments-b4-summer-glamou-414473.html"]
+        )
       },
       {
         id: "sibenik",
@@ -196,11 +210,16 @@
         startDate: "2026-10-01",
         endDate: "2026-10-03",
         booking: "open",
-        currentFirstChoice: "Maja Apartment · Šibenik",
-        currentFirstChoiceUrl: booking("hr", "maja-apartment-sibenik", "2026-10-01", "2026-10-03"),
-        currentAlternative: "Šibenik Style Suites",
-        currentAlternativeUrl: booking("hr", "sibenik-style-apartments", "2026-10-01", "2026-10-03"),
-        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+        currentFirstChoice: "My Adriatic Place · Podsolarsko",
+        currentFirstChoiceUrl: booking("hr", "my-adriatic-place", "2026-10-01", "2026-10-03"),
+        currentAlternative: "Comfy apartment in a quiet neighborhood · Ražine",
+        currentAlternativeUrl: booking("hr", "comfy-apartment-in-a-queit-neighborhood", "2026-10-01", "2026-10-03"),
+        parking: "Erste Wahl: Garage im Inserat genannt; Alternative: Privatparkplatz. Sichere Abstellung für zwei Maschinen noch schriftlich bestätigen lassen.",
+        ...apartmentReview(
+          "Erdgeschosswohnung mit Garten in Podsolarsko, ausserhalb des Zentrums. Küche und Waschmaschine laut Inserat; Garage für zwei Motorräder bestätigen. Am 03.09. für 01.–03.10. angezeigt: CHF 215 insgesamt als Mitgliederpreis, vollständig erstattbar durch Booking vor 27.09. Rabatt und Erstattungsbedingungen im eigenen Konto prüfen; kein gewöhnlicher kostenloser Stornotarif.",
+          "Ganze Erdgeschosswohnung mit Garten in Ražine, Danilska 45. Küche, Waschmaschine und privater Parkplatz laut Inserat. Ruhige Wohnlage statt Altstadt; keine abschliessbare Garage belegt. Am 03.09. für 01.–03.10. angezeigt: CHF 170 insgesamt, kostenlos stornierbar vor 30.09.",
+          ["https://www.airbnb.com/rooms/50787604"]
+        )
       },
       {
         id: "makarska-base",
@@ -212,7 +231,11 @@
         currentFirstChoiceUrl: "https://www.airbnb.ch/rooms/35830801?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
         currentAlternative: "Der Blick · modernes Apartment mit zwei Schlafzimmern",
         currentAlternativeUrl: "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
-        parking: "Die private Abstellfläche vor der Buchung schriftlich für zwei Maschinen bestätigen lassen"
+        parking: "Die private Abstellfläche vor der Buchung schriftlich für zwei Maschinen bestätigen lassen; eine Bewertung nennt teilweise öffentliche Plätze neben dem Haus.",
+        ...apartmentReview(
+          "Villa Pehar: Küche und Waschmaschine im Inserat, ruhige Lage und Dachgeschoss. Private Stellplätze werden genannt; eine Bewertung beschreibt weitere Plätze im öffentlichen Bereich. Exakten privaten Platz sichern. Am 03.09. für 03.–06.10. und zwei Erwachsene angezeigt: CHF 192 insgesamt, kostenlos stornierbar vor 28.09.; Momentaufnahme, keine Buchung.",
+          "Der Blick: Küche, eigene kostenlose Waschmaschine und ein Stellplatz auf dem Grundstück. Passt auch für eine Waschpause. Platz für zwei Motorräder und Steigung der Zufahrt klären. Am 03.09. für 03.–06.10. angezeigt: CHF 242 insgesamt, kostenlos stornierbar vor 02.10.; vollständige Frist mit Uhrzeit vor Buchung prüfen."
+        )
       },
       {
         id: "dubrovnik-lapad",
@@ -224,7 +247,11 @@
         currentFirstChoiceUrl: "https://www.airbnb.ch/rooms/648206203313909249?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
         currentAlternative: "Miss Mia · Apartment mit Meerblick und Balkon",
         currentAlternativeUrl: "https://www.airbnb.ch/rooms/599181579397214439?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
-        parking: "Den vorhandenen Innenstellplatz vor der Buchung schriftlich für zwei Maschinen bestätigen lassen"
+        parking: "Den vorhandenen Innenstellplatz vor der Buchung schriftlich für zwei Maschinen bestätigen lassen",
+        ...apartmentReview(
+          "OSCAR Suite: Küche, eigene kostenlose Waschmaschine und ein Garagenstellplatz ausdrücklich im Inserat. Ruhige Wohnlage ausserhalb der Altstadt. Am 03.09. für 06.–09.10. und zwei Erwachsene angezeigt: CHF 352 insgesamt, kostenlos stornierbar vor 01.10. Beide Motorräder müssen auf den zugesagten Platz passen.",
+          "Miss Mia: Küche, Waschmaschine und privater Stellplatz am Haus, keine Garage belegt. Ausserhalb der Altstadt; laut Beschreibung 15–20 Minuten zu Fuss dorthin. Rangierfläche prüfen. Am 03.09. für 06.–09.10. angezeigt: CHF 393 insgesamt, kostenlos stornierbar vor 01.10.; keine Preis- oder Verfügbarkeitsgarantie."
+        )
       },
       {
         id: "kotor-dobrota",
@@ -236,7 +263,11 @@
         currentFirstChoiceUrl: "https://www.airbnb.ch/rooms/906512978879018565?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2&locale=de",
         currentAlternative: "Bright & Elegant Secret Vacation Home · Dobrota",
         currentAlternativeUrl: "https://www.airbnb.com/rooms/1138334092306069668?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2",
-        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen"
+        parking: "Wunschwohnung: nur Strassenparkplätze im Inserat. Sichere Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen.",
+        ...apartmentReview(
+          "Euer Favorit bleibt erste Wahl: ganze Wohnung in Sveti Stasije/Dobrota, Küche und eigene kostenlose Waschmaschine. Wichtig: nur kostenlose Strassenparkplätze, kein gesicherter Privatplatz belegt; kein Rauchmelder aufgeführt. Am 03.09. für 09.–13.10. und zwei Erwachsene angezeigt: CHF 359 insgesamt, kostenlos stornierbar vor 04.10. Erst nach Klärung der Abstellung buchen.",
+          "Bright & Elegant: ganzes Studio mit Küche, eigener Waschmaschine und Trockenständer. Laut Gastgeber ruhige Wohnlage und beleuchteter Stellbereich am Haus, keine abschliessbare Garage belegt. Am 03.09. für 09.–13.10. angezeigt: erstattungsfähiger Tarif CHF 232.70 insgesamt, kostenlos stornierbar vor 04.10. Diesen Tarif wählen, nicht den voreingestellten nicht erstattbaren Tarif für CHF 214.90."
+        )
       },
       {
         id: "ston-return",
@@ -268,11 +299,16 @@
         startDate: "2026-10-15",
         endDate: "2026-10-17",
         booking: "open",
-        currentFirstChoice: "Country House Ca’ Balsomino · Urbino",
-        currentFirstChoiceUrl: booking("it", "country-house-ca-39-balsomino", "2026-10-15", "2026-10-17"),
-        currentAlternative: "Tenuta Santi Giacomo e Filippo · Urbino",
-        currentAlternativeUrl: booking("it", "urbino-resort", "2026-10-15", "2026-10-17"),
-        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+        currentFirstChoice: "Casale di Nicolò · Appartamento Country",
+        currentFirstChoiceUrl: "https://www.airbnb.ch/rooms/49005441?adults=2&check_in=2026-10-15&check_out=2026-10-17&locale=de",
+        currentAlternative: "Cà Maggetti · Ferienwohnung im Grünen",
+        currentAlternativeUrl: booking("it", "ca-39-maggetti", "2026-10-15", "2026-10-17"),
+        parking: "Cà Maggetti nennt einen umzäunten Parkplatz. Bei Nicolò ist die sichere Abstellung ungeklärt. Platz für zwei Maschinen und asphaltierte Zufahrt schriftlich bestätigen lassen.",
+        ...apartmentReview(
+          "Country-Apartment für zwei Personen im Grünen: Erdgeschoss, Küche, eigene Waschmaschine und Garten. Am 03.09. bei Airbnb für 15.–17.10. angezeigt: CHF 166 insgesamt, kostenlos stornierbar vor 14.10. Deshalb erste Wahl. Parkplatz am Haus aufgeführt, sichere Abstellung noch bestätigen. Direktbuchung hat andere Bedingungen: Anzahlung nur auf späteren Aufenthalt anrechenbar.",
+          "Landgut ausserhalb Urbinos. Küche, Waschmaschine und umzäunter Parkplatz laut Anbieter. Am 03.09. für 15.–17.10. grosse 100-m²-Wohnung angezeigt: CHF 426 als Mitgliederpreis insgesamt, kostenlos stornierbar nur vor 15.09. Deutlich teurer und frühe Frist; vor Fährbestätigung keine nicht erstattbare Bindung eingehen. Kleinere Einheit separat anfragen.",
+          ["https://camaggetti.vacation-bookings.com/", "https://www.casaledinicolo.it/sistemazioni/appartamento-country/"]
+        )
       },
       {
         id: "ravenna",
@@ -292,11 +328,16 @@
         startDate: "2026-10-18",
         endDate: "2026-10-20",
         booking: "open",
-        currentFirstChoice: "La Giuggiola · Arquà Petrarca",
-        currentFirstChoiceUrl: booking("it", "la-giuggiola-arqua-petrarca", "2026-10-18", "2026-10-20"),
-        currentAlternative: "Borgo Petrarca · Arquà Petrarca",
-        currentAlternativeUrl: booking("it", "borgo-petrarca-arqua-petrarca", "2026-10-18", "2026-10-20"),
-        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+        currentFirstChoice: "Agriturismo Giulio Fufo · Ferienwohnung",
+        currentFirstChoiceUrl: booking("it", "agriturismo-giulio-fufo", "2026-10-18", "2026-10-20"),
+        currentAlternative: "Holiday House Petrarca · Ferienhaus im Olivenhain",
+        currentAlternativeUrl: booking("it", "holiday-house-petrarca-arqua-petrarca", "2026-10-18", "2026-10-20"),
+        parking: "Beide nennen Privatparkplätze. Bei Petrarca steile Zufahrt laut Bewertung. Sichere Fläche für zwei Maschinen und asphaltierte Zufahrt schriftlich bestätigen lassen.",
+        ...apartmentReview(
+          "Ganze 45-m²-Wohnung mit Küche, Waschmaschine, Terrasse und Privatparkplatz laut Inserat. Via Scalette 2, laut Gastgeber etwa 500 m ausserhalb des historischen Zentrums. Am 03.09. für 18.–20.10. angezeigt: CHF 264 insgesamt, kostenlos stornierbar vor 17.10. Einfache Unterkunft; genaue Zufahrt und sichere Motorradabstellung bestätigen.",
+          "Eigenes Ferienhaus im Olivenhain mit Küche, Waschmaschine und Privatparkplatz. Am 03.09. bei Booking für 18.–20.10. und zwei Erwachsene angezeigt: grosses 200-m²-Haus, CHF 539 insgesamt, kostenlos stornierbar vor 16.10. Steile Anfahrt laut Bewertung: nur wählen, wenn asphaltierte Zufahrt und Rangieren auch bei Nässe passen. Nicht mit dem allgemeinen Villa-Couple-Ab-Preis verwechseln.",
+          ["https://www.hhpetrarca.com/"]
+        )
       },
       {
         id: "iseo",
@@ -304,11 +345,16 @@
         startDate: "2026-10-20",
         endDate: "2026-10-22",
         booking: "open",
-        currentFirstChoice: "B&B La Castellina · Iseo",
-        currentFirstChoiceUrl: booking("it", "b-amp-b-la-castellina-iseo", "2026-10-20", "2026-10-22"),
-        currentAlternative: "Relais I Due Roccoli · Iseo",
-        currentAlternativeUrl: booking("it", "relais-i-due-roccoli", "2026-10-20", "2026-10-22"),
-        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+        currentFirstChoice: "Ca’ Nildes · Ferienwohnung in Clusane",
+        currentFirstChoiceUrl: "https://www.airbnb.ch/rooms/942578923582417304?adults=2&check_in=2026-10-20&check_out=2026-10-22&locale=de",
+        currentAlternative: "Casa Monalba · Ferienwohnung in Predore",
+        currentAlternativeUrl: "https://www.airbnb.ch/rooms/951224785764956985?adults=2&check_in=2026-10-20&check_out=2026-10-22&locale=de",
+        parking: "Ca’ Nildes: Innenhof mit Tor und schmalem Stellplatz; Casa Monalba: private Garage laut Inserat. Eignung für zwei Maschinen schriftlich bestätigen lassen.",
+        ...apartmentReview(
+          "Erdgeschosswohnung in Clusane, nicht im Zentrum von Iseo: Küche, eigene Waschmaschine und Innenhofstellplatz hinter automatischem Tor. Laut Gastgeber nur 1,90 m Fahrzeugbreite vorgesehen; Platz und Rangieren für beide Motorräder bestätigen. Am 03.09. bei Airbnb für 20.–22.10. angezeigt: CHF 242 insgesamt, kostenlos stornierbar vor 15.10.; bei Booking für diese Daten nicht verfügbar.",
+          "Ganze Wohnung mit Seeblick, Küche, Waschmaschine, Garten und privater Garage laut Inserat. Ruhige Lage in Predore am Westufer. Am 03.09. bei Airbnb für 20.–22.10. angezeigt: CHF 282 insgesamt, kostenlos stornierbar vor 15.10. Bei Wahl dieser Alternative An- und Abfahrt auf Predore anpassen und prüfen; die vorhandene Tagesroute bleibt bis dahin bei Iseo.",
+          ["https://visitlakeiseo.info/en/hotels/ca-nildes/", "https://visitlakeiseo.info/ospitalita/casa-monalba/"]
+        )
       },
       {
         id: "como-lazzago",
@@ -326,7 +372,7 @@
     trip: {
       id: "trip_adria_2026",
       name: "Adria & Balkan 2026",
-      dataVersion: "2026-09-03.3",
+      dataVersion: "2026-09-03.4",
       characterTitle: "Adriawind, Küstenkurven und stille Buchten",
       characterText: "Durch das Pustertal und Drautal, mit einer Pause am Wörthersee, führt die Reise über Graz nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
       startDate: "2026-09-24",
@@ -345,7 +391,12 @@
         ridingRhythm: "slow",
         targetDailyRidingHours: 4,
         maxDailyRidingHours: 5,
-        accommodationStyle: "Motorradfreundlich mit sicherer Abstellung",
+        accommodationStyle: "Ab zwei Nächten bevorzugt ganze Ferienwohnung oder Ferienhaus mit eigener Küche und möglichst eigener Waschmaschine; ruhige Lage ausserhalb historischer Zentren, sichere Abstellung für zwei Motorräder. Airbnb oder Booking nach konkreten Tarifbedingungen wählen.",
+        apartmentFromNights: 2,
+        preferPrivateKitchen: true,
+        preferWashingMachine: true,
+        avoidHistoricCenters: true,
+        flexibleCancellationPreferred: true,
         preferGoodWeather: true,
         asphaltOnly: true
       },

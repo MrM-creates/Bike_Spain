@@ -187,7 +187,10 @@
         endDate: addDays(stage.date, 1),
         nightCount: 1,
         accommodationOptionIds: [],
-        selectedAccommodationId: null
+        selectedAccommodationId: null,
+        reviewNote: legacyAccommodation?.reviewNote || "",
+        reviewSources: Array.isArray(legacyAccommodation?.reviewSources) ? clone(legacyAccommodation.reviewSources) : [],
+        reviewedAt: legacyAccommodation?.reviewedAt || null
       };
       if (legacyAccommodation?.currentFirstChoice) {
         const option = {
@@ -197,10 +200,13 @@
           url: legacyAccommodation.currentFirstChoiceUrl || null,
           latitude: null,
           longitude: null,
-          motorcycleParking: /garage|motorrad|parking/i.test(legacyAccommodation.parking || "") ? "confirmed" : "unknown",
+          motorcycleParking: ["confirmed", "unknown"].includes(legacyAccommodation.motorcycleParking)
+            ? legacyAccommodation.motorcycleParking
+            : /garage|motorrad|parking/i.test(legacyAccommodation.parking || "") ? "confirmed" : "unknown",
+          notes: legacyAccommodation.currentFirstChoiceNotes || "",
           availability: bookingStatus(legacyAccommodation.booking) === "booked" ? "available" : bookingStatus(legacyAccommodation.booking),
           source: "legacy-accommodation-page",
-          checkedAt: null
+          checkedAt: legacyAccommodation.reviewedAt || null
         };
         accommodationOptions.push(option);
         stay.accommodationOptionIds.push(option.id);
@@ -225,9 +231,10 @@
           latitude: null,
           longitude: null,
           motorcycleParking: "unknown",
+          notes: legacyAccommodation.currentAlternativeNotes || "",
           availability: "unknown",
           source: "legacy-accommodation-page",
-          checkedAt: null
+          checkedAt: legacyAccommodation.reviewedAt || null
         };
         accommodationOptions.push(alternative);
         stay.accommodationOptionIds.push(alternative.id);
