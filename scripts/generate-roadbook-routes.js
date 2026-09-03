@@ -17,51 +17,18 @@ const decode = (value) => String(value || "")
 const encodeXml = (value) => String(value).replace(/[&<>\"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[character]);
 
 const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
-const distanceKilometers = (a, b) => {
-  const radians = Math.PI / 180;
-  const latitudeA = a[1] * radians;
-  const latitudeB = b[1] * radians;
-  const latitudeDelta = (b[1] - a[1]) * radians;
-  const longitudeDelta = (b[0] - a[0]) * radians;
-  const value = Math.sin(latitudeDelta / 2) ** 2
-    + Math.cos(latitudeA) * Math.cos(latitudeB) * Math.sin(longitudeDelta / 2) ** 2;
-  return 12742 * Math.asin(Math.sqrt(value));
-};
-
-function removeBacktrackingSpurs(coordinates) {
-  const cleaned = coordinates.slice();
-  if (distanceKilometers(cleaned[0], cleaned.at(-1)) < 2) return cleaned;
-  let changed = true;
-  while (changed) {
-    changed = false;
-    for (let start = 0; start < cleaned.length - 2 && !changed; start += 1) {
-      for (let end = Math.min(cleaned.length - 1, start + 14); end >= start + 2; end -= 1) {
-        const returnDistance = distanceKilometers(cleaned[start], cleaned[end]);
-        if (returnDistance > 0.6) continue;
-        let drivenDistance = 0;
-        for (let index = start; index < end; index += 1) drivenDistance += distanceKilometers(cleaned[index], cleaned[index + 1]);
-        if (drivenDistance < 2 || drivenDistance / Math.max(returnDistance, 0.05) < 4) continue;
-        cleaned.splice(start + 1, end - start - 1);
-        changed = true;
-        break;
-      }
-    }
-  }
-  return cleaned;
-}
-
 async function routedGeometry(coordinates) {
   const key = coordinates.map(([longitude, latitude]) => `${longitude},${latitude}`).join(";");
   if (cache.has(key)) return cache.get(key);
-  const url = `https://router.project-osrm.org/route/v1/driving/${key}?overview=simplified&geometries=geojson&steps=false&continue_straight=true`;
-  const response = await fetch(url, { headers: { "User-Agent": "motorcycle-roadbook-route-builder/1.0" } });
+  const url = `https://router.project-osrm.org/route/v1/driving/${key}?overview=full&geometries=geojson&steps=false&continue_straight=true`;
+  await sleep(1100);
+  const response = await fetch(url, { signal: AbortSignal.timeout(30000), headers: { "User-Agent": "motorcycle-roadbook-route-builder/1.0" } });
   if (!response.ok) throw new Error(`OSRM ${response.status}`);
   const data = await response.json();
   const route = data.routes?.[0];
   if (!route?.geometry?.coordinates?.length) throw new Error(data.message || "Keine Route");
   const result = { geometry: route.geometry, distanceMeters: route.distance, durationSeconds: route.duration };
   cache.set(key, result);
-  await sleep(250);
   return result;
 }
 
@@ -127,7 +94,6 @@ async function main() {
           }
         }
       }
-      const cleanedCoordinates = ferry ? route.geometry.coordinates : removeBacktrackingSpurs(route.geometry.coordinates);
       features.push({
         type: "Feature",
         properties: {
@@ -139,9 +105,11 @@ async function main() {
           anchorCount: anchors.length,
           distanceMeters: route.distanceMeters,
           durationSeconds: route.durationSeconds,
+          roadGeometryResolution: ferry ? null : "full",
           source: routeSource
         },
-        geometry: { ...route.geometry, coordinates: cleanedCoordinates }
+        // Preserve all routed points, including legitimate hairpins and waypoint approaches.
+        geometry: route.geometry
       });
     }
   }

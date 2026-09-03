@@ -72,8 +72,9 @@ function loadDays() {
 
 async function routeThrough(points) {
   const pathPart = points.map(([longitude, latitude]) => `${longitude},${latitude}`).join(";");
-  const url = `https://router.project-osrm.org/route/v1/driving/${pathPart}?overview=simplified&geometries=geojson&steps=true&continue_straight=true`;
-  const response = await fetch(url, { headers: { "User-Agent": "motorcycle-roadbook-adria-builder/1.0" } });
+  const url = `https://router.project-osrm.org/route/v1/driving/${pathPart}?overview=full&geometries=geojson&steps=true&continue_straight=true`;
+  await new Promise(resolve => setTimeout(resolve, 1100));
+  const response = await fetch(url, { signal: AbortSignal.timeout(30000), headers: { "User-Agent": "motorcycle-roadbook-adria-builder/1.0" } });
   if (!response.ok) throw new Error(`OSRM ${response.status}`);
   const result = await response.json();
   const route = result.routes?.[0];
@@ -132,6 +133,7 @@ async function main() {
           distanceScope: "road-approach-only",
           seaGeometry: "schematic-not-navigation",
           roadCoordinateCount: approach.geometry.coordinates.length,
+          roadGeometryResolution: "full",
           roadEvidence: evidence,
           source: "osrm-road-approach-and-schematic-ferry"
         },
@@ -154,6 +156,7 @@ async function main() {
         distanceMeters: route.distance,
         durationSeconds: route.duration,
         roadEvidence: evidence,
+        roadGeometryResolution: "full",
         source: "osrm-driving-via-roadbook-anchors"
       },
       geometry: route.geometry
