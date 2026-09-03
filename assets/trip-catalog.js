@@ -26,9 +26,38 @@
     getSnapshot(id, publishedDefaultSnapshot) {
       const builtIn = [publishedDefaultSnapshot, ...builtInSnapshots()].find((item) => item?.trip?.id === id);
       const stored = storedTrips()[id];
+      if (id === 'trip_adria_2026' && builtIn) {
+        if (!stored) return clone(builtIn);
+        // An acknowledged release has landed: prefer the deployed snapshot.
+        if (stored.deliveryVersion && !stored.localDraft && builtIn.publishedVersion >= stored.deliveryVersion) return clone(builtIn);
+        const result = clone(stored);
+        // Preserve legacy browser drafts. Unknown bases are deliberately not publishable.
+        result.baseVersion ||= stored.trip?.dataVersion === builtIn.trip.dataVersion ? builtIn.publishedVersion : 'unknown';
+        if (result.days?.length === builtIn.days.length && result.baseVersion === builtIn.publishedVersion) {
+          result.days = result.days.map((day, index) => ({ ...day, id: day.id || builtIn.days[index].id }));
+        }
+        if (!result.deliveryVersion) result.localDraft = true;
+        return result;
+      }
       const storedIsCurrent = !builtIn?.trip?.dataVersion || stored?.trip?.dataVersion === builtIn.trip.dataVersion;
       if (stored && storedIsCurrent) return clone(stored);
       return clone(builtIn || publishedDefaultSnapshot);
+    },
+    saveDraft(value) {
+      const next = clone(value);
+      next.baseVersion ||= next.publishedVersion;
+      next.localDraft = true;
+      next.draftUpdatedAt = new Date().toISOString();
+      delete next.deliveryVersion;
+      return this.saveSnapshot(next);
+    },
+    markSubmitted(value, version) {
+      return this.saveSnapshot({ ...clone(value), publishedVersion: version, baseVersion: version, deliveryVersion: version, localDraft: false, planKind: 'adjusted' });
+    },
+    discardDraft(id) {
+      const trips = storedTrips();
+      delete trips[id];
+      saveStoredTrips(trips);
     },
     saveSnapshot(value) {
       if (!value?.trip?.id) throw new Error("Die Reise besitzt keine gültige ID.");

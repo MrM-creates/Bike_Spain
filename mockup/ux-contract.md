@@ -43,6 +43,14 @@ Im aktuellen Mockup bleiben nur `Reisen` und der geoeffnete `Reiseplan` sichtbar
 
 ## Sprache
 
+### Veröffentlichung und Begleitapp
+
+- Balkan-Änderungen bleiben zunächst ein lokaler Entwurf. Die vorhandene Hauptnavigation, Systemschrift und grünen Aktionsfarben bleiben unverändert.
+- Ein Statusbereich oberhalb von Übersicht und Roadbook bietet bei Änderungen genau eine primäre Freigabe: `Plan veröffentlichen`. PIN und Bestätigung bleiben erforderlich.
+- Zustände: `Änderungen nur in diesem Browser`, `Veröffentlichung wird bereitgestellt`, `An die Begleitapp übergeben`. Ein erfolgreicher Commit ist noch keine bestätigte Bereitstellung.
+- `Online-Stand ansehen` öffnet bei Konflikten den zentralen Stand getrennt; der lokale Entwurf bleibt erhalten. Fehlermeldungen und Übertragungsstatus sind per Live-Region zugänglich. Die bestehende responsive Banner-Komponente wird wiederverwendet.
+- Persönliche Tagebücher/Fotos sind kein Teil dieses Freigabewegs. Etappen behalten ihre IDs.
+
 - Titel benennen Ort und Zustand.
 - Hilfetext erklaert nur den naechsten Schritt.
 - Aktionen verwenden Verben: `Reise anpassen`, `Route bestaetigen`, `Gesamtplan veroeffentlichen`.

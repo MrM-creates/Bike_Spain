@@ -4,6 +4,7 @@
   const params = new URLSearchParams(window.location.search);
   const requestedView = params.get("view") === "roadbook" ? "roadbook" : "overview";
   const catalog = window.MotorcycleTripCatalog;
+  const publication = window.MotorcycleTripPublication;
   const requestedTripId = params.get("trip") || catalog?.defaultTripId || window.__TRIP_DATA__?.trip?.id || "";
 
   const bridge = window.__ROADBOOK_READ_MODEL__;
@@ -76,6 +77,8 @@
   let planDraftStatus = { active: false };
   let showPlanDraftDialog = () => {};
   const isServerManagedTrip = () => model?.trip?.capabilities?.storage === "server";
+  const canPublishTrip = () => activeSnapshot?.trip?.id === 'trip_adria_2026';
+  const hasLocalDraft = () => canPublishTrip() ? Boolean(activeSnapshot.localDraft) : !isServerManagedTrip();
   const usesKmlNarrative = () => model?.trip?.capabilities?.mapNarrativeSource === "kml";
 
   const hydrateRouteStyleDrafts = async () => {
@@ -93,9 +96,9 @@
   const updateDraftChrome = () => {
     const count = confirmedRouteStyleDrafts.size;
     const status = navRoot.querySelector(".generic-status");
-    if (status) status.textContent = !isServerManagedTrip() ? "Entwurf · lokal" : count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : planStatusLabel();
+    if (status) status.textContent = hasLocalDraft() ? "Entwurf · lokal" : activeSnapshot.deliveryVersion ? "Übertragung läuft" : count ? `Routenentwurf · ${count} ${count === 1 ? "Änderung" : "Änderungen"}` : planStatusLabel();
     const loaded = root.querySelector(".generic-loaded-plan strong");
-    if (loaded) loaded.textContent = !isServerManagedTrip() || count || isOriginalDraft() || isPlanDraft() ? "Lokaler Entwurf" : "Online";
+    if (loaded) loaded.textContent = hasLocalDraft() || count || isOriginalDraft() || isPlanDraft() ? "Lokaler Entwurf" : activeSnapshot.deliveryVersion ? "Übertragung läuft" : "Online";
   };
 
   const persistRouteStyle = async (stageIndex, style) => {
@@ -152,7 +155,7 @@
   const stayMarkerGroups = () => modelApi.groupStayRanges(model.revision.stays, model.revision.stages);
   const isOriginalDraft = () => model?.source?.planKind === "original-draft";
   const isPlanDraft = () => model?.source?.planKind === "plan-draft";
-  const planLabel = () => !isServerManagedTrip() ? "Reiseentwurf" : isOriginalDraft() ? "Originalplan" : (isPlanDraft() ? "Planentwurf" : "Aktueller Plan");
+  const planLabel = () => hasLocalDraft() ? "Reiseentwurf" : isOriginalDraft() ? "Originalplan" : (isPlanDraft() ? "Planentwurf" : "Aktueller Plan");
   const planStatusLabel = () => isOriginalDraft()
     ? "Originalplan · lokaler Entwurf"
     : (isPlanDraft() ? "Planentwurf · lokal" : "Aktueller Plan · online");
@@ -336,10 +339,9 @@
         const candidateDays = activeSnapshot.days.map((item, index) => index === selectedStage ? updated : item);
         if (typeof bridge.verifyTripRoute !== "function") throw new Error("Die automatische Routenprüfung ist momentan nicht verfügbar.");
         const verified = await bridge.verifyTripRoute({ days: candidateDays, trip: activeSnapshot.trip, startDay: selectedStage + 1, change: { type: "Etappe bearbeiten", scope: "stage" } });
-        activeSnapshot.days = verified.days;
-        activeSnapshot.verification = { verified: true, verificationVersion: verified.verificationVersion, checkedAt: verified.createdAt, summary: verified.summary || [], sourceChecks: verified.sourceChecks || [], openItems: verified.openItems || [] };
-        activeSnapshot.publishedVersion = new Date().toISOString();
-        catalog.saveSnapshot(activeSnapshot);
+        activeSnapshot.days = publication.mergeVerifiedDays(activeSnapshot.days, verified);
+        activeSnapshot.verification = publication.mergeVerification(activeSnapshot.verification, verified);
+        catalog.saveDraft(activeSnapshot);
         window.location.reload();
       } catch (error) {
         status.textContent = `Nicht gespeichert: ${error.message}`;
@@ -369,10 +371,9 @@
           trip: activeSnapshot.trip,
           change: { type: "reroute", startDay, instruction: form.elements.instruction.value.trim() }
         });
-        activeSnapshot.days = verified.days;
-        activeSnapshot.verification = { verified: true, verificationVersion: verified.verificationVersion, checkedAt: verified.createdAt, summary: verified.summary || [], sourceChecks: verified.sourceChecks || [], openItems: verified.openItems || [] };
-        activeSnapshot.publishedVersion = new Date().toISOString();
-        catalog.saveSnapshot(activeSnapshot);
+        activeSnapshot.days = publication.mergeVerifiedDays(activeSnapshot.days, verified);
+        activeSnapshot.verification = publication.mergeVerification(activeSnapshot.verification, verified);
+        catalog.saveDraft(activeSnapshot);
         window.location.reload();
       } catch (error) {
         status.textContent = `Nicht gespeichert: ${error.message}`;
@@ -520,6 +521,67 @@
     }
   }
 
+  function renderPublication() {
+    if (!canPublishTrip()) return;
+    const banner = document.createElement('section');
+    banner.className = 'generic-original-draft-banner';
+    banner.setAttribute('aria-label', 'Übergabe an die Begleitapp');
+    const pending = Boolean(activeSnapshot.deliveryVersion);
+    banner.innerHTML = `<div><strong>${hasLocalDraft() ? 'Änderungen nur in diesem Browser' : pending ? 'Veröffentlichung wird bereitgestellt' : 'Reiseplan online verfügbar'}</strong><span>${hasLocalDraft() ? 'Erst nach deiner Freigabe erhält die Begleitapp diesen Plan. Persönliche Tagebucheinträge und Fotos werden nicht übertragen.' : pending ? 'Der Plan ist zentral gespeichert. Die Begleitapp erhält ihn, sobald die Bereitstellung abgeschlossen ist.' : 'Die Begleitapp lädt diesen Stand beim Öffnen oder Aktualisieren.'}</span><small id="generic-publication-feedback" role="status" aria-live="polite"></small></div><div>${hasLocalDraft() ? '<button class="generic-primary" id="generic-publish-trip" type="button">Plan veröffentlichen</button>' : ''}${pending ? '<button class="generic-secondary" id="generic-check-delivery" type="button">Übertragung prüfen</button>' : ''}${hasLocalDraft() ? '<button class="generic-secondary" id="generic-view-online" type="button">Online-Stand ansehen</button>' : ''}</div>`;
+    root.prepend(banner);
+    const feedback = banner.querySelector('#generic-publication-feedback');
+    const checkDelivery = async () => {
+      try {
+        const ready = await publication.delivered(activeSnapshot.trip.id, activeSnapshot.deliveryVersion);
+        feedback.textContent = ready ? 'Für die Begleitapp verfügbar. Dort „Reisepläne aktualisieren“ wählen.' : 'Noch nicht verfügbar. Bitte in etwa einer Minute erneut prüfen; der gespeicherte Plan bleibt erhalten.';
+        if (ready) {
+          banner.querySelector('strong').textContent = 'An die Begleitapp übergeben';
+          banner.querySelector('span').textContent = 'Der neue Online-Stand kann jetzt auf deinen Geräten geladen werden.';
+          navRoot.querySelector('.generic-status').textContent = 'Aktueller Plan · online';
+          const loaded = root.querySelector('.generic-loaded-plan strong');
+          if (loaded) loaded.textContent = 'Online';
+        }
+      } catch (error) { feedback.textContent = error.message; }
+    };
+    banner.querySelector('#generic-check-delivery')?.addEventListener('click', checkDelivery);
+    banner.querySelector('#generic-view-online')?.addEventListener('click', () => {
+      const url = new URL(window.location.href);
+      url.searchParams.set('online', '1');
+      window.open(url.toString(), '_blank', 'noopener');
+    });
+    banner.querySelector('#generic-publish-trip')?.addEventListener('click', () => {
+      const dialog = document.createElement('dialog');
+      dialog.className = 'generic-journeys-dialog';
+      dialog.innerHTML = `<form><div class="generic-dialog-head"><div><h2>Reiseplan veröffentlichen</h2><p>${escapeHtml(activeSnapshot.trip.name)}</p></div><button class="generic-dialog-close" type="button" aria-label="Abbrechen">×</button></div><p>Route und Unterkünfte werden als neuer Online-Stand freigegeben. Danach kann die Begleitapp sie laden. Persönliche Notizen und Fotos gehören nicht zu dieser Freigabe.</p><label>Publish-PIN<input name="pin" type="password" required autocomplete="off"></label><p role="status" aria-live="polite"></p><div class="generic-dialog-foot"><button class="generic-primary" type="submit">Jetzt veröffentlichen</button></div></form>`;
+      document.body.append(dialog);
+      dialog.addEventListener('cancel', event => {
+        if (dialog.querySelector('button[type=submit]').disabled) event.preventDefault();
+      });
+      dialog.addEventListener('close', () => dialog.remove());
+      dialog.querySelector('.generic-dialog-close').addEventListener('click', () => dialog.close());
+      dialog.querySelector('form').addEventListener('submit', async event => {
+        event.preventDefault();
+        const button = dialog.querySelector('button[type=submit]');
+        const status = dialog.querySelector('[role=status]');
+        button.disabled = true;
+        dialog.querySelector('.generic-dialog-close').disabled = true;
+        status.textContent = 'Plan wird zentral gespeichert …';
+        try {
+          const result = await publication.publish(activeSnapshot, event.currentTarget.elements.pin.value.trim());
+          activeSnapshot = catalog.markSubmitted(activeSnapshot, result.version);
+          dialog.close();
+          window.location.reload();
+        } catch (error) {
+          status.textContent = `${error.message} Dein lokaler Entwurf bleibt erhalten.`;
+          button.disabled = false;
+          dialog.querySelector('.generic-dialog-close').disabled = false;
+        }
+      });
+      dialog.showModal();
+    });
+    if (pending) checkDelivery();
+  }
+
   function renderOverview() {
     const { trip, revision } = model;
     const totalDistance = revision.routeVariants.reduce((sum, route) => sum + route.distanceMeters, 0) / 1000;
@@ -531,7 +593,7 @@
     const planningAlternatives = Array.isArray(trip.planningAlternatives) ? trip.planningAlternatives : [];
     const alternativesMarkup = planningAlternatives.map((alternative) => `<article class="generic-overview-card generic-planning-alternative"><div class="generic-card-head"><div><span class="generic-eyebrow">Plan B · Wetterreserve</span><h2>${escapeHtml(alternative.title)}</h2></div><span>nicht Teil der Hauptstrecke</span></div><p>${escapeHtml(alternative.summary)}</p><ol>${(alternative.steps || []).map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol><div class="generic-alternative-foot"><strong>${escapeHtml(alternative.decision || "")}</strong>${alternative.sourceUrl ? `<a href="${escapeHtml(alternative.sourceUrl)}" target="_blank" rel="noopener">Anbieterinformation ↗</a>` : ""}</div></article>`).join("");
     root.innerHTML = `${isOriginalDraft() ? `<section class="generic-original-draft-banner" aria-label="Aktionen für den Originalplan"><div><strong>Originalplan als Entwurf geladen</strong><span>Der gemeinsame Plan bleibt unverändert, bis du ihn veröffentlichst.</span><small class="generic-original-bar-feedback" aria-live="polite"></small></div><div><button class="generic-secondary" id="generic-original-bar-discard" type="button">Beim aktuellen Plan bleiben</button><button class="generic-primary" id="generic-original-bar-publish" type="button">Originalplan veröffentlichen</button></div></section>` : (isPlanDraft() ? `<section class="generic-original-draft-banner generic-plan-draft-banner" aria-label="Aktionen für den Planentwurf"><div><strong>Planentwurf wird lokal angezeigt</strong><span>Der gemeinsame Plan bleibt unverändert, bis du ihn veröffentlichst.</span></div><div><button class="generic-secondary" id="generic-plan-bar-discard" type="button">Entwurf verwerfen</button><button class="generic-primary" id="generic-plan-bar-review" type="button">Entwurf prüfen</button></div></section>` : "")}<section id="generic-overview-panel">
-      <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">${escapeHtml(trip.characterTitle || trip.name)}</h1><p>${escapeHtml(trip.characterText || "Motorradreise mit individuell geplanten Etappen, Aufenthalten und geschützten Fixpunkten.")}</p></div><div class="generic-overview-date">${escapeHtml(planLabel())} · ${(!isServerManagedTrip() || isOriginalDraft() || isPlanDraft()) ? "lokaler Entwurf" : "online"}<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
+      <section class="generic-overview-heading" aria-labelledby="generic-overview-title"><div><span class="generic-eyebrow">Charakter der Reise</span><h1 id="generic-overview-title">${escapeHtml(trip.characterTitle || trip.name)}</h1><p>${escapeHtml(trip.characterText || "Motorradreise mit individuell geplanten Etappen, Aufenthalten und geschützten Fixpunkten.")}</p></div><div class="generic-overview-date">${escapeHtml(planLabel())} · ${(hasLocalDraft() || isOriginalDraft() || isPlanDraft()) ? "lokaler Entwurf" : "online"}<strong>${escapeHtml(dateRange())}</strong><span>${escapeHtml(planVersionLabel())}</span></div></section>
       <section class="generic-route-card" aria-label="Karte und Reiseverlauf"><div class="generic-map-wrap"><div id="trip-overview-map" aria-label="Interaktive Übersichtskarte"></div><div class="generic-map-loading">Karte und aktuelle Route werden geladen …</div><span class="generic-map-label" id="generic-overview-map-label">${escapeHtml(planLabel())} · dieselbe Route wie im Roadbook</span><button class="generic-map-reset" id="generic-map-reset" type="button">Gesamte Route</button></div><div class="generic-route-story"><h2>Reiseverlauf</h2><p>Karte und Beschreibung sind miteinander verbunden.</p>${revision.narrativeSegments.map((segment, index) => `<button class="generic-story-segment" type="button" data-story="${index}" aria-current="false"><strong>${escapeHtml(segment.title)}</strong>${escapeHtml(segment.text)}</button>`).join("")}</div></section>
       <section class="generic-overview-stats" aria-label="Eckdaten"><div class="generic-overview-stat"><strong>${revision.stages.length} Tage</strong><span>Gesamtdauer</span></div><div class="generic-overview-stat"><strong>${rideCount}</strong><span>Fahretappen</span></div><div class="generic-overview-stat"><strong>${restCount}</strong><span>Ruhetage</span></div><div class="generic-overview-stat"><strong>${km.format(totalDistance)} km</strong><span>Planwerte</span></div><div class="generic-overview-stat"><strong>${trip.motorcycleCount} Motorräder</strong><span>Reiseparameter</span></div></section>
       <section class="generic-overview-details"><article class="generic-overview-card"><div class="generic-card-head"><h2>Fixpunkte</h2><span>Automatisch geschützt</span></div><ul class="generic-fix-list">${revision.fixPoints.map((fix) => `<li><span class="generic-fix-icon">${fix.kind === "transport" ? "⚓" : fix.kind === "start" ? "●" : "◎"}</span><span><strong>${escapeHtml(fix.title)}</strong><small>${escapeHtml(fix.startsAt ? formatDate(fix.startsAt.slice(0, 10)) : "Verbindlich")}</small></span><span class="generic-fix-tag">Geschützt</span></li>`).join("")}</ul></article><article class="generic-overview-card"><div class="generic-card-head"><h2>Unterkünfte</h2><span>${revision.stays.length} Stopps</span></div><div class="generic-booking-stats"><div><strong>${booked}</strong><span>Gebucht</span></div><div><strong>${requested}</strong><span>Angefragt</span></div><div><strong>${open}</strong><span>Offen</span></div></div><p class="generic-card-note">Unterkünfte, Alternativen und Buchungsstatus sind direkt mit dem Roadbook verbunden.</p><button class="generic-secondary" id="generic-overview-stays" type="button">Unterkünfte im Roadbook ansehen</button></article>${alternativesMarkup}</section>
@@ -569,6 +631,7 @@
       }
     });
     renderWorkspace();
+    renderPublication();
     initialiseOverviewMap(revision.narrativeSegments);
   }
 
@@ -1461,7 +1524,9 @@
     try {
       const publishedSnapshot = await bridge.getPublishedSnapshot();
       publishedDefaultSnapshot = publishedSnapshot;
-      const snapshot = catalog?.getSnapshot ? catalog.getSnapshot(requestedTripId, publishedSnapshot) : publishedSnapshot;
+      const snapshot = params.get('online') === '1' && requestedTripId === 'trip_adria_2026'
+        ? JSON.parse(JSON.stringify(window.__TRIP_ADRIA_DATA__))
+        : catalog?.getSnapshot ? catalog.getSnapshot(requestedTripId, publishedSnapshot) : publishedSnapshot;
       activeSnapshot = snapshot;
       planDraftStatus = activeSnapshot.trip?.capabilities?.storage === "server" && typeof bridge.getPlanDraftStatus === "function" ? await bridge.getPlanDraftStatus() : { active: false };
       model = modelApi.importLegacyRoadbook(activeSnapshot);

@@ -1,7 +1,7 @@
 const DEFAULT_REPO = "MrM-creates/Bike_Spain";
 const DEFAULT_BRANCH = "main";
-const TRIP_DATA_PATH = "data/trip-spanien-2026.js";
-const { parseTripData, serializeTripData, normalizePlanKind } = require("../lib/trip-data");
+const { normalizePlanKind } = require("../lib/trip-data");
+const { tripTarget, readPublishedTrip, writePublishedTrip } = require("../lib/published-trips");
 
 const json = (response, status, body) => {
   response.statusCode = status;
@@ -11,7 +11,12 @@ const json = (response, status, body) => {
 
 const readBody = async (request) => {
   const chunks = [];
-  for await (const chunk of request) chunks.push(chunk);
+  let size = 0;
+  for await (const chunk of request) {
+    size += Buffer.byteLength(chunk);
+    if (size > 2 * 1024 * 1024) throw Object.assign(new Error("Der Reiseplan ist zu gross."), { status: 413 });
+    chunks.push(Buffer.from(chunk));
+  }
   return JSON.parse(Buffer.concat(chunks).toString("utf8") || "{}");
 };
 
@@ -47,7 +52,7 @@ const normalizeDay = (day) => {
   const allowed = [
     "id", "day", "title", "type", "overnight", "km", "time", "roads", "points",
     "note", "travelNote", "alert", "rest", "origin", "destination", "waypoints",
-    "status", "custom", "mainLabel", "mainMeta", "alt", "routeStyle"
+    "status", "custom", "main", "mainLabel", "mainMeta", "alt", "routeStyle", "distanceScope", "roadApproach"
   ];
   const output = {};
   allowed.forEach((key) => {
@@ -82,10 +87,13 @@ const normalizeAccommodationState = (input) => {
   );
 };
 
-const createCommit = async ({ repo, branch, message, files }) => {
+const createCommit = async ({ repo, branch, message, files, expectedBlobSha }) => {
   const refPath = `/repos/${repo}/git/ref/heads/${encodeURIComponent(branch)}`;
   const ref = await githubRequest(refPath);
   const headSha = ref.object.sha;
+  // The source may have changed between the first read and this commit.
+  const latest = await githubRequest(`/repos/${repo}/contents/${encodeURIComponent(files[0].path)}?ref=${headSha}`);
+  if (latest.sha !== expectedBlobSha) throw Object.assign(new Error("Der Online-Plan wurde inzwischen geändert. Dein Entwurf bleibt lokal erhalten. Bitte zuerst den aktuellen Online-Plan prüfen."), { status: 409 });
   const headCommit = await githubRequest(`/repos/${repo}/git/commits/${headSha}`);
   const treeItems = [];
   for (const file of files) {
@@ -136,12 +144,19 @@ module.exports = async (request, response) => {
       return;
     }
 
+    const tripId = payload.tripId || "trip_spanien_2026";
+    const target = tripTarget(tripId);
+    const isAdria = tripId === "trip_adria_2026";
     const days = payload.days.map(normalizeDay);
-    const accommodations = payload.accommodations ? normalizeAccommodationState(payload.accommodations) : null;
+    if (isAdria && (!payload.baseVersion || days.length > 90 || new Set(days.map(day => day.id)).size !== days.length || days.some(day => typeof day.id !== 'string' || !day.id))) {
+      json(response, 400, { error: "Online-Ausgangsversion und eindeutige Etappen-IDs sind erforderlich." });
+      return;
+    }
+    const accommodations = !isAdria && payload.accommodations ? normalizeAccommodationState(payload.accommodations) : null;
     const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
     const branch = process.env.GITHUB_BRANCH || DEFAULT_BRANCH;
-    const current = await githubRequest(`/repos/${repo}/contents/${encodeURIComponent(TRIP_DATA_PATH)}?ref=${encodeURIComponent(branch)}`);
-    const tripData = parseTripData(Buffer.from(current.content, "base64").toString("utf8"));
+    const current = await githubRequest(`/repos/${repo}/contents/${encodeURIComponent(target.path)}?ref=${encodeURIComponent(branch)}`);
+    const tripData = readPublishedTrip(Buffer.from(current.content, "base64").toString("utf8"), tripId);
     const currentVersion = tripData.publishedVersion || "legacy";
     const planKind = normalizePlanKind(payload.planKind, tripData.planKind);
     if (payload.baseVersion && String(payload.baseVersion) !== currentVersion) {
@@ -149,23 +164,29 @@ module.exports = async (request, response) => {
       return;
     }
     const nextVersion = new Date().toISOString();
-    tripData.publishedDays = days;
+    if (isAdria) {
+      const { applyAdriaPublication } = require('../lib/adria-publication');
+      applyAdriaPublication(tripData, payload, days);
+    } else tripData.publishedDays = days;
     if (accommodations) {
       if (!tripData.baselineAccommodations) tripData.baselineAccommodations = tripData.accommodations;
       tripData.accommodations = accommodations;
     }
     tripData.publishedVersion = nextVersion;
+    if (isAdria) tripData.trip.dataVersion = nextVersion;
     tripData.planKind = planKind;
 
     const message = payload.reason
       ? `Update roadbook plan: ${String(payload.reason).slice(0, 140)}`
       : "Update roadbook plan";
 
-    const files = [{ path: TRIP_DATA_PATH, content: serializeTripData(tripData) }];
-    const result = await createCommit({ repo, branch, message, files });
+    const files = [{ path: target.path, content: writePublishedTrip(tripData, tripId) }];
+    const result = await createCommit({ repo, branch, message, files, expectedBlobSha: current.sha });
 
     json(response, 200, {
       ok: true,
+      tripId,
+      delivery: "deployment-pending",
       commit: result.sha || null,
       message,
       branch,
@@ -174,7 +195,7 @@ module.exports = async (request, response) => {
       version: nextVersion
     });
   } catch (error) {
-    json(response, error.status || 500, {
+    json(response, error.status || (error instanceof SyntaxError ? 400 : 500), {
       error: error.message || "Publish fehlgeschlagen.",
       details: error.body || null
     });
