@@ -113,6 +113,34 @@ assert.equal(catalog.getSnapshot(created.trip.id, {}).trip.name, "Testreise");
 
 const routes = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "assets", "adria-routes.geojson"), "utf8"));
 assert.equal(routes.features.length, 18);
+const corrected = new Map(routes.features.filter((f) => [1, 10, 13, 22].includes(f.properties.day)).map((f) => [f.properties.day, f]));
+for (const [day, feature] of corrected) {
+  assert.ok(feature.properties.durationSeconds < 5 * 3600, `Tag ${day}: Routerzeit unter fünf Stunden`);
+  assert.equal(feature.properties.roadEvidence.ferryMeters, 0);
+  assert.ok(feature.properties.roadEvidence.snappedWaypoints.every((w) => w.distance < 100));
+  const nav = new URL(adria.days[day - 1].main);
+  assert.equal(nav.searchParams.get("waypoints"), adria.days[day - 1].waypoints.join("|"));
+  assert.ok(adria.days[day - 1].waypoints.length <= 3, "Mobile Maps: höchstens drei Zwischenziele");
+}
+const arlberg = corrected.get(1).properties.roadEvidence;
+assert.ok(arlberg.snappedWaypoints.some((w) => w.name === "Arlbergtunnel" && w.distance < 1));
+assert.ok(arlberg.roadDistancesMeters.S16 > 50000);
+assert.ok(!Object.keys(arlberg.roadDistancesMeters).some((road) => /L197|B197|Paul-Bantlin/.test(road)));
+for (const day of [10, 13]) {
+  const roads = corrected.get(day).properties.roadEvidence.roadDistancesMeters;
+  assert.ok(!Object.keys(roads).some((road) => /\bA1\b/.test(road)), `Tag ${day}: keine A1`);
+  assert.ok(roads.D8 > 120000);
+}
+assert.ok(corrected.get(10).geometry.coordinates.some(([lon, lat]) => lon > 16.68 && lon < 16.74 && lat > 43.4 && lat < 43.46), "Omiš an der Küste enthalten");
+assert.ok(corrected.get(13).properties.roadEvidence.snappedWaypoints.some((w) => /Pelješki/.test(w.name)));
+const furlo = corrected.get(22);
+assert.ok(furlo.properties.roadEvidence.roadDistancesMeters.A14 > 35000);
+assert.match(adria.days[21].roads, /A14/);
+assert.ok(furlo.properties.roadEvidence.snappedWaypoints.some((w) => w.name === "Via Flaminia" && w.distance < 1));
+assert.ok(!Object.keys(furlo.properties.roadEvidence.roadDistancesMeters).some((road) => /Furlo Monte/i.test(road)));
+assert.ok(furlo.geometry.coordinates.some(([lon, lat]) => lon > 12.75 && lon < 12.76 && lat > 43.66 && lat < 43.67), "Furlo: östlicher Zugang");
+assert.ok(furlo.geometry.coordinates.some(([lon, lat]) => lon > 12.70 && lon < 12.72 && lat > 43.63 && lat < 43.64), "Furlo: westlicher Ausgang");
+assert.match(adria.days[21].note, /Öffnungsmeldung stammt von 2022/);
 const shortenedDay = routes.features.find((feature) => feature.properties.day === 3);
 assert.ok(shortenedDay.properties.distanceMeters > 275000 && shortenedDay.properties.distanceMeters < 300000);
 assert.ok(shortenedDay.properties.durationSeconds < 4.5 * 3600);

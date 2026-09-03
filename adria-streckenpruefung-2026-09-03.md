@@ -38,7 +38,7 @@ Inserate am 03.09. über Suchindex geprüft. Datierte Direktabfragen lieferten k
 
 Vor Buchung schriftlich fragen: asphaltierte Zufahrt ohne steile/enge Problemstelle, ebene Rangierfläche und gesicherte Abstellung für zwei beladene Motorräder. Ein privater Parkplatz allein bestätigt weder Garage noch Sicherheit. Treppen zum zweiten Stock beim Gepäck bedenken.
 
-## Weiter offen, nicht Teil dieser Änderung
+## Damals offene Punkte – inzwischen korrigiert (Nachtrag unten)
 
 - Tag 1: Arlbergtunnel-Anker und tatsächlicher Tunnelverlauf statt Pass korrigieren.
 - Tag 10: gewünschte D8 über Omiš statt unbeabsichtigter A1-Abschnitte sichern.
@@ -56,3 +56,26 @@ Copy: Kennzahlen am Transporttag heissen „Landstrecke“ und „Reine Fahrzeit
 Design/Interaktion: bestehende Tokens, Systemschrift, Abstände, Buttons und grüner Akzent; keine neuen Farben oder Animationen. Etappenklick öffnet weiterhin dasselbe Detailfenster. Responsive: bestehendes Desktop-/Tablet-/Mobile-Raster und scrollbarer Detailinhalt. Accessibility: semantische Überschriften, Textlabels, Links und vorhandene Fokuszustände bleiben erhalten. Referenzen: mockup/ux-contract.md sowie Flider navigation-principles.md.
 
 Die erste Produktionsprüfung zeigte, dass Transporttage bislang keine Routenkennzahlen und keinen Maps-Link erhielten; zudem verdeckten kurze Strassenangaben die ausführlichen Tagesnotizen. Korrigiert: explizites roadApproach-Feld ermöglicht eine reine Landroutenvariante zusätzlich zum Transporttag, ohne den Transport-Fixpunkt oder reine Fährtage anderer Reisen zu verändern. Tagesnotizen werden nun zusätzlich zu Strassen/Wegpunkten angezeigt. Die Landanfahrt wird dadurch auch in der Gesamtfahrdistanz mitgezählt.
+
+## Nachtrag: vier Streckenkorrekturen, 03.09.2026
+
+Vom Nutzer ausdrücklich beauftragt. Nur Tage 1, 10, 13 und 22 sowie deren Kartenlinien geändert. Alle Unterkunftsblöcke, übrigen Tage und Fixpunkte bleiben unverändert. Kein abschliessender Gesamtcheck der Reise in diesem Arbeitsschritt.
+
+| Tag | Korrektur | Geroutet, ohne Live-Verkehr | Vorsichtiger Planwert |
+| --- | --- | --- | --- |
+| 1 | Punkt direkt im Arlbergtunnel; falscher Suchpunkt und unnötiger Feldkirch-Zentrumspunkt entfernt | 294,079 km / 3 h 40 min | 295 km / 4 h 30 |
+| 10 | Primošten-Rand, Hauptstrasse nördlich Trogir-Altstadt, Dugi Rat als Küstenanker; weiter über Omiš | ca. 145 km / 3 h 07 min | 145 km / 4 h |
+| 13 | Drvenik als Küstenstopp, exakter Brückenanker, Ston; keine A1 | 174,335 km / 3 h 24 min | 175 km / 4 h |
+| 22 | Via Flaminia statt Furlo Monte; durchgehende Passage von Calmazzo nach Furlo; kein Fano-Altstadtanker | 113,945 km / 1 h 49 min | 115 km / 3 h |
+
+Pausen/Verkehrsreserve kommen zu diesen Planwerten hinzu. Tag 22 enthält bewusst 40 km A14 bis zum Anschluss Fano. Das ist jetzt in Strassenliste und Hinweis ausdrücklich sichtbar; eine reine SS16-Küstenzufahrt ist nicht zugesagt. Der Versuch, OSRM mit exclude=motorway zu verwenden, wurde vom Dienst als nicht unterstützt abgewiesen; es wurde keine scheinbar wirksame Vermeidungsoption eingebaut.
+
+Routingnachweise: S16 über 62 km, Tunnelanker von OSRM als „Arlbergtunnel“ erkannt (0 m Abweichung), keine L197/B197/Paul-Bantlin-Weg-Schritte. Tage 10/13 enthalten jeweils mehr als 120 km D8, keine A1 und keine Fähre. Omiš ist in der Geometrie enthalten. Tag 22 hat einen exakt auf Via Flaminia liegenden Anker und Geometriepunkte östlich und westlich der Schlucht, keine Strasse „Furlo Monte“. Alle Ankerabweichungen unter 100 m. Höchstens drei Zwischenziele pro Google-Maps-Link, damit mobile Links die relevanten Anker aufnehmen können. Google Maps berechnet trotzdem selbst neu.
+
+### Quellen und Grenzen der Prüfung
+
+- [ASFINAG S16 Arlbergtunnel](https://shop.asfinag.at/de/produkte/digitale-streckenmaut/s-16-arlberg-strassentunnel/) und [Land Vorarlberg, Wiedereröffnung 22.11.2024](https://presse.vorarlberg.at/land/public/Arlbergtunnel-fristgerecht-wieder-f-r-Verkehr-ge-ffnet): Tunnel statt früherer Sanierungsumleitung. [Motorradvorarlberg, Anreise](https://www.motorradvorarlberg.de/anreise-vorarlberg.html), Suchindex gelesen 03.09., Direktabruf Cache miss: unterscheidet ebenfalls S16-Tunnel und saisonale Passstrasse; dient als motorradspezifischer Korridorabgleich, nicht als Live-Sperrnachweis. Keine Tagesfreigabe für den 24.09. behauptet.
+- [HAK](https://www.hak.hr/info/stanje-na-cestama/?lang=en), Stand 03.09.: D8 und Split-Zufahrten können Baustellen-/Verkehrsverzögerungen haben. [ADAC Motorradstrecken Kroatien](https://www.adac.de/reise-freizeit/reisen-mit-motorrad/motorradtouren/kroatien/), 31.08.2026: bestätigt die Motorrad-Küstenachse und die Pelješac-Verbindung. Konsequenz: beide D8-Tage behalten Küste und Zeitreserve; keine unbeabsichtigte A1. Keine Aussage, dass heutige Verkehrslage im Oktober gilt.
+- [Furlo-Reservat, Verkehrsregelung](https://www.riservagoladelfurlo.it/la-riserva/modifiche-alla-circolazione), gelesen 03.09.: veröffentlichte Wiederöffnung bezieht sich auf Juli 2022, ist ausdrücklich keine aktuelle Tagesbestätigung. Suchtreffer einer kommunalen Sperrverfügung beziehen sich auf 16.05.2023, nicht auf 2026; eine spätere [lokale Meldung vom 29.08.2023](https://www.nonsoloflaminia.it/index.php/2023/08/29/furlo-bartoli-strategia-per-valorizzare-la-via-flaminia-con-acqualagna-e-fermignano/) erwähnt die Wiederöffnung. [MotoPlanner Furlo](https://www.motoplanner.com/poi/gola-del-furlo) identifiziert die Schlucht als Motorrad-Panoramastrasse (POI 43.6488, 12.7277); der tatsächliche Strassenanker wurde separat geroutet. Konsequenz: korrekte Schluchtgeometrie mit ausdrücklicher Freigabe-/Wetterbedingung. Bei Sperre Furlo auslassen, auf SS73bis Richtung Urbino bleiben, keine schmale Bergumfahrung.
+
+Die präzisen Zufahrten zu den noch nicht gebuchten Unterkünften und zum Ausschiffungsplatz bleiben offen; die Ortsendpunkte sind keine Freigabe zur Einfahrt in eine ZTL oder Fussgängerzone. Nach diesen vier Korrekturen folgen auf separaten Auftrag Gesamtcheck und Buchungsreife; Wetter, Baustellen, Furlo-Freigabe und Fähre bleiben zeitnahe Reisechecks.
