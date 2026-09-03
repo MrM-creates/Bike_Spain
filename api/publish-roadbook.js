@@ -45,14 +45,15 @@ const githubRequest = async (path, options = {}) => {
   return body;
 };
 
-const normalizeDay = (day) => {
+const normalizeDay = (day, keepNavigation = false) => {
   if (!day || typeof day !== "object") throw new Error("Jeder Tag muss ein Objekt sein.");
   if (!day.title || typeof day.title !== "string") throw new Error("Jeder Tag braucht einen Titel.");
 
   const allowed = [
     "id", "day", "title", "type", "overnight", "km", "time", "roads", "points",
     "note", "travelNote", "alert", "rest", "origin", "destination", "waypoints",
-    "status", "custom", "main", "mainLabel", "mainMeta", "alt", "routeStyle", "distanceScope", "roadApproach"
+    "status", "custom", "mainLabel", "mainMeta", "alt", "routeStyle",
+    ...(keepNavigation ? ["main", "distanceScope", "roadApproach"] : [])
   ];
   const output = {};
   allowed.forEach((key) => {
@@ -147,7 +148,7 @@ module.exports = async (request, response) => {
     const tripId = payload.tripId || "trip_spanien_2026";
     const target = tripTarget(tripId);
     const isAdria = tripId === "trip_adria_2026";
-    const days = payload.days.map(normalizeDay);
+    const days = payload.days.map(day => normalizeDay(day, isAdria));
     if (isAdria && (!payload.baseVersion || days.length > 90 || new Set(days.map(day => day.id)).size !== days.length || days.some(day => typeof day.id !== 'string' || !day.id))) {
       json(response, 400, { error: "Online-Ausgangsversion und eindeutige Etappen-IDs sind erforderlich." });
       return;
