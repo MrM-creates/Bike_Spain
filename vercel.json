@@ -1,6 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
+    "api/companion-plan.js": {
+      "includeFiles": "data/trip-*.js"
+    },
     "api/create-plan-draft.js": {
       "maxDuration": 300
     }
