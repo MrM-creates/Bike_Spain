@@ -67,8 +67,8 @@
     rest(17, "Kotor und Perast", "Kotor oder Perast", "Die vollständige Buchtrunde misst nur etwa 50–60 km, braucht auf der schmalen Uferstrasse aber Zeit. Perast und Risan ruhig angehen."),
     rest(18, "Bucht von Kotor", "Kotor oder Perast", "Ruhetag oder kurze Buchtrunde auf Hauptstrassen. Motorrad ausserhalb der engen Kerne abstellen."),
     rest(19, "Kotor / Wetter- und Entscheidungstag", "Kotor oder Perast", "Lovćen nur trocken, windarm und nach Tagesprüfung. Keine spontane Hin-und-zurück-Fahrt; alternativ ein weiterer ruhiger Tag an der Bucht."),
-    ride(20, "Kotor – Dubrovnik – Ploče – Makarska", "Makarska", "ca. 275 km", "ca. 5 h 15 plus Grenze", "M1 · D8", "Kotor, Montenegro", "Makarska, Croatia", ["Karasovići Border Crossing", "Dubrovnik, Croatia", "Ploče, Croatia"], "Vier Nächte Montenegro bleiben erhalten. Das ist der längste Küstentag: früh starten und grosszügigen Grenz- und Pausenpuffer vorsehen.", "Rückfahrt zur Fähre"),
-    ride(21, "Makarska – Split / Nachtfähre nach Ancona", "Ancona", "ca. 90 km plus Nachtfähre", "ca. 1 h 45 plus Check-in und Überfahrt", "D8 · A1 · Fährlinie 53", "Makarska, Croatia", "Ancona, Italy", ["Split Ferry Port, Croatia"], "Kurze Anfahrt zum Hafen. Check-in spätestens 18:00, planmässige Abfahrt 20:00 und Ankunft in Ancona am Folgetag um 07:00. Achtung: Jadrolinija hat die Linie wegen eines technischen Problems bis 21.09.2026 eingestellt. Wiederaufnahme und zwei Motorradplätze am 22.09. zwingend bestätigen.", "Fährtag"),
+    ride(20, "Kotor – Perast – Dubrovnik-Umfahrung – Ston", "Ston / Mali Ston", "ca. 150 km", "ca. 4 h plus Grenze", "M1 · D8 · Zufahrt Ston", "Kotor, Montenegro", "Ston, Croatia", ["42.487161,18.699758", "Karasovići Border Crossing"], "Nach vier vollen Nächten Montenegro rund um die Bucht auf der Hauptstrasse oberhalb von Perast, ohne Kamenari-Fähre. Über Karasovići und die D8 an Dubrovnik vorbei, ohne Altstadtzufahrt, bis Ston. Rund 4 Stunden reine Fahrt einplanen; mit Pausen und Grenzpuffer etwa 6–7 Stunden unterwegs, bei langer Grenzwartezeit mehr. Unterkunft bevorzugt in Luka oder Hodilje ausserhalb der historischen Ortskerne; die letzten Kilometer und die Zufahrt zum gewählten Haus vor Buchung prüfen. Am Fahrtag AMSCG und HAK für Strassen, Wind und Grenze kontrollieren.", "Rückfahrt zur Fähre"),
+    ride(21, "Ston – Pelješac-Brücke – Split / Nachtfähre nach Ancona", "Ancona", "ca. 185 km plus Nachtfähre", "ca. 3 h plus Check-in und Überfahrt", "D8 · D425 · A1 · D1 · D8 · D410 · Fährlinie 53", "Ston, Croatia", "Ancona, Italy", ["42.930204,17.534612", "Split Ferry Port, Croatia"], "Über die Pelješac-Brücke ohne Neum-Transit und ab Karamatići bewusst auf der A1 bis Dugopolje, dann zum Hafen Split. Rund 3 Stunden reine Fahrt; mit Pausen und Stadtverkehr etwa 4–5 Stunden bis zum Hafen. Morgens losfahren, am frühen Nachmittag ankommen; keine zusätzliche Küstenrunde. Check-in spätestens 18:00 als Planwert, verbindlich gelten Ticket und Reederei. Geplant: Abfahrt 14.10. um 20:00, Ankunft 15.10. um 07:00. Die Kartenlinie folgt an Land den Strassen; die Seeverbindung ist schematisch, der Google-Maps-Link endet am Hafen Split. Jadrolinija nennt am 03.09. einen technischen Unterbruch bis 09.09.2026; Wiederaufnahme, Kabine und zwei Motorradplätze am 22.09. bestätigen. Nicht gebucht und noch nicht operativ gesichert.", "Fährtag"),
     ride(22, "Ancona – Fano – Furlo-Schlucht – Urbino", "Urbino", "ca. 130 km", "ca. 3 h", "SS16 · SS73bis · SP3", "Ancona, Italy", "Urbino, Italy", ["Fano, Italy", "Gola del Furlo, Italy"], "Nach der Ausschiffung bewusst kurze Marken-Etappe. Die alte Flaminia durch die Furlo-Schlucht wird von offiziellen italienischen und aktuellen Motorradquellen empfohlen; trotzdem nur bei geöffneter, trockener Strecke fahren. Urbino-Unterkunft ausserhalb der ZTL mit gut erreichbarer Abstellung wählen.", "Italien / Genussfahrt"),
     rest(23, "Urbino und Montefeltro", "Urbino", "Renaissance-Stadt, Erholung und optional eine kurze Runde durch die sanften Hügel des Montefeltro."),
     ride(24, "Urbino – San Marino – Rimini – Ravenna", "Ravenna", "ca. 125 km", "ca. 3 h", "SS73bis · SS72 · SS16", "Urbino, Italy", "Ravenna, Italy", ["San Marino", "Rimini, Italy"], "San Marino und Rimini als flexible Stopps; bei Regen direkt auf gut ausgebauten Strassen nach Ravenna."),
@@ -80,6 +80,11 @@
     ride(30, "Como – Gotthardtunnel – Berikon", "Berikon", "ca. 235 km", "ca. 3 h 15", "A9 · A2 · A1", "Como, Italy", "Berikon, Switzerland", ["Gotthard Road Tunnel, Switzerland"], "Keine hohen Alpenpässe: Splügen und Engadin bleiben ausgeschlossen. Gotthardverkehr vor Abfahrt prüfen.", "Heimfahrt")
   ];
 
+  // Navigation on ferry days covers the road approach, never an inferred drive to Italy.
+  days[20].main = maps(days[20].origin, "Split Ferry Port, Croatia", days[20].waypoints.slice(0, -1));
+  days[19].points = "Perast (M1 oberhalb des Ortes) · Karasovići · Dubrovnik-Umfahrung";
+  days[20].points = "Pelješac-Brücke · A1 · Hafen Split";
+
   const placeCoordinates = {
     "Berikon": { latitude: 47.351, longitude: 8.372, countryCode: "CH" },
     "Innsbruck": { latitude: 47.269, longitude: 11.405, countryCode: "AT" },
@@ -90,6 +95,7 @@
     "Zadar": { latitude: 44.119, longitude: 15.232, countryCode: "HR" },
     "Šibenik": { latitude: 43.735, longitude: 15.895, countryCode: "HR" },
     "Makarska": { latitude: 43.296, longitude: 17.017, countryCode: "HR" },
+    "Ston / Mali Ston": { latitude: 42.838, longitude: 17.697, countryCode: "HR" },
     "Dubrovnik (Aussenbasis)": { latitude: 42.651, longitude: 18.094, countryCode: "HR" },
     "Kotor oder Perast": { latitude: 42.486, longitude: 18.699, countryCode: "ME" },
     "Ancona": { latitude: 43.615, longitude: 13.51, countryCode: "IT" },
@@ -101,7 +107,7 @@
   };
 
   const snapshot = {
-    publishedVersion: "2026-09-02T19:45:00.000Z",
+    publishedVersion: "2026-09-03T08:20:00.000Z",
     planKind: "draft",
     originalDays: days,
     days,
@@ -227,16 +233,16 @@
         parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen"
       },
       {
-        id: "makarska-return",
-        title: "Makarska",
+        id: "ston-return",
+        title: "Ston / Mali Ston",
         startDate: "2026-10-13",
         endDate: "2026-10-14",
         booking: "open",
-        currentFirstChoice: "Romana Beach Resort · Makarska-Nord",
-        currentFirstChoiceUrl: booking("hr", "romana-beach-resort", "2026-10-13", "2026-10-14"),
-        currentAlternative: "Hotel Maritimo · Makarska",
-        currentAlternativeUrl: booking("hr", "maritimo", "2026-10-13", "2026-10-14"),
-        parking: "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+        currentFirstChoice: "Apartman I&M · Luka bei Ston · Meerblick und Küche",
+        currentFirstChoiceUrl: booking("hr", "i-amp-m", "2026-10-13", "2026-10-14"),
+        currentAlternative: "Apartmani Mirjana · Hodilje · Apartment ausserhalb von Ston",
+        currentAlternativeUrl: booking("hr", "apartmani-mirjana-hodilje", "2026-10-13", "2026-10-14"),
+        parking: "Beide Inserate nennen private Parkplätze. Ebener, sicherer Stellplatz für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kandidaten, nicht gebucht: Verfügbarkeit für 13.–14.10., Mindestaufenthalt, Gesamtpreis und kostenlose Stornofrist noch offen; beide Adressen nennen den 2. Stock."
       },
       {
         id: "split-ancona-cabin",
@@ -314,7 +320,7 @@
     trip: {
       id: "trip_adria_2026",
       name: "Adria & Balkan 2026",
-      dataVersion: "2026-09-02.6",
+      dataVersion: "2026-09-03.1",
       characterTitle: "Adriawind, Küstenkurven und stille Buchten",
       characterText: "Durch das Pustertal und Drautal, mit einer Pause am Wörthersee, führt die Reise über Graz nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
       startDate: "2026-09-24",
@@ -344,7 +350,7 @@
           "Pausen, Besichtigungen, Tanken, Verkehrspuffer sowie Grenz- und Fährwartezeiten zusätzlich ausweisen; 4–5 Stunden Fahrt können bereits 7 oder mehr Stunden unterwegs bedeuten.",
           "Nicht durch optimistisch verkürzte Zeitangaben passend rechnen: Überschreitungen offen melden und die Strecke vereinfachen. Übernachtungen oder Reisedaten nur nach Rücksprache verschieben.",
           "Nockalmstraße und Murau gehören nicht mehr zum Fahrtag Lienz–Graz, auch nicht als zusätzliche Schönwettervariante.",
-          "Vier Nächte Montenegro sowie die vorhandenen Ruhetage erhalten. Die bisherige Etappe Kotor–Makarska mit mehr als 5 Stunden ist noch zu überarbeiten, nicht als freigegeben behandeln."
+          "Vier Nächte Montenegro sowie die vorhandenen Ruhetage erhalten. Rückweg am 13.10. nur bis Ston/Mali Ston, am 14.10. über Pelješac-Brücke und A1 zum Hafen Split. Keine zusätzliche Küstenrunde am Fährtag; Pausen, Grenzwartezeit und Check-in separat einplanen."
         ],
         seasonalRisks: [
           "spätherbstliches Alpenwetter am Arlberg, im Pustertal und auf der A2 im Bereich Pack",
@@ -352,7 +358,7 @@
           "Stau im Korridor Trogir–Split–Makarska",
           "Grenzwartezeiten Kroatien–Montenegro",
           "saisonale Verkehrsanordnungen am Lovćen",
-          "fester Fahrplantag und begrenzte Motorradplätze auf der Fähre Split–Ancona; technischer Betriebsunterbruch aktuell bis 21. September 2026",
+          "fester Fahrplantag und begrenzte Motorradplätze auf der Fähre Split–Ancona; laut Reedereimeldung am 03.09. technischer Betriebsunterbruch bis 09.09.2026, Wiederaufnahme noch bestätigen",
           "ZTL und Stadtverkehr in italienischen Altstädten",
           "Oktoberwetter und Verkehr am Gotthard"
         ]
@@ -381,7 +387,7 @@
           id: "split-ancona-ferry-watch",
           title: "Fährkontrolle: Split–Ancona",
           status: "watch",
-          summary: "Die Abfahrt am 14. Oktober steht im offiziellen Fahrplan. Wegen des technischen Unterbruchs der internationalen Jadrolinija-Linien bis 21. September wird sie noch nicht als operativ gesichert behandelt.",
+          summary: "Die Abfahrt am 14. Oktober steht im offiziellen Fahrplan. Die am 03.09. gelesene Reedereimeldung nennt einen technischen Unterbruch bis 09.09.2026. Wiederaufnahme und Verfügbarkeit sind noch zu bestätigen; die Oktoberfahrt ist nicht als operativ gesichert markiert.",
           replacesDays: [21],
           steps: [
             "Am 22. September offizielle Wiederaufnahme der Linie 53 kontrollieren",
@@ -390,7 +396,7 @@
             "Falls die Linie nicht wieder aufgenommen wird, Rückweg ab Split über Slowenien und Norditalien neu planen"
           ],
           decision: "Kontrolltermin 22.09.2026; bis dahin nur flexibel stornierbare Unterkünfte buchen.",
-          sourceUrl: "https://www.jadrolinija.hr/news-single/linije-u-prekidu-22082026"
+          sourceUrl: "https://www.jadrolinija.hr/en/news/linije-u-prekidu_2"
         }
       ],
       fixPoints: [
@@ -402,7 +408,7 @@
         { title: "Über die Alpen nach Slowenien.", text: "Über Arlberg und Pustertal nach Lienz, dann durchs Drautal mit Seepause am Wörthersee nach Graz. Ljubljana bekommt eine eigene Nacht; die Nockalm entfällt zugunsten kürzerer Fahrtage.", fromDay: 1, toDay: 5, mapGroup: 0 },
         { title: "Dalmatien ohne Eile.", text: "Ab Senj folgt die Reise der D8. Zadar, Šibenik und Makarska werden zu echten Basen statt blossen Übernachtungsorten.", fromDay: 6, toDay: 12, mapGroup: 1 },
         { title: "Dubrovnik und die Bucht von Kotor.", text: "Der südliche Schwerpunkt bleibt unangetastet: Dubrovnik erhält drei, Kotor und Perast vier Nächte.", fromDay: 13, toDay: 19, mapGroup: 2 },
-        { title: "Mit der Nachtfähre über die Adria.", text: "Von Kotor geht es mit einer Zwischenübernachtung in Makarska nach Split und über Nacht nach Ancona.", fromDay: 20, toDay: 21, mapGroup: 3 },
+        { title: "Mit der Nachtfähre über die Adria.", text: "Von Kotor geht es entspannt bis Ston, mit einer Nacht in der Umgebung von Mali Ston. Am nächsten Tag führen Pelješac-Brücke und Autobahn mit Zeitreserve zum Hafen Split; über Nacht geht es nach Ancona.", fromDay: 20, toDay: 21, mapGroup: 3 },
         { title: "Durch die Marken und Norditalien nach Hause.", text: "Furlo, Urbino, Ravenna, die Colli Euganei und der Lago d’Iseo bilden einen eigenständigen Rückweg bis Como und durch den Gotthardtunnel.", fromDay: 22, toDay: 30, mapGroup: 4 }
       ]
     }

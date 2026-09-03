@@ -36,6 +36,14 @@ assert.equal(adria.days[6].overnight, "Zadar");
 assert.deepEqual(adria.days.slice(15, 19).map((day) => day.overnight), Array(4).fill("Kotor oder Perast"));
 assert.equal(adria.days[20].type, "Fährtag");
 assert.equal(adria.days[20].overnight, "Ancona");
+assert.equal(adria.days[19].overnight, "Ston / Mali Ston");
+assert.equal(adria.days[19].destination, adria.days[20].origin);
+assert.equal(adria.days[19].time, "ca. 4 h plus Grenze");
+assert.equal(adria.days[20].time, "ca. 3 h plus Check-in und Überfahrt");
+const ferryNavigation = new URL(adria.days[20].main);
+assert.equal(ferryNavigation.searchParams.get("origin"), "Ston, Croatia");
+assert.equal(ferryNavigation.searchParams.get("destination"), "Split Ferry Port, Croatia");
+assert.equal(ferryNavigation.searchParams.get("waypoints"), "42.930204,17.534612");
 assert.match(adria.days[21].title, /Ancona.*Urbino/);
 assert.equal(adria.trip.fixPoints[1].id, "fix_adria_ferry_split_ancona");
 assert.equal(adria.trip.fixPoints[1].stageDay, 21);
@@ -51,7 +59,7 @@ assert.equal(adria.days[24].km, "ca. 150 km");
 assert.equal(adria.days[29].overnight, "Berikon");
 const expectedAccommodationIds = [
   "innsbruck-mutters", "lienz", "graz-west", "ljubljana-ring", "senj", "zadar", "sibenik",
-  "makarska-base", "dubrovnik-lapad", "kotor-dobrota", "makarska-return", "split-ancona-cabin",
+  "makarska-base", "dubrovnik-lapad", "kotor-dobrota", "ston-return", "split-ancona-cabin",
   "urbino-country", "ravenna", "arqua-petrarca", "iseo", "como-lazzago"
 ];
 assert.deepEqual(adria.accommodations.map((stay) => stay.id), expectedAccommodationIds);
@@ -84,6 +92,13 @@ assert.equal(kotorStay.startDate, "2026-10-09");
 assert.equal(kotorStay.endDate, "2026-10-13");
 assert.match(kotorStay.currentFirstChoice, /sensationeller Aussicht/);
 assert.match(kotorStay.parking, /schriftlich bestätigen/);
+const stonStay = adria.accommodations.find((stay) => stay.id === "ston-return");
+assert.equal(stonStay.startDate, "2026-10-13");
+assert.equal(stonStay.endDate, "2026-10-14");
+assert.equal(stonStay.booking, "open");
+assert.match(stonStay.currentFirstChoice, /I&M.*Luka/);
+assert.match(stonStay.currentAlternative, /Mirjana.*Hodilje/);
+assert.match(stonStay.parking, /Verfügbarkeit.*noch offen/);
 
 const created = catalog.createTrip({
   name: "Testreise",
@@ -105,7 +120,25 @@ assert.match(shortenedDay.properties.name, /Wörthersee/);
 assert.ok(shortenedDay.geometry.coordinates.some(([lon, lat]) => Math.abs(lon - 14.0413) < 0.01 && Math.abs(lat - 46.6142) < 0.01));
 assert.deepEqual(routes.features.map((feature) => feature.properties.day), [1, 2, 3, 4, 5, 6, 8, 10, 13, 16, 20, 21, 22, 24, 25, 27, 29, 30]);
 assert.ok(routes.features.every((feature) => feature.geometry.type === "LineString" && feature.geometry.coordinates.length >= 3));
-assert.equal(routes.features.find((feature) => feature.properties.day === 21).properties.source, "official-ferry-timetable");
+const returnRoad = routes.features.find((feature) => feature.properties.day === 20);
+assert.ok(returnRoad.properties.distanceMeters > 140000 && returnRoad.properties.distanceMeters < 160000);
+assert.ok(returnRoad.properties.durationSeconds < 4 * 3600);
+assert.equal(returnRoad.properties.roadEvidence.ferryMeters, 0);
+assert.ok(returnRoad.properties.roadEvidence.snappedWaypoints.every((point) => point.distance < 100));
+const ferryRoad = routes.features.find((feature) => feature.properties.day === 21);
+assert.equal(ferryRoad.properties.source, "osrm-road-approach-and-schematic-ferry");
+assert.equal(ferryRoad.properties.distanceScope, "road-approach-only");
+assert.equal(ferryRoad.properties.seaGeometry, "schematic-not-navigation");
+assert.ok(ferryRoad.properties.distanceMeters > 175000 && ferryRoad.properties.distanceMeters < 195000);
+assert.ok(ferryRoad.properties.durationSeconds < 3 * 3600);
+assert.ok(ferryRoad.properties.roadEvidence.roadDistancesMeters.A1 > 90000);
+assert.equal(ferryRoad.properties.roadEvidence.ferryMeters, 0);
+assert.ok(ferryRoad.properties.roadEvidence.snappedWaypoints.every((point) => point.distance < 100));
+assert.ok(ferryRoad.properties.roadCoordinateCount > 30);
+assert.equal(ferryRoad.geometry.coordinates.length, ferryRoad.properties.roadCoordinateCount + 1);
+const portCoordinate = ferryRoad.geometry.coordinates[ferryRoad.properties.roadCoordinateCount - 1];
+assert.ok(Math.abs(portCoordinate[0] - 16.441) < 0.005 && Math.abs(portCoordinate[1] - 43.503) < 0.005);
+assert.deepEqual(ferryRoad.geometry.coordinates.at(-1), [13.510, 43.615]);
 assert.equal(routes.features.find((feature) => feature.properties.day === 21).properties.transport, true);
 assert.ok(routes.features.filter((feature) => feature.properties.day !== 21).every((feature) => feature.properties.source === "osrm-driving-via-roadbook-anchors" && feature.geometry.coordinates.length > 10));
 

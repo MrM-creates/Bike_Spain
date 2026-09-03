@@ -38,6 +38,8 @@ const coordinates = {
   "Karasovići Border Crossing": [18.436, 42.493],
   "Herceg Novi, Montenegro": [18.531, 42.453],
   "Perast, Montenegro": [18.699, 42.486],
+  "42.487161,18.699758": [18.699758, 42.487161],
+  "42.930204,17.534612": [17.534612, 42.930204],
   "Kotor, Montenegro": [18.771, 42.424],
   "Split Ferry Port, Croatia": [16.441, 43.503],
   "Ancona, Italy": [13.510, 43.615],
@@ -66,13 +68,25 @@ function loadDays() {
 
 async function routeThrough(points) {
   const pathPart = points.map(([longitude, latitude]) => `${longitude},${latitude}`).join(";");
-  const url = `https://router.project-osrm.org/route/v1/driving/${pathPart}?overview=simplified&geometries=geojson&steps=false&continue_straight=true`;
+  const url = `https://router.project-osrm.org/route/v1/driving/${pathPart}?overview=simplified&geometries=geojson&steps=true&continue_straight=true`;
   const response = await fetch(url, { headers: { "User-Agent": "motorcycle-roadbook-adria-builder/1.0" } });
   if (!response.ok) throw new Error(`OSRM ${response.status}`);
   const result = await response.json();
   const route = result.routes?.[0];
   if (!route?.geometry?.coordinates?.length) throw new Error(result.message || "Keine Route gefunden");
+  route.snappedWaypoints = result.waypoints.map(({ name, location, distance }) => ({ name, location, distance }));
   return route;
+}
+
+function roadEvidence(route) {
+  const distances = {};
+  let ferryMeters = 0;
+  for (const leg of route.legs) for (const step of leg.steps) {
+    const key = step.ref || step.name || "unnamed";
+    distances[key] = (distances[key] || 0) + step.distance;
+    if (step.mode === "ferry") ferryMeters += step.distance;
+  }
+  return { roadDistancesMeters: distances, ferryMeters, snappedWaypoints: route.snappedWaypoints };
 }
 
 async function main() {
@@ -95,6 +109,10 @@ async function main() {
       return coordinates[name];
     });
     if (/fährtag/i.test(day.type)) {
+      if (names.at(-2) !== "Split Ferry Port, Croatia") throw new Error("Fährtag benötigt Hafen Split als letzten Landwegpunkt");
+      const approach = await routeThrough(points.slice(0, -1));
+      const evidence = roadEvidence(approach);
+      if (evidence.ferryMeters > 0) throw new Error("Ungeplante Fähre in der Hafenzufahrt");
       features.push({
         type: "Feature",
         properties: {
@@ -105,15 +123,21 @@ async function main() {
           transport: true,
           optional: false,
           anchorCount: points.length,
-          distanceMeters: null,
-          durationSeconds: null,
-          source: "official-ferry-timetable"
+          distanceMeters: approach.distance,
+          durationSeconds: approach.duration,
+          distanceScope: "road-approach-only",
+          seaGeometry: "schematic-not-navigation",
+          roadCoordinateCount: approach.geometry.coordinates.length,
+          roadEvidence: evidence,
+          source: "osrm-road-approach-and-schematic-ferry"
         },
-        geometry: { type: "LineString", coordinates: points }
+        geometry: { type: "LineString", coordinates: [...approach.geometry.coordinates, points.at(-1)] }
       });
       continue;
     }
     const route = await routeThrough(points);
+    const evidence = roadEvidence(route);
+    if (day.day === 20 && evidence.ferryMeters > 0) throw new Error("Tag 20 darf keine Kamenari-Fähre enthalten");
     features.push({
       type: "Feature",
       properties: {
@@ -125,6 +149,7 @@ async function main() {
         anchorCount: points.length,
         distanceMeters: route.distance,
         durationSeconds: route.duration,
+        roadEvidence: evidence,
         source: "osrm-driving-via-roadbook-anchors"
       },
       geometry: route.geometry
