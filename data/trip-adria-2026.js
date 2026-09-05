@@ -1,6 +1,6 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-04T18:08:38.000Z",
-  "planKind": "draft",
+  "publishedVersion": "2026-09-05T05:43:55.000Z",
+  "planKind": "published",
   "originalDays": [
     {
       "id": "adria-1",

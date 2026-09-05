@@ -11,7 +11,7 @@ test('read-only companion contains both trips and preserves stable stage IDs', (
     assert.equal(trip.days.filter(d => d.accommodation).length, 29);
   }
   assert.equal(feed.trips[0].days[15].id, 'adria-16');
-  assert.match(feed.trips[0].status, /entwurf/i);
+  assert.equal(feed.trips[0].status, 'Veröffentlichter Reiseplan');
   assert.equal(new URL(feed.trips[0].days[20].mapsURL).searchParams.get('destination'), 'Gat Svetog Duje, Split');
 });
 test('journal properties never enter public plan feed', () => {
