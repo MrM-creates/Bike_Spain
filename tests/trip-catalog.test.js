@@ -44,9 +44,9 @@ assert.equal(adria.days[19].destination, adria.days[20].origin);
 assert.equal(adria.days[19].time, "ca. 4 h plus Grenze");
 assert.equal(adria.days[20].time, "ca. 3 h plus Check-in und Überfahrt");
 const ferryNavigation = new URL(adria.days[20].main);
-assert.equal(ferryNavigation.searchParams.get("origin"), "Ston, Croatia");
-assert.equal(ferryNavigation.searchParams.get("destination"), "Split Ferry Port, Croatia");
-assert.equal(ferryNavigation.searchParams.get("waypoints"), "42.930204,17.534612");
+assert.equal(ferryNavigation.searchParams.get("origin"), "42.860800,17.681200");
+assert.equal(ferryNavigation.searchParams.get("destination"), "Gat Svetog Duje, Split");
+assert.equal(ferryNavigation.searchParams.get("waypoints"), "42.885330,17.579727|43.590818,16.571883");
 assert.match(adria.days[21].title, /Ancona.*Urbino/);
 assert.equal(adria.trip.fixPoints[1].id, "fix_adria_ferry_split_ancona");
 assert.equal(adria.trip.fixPoints[1].stageDay, 21);
@@ -156,7 +156,9 @@ for (const [day, feature] of corrected) {
   assert.ok(adria.days[day - 1].waypoints.length <= 3, "Mobile Maps: höchstens drei Zwischenziele");
 }
 const arlberg = corrected.get(1).properties.roadEvidence;
-assert.ok(arlberg.snappedWaypoints.some((w) => w.name === "Arlbergtunnel" && w.distance < 1));
+assert.ok(arlberg.snappedWaypoints.some((w) => w.name === "Arlberg Schnellstraße" && w.distance < 1));
+assert.ok(!adria.days[0].waypoints.includes("47.126940,10.160801"), "Do not restore the tunnel-name/surface-road snapping bug");
+assert.equal(adria.days[0].destination, "Hotel dasMEI, Nattererstrasse 20-22, Mutters");
 assert.ok(arlberg.roadDistancesMeters.S16 > 50000);
 assert.ok(!Object.keys(arlberg.roadDistancesMeters).some((road) => /L197|B197|Paul-Bantlin/.test(road)));
 for (const day of [10, 13]) {
@@ -165,7 +167,8 @@ for (const day of [10, 13]) {
   assert.ok(roads.D8 > 120000);
 }
 assert.ok(corrected.get(10).geometry.coordinates.some(([lon, lat]) => lon > 16.68 && lon < 16.74 && lat > 43.4 && lat < 43.46), "Omiš an der Küste enthalten");
-assert.ok(corrected.get(13).properties.roadEvidence.snappedWaypoints.some((w) => /Pelješki/.test(w.name)));
+assert.ok(corrected.get(13).properties.roadEvidence.roadDistancesMeters.D416 > 100, "Pelješac bridge approach retained");
+assert.ok(corrected.get(13).geometry.coordinates.some(([lon,lat]) => lon > 17.52 && lon < 17.59 && lat > 42.90 && lat < 42.95), "Pelješac bridge crossing retained");
 const furlo = corrected.get(22);
 assert.ok(furlo.properties.roadEvidence.roadDistancesMeters.A14 > 35000);
 assert.match(adria.days[21].roads, /A14/);

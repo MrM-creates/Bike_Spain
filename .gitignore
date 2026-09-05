@@ -2,3 +2,9 @@
 .playwright-cli/
 output/playwright/
 .DS_Store
+companion/.build/
+companion/DerivedData/
+companion/**/*.xcuserstate
+companion/**/xcuserdata/
+# Persönliche Tagebuchsicherungen sind keine Projektdaten.
+Roadbook-Tagebuch-*

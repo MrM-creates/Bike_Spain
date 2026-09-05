@@ -170,7 +170,11 @@
   const googleMapsUrlForSelection = (stage, route) => {
     if (!stage || !route?.providerRouteRef) return null;
     if (route.distanceScope === "road-approach-only") return route.providerRouteRef;
-    if (selectedRouteStyle(stage, route) !== "direct") return route.providerRouteRef;
+    const selectedStyle = selectedRouteStyle(stage, route);
+    const changedToDirect = routeStyleDrafts.has(selectedStage) && selectedStyle === "direct" && selectedStyle !== route.style;
+    // A published route marked "direct" may still contain deliberately curated anchors.
+    // Only a new, not-yet-reviewed direct preview is allowed to omit them.
+    if (!changedToDirect) return route.providerRouteRef;
     try {
       const url = new URL(route.providerRouteRef);
       url.searchParams.delete("waypoints");
@@ -1097,16 +1101,49 @@
     }
   }
 
-  function routeHintsFor(stage, route, activeStyle) {
+  function routeGuideFor(stage, route, activeStyle) {
     const hasChangedStyle = routeStyleDrafts.has(selectedStage) && activeStyle !== route?.style;
     if (hasChangedStyle && activeStyle === "direct") {
-      return `Direkte Verbindung von ${place(stage.originPlaceId).name} nach ${place(stage.destinationPlaceId).name}. Die Zwischenziele der kurvigen Variante entfallen.`;
+      return {
+        points: [place(stage.originPlaceId).name, place(stage.destinationPlaceId).name],
+        roads: [],
+        note: "Die Zwischenziele der kurvigen Variante entfallen. Die genaue direkte Strecke wird beim Übernehmen berechnet."
+      };
     }
     if (hasChangedStyle && activeStyle === "scenic") {
-      return `Kurvige Verbindung von ${place(stage.originPlaceId).name} nach ${place(stage.destinationPlaceId).name}. Landschaftliche Zwischenziele werden bei der Routenprüfung festgelegt.`;
+      return {
+        points: [place(stage.originPlaceId).name, place(stage.destinationPlaceId).name],
+        roads: [],
+        note: "Die landschaftlichen Zwischenziele werden bei der Routenprüfung festgelegt."
+      };
     }
-    return [route?.roadSummary.join(" · "), stage.legacy?.points, ...stage.notes].filter(Boolean).join(" · ")
-      || (stage.kind === "rest" ? "Motorräder bleiben stehen." : "Keine zusätzlichen Hinweise.");
+    if (stage.kind === "rest") return { points: [], roads: [], note: "Keine feste Fahrroute an diesem Ruhetag." };
+    const value = googleMapsUrlForSelection(stage, route);
+    let points = [];
+    try {
+      const url = new URL(value);
+      const origin = url.searchParams.get("origin");
+      const destination = url.searchParams.get("destination");
+      const waypoints = (url.searchParams.get("waypoints") || "").split("|").filter(Boolean);
+      if (origin && destination) points = [origin, ...waypoints, destination];
+    } catch (_error) {
+      points = [];
+    }
+    return {
+      points,
+      roads: route?.roadSummary || [],
+      note: points.length ? "" : "Für diese Etappe sind noch keine übertragbaren Navigationspunkte hinterlegt."
+    };
+  }
+
+  function routeGuideHtml(stage, route, activeStyle) {
+    const guide = routeGuideFor(stage, route, activeStyle);
+    const pointRows = guide.points.map((point, index) => {
+      const label = index === 0 ? "Start" : index === guide.points.length - 1 ? "Ziel" : `Zwischenziel ${index}`;
+      return `<li><span>${label}</span><code>${escapeHtml(point)}</code><button type="button" data-copy-route-point="${encodeURIComponent(point)}" aria-label="${label} kopieren">Kopieren</button></li>`;
+    }).join("");
+    const roads = guide.roads.map((road) => `<span>${escapeHtml(road)}</span>`).join("");
+    return `${pointRows ? `<ol class="generic-route-points">${pointRows}</ol>` : ""}${roads ? `<div class="generic-route-roads"><strong>Strassen und Verlauf</strong><div>${roads}</div></div>` : ""}${guide.note ? `<p class="generic-context-note">${escapeHtml(guide.note)}</p>` : ""}`;
   }
 
   function updateCompareControl() {
@@ -1248,7 +1285,7 @@
         ${fixed ? `<div class="generic-fixed-notice"><strong>🔒 Geschützter Fixpunkt</strong>${escapeHtml(fixed.title)} kann nur nach ausdrücklicher Bestätigung verändert werden.</div>` : ""}
         <div class="generic-metrics"><div><strong>${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km` : "–"}</strong><span>${route?.distanceScope === "road-approach-only" ? "Landstrecke" : hasRoutePreview ? "Neu berechnet" : "Strecke"}</span></div><div><strong>${formatDuration(displayedRoute?.durationSeconds)}</strong><span>${route?.distanceScope === "road-approach-only" ? "Reine Fahrzeit an Land" : hasRoutePreview ? "Neu berechnet" : "Fahrzeit"}</span></div><div><strong>${escapeHtml(destination)}</strong><span>Übernachtung</span></div></div>
         ${route && stage.kind !== "transport" ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt beide Strecken auf der Karte und reduziert dieses Fenster auf die Entscheidung.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Lokal gespeichert · Prüfung ausstehend" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
-        <div class="generic-detail-block"><h3>Streckenhinweise</h3><p>${escapeHtml(routeHintsFor(stage, route, activeStyle))}</p></div>
+        <div class="generic-detail-block"><h3>Wegpunkte &amp; Strassen</h3>${routeGuideHtml(stage, route, activeStyle)}</div>
         <div class="generic-detail-block"><h3>Unterkunft</h3>${accommodation ? `<div class="generic-hotel">${hotelIcon()}<div><strong>${escapeHtml(accommodation.name)}</strong><span>${bookingLabel(booking)} · ${parkingLabel(accommodation, stay)}</span>${accommodation.url ? `<a class="generic-hotel-link" href="${escapeHtml(accommodation.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : ""}${alternative ? `<small>Alternative: ${escapeHtml(alternative.name)}</small>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : ""}` : ""}</div></div>` : `<p>Für diesen Tag ist noch keine Unterkunft hinterlegt.</p>`}${stay ? `<button class="generic-context-link" type="button" id="generic-show-stay">Unterkunft dieses Tages ansehen →</button>` : ""}</div>
         <div class="generic-inspector-actions">${googleMapsUrl ? `<a class="generic-action-button" href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div></div><span class="generic-inspector-resize" data-inspector-resize aria-hidden="true"></span>`;
       inspector.querySelectorAll("[data-route-style]").forEach((button) => button.addEventListener("click", () => previewRouteStyle(button.dataset.routeStyle)));
@@ -1256,6 +1293,17 @@
       inspector.querySelector("#generic-adjust-stage")?.addEventListener("click", () => openStagePlanContext("stage"));
       inspector.querySelector("#generic-adjust-fixed")?.addEventListener("click", () => openStagePlanContext("fixed"));
       inspector.querySelector("#generic-show-stay")?.addEventListener("click", () => { selectedStay = model.revision.stays.indexOf(stay); setListMode("stays"); openInspector(); });
+      inspector.querySelectorAll("[data-copy-route-point]").forEach((button) => button.addEventListener("click", async () => {
+        const point = decodeURIComponent(button.dataset.copyRoutePoint || "");
+        if (!point || !navigator.clipboard?.writeText) return;
+        try {
+          await navigator.clipboard.writeText(point);
+          button.textContent = "Kopiert";
+          window.setTimeout(() => { button.textContent = "Kopieren"; }, 1600);
+        } catch (_error) {
+          button.textContent = "Nicht kopiert";
+        }
+      }));
     } else {
       const stay = model.revision.stays[selectedStay];
       const startIndex = stageForStay(stay);

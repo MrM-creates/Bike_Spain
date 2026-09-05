@@ -21,7 +21,7 @@ test('Balkan: all driving days have exactly one geometry and realistic bounded p
     assert.ok(hours(day.time) * 3600 >= route.properties.durationSeconds, `Tag ${day.day}: Planwert nicht unter Routerzeit`);
     const maps = new URL(day.main);
     assert.equal(maps.searchParams.get('origin'), day.origin);
-    assert.equal(maps.searchParams.get('destination'), day.roadApproach ? 'Split Ferry Port, Croatia' : day.destination);
+    assert.equal(maps.searchParams.get('destination'), day.roadApproach ? 'Gat Svetog Duje, Split' : day.destination);
     assert.equal(maps.searchParams.get('waypoints') || '', (day.roadApproach ? day.waypoints.slice(0, -1) : day.waypoints).join('|'));
     assert.ok((maps.searchParams.get('waypoints') || '').split('|').filter(Boolean).length <= 3);
   }

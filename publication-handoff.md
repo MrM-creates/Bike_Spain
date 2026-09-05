@@ -33,4 +33,21 @@ Stand: 3. September 2026
 
 ## Bereitstellung
 
-Produktionsnachweis wird nach Deployment ergänzt. Die vorhandenen Reiseinhalte bleiben bei der Bereitstellung dieser Funktion unverändert.
+### Deploy Result
+
+- URL: https://motorrad-roadbook-spanien-2026.vercel.app/
+- Target: production
+- Status: READY
+- Commit: `8944288` (in Vercel-Build-Logs bestätigt)
+- Deployment: `dpl_6iMv7RgZN77v9W1xpuscTrRFn7Tq`
+- Framework: statisches HTML/JavaScript mit Node-Serverless-Funktionen
+- Build Duration: 472 ms laut Vercel; Buildstart bis Bereitstellung etwa 7 Sekunden
+
+### Post-Deploy Observability
+
+- Error scan: keine Einträge bei `vercel logs --level error --since 1h --no-follow`; kein Beleg für eine Langzeitüberwachung.
+- Browser-Konsole: keine Fehler im geprüften Produktionsablauf.
+- Drains: nicht geprüft.
+- Monitoring: unmittelbarer Smoke-Test, keine neue dauerhafte Überwachung eingerichtet.
+- Feed HTTP 200, beide Reisen mit je 30 Tagen; neue Veröffentlichungsoberfläche live. POST ohne PIN liefert HTTP 401. Keine authentifizierte Test-Reiseänderung auf Produktion vorgenommen.
+- Spanien-Version `2026-08-16T14:49:12.000Z`, Balkan-Version `2026-09-03T08:57:32.000Z`: Reiseinhalte unverändert.

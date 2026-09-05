@@ -1,0 +1,431 @@
+[
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-1",
+    "notes": "Anreise über die S16 durch den Arlbergtunnel, nicht über L197/B197 und den Arlbergpass. Die Zwischenpunkte halten A3, Ruggell/Feldkirch und S16; der frühere Punkt über dem Tunnel wurde entfernt, weil er eine Passzufahrt auslösen konnte. Ziel ist die bevorzugte Unterkunft dasMEI, Nattererstraße 20–22 in Mutters, über Innsbruck-Süd, B182 und Innsbrucker Straße. Start bleibt der Ortsanker Berikon. Google-Maps-Link und Kartenlinie am 04.09.2026 anhand der Abbiegefolge abgeglichen (Maps rund 293 km); keine Prüfung in der nativen Google-Maps-App. Rund 4½ Stunden reine Fahrt planen, mit Pausen und Verkehrsreserve etwa 6–7 Stunden unterwegs. Vignette/Streckenmaut sowie Tunnel- und Verkehrslage bei ASFINAG vor Abfahrt prüfen. Bei einer Sperre nicht automatisch auf einen Alpenpass ausweichen.",
+    "important": [
+      "Anreise über die S16 durch den Arlbergtunnel, nicht über L197/B197 und den Arlbergpass.",
+      "Vignette/Streckenmaut sowie Tunnel- und Verkehrslage bei ASFINAG vor Abfahrt prüfen. Bei einer Sperre nicht automatisch auf einen Alpenpass ausweichen."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-2",
+    "notes": "Vom dasMEI über die A13/A22 und die SS49 durchs Pustertal; die drei Strassenpunkte halten die Hauptstrassenlinie, ohne Zentren als Zwischenziele zu verwenden. Ziel ist die bevorzugte Unterkunft Holunderhof, Zettersfeldstraße 36 in Gaimberg. Google-Maps-Link und Kartenlinie am 04.09.2026 anhand der Abbiegefolge abgeglichen; keine Prüfung in der nativen Google-Maps-App. Die Luegbrücke ist 2026 im Regelfall einspurig; 30–45 Minuten Reserve einplanen und bei früher Kälte die Hauptstrassenlinie beibehalten.",
+    "important": [
+      "Die Luegbrücke ist 2026 im Regelfall einspurig; 30–45 Minuten Reserve einplanen und bei früher Kälte die Hauptstrassenlinie beibehalten."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-3",
+    "notes": "Vom Holunderhof durchs Drautal auf B100/A10/A2. Die Seepause bleibt Teil der kuratierten Route, führt aber zum Berger Parkplatz an der Augsdorfer Straße statt zum Stadtmittelpunkt. Weiter über Süduferstraße, Rosentaler Straße und B83 zurück auf A2/A9 bis zum Steiermarkhof. Google-Maps-Link und Kartenlinie am 04.09.2026 abgeglichen; keine Prüfung in der nativen Google-Maps-App. Rund 4¼ Stunden reine Fahrzeit als vorsichtiger Planwert; mit Pausen etwa 6–7 Stunden unterwegs. Nockalm und Murau entfallen wegen des Zeitbudgets vollständig. Vor Abfahrt Wetter und Baustellen auf A10/A2, insbesondere im Bereich Pack, bei ASFINAG prüfen; auch diese Strecke ist nicht wetterunabhängig.",
+    "important": [
+      "Vor Abfahrt Wetter und Baustellen auf A10/A2, insbesondere im Bereich Pack, bei ASFINAG prüfen; auch diese Strecke ist nicht wetterunabhängig."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-4",
+    "notes": "Direkte Hotel-zu-Hotel-Etappe auf A9/A1 über Maribor, ohne Abstecher zum Stadtmittelpunkt. Die frühere A4-Angabe war falsch. Ziel ist das Urban Ring an der Dolenjska cesta 242c über Ausfahrt Ljubljana-jug. Google-Maps-Link und Kartenlinie am 04.09.2026 abgeglichen; keine Prüfung in der nativen Google-Maps-App. Der kurze Fahrtag lässt Zeit für Ljubljana; Slowenien ist Übernachtungsort und nicht bloss Transitland.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-5",
+    "notes": "Vom Urban Ring über A1 Ausfahrt Postojna, Route 6, A7/E61 und E65/D8 zum Apartment Zora, Mateše Kuhačevića 5. Die Strassenkoordinaten ersetzen Postojna und Rijeka als Stadtziele und verhindern Zentrumsschleifen. Der exakte von der App erzeugte Link wurde am 04.09.2026 in Google Maps kontrolliert: 184 km, durchgehend auf dem vorgesehenen Korridor; keine Prüfung in der nativen Google-Maps-App. Ab Rijeka beginnt die kroatische Küstenlinie. Wegen der vielen slowenischen Autobahnbaustellen 2026 morgens Promet.si prüfen.",
+    "important": [
+      "Wegen der vielen slowenischen Autobahnbaustellen 2026 morgens Promet.si prüfen."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-6",
+    "notes": "Durchgehend auf der D8/Jadranska Magistrala; die drei Strassenpunkte verhindern A1-, D25- und Posedarje-Ortsabkürzungen. Ziel ist der öffentliche Google-Marker des bevorzugten Adria Concept in Zadar. Booking nennt Hausnummer 74, Google 78a; konkrete Einheit und Garagenzufahrt vor der Buchung bestätigen. Google-Maps-Link und Kartenlinie am 04.09.2026 abgeglichen; keine Prüfung in der nativen Google-Maps-App. Senj–Karlobag ist im offiziellen kroatischen Motorradführer als Panoramastrecke ausgewiesen und wird auch von aktuellen Motorradequellen als Höhepunkt bestätigt. Sehr bura-exponiert: Wind- und Sperrlage am Fahrtag bei HAK prüfen.",
+    "important": [
+      "Sehr bura-exponiert: Wind- und Sperrlage am Fahrtag bei HAK prüfen."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-7",
+    "notes": "Altstadt, Meer und Erholung. Nin oder Pag nur als kurzer, asphaltierter Ausflug bei Lust und gutem Wetter.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-8",
+    "notes": "Kurze D8-Etappe mit Zeit für Fotostopps.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-9",
+    "notes": "Altstadt, Hafen und optional Krka; kein Programmzwang und nicht in enge Gassen navigieren.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-10",
+    "notes": "Küstenlinie über den Rand von Primošten und die Hauptstrasse nördlich der Altstadt von Trogir, dann auf der D8 über Dugi Rat und Omiš nach Makarska. Die Altstädte bei einem Stopp zu Fuss besuchen. Der zusätzliche Küstenanker verhindert die bisherige unbeabsichtigte A1-Abkürzung. Rund 4 Stunden reine Fahrt, mit Stopps und Stadtverkehr etwa 6–7 Stunden unterwegs. Trogir–Split und Omiš möglichst ausserhalb der Spitzenzeit passieren; bei Stau zuerst Besichtigungen kürzen. Eine Autobahnalternative wäre eine bewusste Routenänderung und lässt Teile der Küste aus. Vor Abfahrt HAK für Wind, Baustellen und Sperren prüfen.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nVilla Pehar: Die öffentliche Gebäudeadresse Put Kulice 5 ist plausibel; Wohnung und Einfahrt nach der Buchung mit dem Gastgeber bestätigen.",
+    "important": [
+      "Vor Abfahrt HAK für Wind, Baustellen und Sperren prüfen."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-11",
+    "notes": "Meer-und-Berge-Basis; Promenade und Erholung.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-12",
+    "notes": "Kurzer Küstenausflug oder vollständiger Ruhetag; zugleich Wetterreserve.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-13",
+    "notes": "Auf der D8 südwärts mit kurzem Küstenstopp in Drvenik, weiter im Raum Ploče zur Pelješac-Brücke und über Ston nach Dubrovnik. Keine A1-Abkürzung und kein Neum-Transit. Der Brückenanker liegt direkt auf der Fahrbahn. Rund 4 Stunden reine Fahrt; mit Küstenstopps und Pausen etwa 6–7 Stunden unterwegs. Wind und Brückenfreigabe bei HAK vor Abfahrt prüfen. Das Ziel ist vorläufig ein Ortsanker ausserhalb der Altstadt; die genaue Zufahrt zur gewählten Aussenbasis folgt mit der Unterkunftsentscheidung.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nOSCAR Suite: Die öffentliche Gebäudeadresse ist geprüft; Garageneinfahrt nach der Buchung bestätigen.",
+    "important": [
+      "Wind und Brückenfreigabe bei HAK vor Abfahrt prüfen. Das Ziel ist vorläufig ein Ortsanker ausserhalb der Altstadt; die genaue Zufahrt zur gewählten Aussenbasis folgt mit der Unterkunftsentscheidung."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-14",
+    "notes": "Stadttag ohne Motorradlogistik.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-15",
+    "notes": "Zweiter voller Tag für Erholung, Wetter oder einen ruhigen Küstentag.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-16",
+    "notes": "Grenztag: rund 3 Stunden reine Fahrt, Pausen und grosszügiger Grenzpuffer zusätzlich; Karasovići kann stark schwanken. EES gilt nicht für Schweizer Staatsangehörige und Inhaber gültiger Schengen-Aufenthaltstitel. Reisepass und gegebenenfalls Aufenthaltstitel im Original mitführen; Dokumentenprüfung und Wartezeiten bleiben bestehen. Montenegro hat eigene Einreiseregeln. Die schöne Linie bleibt bewusst rund um die Bucht über Perast statt über die Kamenari-Fähre. In Perast auf der Hauptstrasse bleiben, die historische Uferzone nur zu Fuss besuchen; Maps-Neuberechnung vor Abfahrt prüfen.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nDas Ziel ist der öffentliche Strassenanker in Sveti Stasije, nicht die private Haustür. Die genaue Wohnungslage wird von Airbnb erst nach der Buchung mitgeteilt.",
+    "important": [
+      "Grenztag: rund 3 Stunden reine Fahrt, Pausen und grosszügiger Grenzpuffer zusätzlich; Karasovići kann stark schwanken. EES gilt nicht für Schweizer Staatsangehörige und Inhaber gültiger Schengen-Aufenthaltstitel. Reisepass und gegebenenfalls Aufenthaltstitel im Original mitführen; Dokumentenprüfung und Wartezeiten bleiben bestehen. Montenegro hat eigene Einreiseregeln. Die schöne Linie bleibt bewusst rund um die Bucht über Perast statt über die Kamenari-Fähre. In Perast auf der Hauptstrasse bleiben, die historische Uferzone nur zu Fuss besuchen; Maps-Neuberechnung vor Abfahrt prüfen."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-17",
+    "notes": "Die vollständige Buchtrunde misst nur etwa 50–60 km, braucht auf der schmalen Uferstrasse aber Zeit. Perast und Risan ruhig angehen.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-18",
+    "notes": "Ruhetag oder kurze Buchtrunde auf Hauptstrassen. Motorrad ausserhalb der engen Kerne abstellen.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-19",
+    "notes": "Lovćen nur trocken, windarm und nach Tagesprüfung. Keine spontane Hin-und-zurück-Fahrt; alternativ ein weiterer ruhiger Tag an der Bucht.",
+    "important": [
+      "Lovćen nur trocken, windarm und nach Tagesprüfung. Keine spontane Hin-und-zurück-Fahrt; alternativ ein weiterer ruhiger Tag an der Bucht."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-20",
+    "notes": "Nach vier vollen Nächten Montenegro rund um die Bucht auf der Hauptstrasse oberhalb von Perast, ohne Kamenari-Fähre. Über Karasovići und die D8 an Dubrovnik vorbei, ohne Altstadtzufahrt, bis Ston. Rund 4 Stunden reine Fahrt einplanen; mit Pausen und Grenzpuffer etwa 6–7 Stunden unterwegs, bei langer Grenzwartezeit mehr. Unterkunft bevorzugt in Luka oder Hodilje ausserhalb der historischen Ortskerne; die letzten Kilometer und die Zufahrt zum gewählten Haus vor Buchung prüfen. Am Fahrtag AMSCG und HAK für Strassen, Wind und Grenze kontrollieren.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nDer Start verwendet denselben öffentlichen Strassenanker in Sveti Stasije. Das Ziel führt anhand veröffentlichter Koordinaten zu Apartman I&M in Luka.",
+    "important": [
+      "Am Fahrtag AMSCG und HAK für Strassen, Wind und Grenze kontrollieren."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-21",
+    "notes": "Über die Pelješac-Brücke ohne Neum-Transit und ab Karamatići bewusst auf der A1 bis Dugopolje, dann zum Hafen Split. Rund 3 Stunden reine Fahrt; mit Pausen und Stadtverkehr etwa 4–5 Stunden bis zum Hafen. Morgens losfahren, am frühen Nachmittag ankommen; keine zusätzliche Küstenrunde. Check-in spätestens 18:00 als Planwert, verbindlich gelten Ticket und Reederei. Geplant: Abfahrt 14.10. um 20:00, Ankunft 15.10. um 07:00. Die Kartenlinie folgt an Land den Strassen; die Seeverbindung ist schematisch, der Google-Maps-Link endet am Hafen Split. Jadrolinija nennt am 03.09. einen technischen Unterbruch bis 09.09.2026; Wiederaufnahme, Kabine und zwei Motorradplätze am 22.09. bestätigen. Nicht gebucht und noch nicht operativ gesichert.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nDie Navigation endet an der öffentlichen Hafenstrasse Gat Svetog Duje. Fahrzeugspur und Liegeplatz richten sich nach Ticket und Beschilderung vor Ort.",
+    "important": [
+      "Check-in spätestens 18:00 als Planwert, verbindlich gelten Ticket und Reederei. Geplant: Abfahrt 14.10. um 20:00, Ankunft 15.10. um 07:00. Die Kartenlinie folgt an Land den Strassen; die Seeverbindung ist schematisch, der Google-Maps-Link endet am Hafen Split. Jadrolinija nennt am 03.09. einen technischen Unterbruch bis 09.09.2026; Wiederaufnahme, Kabine und zwei Motorradplätze am 22.09. bestätigen. Nicht gebucht und noch nicht operativ gesichert."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-22",
+    "notes": "Nach der Ausschiffung zunächst bewusst rund 40 km A14 bis zum Anschluss Fano, ohne Altstadtdurchfahrt. Danach zur alten Via Flaminia: die Kartenlinie durchquert die Furlo-Schlucht von der Calmazzo-Seite nach Furlo und führt über die SP43 Richtung Fermignano/Urbino. Kein Abstecher auf die Bergstrasse Furlo Monte. Rund 3 Stunden reine Fahrt; mit Pausen und Schluchtstopp etwa 4–5 Stunden, Ausschiffung zusätzlich. Die offizielle Öffnungsmeldung stammt von 2022 und bestätigt den Reisetag nicht: vor der Fahrt bei der Reservatsverwaltung prüfen. Nur bei freigegebener, trockener Strasse durchfahren. Bei Sperre oder schlechtem Wetter Furlo auslassen und ab Fano auf SS73bis über Fossombrone Richtung Urbino bleiben, keine Bergumfahrung suchen. Start und Ziel sind vorläufige Ortsanker; genaue Hafen- und Unterkunftszufahrt ausserhalb der ZTL noch separat prüfen.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nStart ist die öffentliche Strasse bei Porta Pia nach der Ausschiffung. Die tatsächliche Hafenausfahrt richtet sich nach der Ankunftsspur.",
+    "important": [
+      "Die offizielle Öffnungsmeldung stammt von 2022 und bestätigt den Reisetag nicht: vor der Fahrt bei der Reservatsverwaltung prüfen. Nur bei freigegebener, trockener Strasse durchfahren. Bei Sperre oder schlechtem Wetter Furlo auslassen und ab Fano auf SS73bis über Fossombrone Richtung Urbino bleiben, keine Bergumfahrung suchen. Start und Ziel sind vorläufige Ortsanker; genaue Hafen- und Unterkunftszufahrt ausserhalb der ZTL noch separat prüfen."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-23",
+    "notes": "Renaissance-Stadt, Erholung und optional eine kurze Runde durch die sanften Hügel des Montefeltro.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-24",
+    "notes": "San Marino und Rimini als flexible Stopps; bei Regen direkt auf gut ausgebauten Strassen nach Ravenna.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nDie Stopps führen zu den öffentlichen Parkplätzen P3 und Tiberio, nicht in die Altstadt oder ZTL.",
+    "important": [
+      "San Marino und Rimini als flexible Stopps; bei Regen direkt auf gut ausgebauten Strassen nach Ravenna."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-25",
+    "notes": "Nur der kurze landschaftliche Abschnitt bis Comacchio bleibt auf der SS309. Danach führt die Route über Ferrara ins Landesinnere und vermeidet den langen, verkehrs- und schwerlastreichen Romea-Abschnitt bis Chioggia. Altstadtzufahrten und ZTL vermeiden.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nFür Giulio & Fufo wird Via Scalette 2 verwendet; die Zufahrt vor der Buchung mit dem Gastgeber bestätigen.",
+    "important": [
+      "Altstadtzufahrten und ZTL vermeiden."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-26",
+    "notes": "Ruhiger Hügeltag, Therme oder vollständige Erholung. Keine Pflichtkilometer.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-27",
+    "notes": "Norditalienische Übergangsetappe mit Autobahnreserve bei Regen; Seeuferverkehr nicht unterschätzen.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nCa Nildes liegt an einer privaten Hofzufahrt. Tor- und Parkhinweise nach der Buchung beim Gastgeber erfragen.",
+    "important": [
+      "Norditalienische Übergangsetappe mit Autobahnreserve bei Regen; Seeuferverkehr nicht unterschätzen."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-28",
+    "notes": "Letzter echter Genuss- und Wettertag vor der Heimreise.",
+    "important": []
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-29",
+    "notes": "Kurzer, tiefer und wetterrobuster Rückfahrtstag; Stadtzufahrten und ZTL beachten.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nDie letzten Meter sind eine private Gästezufahrt. Tor- und Parkhinweise nach der Buchung beim Gastgeber erfragen.",
+    "important": [
+      "Kurzer, tiefer und wetterrobuster Rückfahrtstag; Stadtzufahrten und ZTL beachten."
+    ]
+  },
+  {
+    "tripID": "trip_adria_2026",
+    "stageID": "adria-30",
+    "notes": "Keine hohen Alpenpässe: Splügen und Engadin bleiben ausgeschlossen. Gotthardverkehr vor Abfahrt prüfen.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. Die native Google-Maps-App wurde noch nicht auf einem Gerät geprüft.\n\nZiel bleibt der öffentliche Ortsanker Berikon; eine private Wohnadresse ist nicht in der Reise gespeichert.",
+    "important": [
+      "Keine hohen Alpenpässe: Splügen und Engadin bleiben ausgeschlossen. Gotthardverkehr vor Abfahrt prüfen."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-1",
+    "notes": "Autobahnen nicht vermeiden. Französische Umweltplakette Crit’Air und Hotelgarage in Grenoble vorab klären.",
+    "important": [
+      "Autobahnen nicht vermeiden. Französische Umweltplakette Crit’Air und Hotelgarage in Grenoble vorab klären."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-2",
+    "notes": "N85 halten; keine kleinen Seitenpässe bei schlechtem Wetter.\n\nGoogle meldet derzeit eine lokale Sperrung in Gap und umfährt sie automatisch. Vor der Fahrt erneut prüfen.",
+    "important": [
+      "N85 halten; keine kleinen Seitenpässe bei schlechtem Wetter.\n\nGoogle meldet derzeit eine lokale Sperrung in Gap und umfährt sie automatisch. Vor der Fahrt erneut prüfen."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-3",
+    "notes": "Digne ist kein Pflichtpunkt. In Bonnieux und Lourmarin am Ortsrand parkieren.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-4",
+    "notes": "Nicht auf den schmalen Meerdeich Digue à la Mer fahren. Auch keine Salinenpisten, Schutzgebiets- oder Strandwege verwenden.",
+    "important": [
+      "Nicht auf den schmalen Meerdeich Digue à la Mer fahren. Auch keine Salinenpisten, Schutzgebiets- oder Strandwege verwenden."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-5",
+    "notes": "Bei Verkehr, Wind oder Regen abschnittsweise A9/A61 wählen.",
+    "important": [
+      "Bei Verkehr, Wind oder Regen abschnittsweise A9/A61 wählen."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-6",
+    "notes": "Keine kleinen Pyrenäenpässe. Hotel nahe R2-Bahnhof und mit geschlossener Garage wählen; für Barcelona die Motorräder stehen lassen.",
+    "important": [
+      "Keine kleinen Pyrenäenpässe. Hotel nahe R2-Bahnhof und mit geschlossener Garage wählen; für Barcelona die Motorräder stehen lassen."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-7",
+    "notes": "Motorräder beim Hotel lassen. Barcelona nur besuchen, wenn Energie und Lust passen.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-8",
+    "notes": "Die schönsten Punkte der früheren Priorat-Runde sind in den Anreisetag integriert. Bei dichtem Küstenverkehr Sitges auslassen; Porrera und Gratallops auf Asphalt anfahren.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-9",
+    "notes": "N-420 bis Teruel und A-1512 nach Albarracín halten. Nicht in die Altstadt routen.",
+    "important": [
+      "N-420 bis Teruel und A-1512 nach Albarracín halten. Nicht in die Altstadt routen."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-10",
+    "notes": "Nur fahren, wenn Google klar auf Asphalt führt; sonst Ruhetag.",
+    "important": [
+      "Nur fahren, wenn Google klar auf Asphalt führt; sonst Ruhetag."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-11",
+    "notes": "Bei gutem Wetter N-234-Abschnitte, sonst A-23. Ziel ist das Olympia Hotel in Alboraya; sichere Abstellung für zwei Motorräder vor der Buchung bestätigen.",
+    "important": [
+      "Bei gutem Wetter N-234-Abschnitte, sonst A-23. Ziel ist das Olympia Hotel in Alboraya; sichere Abstellung für zwei Motorräder vor der Buchung bestätigen."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-12",
+    "notes": "Motorräder beim Hotel lassen und je nach Energie Strandtag oder Stadtbesuch wählen.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-13",
+    "notes": "Kurviger Tag. Nur eine Nacht in Altea; am Folgetag beginnt die Küstenetappe nach Águilas.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-14",
+    "notes": "Cartagena als längeren Mittagsstopp nutzen. Danach folgt der schönere Küstenabschnitt über La Azohía; bei Müdigkeit oder dichtem Verkehr direkt über A-7/RM-11 nach Águilas fahren.",
+    "important": [
+      "Cartagena als längeren Mittagsstopp nutzen. Danach folgt der schönere Küstenabschnitt über La Azohía; bei Müdigkeit oder dichtem Verkehr direkt über A-7/RM-11 nach Águilas fahren."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-15",
+    "notes": "Nach dem Frühstück am Meer die direkte Hauptstrecke nehmen. Granada-Zentrum vermeiden; nach Monachil mit einfacher Zufahrt routen.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-16",
+    "notes": "Motorräder beim Hotel lassen und für Granada Taxi oder Bus verwenden.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-17",
+    "notes": "Pampaneira reicht als Wendepunkt; Trevélez nicht erzwingen.\n\nGoogle meldet derzeit Sperrungen auf der A-348 und berechnet eine Umfahrung. Kurz vor der Reise neu prüfen.",
+    "important": [
+      "Pampaneira reicht als Wendepunkt; Trevélez nicht erzwingen.\n\nGoogle meldet derzeit Sperrungen auf der A-348 und berechnet eine Umfahrung. Kurz vor der Reise neu prüfen."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-18",
+    "notes": "Campillos ist die verlässliche Hauptlinie. El Burgo nur trocken und ausgeruht.",
+    "important": [
+      "Campillos ist die verlässliche Hauptlinie. El Burgo nur trocken und ausgeruht."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-19",
+    "notes": "CA-9104 nur offen, trocken und bei guter Sicht fahren.",
+    "important": [
+      "CA-9104 nur offen, trocken und bei guter Sicht fahren."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-20",
+    "notes": "Bewusster Puffertag. Nur eine kurze Zusatzrunde fahren, wenn Wetter und Energie passen.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-21",
+    "notes": "Ruhiger Inlandtag; Baeza als kurzer Stopp, Úbeda als Basis.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-22",
+    "notes": "Kurzer Kultur- und Puffertag.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-23",
+    "notes": "Albacete wird nicht mehr als Stadtziel angefahren. In Alcalá del Júcar am Ortsrand parkieren.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-24",
+    "notes": "Der zusätzliche Tag entschärft den langen Vortag und hält den Rückweg zur Fähre flexibel.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-25",
+    "notes": "Landschaftlich, aber nicht auf kleinere Abkürzungen wechseln. Bei Wetter direkter fahren.",
+    "important": [
+      "Landschaftlich, aber nicht auf kleinere Abkürzungen wechseln. Bei Wetter direkter fahren."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-26",
+    "notes": "Montblanc nur als kurzer Stopp. In Castelldefels Garage für zwei Nächte und frühe Abfahrt zum Fährterminal vorsehen.",
+    "important": [
+      "Montblanc nur als kurzer Stopp. In Castelldefels Garage für zwei Nächte und frühe Abfahrt zum Fährterminal vorsehen."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-27",
+    "notes": "Motorräder stehen lassen und den Tag ruhig halten. Wecker, Check-in-Unterlagen und Zufahrt zum Terminal für den frühen nächsten Morgen vorbereiten.",
+    "important": [
+      "Motorräder stehen lassen und den Tag ruhig halten. Wecker, Check-in-Unterlagen und Zufahrt zum Terminal für den frühen nächsten Morgen vorbereiten."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-28",
+    "notes": "Frühstück und Tankstopp vorziehen. Mindestens den bestätigten Check-in-Puffer einhalten und die Terminalangabe auf dem Ticket verwenden.",
+    "important": [
+      "Frühstück und Tankstopp vorziehen. Mindestens den bestätigten Check-in-Puffer einhalten und die Terminalangabe auf dem Ticket verwenden."
+    ]
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-29",
+    "notes": "Zeit für die Ausschiffung lassen und danach direkt nach Aosta fahren.",
+    "important": []
+  },
+  {
+    "tripID": "trip_spanien_2026",
+    "stageID": "day-30",
+    "notes": "Alpenwetter und Passstatus vor der Abfahrt prüfen; bei Sperrung muss die Heimroute als Reiseänderung neu geplant werden.",
+    "important": [
+      "Alpenwetter und Passstatus vor der Abfahrt prüfen; bei Sperrung muss die Heimroute als Reiseänderung neu geplant werden."
+    ]
+  }
+]

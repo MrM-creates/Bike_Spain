@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+    <key>NSPrivacyTracking</key><false/>
+    <key>NSPrivacyTrackingDomains</key><array/>
+    <!-- No direct required-reason API calls found in Roadbook's app sources.
+         Reassess when adding APIs or third-party SDKs; do not copy Spur's
+         UserDefaults declaration because Roadbook does not use UserDefaults. -->
+    <key>NSPrivacyAccessedAPITypes</key><array/>
+</dict></plist>
