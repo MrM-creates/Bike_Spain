@@ -1,6 +1,12 @@
 # Roadbook – TestFlight-Vorbereitung
 
-Stand: 4. September 2026. **App-Eintrag angelegt, CloudKit-Schema nach ausdrücklicher Zustimmung in Production bereitgestellt. Build 9 erfolgreich hochgeladen; Apple-Verarbeitung gestartet. Noch kein Beta-Review.** Vollständiger iPhone-Sicherungs-/Importtest bestanden; Build 8 bleibt das gestrige lokale Exportartefakt. Debug-Sicherungsupdate 9 nach Nutzerfreigabe auf iPhone und iPad installiert und gestartet. Keine persönlichen Tagebuchdaten gelesen oder migriert, keine Einladung verschickt.
+Stand: 5. September 2026. **App-Eintrag angelegt, CloudKit-Schema nach ausdrücklicher Zustimmung in Production bereitgestellt. Build 11 mit der vollständigen Balkanroute und „Wegpunkte & Strassen“ erfolgreich hochgeladen; Apple-Verarbeitung gestartet. Noch kein Beta-Review.** Vollständiger iPhone-Sicherungs-/Importtest bestanden. Keine persönlichen Tagebuchdaten gelesen oder migriert, keine Einladung verschickt.
+
+## Build 11 – aktueller Paketstand
+
+Version 0.1.0 (11) wurde am 5. September erfolgreich als Release archiviert, lokal exportiert, signaturgeprüft und zu App Store Connect hochgeladen. Apple bestätigt „Uploaded package is processing“. Production-CloudKit, Production-Push, `get-task-allow=false`, `beta-reports-active=true` und ausschliesslich `iCloud.com.mrm.roadbook` wurden am exportierten IPA geprüft. SHA-256: `03aa760525378ec9ac2946f087c1376863225e6137ee0189c569785c28cb387e`. Artefakte: `companion/.build/distribution/2026-09-05-build11/`.
+
+Enthalten sind alle 18 geprüften Balkan-Fahretappen, die aktualisierten Offline-Karten sowie die neue getrennte Darstellung von Start, Zwischenzielen, Etappenziel und Strassen. Interne Korrekturprotokolle werden nicht als Streckenhinweis gezeigt; freigegebene Wetter-, Sperr-, Grenz- und Fährhinweise bleiben sichtbar. Node-Tests, Swift-Plan-/Hinweisprüfungen, Simulator-Build und Produktions-Web-Smoke-Test waren erfolgreich.
 
 ## Build 9 – aktueller Paketstand
 

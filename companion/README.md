@@ -35,7 +35,7 @@ DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer xcodebuild -projec
 
 ## TestFlight-Vorbereitung
 
-Version **0.1.0 (9)** wurde am 4. September 2026 mit Sicherung/Einlesen als Release archiviert, lokal exportiert und die Distribution-Signatur geprüft. Noch kein Upload, keine Apple-Beta-Prüfung und keine Geräteumstellung. Apple-Portalname **Roadbook by Mr M**, App-ID **6808538943**. Production-Schema nach ausdrücklicher Nutzerfreigabe bereitgestellt. Vor dem Wechsel müssen die bestehenden Development-Einträge gesichert und anschliessend bewusst übernommen werden. Details, Paketpfade, Beta-Texte und Freigabeschritte: [Distribution/TESTFLIGHT.md](Distribution/TESTFLIGHT.md).
+Version **0.1.0 (11)** wurde am 5. September 2026 mit der vollständigen Balkanroute und der neuen Wegpunktdarstellung als Release archiviert, lokal exportiert, signaturgeprüft und erfolgreich zu App Store Connect hochgeladen; Apple verarbeitet das Paket. Noch keine Beta-Prüfung oder Einladung. Apple-Portalname **Roadbook by Mr M**, App-ID **6808538943**. Production-Schema nach ausdrücklicher Nutzerfreigabe bereitgestellt. Vor dem Wechsel müssen die bestehenden Development-Einträge gesichert und anschliessend bewusst übernommen werden. Details, Paketpfade, Beta-Texte und Freigabeschritte: [Distribution/TESTFLIGHT.md](Distribution/TESTFLIGHT.md).
 
 ## Eigene iCloud-Ablage – Development-Abgleich bestätigt, Production offen
 
