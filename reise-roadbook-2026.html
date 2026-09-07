@@ -1422,6 +1422,7 @@
   </footer>
 
   <script src="/data/trip-spanien-2026.js?v=20260816ipad"></script>
+  <script src="/assets/route-navigation.js?v=20260907parts"></script>
   <script>
     const maps = (origin, destination, waypoints = []) => {
       const params = new URLSearchParams({ api: "1", origin, destination, travelmode: "driving" });
@@ -2738,7 +2739,14 @@ Wichtig fuer das Import-JSON:
       actions.className = "actions";
       const currentRoute = item.origin && item.destination ? maps(item.origin, item.destination, item.waypoints || []) : item.main;
       const routeActions = [];
-      if (currentRoute) routeActions.push(routeLink(item.mainLabel || "Route öffnen", currentRoute, false, item.mainMeta || [item.km, item.time].filter(Boolean).join(" · ")));
+      const routeParts = item.navigationBreaks?.length && currentRoute
+        ? window.RoadbookNavigation.navigationParts(item, item.main || currentRoute) : null;
+      if (routeParts?.length) {
+        routeParts.forEach((part, index) => routeActions.push(routeLink(
+          `Abschnitt ${index + 1} · ${part.title} öffnen`, part.mapsURL, index > 0,
+          index ? "Nach dem Parkplatzhalt weiterfahren" : "Bis zum geplanten Parkplatzhalt"
+        )));
+      } else if (currentRoute) routeActions.push(routeLink(item.mainLabel || "Route öffnen", currentRoute, false, item.mainMeta || [item.km, item.time].filter(Boolean).join(" · ")));
       (item.alt || []).forEach((option) => routeActions.push(routeLink(option.label, option.url, true, option.meta || "")));
       if (!currentRoute && !(item.alt || []).length) {
         const rest = document.createElement("span");
@@ -3257,10 +3265,10 @@ Wichtig fuer das Import-JSON:
       openPlanChange();
     }
   </script>
-  <script src="/assets/travel-model.js?v=20260829adria2"></script>
-  <script src="/data/trip-adria-2026.js?v=20260903check"></script>
+  <script src="/assets/travel-model.js?v=20260907parts"></script>
+  <script src="/data/trip-adria-2026.js?v=20260907routes"></script>
   <script src="/assets/trip-catalog.js?v=20260903publish"></script>
   <script src="/assets/trip-publication.js?v=20260903publish"></script>
-  <script src="/assets/trip-overview.js?v=20260905waypoints"></script>
+  <script src="/assets/trip-overview.js?v=20260907parts"></script>
 </body>
 </html>

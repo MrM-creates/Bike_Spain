@@ -1,6 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
+const { navigationParts, routePoints } = require('../lib/route-navigation');
 require('../data/trip-adria-2026');
 const trip = global.__TRIP_ADRIA_DATA__;
 const routes = JSON.parse(fs.readFileSync(require.resolve('../assets/adria-routes.geojson'), 'utf8'));
@@ -23,7 +24,9 @@ test('Balkan: all driving days have exactly one geometry and realistic bounded p
     assert.equal(maps.searchParams.get('origin'), day.origin);
     assert.equal(maps.searchParams.get('destination'), day.roadApproach ? 'Gat Svetog Duje, Split' : day.destination);
     assert.equal(maps.searchParams.get('waypoints') || '', (day.roadApproach ? day.waypoints.slice(0, -1) : day.waypoints).join('|'));
-    assert.ok((maps.searchParams.get('waypoints') || '').split('|').filter(Boolean).length <= 3);
+    for (const part of navigationParts(day, day.main) || [{ mapsURL: day.main }]) {
+      assert.ok(routePoints(part.mapsURL).length <= 5, `Tag ${day.day}: maximal drei Zwischenpunkte je Abschnitt`);
+    }
   }
 });
 

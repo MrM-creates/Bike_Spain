@@ -1,8 +1,8 @@
 (function (root, factory) {
-  const api = factory();
+  const api = factory(typeof module === "object" && module.exports ? require("./route-navigation") : root.RoadbookNavigation);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.MotorcycleTravelModel = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function () {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (navigation) {
   "use strict";
 
   const DAY_MS = 86400000;
@@ -135,6 +135,7 @@
           roadSummary: String(source.roads || "").split(/[·;]/).map((item) => item.trim()).filter(Boolean),
           provider: googleMapsRouteUrl(source) ? "google-maps" : "legacy",
           providerRouteRef: googleMapsRouteUrl(source),
+          navigationParts: source.navigationBreaks?.length ? navigation.navigationParts(source, googleMapsRouteUrl(source)) : undefined,
           checkedAt: null
         };
         routeVariants.push(variant);

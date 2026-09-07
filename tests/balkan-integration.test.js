@@ -23,6 +23,8 @@ test('integrated Balkan stage preserves the exact Maps URL through web and nativ
     const joined = bundled.days[i].map.lines.flatMap((line,index)=>index ? line.coordinates.slice(1) : line.coordinates);
     assert.deepEqual(joined, f.geometry.coordinates);
     assert.ok(new URL(snapshot.days[i].main).searchParams.get('destination'));
-    assert.ok(snapshot.days[i].waypoints.length <= 3);
+    for (const part of feed.days[i].navigationParts || [{mapsURL: feed.days[i].mapsURL}]) {
+      assert.ok(routePoints(part.mapsURL).length <= 5);
+    }
   }
 });

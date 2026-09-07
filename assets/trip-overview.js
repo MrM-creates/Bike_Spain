@@ -184,6 +184,18 @@
     }
   };
 
+  const navigationLinksForSelection = (stage, route) => {
+    const url = googleMapsUrlForSelection(stage, route);
+    if (!url) return [];
+    if (url === route.providerRouteRef && route.navigationParts?.length) {
+      return route.navigationParts.map((part, index) => ({
+        url: part.mapsURL,
+        label: `Abschnitt ${index + 1} · ${part.title} öffnen`
+      }));
+    }
+    return [{ url, label: "In Google Maps öffnen" }];
+  };
+
   const loadLeaflet = () => new Promise((resolve, reject) => {
     if (window.L) { resolve(window.L); return; }
     const link = document.createElement("link");
@@ -496,9 +508,24 @@
       const selectedStyle = selectedRouteStyle(stage, route);
       const googleMapsUrl = googleMapsUrlForSelection(stage, route);
       const googleLink = exportDialog.querySelector("#generic-export-google");
-      googleLink.href = googleMapsUrl || "#";
+      const navigationLinks = navigationLinksForSelection(stage, route);
+      googleLink.href = navigationLinks[0]?.url || "#";
+      googleLink.textContent = `${navigationLinks[0]?.label || "Tagesroute in Google Maps öffnen"} ↗`;
       googleLink.setAttribute("aria-disabled", String(!googleMapsUrl));
-      exportDialog.querySelector("#generic-export-day").textContent = `Tag ${travelDayNumber(selectedStage)} · ${stage.title} · ${routeStyleLabel(selectedStyle)} ausgewählt. Google Maps berechnet den Verlauf beim Öffnen neu.`;
+      exportDialog.querySelectorAll("[data-navigation-part]").forEach((link) => link.remove());
+      let precedingLink = googleLink;
+      navigationLinks.slice(1).forEach((part) => {
+        const link = document.createElement("a");
+        link.className = "generic-action-button";
+        link.dataset.navigationPart = "true";
+        link.href = part.url;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = `${part.label} ↗`;
+        precedingLink.after(link);
+        precedingLink = link;
+      });
+      exportDialog.querySelector("#generic-export-day").textContent = `Tag ${travelDayNumber(selectedStage)} · ${stage.title} · ${routeStyleLabel(selectedStyle)} ausgewählt. Google Maps berechnet den Verlauf beim Öffnen neu.${navigationLinks.length > 1 ? " Nach dem Parkplatzhalt den nächsten Abschnitt öffnen." : ""}`;
       exportDialog.querySelectorAll("a[download]").forEach((link) => { link.hidden = model.trip.capabilities?.downloads !== true; });
       exportDialog.showModal();
       closeMore();
@@ -1286,8 +1313,9 @@
         <div class="generic-metrics"><div><strong>${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km` : "–"}</strong><span>${route?.distanceScope === "road-approach-only" ? "Landstrecke" : hasRoutePreview ? "Neu berechnet" : "Strecke"}</span></div><div><strong>${formatDuration(displayedRoute?.durationSeconds)}</strong><span>${route?.distanceScope === "road-approach-only" ? "Reine Fahrzeit an Land" : hasRoutePreview ? "Neu berechnet" : "Fahrzeit"}</span></div><div><strong>${escapeHtml(destination)}</strong><span>Übernachtung</span></div></div>
         ${route && stage.kind !== "transport" ? `<div class="generic-detail-block"><h3>Routenart</h3>${stage.kind === "loop" ? `<p class="generic-context-note">Festgelegte Rundfahrt über die definierten Wegpunkte. Eine direkte Verbindung wäre hier keine sinnvolle Alternative.</p>` : `<div class="generic-route-choice"><button type="button" data-route-style="direct" aria-pressed="${activeStyle === "direct"}">${activeStyle === "direct" ? `<span aria-hidden="true">✓</span>` : ""}Direkt</button><button type="button" data-route-style="scenic" aria-pressed="${activeStyle === "scenic"}">${activeStyle === "scenic" ? `<span aria-hidden="true">✓</span>` : ""}Kurvig & schön</button></div><p class="generic-route-current"><span aria-hidden="true"></span>Ausgewählt: <strong>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"}</strong></p><p class="generic-context-note">Eine andere Auswahl zeigt beide Strecken auf der Karte und reduziert dieses Fenster auf die Entscheidung.</p>${hasRoutePreview ? `<div class="generic-route-preview ${routePreviewConfirmed ? "confirmed" : ""}"><strong>${routePreviewConfirmed ? "Lokal gespeichert · Prüfung ausstehend" : "Routenvorschau"}</strong><span>${activeStyle === "scenic" ? "Kurvig & schön" : "Direkt"} · ${displayedRoute?.distanceMeters ? `${km.format(displayedRoute.distanceMeters / 1000)} km · ${formatDuration(displayedRoute.durationSeconds)}` : "noch nicht übernommen"}</span><button type="button" id="generic-discard-route-preview">${routePreviewConfirmed ? "Zurücksetzen" : "Verwerfen"}</button></div>` : ""}`}</div>` : ""}
         <div class="generic-detail-block"><h3>Wegpunkte &amp; Strassen</h3>${routeGuideHtml(stage, route, activeStyle)}</div>
+        ${stage.notes?.length ? `<details class="generic-detail-block"><summary>Tagesbeschreibung &amp; Hinweise</summary>${stage.notes.flatMap((note) => String(note).split(/\n\s*\n/)).filter(Boolean).map((paragraph) => `<p class="generic-context-note">${escapeHtml(paragraph)}</p>`).join("")}</details>` : ""}
         <div class="generic-detail-block"><h3>Unterkunft</h3>${accommodation ? `<div class="generic-hotel">${hotelIcon()}<div><strong>${escapeHtml(accommodation.name)}</strong><span>${bookingLabel(booking)} · ${parkingLabel(accommodation, stay)}</span>${accommodation.url ? `<a class="generic-hotel-link" href="${escapeHtml(accommodation.url)}" target="_blank" rel="noopener">Hotel öffnen ↗</a>` : ""}${alternative ? `<small>Alternative: ${escapeHtml(alternative.name)}</small>${alternative.url ? `<a class="generic-hotel-link" href="${escapeHtml(alternative.url)}" target="_blank" rel="noopener">Alternative öffnen ↗</a>` : ""}` : ""}</div></div>` : `<p>Für diesen Tag ist noch keine Unterkunft hinterlegt.</p>`}${stay ? `<button class="generic-context-link" type="button" id="generic-show-stay">Unterkunft dieses Tages ansehen →</button>` : ""}</div>
-        <div class="generic-inspector-actions">${googleMapsUrl ? `<a class="generic-action-button" href="${escapeHtml(googleMapsUrl)}" target="_blank" rel="noopener">In Google Maps öffnen ↗</a>${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div></div><span class="generic-inspector-resize" data-inspector-resize aria-hidden="true"></span>`;
+        <div class="generic-inspector-actions">${googleMapsUrl ? `${navigationLinksForSelection(stage, route).map((part) => `<a class="generic-action-button" href="${escapeHtml(part.url)}" target="_blank" rel="noopener">${escapeHtml(part.label)} ↗</a>`).join("")}${navigationLinksForSelection(stage, route).length > 1 ? `<p class="generic-google-note">Nach dem Parkplatzhalt den nächsten Abschnitt öffnen.</p>` : ""}${hasRoutePreview ? `<p class="generic-google-note">Google Maps berechnet die gewählte Route dort neu. Verlauf und Fahrzeit können leicht von der Vorschau abweichen.</p>` : ""}` : ""}<button class="generic-action-button primary" type="button" id="generic-adjust-stage">Etappe anpassen</button>${fixed ? `<button class="generic-action-button warning" type="button" id="generic-adjust-fixed">Fixpunkt ändern</button>` : ""}</div></div><span class="generic-inspector-resize" data-inspector-resize aria-hidden="true"></span>`;
       inspector.querySelectorAll("[data-route-style]").forEach((button) => button.addEventListener("click", () => previewRouteStyle(button.dataset.routeStyle)));
       inspector.querySelector("#generic-discard-route-preview")?.addEventListener("click", discardRoutePreview);
       inspector.querySelector("#generic-adjust-stage")?.addEventListener("click", () => openStagePlanContext("stage"));
