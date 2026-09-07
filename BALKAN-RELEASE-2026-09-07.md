@@ -1,3 +1,19 @@
+# Nachtrag: vollständige iPad-Prüfung und Tag-24-Korrektur
+
+Neue Planversion: `2026-09-07T19:02:54.824Z` (7.9.2026, 21:02 Zürich).
+
+Der Datenstand 19:18 wurde auf dem iPad mit Roadbook 0.1.0 (11) über alle 19 tatsächlichen Maps-Schaltflächen der 18 Balkan-Fahrtage geprüft. Start, Ziel, alle gelieferten Koordinaten und ihre Reihenfolge stimmen. Alle Teilstrecken der nativen Strassenanweisungen wurden aufgeklappt und erfasst. 15 Strassenfolgen stimmen mit dem Roadbook überein; drei Abweichungen wurden festgestellt:
+
+- Tag 4: aktuelle A1-Nachtsperre Slovenske Konjice–Dramlje, von Promet.si für den Prüfzeitpunkt bestätigt. Kein Nachweis derselben Sperre am Reisetag 27. September; der geplante A1-Verlauf bleibt bestehen.
+- Tag 24: Der Covignano-Punkt war nur in der Kartenlinie vorhanden. Nach seiner Ergänzung wählte Maps zeitweise die A14 nach Ravenna. Die Maps-Übergabe enthält deshalb jetzt auch Strassenpunkte auf der geplanten SS16 und Via Darsena. Beide korrigierten URLs wurden vor der Veröffentlichung direkt in der nativen Maps-App geprüft: Covignano, SS16 und Ravenna-Zufahrt stimmen. Zwei Abschnitte treffen sich lückenlos am ohnehin vorgesehenen Tiberio-Parkplatz. Kein zusätzlicher Besuch, keine neue Kartenlinie.
+- Tag 30: Google fährt aktuell über A2/A14 statt Axen und weicht bei Rotkreuz von der A4 ab. Die bekannte Heimweg-Abweichung bleibt vom Nutzer akzeptiert; dieser Tag wird nicht als übereinstimmend bezeichnet.
+
+Nur der Maps-Verlauf von Tag 24 wurde geändert. Die veralteten Hinweise auf eine noch nicht erfolgte native Prüfung wurden aus den Balkan-Tagestexten entfernt. Andere Routen, Termine, Unterkünfte, Fahrzeitvorgaben und Geometrien bleiben erhalten. Die gemeinsame Datenquelle wird von Web und bestehender Roadbook-App geladen; kein neuer TestFlight-Build ist nötig.
+
+Validierung vor Veröffentlichung: beide korrigierten Maps-URLs auf dem iPad, acht gezielte Node-Tests für Datenbindung, mobile Abschnitte, identische Web-/Feed-Übergabe und die drei Strassenpunkte auf der bestehenden Linie. Der abschliessende Aufruf der veröffentlichten Tag-24-Schaltflächen wird im lokalen [iPad-Prüfbericht](route-audit/2026-09-07/ipad-xctest/ALL-18-IPAD.md) dokumentiert. Die Prüfung belegt den beobachteten Strassenverlauf, keine exportierte Google-Polylinie oder Befahrbarkeit an einem zukünftigen Reisetag.
+
+---
+
 # Balkan-Routenkorrektur vom 7. September 2026
 
 Planversion: `2026-09-07T17:18:38.159Z`. Führende Quelle bleibt das Motorrad-Roadbook auf GitHub/Vercel. Roadbook 0.1.0 (11) lädt diese Daten bereits über den bestehenden Feed; für diese Datenkorrektur ist kein neuer TestFlight-Build erforderlich.

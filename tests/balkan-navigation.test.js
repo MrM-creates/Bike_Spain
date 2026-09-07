@@ -9,6 +9,24 @@ const {routePoints} = require('../lib/route-navigation');
 
 const trip = () => readPublishedTrip(fs.readFileSync('data/trip-adria-2026.js','utf8'),'trip_adria_2026');
 
+test('day 24 carries its Covignano, SS16 and Ravenna road controls into mobile navigation', () => {
+  const source = trip();
+  const day = tripForCompanion(source).days.find(d => d.number === 24);
+  const parts = day.navigationParts;
+  assert.equal(parts.length, 2);
+  const points = parts.flatMap((part, index) => routePoints(part.mapsURL).slice(index ? 1 : 0));
+  const controls = ['44.038832,12.551504', '44.211080,12.381783', '44.417979,12.209275'];
+  for (const control of controls) assert.ok(points.includes(control), `Missing road control: ${control}`);
+  assert.equal(routePoints(parts[0].mapsURL).at(-1), 'Parcheggio Tiberio, Rimini');
+  assert.equal(routePoints(parts[1].mapsURL)[0], 'Parcheggio Tiberio, Rimini');
+  const geometry = JSON.parse(fs.readFileSync('assets/adria-routes.geojson')).features.find(f => f.properties.day === 24).geometry.coordinates;
+  for (const control of controls) {
+    const [lat, lon] = control.split(',').map(Number);
+    assert.ok(geometry.some(([x, y]) => Math.hypot((x-lon)*80000, (y-lat)*111000) < 10),
+      `Road control must stay on the existing planned line: ${control}`);
+  }
+});
+
 test('published Balkan plan preserves every point through the actual web and native imports', () => {
   const source = trip();
   const web = importLegacyRoadbook(source);
