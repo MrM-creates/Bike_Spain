@@ -10,7 +10,7 @@ const hours = (text) => {
   return match ? Number(match[1]) + Number(match[2] || 0) / 60 : NaN;
 };
 
-test('Balkan: all driving days have exactly one geometry and realistic bounded plan times', () => {
+test('Balkan: all driving times equal the saved route calculation rounded to a minute', () => {
   const driving = trip.days.filter(day => !day.rest);
   assert.equal(driving.length, 18);
   assert.equal(trip.days.filter(day => day.rest).length, 12);
@@ -18,8 +18,13 @@ test('Balkan: all driving days have exactly one geometry and realistic bounded p
   for (const day of driving) {
     const route = routes.features.find(f => f.properties.day === day.day);
     assert.equal(route.properties.name, `${day.day} ${day.title}`);
-    assert.ok(hours(day.time) <= 5, `Tag ${day.day}: maximal fünf Stunden`);
-    assert.ok(hours(day.time) * 3600 >= route.properties.durationSeconds, `Tag ${day.day}: Planwert nicht unter Routerzeit`);
+    assert.ok(route.properties.durationSeconds <= trip.trip.preferences.maxDailyRidingHours * 3600,
+      `Tag ${day.day}: maximal fünf Stunden berechnete Fahrt`);
+    assert.equal(Math.round(hours(day.time) * 60), Math.round(route.properties.durationSeconds / 60),
+      `Tag ${day.day}: Anzeige entspricht der berechneten Route ohne Zuschlag`);
+    assert.match(day.time, /^ca\. \d+ h(?: \d{2})?$/, 'Nur reine Fahrzeit im Zeitfeld');
+    assert.ok(day.note.startsWith(`Reine Fahrzeit${day.roadApproach ? ' an Land' : ''}: ${day.time}.`));
+    assert.equal(trip.originalDays.find(d => d.id === day.id).time, day.time);
     const maps = new URL(day.main);
     assert.equal(maps.searchParams.get('origin'), day.origin);
     assert.equal(maps.searchParams.get('destination'), day.roadApproach ? 'Gat Svetog Duje, Split' : day.destination);
@@ -41,5 +46,5 @@ test('Balkan: dates, accommodation pairs and unconfirmed booking status agree', 
   assert.equal(trip.accommodations.length, 17);
   assert.deepEqual(nightDates, Array.from({length: 29}, (_, i) => new Date(Date.parse(trip.trip.startDate) + i * 86400000).toISOString().slice(0, 10)));
   assert.match(trip.days[15].note, /EES gilt nicht/);
-  assert.equal(trip.days[15].time, 'ca. 3 h plus Grenze');
+  assert.equal(trip.days[15].time, 'ca. 2 h 03');
 });

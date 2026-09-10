@@ -28,3 +28,24 @@ test('integrated Balkan stage preserves the exact Maps URL through web and nativ
     }
   }
 });
+
+test('all Balkan driving times reach the web model, native feed and offline resource unchanged', () => {
+  const snapshot = readPublishedTrip(fs.readFileSync(require.resolve('../data/trip-adria-2026.js'), 'utf8'), 'trip_adria_2026');
+  const feed = tripForCompanion(snapshot);
+  const web = importLegacyRoadbook(snapshot);
+  const bundled = JSON.parse(fs.readFileSync(require.resolve('../companion/Roadbook/Resources/plans.json'))).trips.find(t => t.id === snapshot.trip.id);
+  const routes = JSON.parse(fs.readFileSync(require.resolve('../assets/adria-routes.geojson')));
+  assert.equal(feed.version, snapshot.publishedVersion);
+  assert.equal(bundled.version, snapshot.publishedVersion);
+  for (const day of snapshot.days.filter(d => !d.rest)) {
+    const seconds = routes.features.find(f => f.properties.day === day.day).properties.durationSeconds;
+    const variant = web.revision.routeVariants.find(v => v.providerRouteRef === day.main);
+    assert.equal(variant.durationSeconds, Math.round(seconds / 60) * 60);
+    for (const consumer of [feed, bundled]) {
+      const received = consumer.days.find(d => d.id === day.id);
+      assert.equal(received.duration, day.time);
+      assert.ok(received.notes.startsWith(`Reine Fahrzeit${day.roadApproach ? ' an Land' : ''}: ${day.time}.`));
+      assert.doesNotMatch(received.notes, /6–7|4–5 Stunden|keine Prüfung in der nativen/);
+    }
+  }
+});
