@@ -160,7 +160,11 @@ module.exports = async (request, response) => {
     const tripData = readPublishedTrip(Buffer.from(current.content, "base64").toString("utf8"), tripId);
     const currentVersion = tripData.publishedVersion || "legacy";
     const planKind = normalizePlanKind(payload.planKind, tripData.planKind);
-    if (payload.baseVersion && String(payload.baseVersion) !== currentVersion) {
+    if (!payload.baseVersion) {
+      json(response, 400, { error: "Die Online-Ausgangsversion fehlt. Bitte den aktuellen Reiseplan laden; dein Entwurf bleibt erhalten." });
+      return;
+    }
+    if (String(payload.baseVersion) !== currentVersion) {
       json(response, 409, { error: "Der Online-Plan wurde inzwischen geändert. Lade den aktuellen Stand und erstelle den Entwurf erneut." });
       return;
     }

@@ -2639,7 +2639,7 @@ Wichtig fuer das Import-JSON:
         const response = await fetch("/api/publish-roadbook", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ secret, reason, days: state.days })
+          body: JSON.stringify({ secret, reason, days: state.days, baseVersion: currentPublishedVersion })
         });
         const result = await response.json();
         if (!response.ok || !result.ok) throw new Error(result.error || "Veröffentlichung fehlgeschlagen.");

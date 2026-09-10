@@ -91,7 +91,11 @@ module.exports = async (request, response) => {
     const current = await githubRequest(`${contentPath}?ref=${encodeURIComponent(branch)}`);
     const tripData = parseTripData(Buffer.from(current.content, "base64").toString("utf8"));
     const currentVersion = tripData.publishedVersion || "legacy";
-    if (payload.baseVersion && String(payload.baseVersion) !== currentVersion) {
+    if (!payload.baseVersion) {
+      json(response, 400, { error: "Die Online-Ausgangsversion fehlt. Bitte den aktuellen Reiseplan laden; dein Entwurf bleibt erhalten." });
+      return;
+    }
+    if (String(payload.baseVersion) !== currentVersion) {
       json(response, 409, { error: "Der Online-Plan wurde inzwischen geändert. Lade den aktuellen Stand und übernimm deine Unterkunftsänderung erneut." });
       return;
     }
