@@ -26,3 +26,28 @@ test('companion endpoint rejects writes', () => {
   require('../api/companion-plan')({method:'POST',body:{journal:'secret'}},response);
   assert.equal(status,405); assert.ok(body.error);
 });
+test('conditional companion reads keep unchanged plans off the wire and distinguish trip feeds', () => {
+  const handler = require('../api/companion-plan');
+  const read = (query = {}, tag) => {
+    const result = { headers: {} };
+    const response = { setHeader(k,v){result.headers[k]=v;}, status(v){result.status=v;return this;}, json(v){result.body=v;}, end(){result.ended=true;} };
+    handler({method:'GET',query,headers:tag ? {'if-none-match':tag} : {}},response);
+    return result;
+  };
+  const full = read();
+  assert.equal(full.status,200);
+  assert.ok(full.body.trips.length===2);
+  assert.match(full.headers.ETag,/^"[a-f0-9]{64}"$/);
+  const unchanged = read({},full.headers.ETag);
+  assert.equal(unchanged.status,304);
+  assert.equal(unchanged.body,undefined);
+  assert.equal(unchanged.ended,true);
+  assert.equal(unchanged.headers['Cache-Control'],'no-cache');
+  assert.equal(read({},'W/'+full.headers.ETag).status,304);
+  assert.equal(read({},'"older-plan"').status,200);
+  const single = read({tripId:'trip_adria_2026'},full.headers.ETag);
+  assert.equal(single.status,200);
+  assert.notEqual(single.headers.ETag,full.headers.ETag);
+  assert.equal(single.body.trips.length,1);
+  assert.equal(read({tripId:'unknown'},full.headers.ETag).status,400);
+});
