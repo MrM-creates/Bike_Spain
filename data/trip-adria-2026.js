@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-10T11:49:30.989Z",
+  "publishedVersion": "2026-09-10T12:07:58.868Z",
   "planKind": "published",
   "originalDays": [
     {
@@ -1271,8 +1271,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/at/dasmei-medical-selfness.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Muttererhof · Mutters",
       "currentAlternativeUrl": "https://www.booking.com/hotel/at/muttererhof.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
-      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
-      "booking": "asked"
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
     },
     {
       "id": "lienz",
@@ -1543,7 +1542,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-10T11:49:30.989Z",
+    "dataVersion": "2026-09-10T12:07:58.868Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Durch das Pustertal und Drautal, mit einer Pause am Wörthersee, führt die Reise über Graz nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
     "startDate": "2026-09-24",
