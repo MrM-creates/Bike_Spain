@@ -1,0 +1,20 @@
+const fs=require('node:fs'),assert=require('node:assert/strict');
+const {readPublishedTrip,writePublishedTrip}=require('../../lib/published-trips');
+const {tripForCompanion}=require('../../lib/companion-feed');
+const {attachMaps}=require('../../lib/companion-maps');
+const source='data/trip-adria-2026.js',id='trip_adria_2026',dir='accommodation-audit/2026-09-10/';
+const read=p=>JSON.parse(fs.readFileSync(p)),write=(p,v)=>fs.writeFileSync(p,JSON.stringify(v,null,2)+'\n');
+const base=read(dir+'routes/baseline.json'),remote=readPublishedTrip(fs.readFileSync('/tmp/adria-remote-before.js','utf8'),id),t=readPublishedTrip(fs.readFileSync(source,'utf8'),id);
+assert.deepEqual(remote.days,base.days);assert.deepEqual(remote.originalDays,base.originalDays);
+for(const sid of ['zadar','makarska-base','ston-return'])assert.deepEqual(remote.accommodations.find(s=>s.id===sid),base.accommodations.find(s=>s.id===sid),'Replacement stay changed online');
+t.accommodations=t.accommodations.map(s=>['zadar','makarska-base','ston-return'].includes(s.id)?s:remote.accommodations.find(r=>r.id===s.id));
+const oldTrip={...base.trip},remoteTrip={...remote.trip};delete oldTrip.dataVersion;delete remoteTrip.dataVersion;assert.deepEqual(oldTrip,remoteTrip);
+t.publishedVersion=new Date().toISOString();t.trip={...remote.trip,dataVersion:t.publishedVersion};
+const zadarNote='Die Kartenlinie zeigt eine mögliche lokale Zufahrt. Google Maps kann in Zadar andere Strassen zum selben Unterkunftspunkt wählen; der private Parkplatz ist damit noch nicht bestätigt.';
+for(const n of [6,8]){const day=t.days[n-1];if(!day.note.includes(zadarNote))day.note+='\n\n'+zadarNote;}
+fs.writeFileSync(source,writePublishedTrip(t,id));
+write(dir+'routes/publication-base.json',{version:remote.publishedVersion,accommodations:remote.accommodations,trip:remote.trip});
+const maps=read('data/companion-maps.json'),bundle=read('companion/Roadbook/Resources/plans.json');bundle.trips=bundle.trips.map(x=>x.id===id?attachMaps(tripForCompanion(t),maps):x);write('companion/Roadbook/Resources/plans.json',bundle);
+const draft=read(dir+'route-change-draft.json');draft.integratedVersion=t.publishedVersion;draft.publicationBaseVersion=remote.publishedVersion;write(dir+'route-change-draft.json',draft);
+const options=read(dir+'replacement-options.json');options.status='integrated-not-booked';options.boundaries=options.boundaries.map(b=>b.includes('Keine Gastgeber')?'Keine Gastgeber angeschrieben, keine Buchungen; drei Unterkünfte und sechs Routen im Plan aktualisiert.':b);write(dir+'replacement-options.json',options);
+console.log(t.publishedVersion);

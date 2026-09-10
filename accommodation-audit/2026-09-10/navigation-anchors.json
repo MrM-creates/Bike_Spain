@@ -1,0 +1,35 @@
+{
+  "checkedOn": "2026-09-10",
+  "anchors": {
+    "zadar": {
+      "name": "Arborea",
+      "address": "Ulica Augusta Šenoe 38a, Zadar",
+      "coordinate": [
+        15.217936041002558,
+        44.13247343788357
+      ],
+      "source": "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html",
+      "evidence": "Public map link data-atlas-latlng; address search on Google only partially matches number 38. Use the published listing marker, not the partial address result."
+    },
+    "makarska": {
+      "name": "INA Makarska-Ratac",
+      "address": "Vukovarska 135, Makarska",
+      "coordinate": [
+        17.007086,
+        43.306819
+      ],
+      "source": "https://www.ina.hr/station/makarska-ratac/",
+      "evidence": "Official station page address and linked map lat=43.306819&lng=17.007086. User-approved orientation point; not the location of Der Blick."
+    },
+    "ston": {
+      "name": "Apartments Ivanka",
+      "address": "Hodilje 118, Ston",
+      "coordinate": [
+        17.690087,
+        42.854686
+      ],
+      "source": "https://www.booking.com/hotel/hr/apartments-ivanka-ston1.de.html",
+      "evidence": "Public map link data-atlas-latlng and visible address Hodilje 118."
+    }
+  }
+}

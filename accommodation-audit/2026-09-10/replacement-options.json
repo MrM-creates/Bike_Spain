@@ -1,0 +1,149 @@
+{
+  "tripId": "trip_adria_2026",
+  "checkedOn": "2026-09-10",
+  "status": "integrated-not-booked",
+  "adults": 2,
+  "options": [
+    {
+      "stayId": "zadar",
+      "rank": 1,
+      "name": "Arborea, luxury apartment with private yard",
+      "checkIn": "2026-09-29",
+      "checkOut": "2026-10-01",
+      "url": "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+      "unit": "Apartment mit 2 Schlafzimmern, 65 m²",
+      "displayedTotalCHF": 197,
+      "freeCancellationBefore": "2026-09-28",
+      "address": "Ulica Augusta Šenoe 38a, Zadar, Croatia",
+      "listingEvidence": "Eigene Küche, Waschmaschine, Privatparkplatz am Haus, private Aussenfläche; Inseratsadresse mit Zusatz Prizemlje (Erdgeschoss).",
+      "availabilityEvidence": "Datiertes Booking-Angebot für zwei Erwachsene, auswählbare Einheit CHF 197, kostenlose Stornierung vor 28.09.2026.",
+      "openQuestions": [
+        "Sichere Abstellung für zwei beladene Motorräder verbindlich bestätigen",
+        "Asphalt, Gefälle, Rangierfläche und genaue Einfahrt bestätigen"
+      ],
+      "affectedDays": [
+        6,
+        8
+      ]
+    },
+    {
+      "stayId": "zadar",
+      "rank": 2,
+      "name": "Villa Karla",
+      "checkIn": "2026-09-29",
+      "checkOut": "2026-10-01",
+      "url": "https://www.booking.com/hotel/hr/apartments-villa-karla.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+      "unit": "Standard Apartment, 45 m², Tarif für zwei Gäste",
+      "displayedTotalCHF": 250,
+      "freeCancellationBefore": "2026-09-24",
+      "address": "Premudski prilaz 8, Zadar, Croatia",
+      "listingEvidence": "Eigene Küche; Waschmaschine und Trockner beschrieben; kostenlose Parkplätze an der Unterkunft.",
+      "availabilityEvidence": "Datiertes Booking-Angebot CHF 250 für zwei Erwachsene. Der CHF-243-Tarif gilt nur für einen Gast.",
+      "openQuestions": [
+        "Eigene Nutzung der Waschmaschine dieser Einheit bestätigen",
+        "Zwei sichere Motorradplätze und Einfahrt bestätigen"
+      ],
+      "affectedDays": [
+        6,
+        8
+      ]
+    },
+    {
+      "stayId": "makarska-base",
+      "rank": 1,
+      "name": "Der Blick / The View",
+      "checkIn": "2026-10-03",
+      "checkOut": "2026-10-06",
+      "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+      "unit": "Gesamtes Apartment mit zwei Schlafzimmern, erstattungsfähiger Tarif",
+      "displayedTotalCHF": 241.5,
+      "freeCancellationBefore": "2026-10-02",
+      "address": null,
+      "listingEvidence": "Küche, eigene kostenlose Waschmaschine, ein Stellplatz auf dem Grundstück; eine Bewertung bestätigt reservierten Parkplatz, andere beschreibt Steigung vom Strand zur Wohnung.",
+      "availabilityEvidence": "Datiertes Airbnb-Angebot für zwei Gäste und drei Nächte; erstattungsfähiger Tarif CHF 241.50 und Reservieren-Schaltfläche. Voreingestellt CHF 217.45 nicht erstattungsfähig nach anfänglichem 24-Stunden-Fenster.",
+      "openQuestions": [
+        "Exakte Adresse und Einfahrt vom Gastgeber erhalten",
+        "Zwei beladene Motorräder auf dem einen Stellplatz verbindlich bestätigen",
+        "Steigung, Asphalt und Rangieren bestätigen"
+      ],
+      "affectedDays": [
+        10,
+        13
+      ]
+    },
+    {
+      "stayId": "ston-return",
+      "rank": 1,
+      "name": "Apartments Ivanka · Hodilje",
+      "checkIn": "2026-10-13",
+      "checkOut": "2026-10-14",
+      "url": "https://www.booking.com/hotel/hr/apartments-ivanka-ston1.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+      "unit": "Deluxe Doppelzimmer mit Balkon, 20 m²; keine Ferienwohnung/Küche zugesagt",
+      "displayedTotalCHF": 66,
+      "freeCancellationBefore": "2026-10-06",
+      "address": "Hodilje 118, Ston, Croatia",
+      "listingEvidence": "Kostenloser Privatparkplatz; Kühlschrank und Balkon im Zimmer. Ruhiger Übernachtungsort ausserhalb der Altstadt. Pool laut Kleingedrucktem am Reisetermin geschlossen.",
+      "availabilityEvidence": "Datiertes Booking-Angebot CHF 66 für zwei Erwachsene; kostenlose Stornierung vor 06.10.2026; keine Zahlung vor 04.10.2026.",
+      "openQuestions": [
+        "Zwei sichere Motorradplätze bestätigen",
+        "Asphaltierte Einfahrt, Gefälle und Rangierfläche bestätigen",
+        "Später Check-in am Grenztag klären"
+      ],
+      "affectedDays": [
+        20,
+        21
+      ]
+    },
+    {
+      "stayId": "ston-return",
+      "rank": 2,
+      "name": "Hotel Ostrea · Mali Ston",
+      "checkIn": "2026-10-13",
+      "checkOut": "2026-10-14",
+      "url": "https://www.booking.com/hotel/hr/ostrea.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+      "unit": "Economy Doppelzimmer mit Frühstück",
+      "displayedTotalCHF": 181,
+      "freeCancellationBefore": "2026-10-10",
+      "address": "Obala dr. Ante Starčevića 9, Mali Ston, Croatia",
+      "listingEvidence": "Parkplätze am Hotel, Lage am Wasser neben dem historischen Kern; Anfahrt muss zum Hotelparkplatz führen. Hotelquelle: https://www.ostrea.hr/hotel-ostrea/",
+      "availabilityEvidence": "Datiertes Booking-Angebot CHF 181 mit Frühstück, kostenlose Stornierung vor 10.10.2026; keine Vorauszahlung.",
+      "openQuestions": [
+        "Zwei sichere Motorradplätze und direkte Parkplatzanfahrt bestätigen"
+      ],
+      "affectedDays": [
+        20,
+        21
+      ]
+    }
+  ],
+  "notPreferred": [
+    {
+      "name": "Diklo Apartment MB",
+      "reason": "Im datierten Inserat derzeit überhaupt nicht buchbar."
+    },
+    {
+      "name": "Apartments Yellow House · Ston",
+      "displayedTotalCHF": 56,
+      "reason": "Studio verfügbar, aber kostenlose Stornierung nur vor 13.09.2026; für die spätere Fährentscheidung zu früh."
+    },
+    {
+      "name": "Sun Spalato Residence · Makarska",
+      "displayedTotalCHF": 222,
+      "reason": "Erdgeschosswohnung verfügbar (angezeigter Mitgliederpreis), aber kostenlose Stornierung nur vor 19.09.2026. Nicht als gleichwertig flexibel gegenüber Der Blick behandeln."
+    },
+    {
+      "name": "Apartman Mimi · Makarska",
+      "reason": "Datiertes Angebot vorhanden, aber kostenlose Stornierung nur vor 12.09.2026."
+    },
+    {
+      "name": "Apartment The View bei Makarska Holidays",
+      "reason": "Ähnlicher Name, aber abweichende Kapazität/Bäder. Identität mit dem Airbnb-Inserat nicht belegt; dessen Adresse nicht übernommen."
+    }
+  ],
+  "boundaries": [
+    "Verfügbarkeit und Preise sind Momentaufnahmen ohne Reservierung.",
+    "Kein sicherer Stellplatz für zwei Motorräder ist durch diesen Onlinecheck verbindlich zugesagt.",
+    "Keine Gastgeber angeschrieben, keine Buchungen; drei Unterkünfte und sechs Routen im Plan aktualisiert.",
+    "Die Reise- und Fährdaten bleiben unverändert."
+  ]
+}

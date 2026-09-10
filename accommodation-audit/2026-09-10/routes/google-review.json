@@ -1,0 +1,14 @@
+{
+  "checkedOn": "2026-09-10",
+  "method": "Opened all six final Google Maps URLs in a browser; read resolved endpoints, all intermediate fields and route summaries. Detailed final approach read for day 6.",
+  "nativeGoogleMaps": "not-tested",
+  "scope": "Public pins and main corridor comparison. Stored OSRM geometry is independently calculated, not Google's exact polyline. Private entrances and future traffic are not confirmed.",
+  "stages": [
+    {"day":6,"resolvedEndpoint":"Arborea, luxury apartment with private yard","googleKm":160,"googleMinutes":176,"corridor":"E65 / D8 via all three retained points","difference":"Google final city approach uses Hrvatskog Sabora, Put Plovanije, Nikole Tesle, dr. Franje Tudmana, Ivana Zajca, Put Petrica, Denisa Spike, Put Dikla, Augusta Senoe. OSRM local approach uses D306, Matije Gupca, Antuna Gustava Matosa and Tina Ujevica to the same public marker; not identical final streets."},
+    {"day":8,"resolvedStart":"Arborea, luxury apartment with private yard","resolvedEndpoint":"My Adriatic Place, Podsolarsko 136","googleKm":84,"googleMinutes":97,"corridor":"Jadranska Magistrala via all three retained points","difference":"Google overview only; local street-by-street equivalence not asserted. OSRM retains the previously reviewed Hrvatskog Sabora shape point."},
+    {"day":10,"resolvedEndpoint":"Vukovarska ul. 135, Makarska","googleKm":135,"googleMinutes":164,"corridor":"D8 via Primosten, Trogir and Dugi Rat coastal points"},
+    {"day":13,"resolvedStart":"Vukovarska ul. 135, Makarska","resolvedEndpoint":"Hrvatskog Crvenog Kriza 10, Dubrovnik","googleKm":161,"googleMinutes":167,"corridor":"Jadranska Magistrala via Drvenik, Peljesac bridge and Ston parking"},
+    {"day":20,"resolvedEndpoint":"Apartments Ivanka, Hodilje","googleKm":140,"googleMinutes":193,"corridor":"E65/E80 via Perast and Karasovici; border warning displayed"},
+    {"day":21,"resolvedStart":"Apartments Ivanka, Hodilje","resolvedEndpoint":"Gat Svetog Duje, Split","googleKm":185,"googleMinutes":139,"corridor":"D8 bridge and Dugopolje controls, toll warning displayed"}
+  ]
+}

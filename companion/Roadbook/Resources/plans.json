@@ -4,7 +4,7 @@
     {
       "id": "trip_adria_2026",
       "name": "Adria & Balkan 2026",
-      "version": "2026-09-10T09:58:35.540Z",
+      "version": "2026-09-10T11:49:30.989Z",
       "status": "Veröffentlichter Reiseplan",
       "startDate": "2026-09-24",
       "endDate": "2026-10-23",
@@ -23,7 +23,14 @@
           "notes": "Reine Fahrzeit: ca. 3 h 39.\n\nAnreise über die S16 durch den Arlbergtunnel, nicht über L197/B197 und den Arlbergpass. Die Zwischenpunkte halten A3, Ruggell/Feldkirch und S16; der frühere Punkt über dem Tunnel wurde entfernt, weil er eine Passzufahrt auslösen konnte. Ziel ist die bevorzugte Unterkunft dasMEI, Nattererstraße 20–22 in Mutters, über Innsbruck-Süd, B182 und Innsbrucker Straße. Start bleibt der Ortsanker Berikon. Google-Maps-Link und Kartenlinie am 04.09.2026 anhand der Abbiegefolge abgeglichen (Maps rund 293 km). Vignette/Streckenmaut sowie Tunnel- und Verkehrslage bei ASFINAG vor Abfahrt prüfen. Bei einer Sperre nicht automatisch auf einen Alpenpass ausweichen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Berikon%2C+Switzerland&destination=Hotel+dasMEI%2C+Nattererstrasse+20-22%2C+Mutters&travelmode=driving&waypoints=47.129975%2C9.061041%7C47.242367%2C9.529080%7C47.147210%2C10.358500",
           "accommodation": {
-            "status": "Offen",
+            "id": "innsbruck-mutters",
+            "booking": "asked",
+            "bookingRevision": "9b8e7d8776c648546c3a7ddfc43c672f29d7c7c83a1c3da1280a7b0e0bb68054",
+            "bookingContext": "d9f3644346cb080adfe12b05d22afc4261052e08c31932b0b1b3f370c5a02172",
+            "startDate": "2026-09-24",
+            "endDate": "2026-09-25",
+            "bookingEditable": true,
+            "status": "Angefragt",
             "first": {
               "name": "Hotel dasMEI · Mutters",
               "url": "https://www.booking.com/hotel/at/dasmei-medical-selfness.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
@@ -30679,6 +30686,13 @@
           "notes": "Reine Fahrzeit: ca. 2 h 40.\n\nVom dasMEI über die A13/A22 und die SS49 durchs Pustertal; die drei Strassenpunkte halten die Hauptstrassenlinie, ohne Zentren als Zwischenziele zu verwenden. Ziel ist die bevorzugte Unterkunft Holunderhof, Zettersfeldstraße 36 in Gaimberg. Google-Maps-Link und Kartenlinie am 04.09.2026 anhand der Abbiegefolge abgeglichen. Die Luegbrücke ist 2026 im Regelfall einspurig; die aktuelle Verkehrslage vor Abfahrt prüfen und bei früher Kälte die Hauptstrassenlinie beibehalten.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Hotel+dasMEI%2C+Nattererstrasse+20-22%2C+Mutters&destination=Hotel+Holunderhof%2C+Zettersfeldstrasse+36%2C+Gaimberg&travelmode=driving&waypoints=47.149503%2C11.444244%7C46.814750%2C11.728622%7C46.776327%2C12.017024",
           "accommodation": {
+            "id": "lienz",
+            "booking": "open",
+            "bookingRevision": "7b9dc9cddbe1d503ec67268a013bb0cc90da9e5cac6561bd4333d837989cc6cb",
+            "bookingContext": "7356ba90391d25b2f4c0336fa5d8208efb515626ac1c80c19f05e31c9ae37ed0",
+            "startDate": "2026-09-25",
+            "endDate": "2026-09-26",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel Holunderhof · Lienz",
@@ -51503,6 +51517,13 @@
           "notes": "Reine Fahrzeit: ca. 3 h 38.\n\nVom Holunderhof durchs Drautal auf B100/A10/A2. Die Seepause bleibt Teil der kuratierten Route, führt aber zum Berger Parkplatz an der Augsdorfer Straße statt zum Stadtmittelpunkt. Weiter über Süduferstraße, Rosentaler Straße und B83 zurück auf A2/A9 bis zum Steiermarkhof. Google-Maps-Link und Kartenlinie am 04.09.2026 abgeglichen. Nockalm und Murau entfallen wegen des Zeitbudgets vollständig. Vor Abfahrt Wetter und Baustellen auf A10/A2, insbesondere im Bereich Pack, bei ASFINAG prüfen; auch diese Strecke ist nicht wetterunabhängig.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Hotel+Holunderhof%2C+Zettersfeldstrasse+36%2C+Gaimberg&destination=Steiermarkhof%2C+Ekkehard-Hauer-Strasse+33%2C+Graz&travelmode=driving&waypoints=Berger+Parkplatz%2C+Augsdorfer+Strasse%2C+Velden",
           "accommodation": {
+            "id": "graz-west",
+            "booking": "open",
+            "bookingRevision": "1d2f52dd0cc723d9424b6f90b70ce556ef02b5b0829bf0de355887813fddafa1",
+            "bookingContext": "14bf948b8d5aa0944e93a483e120058bb220ef4a3002f8b1f778f2cf90ef3b67",
+            "startDate": "2026-09-26",
+            "endDate": "2026-09-27",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel Steiermarkhof · Graz-Wetzelsdorf",
@@ -72431,6 +72452,13 @@
           "notes": "Reine Fahrzeit: ca. 2 h 06.\n\nDirekte Hotel-zu-Hotel-Etappe auf A9/A1 über Maribor, ohne Abstecher zum Stadtmittelpunkt. Die frühere A4-Angabe war falsch. Ziel ist das Urban Ring an der Dolenjska cesta 242c über Ausfahrt Ljubljana-jug. Google-Maps-Link und Kartenlinie am 04.09.2026 abgeglichen. Der kurze Fahrtag lässt Zeit für Ljubljana; Slowenien ist Übernachtungsort und nicht bloss Transitland.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Steiermarkhof%2C+Ekkehard-Hauer-Strasse+33%2C+Graz&destination=Urban+Ring+Hotel%2C+Dolenjska+cesta+242c%2C+Ljubljana&travelmode=driving",
           "accommodation": {
+            "id": "ljubljana-ring",
+            "booking": "open",
+            "bookingRevision": "265fdbe7767d99bfab58c1ca3d0474975bbe1f39968f6583e83d667ab1102d95",
+            "bookingContext": "910cefeca27ee99e69dcaff470018d6f16b64a4ef395e9ba32f367a5940aaacf",
+            "startDate": "2026-09-27",
+            "endDate": "2026-09-28",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Urban Ring Hotel · Ljubljana-Rudnik",
@@ -82139,6 +82167,13 @@
           "notes": "Reine Fahrzeit: ca. 2 h 51.\n\nVom Urban Ring über A1 Ausfahrt Postojna, Route 6, A7/E61 und E65/D8 zum Apartment Zora, Mateše Kuhačevića 5. Die Strassenkoordinaten ersetzen Postojna und Rijeka als Stadtziele und verhindern Zentrumsschleifen. Ab Rijeka beginnt die kroatische Küstenlinie. Wegen der vielen slowenischen Autobahnbaustellen 2026 morgens Promet.si prüfen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=46.0211677%2C14.5411596&destination=44.9941346%2C14.9021456&travelmode=driving&waypoints=45.666990%2C14.181330%7C45.317159%2C14.504006%7C45.184644%2C14.684850",
           "accommodation": {
+            "id": "senj",
+            "booking": "open",
+            "bookingRevision": "2335a4133fde4d1ba48b3073e94ec9b681c91c709b43c2b5ce879c1085b9e77d",
+            "bookingContext": "e97ce31c5a8ad42bbab7d671f4df28a76983fc278117cb70d4b0e5ba0dd466d1",
+            "startDate": "2026-09-28",
+            "endDate": "2026-09-29",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Zora · ruhiges Apartment in Senj",
@@ -101608,25 +101643,32 @@
           "date": "2026-09-29",
           "title": "Senj – Karlobag – Starigrad – Zadar",
           "rest": false,
-          "distance": "ca. 160 km",
-          "duration": "ca. 3 h 16",
+          "distance": "ca. 159 km",
+          "duration": "ca. 3 h 17",
           "overnight": "Zadar",
-          "roads": "D8/E65 · Jadranska Magistrala · Hrvatskog Sabora",
-          "notes": "Reine Fahrzeit: ca. 3 h 16.\n\nDurchgehend auf der D8/Jadranska Magistrala; die drei Strassenpunkte verhindern A1-, D25- und Posedarje-Ortsabkürzungen. Ziel ist der öffentliche Google-Marker des bevorzugten Adria Concept in Zadar. Booking nennt Hausnummer 74, Google 78a; konkrete Einheit und Garagenzufahrt vor der Buchung bestätigen. Google-Maps-Link und Kartenlinie am 04.09.2026 abgeglichen. Senj–Karlobag ist im offiziellen kroatischen Motorradführer als Panoramastrecke ausgewiesen und wird auch von aktuellen Motorradequellen als Höhepunkt bestätigt. Sehr bura-exponiert: Wind- und Sperrlage am Fahrtag bei HAK prüfen.",
-          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=44.9941346%2C14.9021456&destination=44.1393374%2C15.2162747&travelmode=driving&waypoints=44.447464%2C15.183677%7C44.272672%2C15.493408%7C44.222638%2C15.523357",
+          "roads": "D8/E65 · Jadranska Magistrala · D306/Hrvatskog Sabora · Matije Gupca · Antuna Gustava Matoša · Tina Ujevića · Arborea",
+          "notes": "Reine Fahrzeit: ca. 3 h 17.\n\nDurchgehend auf der D8/Jadranska Magistrala; die drei Strassenpunkte verhindern A1-, D25- und Posedarje-Ortsabkürzungen. Ziel ist Arborea, Ulica Augusta Šenoe 38a, am veröffentlichten Booking-Kartenmarker. Senj–Karlobag ist im offiziellen kroatischen Motorradführer als Panoramastrecke ausgewiesen und wird auch von aktuellen Motorradequellen als Höhepunkt bestätigt. Sehr bura-exponiert: Wind- und Sperrlage am Fahrtag bei HAK prüfen.\n\nDie Kartenlinie zeigt eine mögliche lokale Zufahrt. Google Maps kann in Zadar andere Strassen zum selben Unterkunftspunkt wählen; der private Parkplatz ist damit noch nicht bestätigt.",
+          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=44.9941346%2C14.9021456&destination=44.1324734%2C15.2179360&travelmode=driving&waypoints=44.447464%2C15.183677%7C44.272672%2C15.493408%7C44.222638%2C15.523357",
           "accommodation": {
+            "id": "zadar",
+            "booking": "open",
+            "bookingRevision": "417246016c86ee7f8b857d8ef32af4ce7f143579e3612a717530f66f7334df12",
+            "bookingContext": "02f52990082bc2fdd98b1712938f5885bf7b73c4a241ea13d31fa3060b47971a",
+            "startDate": "2026-09-29",
+            "endDate": "2026-10-01",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
-              "name": "Adria Concept Boutique Apartments · Diklo",
-              "url": "https://www.booking.com/hotel/hr/adria-concept-boutique-apartments.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
-              "note": "Wohnung in Diklo ausserhalb der Altstadt. Küche und Waschmaschine laut Anbieter; Garage für B4 beschrieben, nicht automatisch für jede Einheit. Am 03.09. für 29.09.–01.10. angezeigt: Standard-Erdgeschosswohnung, CHF 252 insgesamt, kostenlos stornierbar vor 22.09., ein Parkplatz inklusive. Garagenzuordnung und Waschmaschine dieser Einheit bestätigen."
+              "name": "Arborea, luxury apartment with private yard",
+              "url": "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Adresse: Ulica Augusta Šenoe 38a, Zadar, Croatia. Apartment mit 2 Schlafzimmern, 65 m². Eigene Küche, Waschmaschine, Privatparkplatz am Haus, private Aussenfläche; Inseratsadresse mit Zusatz Prizemlje (Erdgeschoss). Am 10.09.2026 für 2026-09-29 bis 2026-10-01 und zwei Erwachsene verfügbar angezeigt: CHF 197 insgesamt, kostenlos stornierbar vor 2026-09-28. Momentaufnahme, nicht gebucht."
             },
             "alternative": {
-              "name": "Diklo – Modern 2 bedroom apartments",
-              "url": "https://www.booking.com/hotel/hr/diklo-modern-2-bedroom-apartments.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
-              "note": "Ganze Erdgeschosswohnung in Diklo mit Küche, Waschmaschine und privatem Parkplatz laut Inserat; keine Garage zugesichert. Am 03.09. für 29.09.–01.10. angezeigt: CHF 349 insgesamt, kostenlos stornierbar vor 15.09. Diese frühe Frist beachten; Platz für beide Motorräder bestätigen."
+              "name": "Villa Karla",
+              "url": "https://www.booking.com/hotel/hr/apartments-villa-karla.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Adresse: Premudski prilaz 8, Zadar, Croatia. Standard Apartment, 45 m², Tarif für zwei Gäste. Eigene Küche; Waschmaschine und Trockner beschrieben; kostenlose Parkplätze an der Unterkunft. Am 10.09.2026: CHF 250 insgesamt für zwei Erwachsene, kostenlos stornierbar vor 2026-09-24."
             },
-            "notes": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt."
+            "notes": "Am 10.09.2026 für die Reisedaten als verfügbar geprüft, nicht gebucht. Preis, Verfügbarkeit und Stornofrist bei späterer Buchung erneut prüfen. Privatparkplatz laut Inserat; sicherer Platz für zwei beladene Motorräder und geeignete Einfahrt nicht verbindlich bestätigt. Navigation zur veröffentlichten Kartenposition von Arborea, luxury apartment with private yard (Ulica Augusta Šenoe 38a, Zadar, Croatia). Die konkrete Parkplatzeinfahrt vor Ort bzw. mit dem Gastgeber abgleichen."
           },
           "map": {
             "lines": [
@@ -122302,72 +122344,88 @@
                     44.136155
                   ],
                   [
-                    15.218901,
-                    44.136185
+                    15.218678,
+                    44.136073
                   ],
                   [
-                    15.218879,
-                    44.136209
+                    15.218367,
+                    44.135952
                   ],
                   [
-                    15.218589,
-                    44.136528
+                    15.218055,
+                    44.135807
                   ],
                   [
-                    15.218359,
-                    44.136737
+                    15.217917,
+                    44.135735
                   ],
                   [
-                    15.218159,
-                    44.136894
+                    15.21735,
+                    44.135433
                   ],
                   [
-                    15.217987,
-                    44.137012
+                    15.217007,
+                    44.135247
                   ],
                   [
-                    15.217905,
-                    44.137064
+                    15.216876,
+                    44.135178
                   ],
                   [
-                    15.217564,
-                    44.137334
+                    15.21682,
+                    44.135151
                   ],
                   [
-                    15.217136,
-                    44.137747
+                    15.216461,
+                    44.134956
                   ],
                   [
-                    15.216614,
-                    44.138293
+                    15.21614,
+                    44.134787
                   ],
                   [
-                    15.216489,
-                    44.138417
+                    15.21579,
+                    44.134601
                   ],
                   [
-                    15.216334,
-                    44.138561
+                    15.215393,
+                    44.134387
                   ],
                   [
-                    15.216044,
-                    44.13881
+                    15.215147,
+                    44.134261
                   ],
                   [
-                    15.215861,
-                    44.138927
+                    15.214693,
+                    44.134026
                   ],
                   [
-                    15.216378,
-                    44.139236
+                    15.214742,
+                    44.133975
+                  ],
+                  [
+                    15.216567,
+                    44.132147
+                  ],
+                  [
+                    15.217669,
+                    44.132684
+                  ],
+                  [
+                    15.217891,
+                    44.132486
+                  ],
+                  [
+                    15.217918,
+                    44.132462
                   ]
                 ]
               }
             ],
             "stop": {
               "coordinate": [
-                15.216378,
-                44.139236
+                15.217918,
+                44.132462
               ],
               "label": "Zadar",
               "approximate": true
@@ -122387,25 +122445,32 @@
           "notes": "Altstadt, Meer und Erholung. Nin oder Pag nur als kurzer, asphaltierter Ausflug bei Lust und gutem Wetter.",
           "mapsURL": "",
           "accommodation": {
+            "id": "zadar",
+            "booking": "open",
+            "bookingRevision": "417246016c86ee7f8b857d8ef32af4ce7f143579e3612a717530f66f7334df12",
+            "bookingContext": "02f52990082bc2fdd98b1712938f5885bf7b73c4a241ea13d31fa3060b47971a",
+            "startDate": "2026-09-29",
+            "endDate": "2026-10-01",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
-              "name": "Adria Concept Boutique Apartments · Diklo",
-              "url": "https://www.booking.com/hotel/hr/adria-concept-boutique-apartments.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
-              "note": "Wohnung in Diklo ausserhalb der Altstadt. Küche und Waschmaschine laut Anbieter; Garage für B4 beschrieben, nicht automatisch für jede Einheit. Am 03.09. für 29.09.–01.10. angezeigt: Standard-Erdgeschosswohnung, CHF 252 insgesamt, kostenlos stornierbar vor 22.09., ein Parkplatz inklusive. Garagenzuordnung und Waschmaschine dieser Einheit bestätigen."
+              "name": "Arborea, luxury apartment with private yard",
+              "url": "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Adresse: Ulica Augusta Šenoe 38a, Zadar, Croatia. Apartment mit 2 Schlafzimmern, 65 m². Eigene Küche, Waschmaschine, Privatparkplatz am Haus, private Aussenfläche; Inseratsadresse mit Zusatz Prizemlje (Erdgeschoss). Am 10.09.2026 für 2026-09-29 bis 2026-10-01 und zwei Erwachsene verfügbar angezeigt: CHF 197 insgesamt, kostenlos stornierbar vor 2026-09-28. Momentaufnahme, nicht gebucht."
             },
             "alternative": {
-              "name": "Diklo – Modern 2 bedroom apartments",
-              "url": "https://www.booking.com/hotel/hr/diklo-modern-2-bedroom-apartments.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
-              "note": "Ganze Erdgeschosswohnung in Diklo mit Küche, Waschmaschine und privatem Parkplatz laut Inserat; keine Garage zugesichert. Am 03.09. für 29.09.–01.10. angezeigt: CHF 349 insgesamt, kostenlos stornierbar vor 15.09. Diese frühe Frist beachten; Platz für beide Motorräder bestätigen."
+              "name": "Villa Karla",
+              "url": "https://www.booking.com/hotel/hr/apartments-villa-karla.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Adresse: Premudski prilaz 8, Zadar, Croatia. Standard Apartment, 45 m², Tarif für zwei Gäste. Eigene Küche; Waschmaschine und Trockner beschrieben; kostenlose Parkplätze an der Unterkunft. Am 10.09.2026: CHF 250 insgesamt für zwei Erwachsene, kostenlos stornierbar vor 2026-09-24."
             },
-            "notes": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt."
+            "notes": "Am 10.09.2026 für die Reisedaten als verfügbar geprüft, nicht gebucht. Preis, Verfügbarkeit und Stornofrist bei späterer Buchung erneut prüfen. Privatparkplatz laut Inserat; sicherer Platz für zwei beladene Motorräder und geeignete Einfahrt nicht verbindlich bestätigt. Navigation zur veröffentlichten Kartenposition von Arborea, luxury apartment with private yard (Ulica Augusta Šenoe 38a, Zadar, Croatia). Die konkrete Parkplatzeinfahrt vor Ort bzw. mit dem Gastgeber abgleichen."
           },
           "map": {
             "lines": [],
             "stop": {
               "coordinate": [
-                15.216378,
-                44.139236
+                15.217918,
+                44.132462
               ],
               "label": "Zadar",
               "approximate": true
@@ -122419,12 +122484,19 @@
           "title": "Zadar – Biograd – Vodice – Šibenik",
           "rest": false,
           "distance": "ca. 85 km",
-          "duration": "ca. 1 h 39",
+          "duration": "ca. 1 h 40",
           "overnight": "Šibenik",
-          "roads": "Julija Klovića · Matije Gupca · D306/Kažimira Zankija/Hrvatskog Sabora · D8/Jadranska Magistrala · Pirovačka · D8 · Zapadna/Srednja/Južna magistrala · Podsolarsko",
-          "notes": "Reine Fahrzeit: ca. 1 h 39.\n\nKurze D8-Etappe mit Zeit für Fotostopps.",
-          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Adria+Concept+Boutique+Apartments%2C+Zadar&destination=My+Adriatic+Place%2C+Podsolarsko+136%2C+Sibenik&travelmode=driving&waypoints=44.001038%2C15.371490%7C43.885446%2C15.544167%7C43.736842%2C15.900025",
+          "roads": "Arborea · Tina Ujevića · Antuna Gustava Matoša · Matije Gupca · D306/Hrvatskog Sabora · D8/Jadranska Magistrala · Podsolarsko",
+          "notes": "Reine Fahrzeit: ca. 1 h 40.\n\nKurze D8-Etappe mit Zeit für Fotostopps. Start bei Arborea, Ulica Augusta Šenoe 38a, am selben Kartenpunkt wie die Ankunft.\n\nDie Kartenlinie zeigt eine mögliche lokale Zufahrt. Google Maps kann in Zadar andere Strassen zum selben Unterkunftspunkt wählen; der private Parkplatz ist damit noch nicht bestätigt.",
+          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=44.1324734%2C15.2179360&destination=My+Adriatic+Place%2C+Podsolarsko+136%2C+Sibenik&travelmode=driving&waypoints=44.001038%2C15.371490%7C43.885446%2C15.544167%7C43.736842%2C15.900025",
           "accommodation": {
+            "id": "sibenik",
+            "booking": "open",
+            "bookingRevision": "1ea404de20debce98e428d03f2c57eed04528288b3984a4f9d41eed16fc84362",
+            "bookingContext": "8545d12b08c34db29361f0e97e5e563d7655a70266741ad087edda9955ced7fe",
+            "startDate": "2026-10-01",
+            "endDate": "2026-10-03",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "My Adriatic Place · Podsolarsko",
@@ -122444,64 +122516,80 @@
                 "kind": "road",
                 "coordinates": [
                   [
-                    15.216378,
-                    44.139236
+                    15.217918,
+                    44.132462
                   ],
                   [
-                    15.215861,
-                    44.138927
+                    15.217891,
+                    44.132486
                   ],
                   [
-                    15.216044,
-                    44.13881
+                    15.217669,
+                    44.132684
                   ],
                   [
-                    15.216334,
-                    44.138561
+                    15.216567,
+                    44.132147
                   ],
                   [
-                    15.216489,
-                    44.138417
+                    15.214742,
+                    44.133975
                   ],
                   [
-                    15.216614,
-                    44.138293
+                    15.214693,
+                    44.134026
                   ],
                   [
-                    15.217136,
-                    44.137747
+                    15.215147,
+                    44.134261
                   ],
                   [
-                    15.217564,
-                    44.137334
+                    15.215393,
+                    44.134387
                   ],
                   [
-                    15.217905,
-                    44.137064
+                    15.21579,
+                    44.134601
                   ],
                   [
-                    15.217987,
-                    44.137012
+                    15.21614,
+                    44.134787
                   ],
                   [
-                    15.218159,
-                    44.136894
+                    15.216461,
+                    44.134956
                   ],
                   [
-                    15.218359,
-                    44.136737
+                    15.21682,
+                    44.135151
                   ],
                   [
-                    15.218589,
-                    44.136528
+                    15.216876,
+                    44.135178
                   ],
                   [
-                    15.218879,
-                    44.136209
+                    15.217007,
+                    44.135247
                   ],
                   [
-                    15.218901,
-                    44.136185
+                    15.21735,
+                    44.135433
+                  ],
+                  [
+                    15.217917,
+                    44.135735
+                  ],
+                  [
+                    15.218055,
+                    44.135807
+                  ],
+                  [
+                    15.218367,
+                    44.135952
+                  ],
+                  [
+                    15.218678,
+                    44.136073
                   ],
                   [
                     15.218923,
@@ -130121,6 +130209,13 @@
           "notes": "Altstadt, Hafen und optional Krka; kein Programmzwang und nicht in enge Gassen navigieren.",
           "mapsURL": "",
           "accommodation": {
+            "id": "sibenik",
+            "booking": "open",
+            "bookingRevision": "1ea404de20debce98e428d03f2c57eed04528288b3984a4f9d41eed16fc84362",
+            "bookingContext": "8545d12b08c34db29361f0e97e5e563d7655a70266741ad087edda9955ced7fe",
+            "startDate": "2026-10-01",
+            "endDate": "2026-10-03",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "My Adriatic Place · Podsolarsko",
@@ -130152,25 +130247,32 @@
           "date": "2026-10-03",
           "title": "Šibenik – Primošten – Trogir – Omiš – Makarska",
           "rest": false,
-          "distance": "ca. 136 km",
+          "distance": "ca. 135 km",
           "duration": "ca. 2 h 47",
           "overnight": "Makarska",
-          "roads": "D8 · Trogirska cesta · Ivana Pavla II · Jadranska Magistrala · Omiška obilaznica · Zagrebačka · Svetog Florijana · Put Kulice",
-          "notes": "Reine Fahrzeit: ca. 2 h 47.\n\nKüstenlinie über den Rand von Primošten und die Hauptstrasse nördlich der Altstadt von Trogir, dann auf der D8 über Dugi Rat und Omiš nach Makarska. Die Altstädte bei einem Stopp zu Fuss besuchen. Der zusätzliche Küstenanker verhindert die bisherige unbeabsichtigte A1-Abkürzung. Trogir–Split und Omiš möglichst ausserhalb der Spitzenzeit passieren; bei Stau zuerst Besichtigungen kürzen. Eine Autobahnalternative wäre eine bewusste Routenänderung und lässt Teile der Küste aus. Vor Abfahrt HAK für Wind, Baustellen und Sperren prüfen.\n\nVilla Pehar: Die öffentliche Gebäudeadresse Put Kulice 5 ist plausibel; Wohnung und Einfahrt nach der Buchung mit dem Gastgeber bestätigen.",
-          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=My+Adriatic+Place%2C+Podsolarsko+136%2C+Sibenik&destination=Villa+Pehar%2C+Makarska&travelmode=driving&waypoints=43.589164%2C15.926309%7C43.528071%2C16.267208%7C43.445153%2C16.638084",
+          "roads": "D8 · Trogirska cesta · Ivana Pavla II · Jadranska Magistrala · Omiška obilaznica · INA Makarska-Ratac",
+          "notes": "Reine Fahrzeit: ca. 2 h 47.\n\nKüstenlinie über den Rand von Primošten und die Hauptstrasse nördlich der Altstadt von Trogir, dann auf der D8 über Dugi Rat und Omiš nach Makarska. Die Altstädte bei einem Stopp zu Fuss besuchen. Der zusätzliche Küstenanker verhindert die bisherige unbeabsichtigte A1-Abkürzung. Trogir–Split und Omiš möglichst ausserhalb der Spitzenzeit passieren; bei Stau zuerst Besichtigungen kürzen. Eine Autobahnalternative wäre eine bewusste Routenänderung und lässt Teile der Küste aus. Vor Abfahrt HAK für Wind, Baustellen und Sperren prüfen.\n\nOrientierungspunkt Makarska: INA Makarska-Ratac, Vukovarska 135 (43.306819, 17.007086). Ankunft und nächste Abfahrt verwenden diesen festen Punkt. Die Adresse von «Der Blick» wird erst nach Buchung bekannt; zur tatsächlich gewählten Unterkunft am jeweiligen Tag separat navigieren. Diese letzte Strecke ist nicht in Kilometer und Fahrzeit enthalten.",
+          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=My+Adriatic+Place%2C+Podsolarsko+136%2C+Sibenik&destination=43.3068190%2C17.0070860&travelmode=driving&waypoints=43.589164%2C15.926309%7C43.528071%2C16.267208%7C43.445153%2C16.638084",
           "accommodation": {
+            "id": "makarska-base",
+            "booking": "open",
+            "bookingRevision": "1112eea2f73c6a97b99b399af1035cc578419bc603950265bdf9652b775cf9c3",
+            "bookingContext": "f0f034b64ce5486bbdc1e5a61d9d4922c91581f2ca358116b362ee138ce2347a",
+            "startDate": "2026-10-03",
+            "endDate": "2026-10-06",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
-              "name": "Villa Pehar · ruhige Wohnung mit Meer- und Biokovo-Blick",
-              "url": "https://www.airbnb.ch/rooms/35830801?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
-              "note": "Villa Pehar: Küche und Waschmaschine im Inserat, ruhige Lage und Dachgeschoss. Private Stellplätze werden genannt; eine Bewertung beschreibt weitere Plätze im öffentlichen Bereich. Exakten privaten Platz sichern. Am 03.09. für 03.–06.10. und zwei Erwachsene angezeigt: CHF 192 insgesamt, kostenlos stornierbar vor 28.09.; Momentaufnahme, keine Buchung."
+              "name": "Der Blick / The View",
+              "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+              "note": "Gesamtes Apartment mit zwei Schlafzimmern, erstattungsfähiger Tarif. Küche, eigene kostenlose Waschmaschine, ein Stellplatz auf dem Grundstück; eine Bewertung bestätigt reservierten Parkplatz, andere beschreibt Steigung vom Strand zur Wohnung. Am 10.09.2026 für 2026-10-03 bis 2026-10-06 und zwei Erwachsene verfügbar angezeigt: CHF 241.5 insgesamt, kostenlos stornierbar vor 2026-10-02. Momentaufnahme, nicht gebucht."
             },
             "alternative": {
-              "name": "Der Blick · modernes Apartment mit zwei Schlafzimmern",
-              "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
-              "note": "Der Blick: Küche, eigene kostenlose Waschmaschine und ein Stellplatz auf dem Grundstück. Passt auch für eine Waschpause. Platz für zwei Motorräder und Steigung der Zufahrt klären. Am 03.09. für 03.–06.10. angezeigt: CHF 242 insgesamt, kostenlos stornierbar vor 02.10.; vollständige Frist mit Uhrzeit vor Buchung prüfen."
+              "name": "Sun Spalato Residence · bedingt passende Reserve",
+              "url": "https://www.booking.com/hotel/hr/sun-spalato-residence-ivano.de.html?checkin=2026-10-03&checkout=2026-10-06&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Zadarska ulica 1, Makarska. Am 10.09. für 03.–06.10. und zwei Erwachsene angezeigt: Erdgeschosswohnung, 55 m², Küche, Privatparkplatz, CHF 222 Mitgliederpreis. Kostenlose Stornierung nur vor 19.09.2026; deshalb weniger flexibel als Der Blick. Eigene Waschmaschine dieser Einheit nicht bestätigt."
             },
-            "notes": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt."
+            "notes": "Am 10.09.2026 für die Reisedaten als verfügbar geprüft, nicht gebucht. Preis, Verfügbarkeit und Stornofrist bei späterer Buchung erneut prüfen. Privatparkplatz laut Inserat; sicherer Platz für zwei beladene Motorräder und geeignete Einfahrt nicht verbindlich bestätigt. Orientierungspunkt Makarska: INA Makarska-Ratac, Vukovarska 135 (43.306819, 17.007086). Ankunft und nächste Abfahrt verwenden diesen festen Punkt. Die Adresse von «Der Blick» wird erst nach Buchung bekannt; zur tatsächlich gewählten Unterkunft am jeweiligen Tag separat navigieren. Diese letzte Strecke ist nicht in Kilometer und Fahrzeit enthalten."
           },
           "map": {
             "lines": [
@@ -146978,64 +147080,68 @@
                     43.309143
                   ],
                   [
-                    17.006021,
-                    43.30921
+                    17.005839,
+                    43.30907
                   ],
                   [
-                    17.006409,
-                    43.309326
+                    17.005899,
+                    43.308879
                   ],
                   [
-                    17.006557,
-                    43.309128
+                    17.005955,
+                    43.308732
                   ],
                   [
-                    17.00674,
-                    43.30889
+                    17.006095,
+                    43.308477
                   ],
                   [
-                    17.006763,
-                    43.30886
+                    17.006272,
+                    43.308217
                   ],
                   [
-                    17.007417,
-                    43.30827
+                    17.00636,
+                    43.308065
                   ],
                   [
-                    17.007956,
-                    43.307868
+                    17.006443,
+                    43.307909
                   ],
                   [
-                    17.008547,
-                    43.30748
+                    17.006573,
+                    43.307654
                   ],
                   [
-                    17.009195,
-                    43.307032
+                    17.006534,
+                    43.307574
                   ],
                   [
-                    17.009548,
-                    43.307345
+                    17.006574,
+                    43.307447
                   ],
                   [
-                    17.009864,
-                    43.307112
+                    17.006577,
+                    43.307386
                   ],
                   [
-                    17.010148,
-                    43.306903
+                    17.006596,
+                    43.307292
                   ],
                   [
-                    17.010186,
-                    43.306871
+                    17.006886,
+                    43.306885
+                  ],
+                  [
+                    17.007081,
+                    43.306811
                   ]
                 ]
               }
             ],
             "stop": {
               "coordinate": [
-                17.010186,
-                43.306871
+                17.007081,
+                43.306811
               ],
               "label": "Makarska",
               "approximate": true
@@ -147055,25 +147161,32 @@
           "notes": "Meer-und-Berge-Basis; Promenade und Erholung.",
           "mapsURL": "",
           "accommodation": {
+            "id": "makarska-base",
+            "booking": "open",
+            "bookingRevision": "1112eea2f73c6a97b99b399af1035cc578419bc603950265bdf9652b775cf9c3",
+            "bookingContext": "f0f034b64ce5486bbdc1e5a61d9d4922c91581f2ca358116b362ee138ce2347a",
+            "startDate": "2026-10-03",
+            "endDate": "2026-10-06",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
-              "name": "Villa Pehar · ruhige Wohnung mit Meer- und Biokovo-Blick",
-              "url": "https://www.airbnb.ch/rooms/35830801?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
-              "note": "Villa Pehar: Küche und Waschmaschine im Inserat, ruhige Lage und Dachgeschoss. Private Stellplätze werden genannt; eine Bewertung beschreibt weitere Plätze im öffentlichen Bereich. Exakten privaten Platz sichern. Am 03.09. für 03.–06.10. und zwei Erwachsene angezeigt: CHF 192 insgesamt, kostenlos stornierbar vor 28.09.; Momentaufnahme, keine Buchung."
+              "name": "Der Blick / The View",
+              "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+              "note": "Gesamtes Apartment mit zwei Schlafzimmern, erstattungsfähiger Tarif. Küche, eigene kostenlose Waschmaschine, ein Stellplatz auf dem Grundstück; eine Bewertung bestätigt reservierten Parkplatz, andere beschreibt Steigung vom Strand zur Wohnung. Am 10.09.2026 für 2026-10-03 bis 2026-10-06 und zwei Erwachsene verfügbar angezeigt: CHF 241.5 insgesamt, kostenlos stornierbar vor 2026-10-02. Momentaufnahme, nicht gebucht."
             },
             "alternative": {
-              "name": "Der Blick · modernes Apartment mit zwei Schlafzimmern",
-              "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
-              "note": "Der Blick: Küche, eigene kostenlose Waschmaschine und ein Stellplatz auf dem Grundstück. Passt auch für eine Waschpause. Platz für zwei Motorräder und Steigung der Zufahrt klären. Am 03.09. für 03.–06.10. angezeigt: CHF 242 insgesamt, kostenlos stornierbar vor 02.10.; vollständige Frist mit Uhrzeit vor Buchung prüfen."
+              "name": "Sun Spalato Residence · bedingt passende Reserve",
+              "url": "https://www.booking.com/hotel/hr/sun-spalato-residence-ivano.de.html?checkin=2026-10-03&checkout=2026-10-06&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Zadarska ulica 1, Makarska. Am 10.09. für 03.–06.10. und zwei Erwachsene angezeigt: Erdgeschosswohnung, 55 m², Küche, Privatparkplatz, CHF 222 Mitgliederpreis. Kostenlose Stornierung nur vor 19.09.2026; deshalb weniger flexibel als Der Blick. Eigene Waschmaschine dieser Einheit nicht bestätigt."
             },
-            "notes": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt."
+            "notes": "Am 10.09.2026 für die Reisedaten als verfügbar geprüft, nicht gebucht. Preis, Verfügbarkeit und Stornofrist bei späterer Buchung erneut prüfen. Privatparkplatz laut Inserat; sicherer Platz für zwei beladene Motorräder und geeignete Einfahrt nicht verbindlich bestätigt. Orientierungspunkt Makarska: INA Makarska-Ratac, Vukovarska 135 (43.306819, 17.007086). Ankunft und nächste Abfahrt verwenden diesen festen Punkt. Die Adresse von «Der Blick» wird erst nach Buchung bekannt; zur tatsächlich gewählten Unterkunft am jeweiligen Tag separat navigieren. Diese letzte Strecke ist nicht in Kilometer und Fahrzeit enthalten."
           },
           "map": {
             "lines": [],
             "stop": {
               "coordinate": [
-                17.010186,
-                43.306871
+                17.007081,
+                43.306811
               ],
               "label": "Makarska",
               "approximate": true
@@ -147093,25 +147206,32 @@
           "notes": "Kurzer Küstenausflug oder vollständiger Ruhetag; zugleich Wetterreserve.",
           "mapsURL": "",
           "accommodation": {
+            "id": "makarska-base",
+            "booking": "open",
+            "bookingRevision": "1112eea2f73c6a97b99b399af1035cc578419bc603950265bdf9652b775cf9c3",
+            "bookingContext": "f0f034b64ce5486bbdc1e5a61d9d4922c91581f2ca358116b362ee138ce2347a",
+            "startDate": "2026-10-03",
+            "endDate": "2026-10-06",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
-              "name": "Villa Pehar · ruhige Wohnung mit Meer- und Biokovo-Blick",
-              "url": "https://www.airbnb.ch/rooms/35830801?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
-              "note": "Villa Pehar: Küche und Waschmaschine im Inserat, ruhige Lage und Dachgeschoss. Private Stellplätze werden genannt; eine Bewertung beschreibt weitere Plätze im öffentlichen Bereich. Exakten privaten Platz sichern. Am 03.09. für 03.–06.10. und zwei Erwachsene angezeigt: CHF 192 insgesamt, kostenlos stornierbar vor 28.09.; Momentaufnahme, keine Buchung."
+              "name": "Der Blick / The View",
+              "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+              "note": "Gesamtes Apartment mit zwei Schlafzimmern, erstattungsfähiger Tarif. Küche, eigene kostenlose Waschmaschine, ein Stellplatz auf dem Grundstück; eine Bewertung bestätigt reservierten Parkplatz, andere beschreibt Steigung vom Strand zur Wohnung. Am 10.09.2026 für 2026-10-03 bis 2026-10-06 und zwei Erwachsene verfügbar angezeigt: CHF 241.5 insgesamt, kostenlos stornierbar vor 2026-10-02. Momentaufnahme, nicht gebucht."
             },
             "alternative": {
-              "name": "Der Blick · modernes Apartment mit zwei Schlafzimmern",
-              "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
-              "note": "Der Blick: Küche, eigene kostenlose Waschmaschine und ein Stellplatz auf dem Grundstück. Passt auch für eine Waschpause. Platz für zwei Motorräder und Steigung der Zufahrt klären. Am 03.09. für 03.–06.10. angezeigt: CHF 242 insgesamt, kostenlos stornierbar vor 02.10.; vollständige Frist mit Uhrzeit vor Buchung prüfen."
+              "name": "Sun Spalato Residence · bedingt passende Reserve",
+              "url": "https://www.booking.com/hotel/hr/sun-spalato-residence-ivano.de.html?checkin=2026-10-03&checkout=2026-10-06&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Zadarska ulica 1, Makarska. Am 10.09. für 03.–06.10. und zwei Erwachsene angezeigt: Erdgeschosswohnung, 55 m², Küche, Privatparkplatz, CHF 222 Mitgliederpreis. Kostenlose Stornierung nur vor 19.09.2026; deshalb weniger flexibel als Der Blick. Eigene Waschmaschine dieser Einheit nicht bestätigt."
             },
-            "notes": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt."
+            "notes": "Am 10.09.2026 für die Reisedaten als verfügbar geprüft, nicht gebucht. Preis, Verfügbarkeit und Stornofrist bei späterer Buchung erneut prüfen. Privatparkplatz laut Inserat; sicherer Platz für zwei beladene Motorräder und geeignete Einfahrt nicht verbindlich bestätigt. Orientierungspunkt Makarska: INA Makarska-Ratac, Vukovarska 135 (43.306819, 17.007086). Ankunft und nächste Abfahrt verwenden diesen festen Punkt. Die Adresse von «Der Blick» wird erst nach Buchung bekannt; zur tatsächlich gewählten Unterkunft am jeweiligen Tag separat navigieren. Diese letzte Strecke ist nicht in Kilometer und Fahrzeit enthalten."
           },
           "map": {
             "lines": [],
             "stop": {
               "coordinate": [
-                17.010186,
-                43.306871
+                17.007081,
+                43.306811
               ],
               "label": "Makarska",
               "approximate": true
@@ -147125,12 +147245,19 @@
           "title": "Makarska – Drvenik – Pelješac-Brücke – Ston – Dubrovnik",
           "rest": false,
           "distance": "ca. 161 km",
-          "duration": "ca. 3 h 10",
+          "duration": "ca. 3 h 09",
           "overnight": "Dubrovnik (Aussenbasis)",
-          "roads": "Put Kulice · Svetog Florijana · Zagrebačka · Lička · D8/Jadranska Magistrala · Pelješki most · D8 · D416 · D414/Pelješki put · Put Braće Mihanović · D414 · Jadranska Magistrala · Jadranska cesta · Batahovina · Obala Ivana Pavla II · Obala Stjepana Radića/Nikole Tesle · Hrvatskog Crvenog Kriza",
-          "notes": "Reine Fahrzeit: ca. 3 h 10.\n\nAuf der D8 südwärts mit kurzem Küstenstopp in Drvenik, weiter im Raum Ploče zur Pelješac-Brücke und über Ston nach Dubrovnik. Keine A1-Abkürzung und kein Neum-Transit. Der Brückenanker liegt direkt auf der Fahrbahn. Wind und Brückenfreigabe bei HAK vor Abfahrt prüfen. Das Ziel ist vorläufig ein Ortsanker ausserhalb der Altstadt; die genaue Zufahrt zur gewählten Aussenbasis folgt mit der Unterkunftsentscheidung.\n\nOSCAR Suite: Die öffentliche Gebäudeadresse ist geprüft; Garageneinfahrt nach der Buchung bestätigen.",
-          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Villa+Pehar%2C+Makarska&destination=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&travelmode=driving&waypoints=43.155031%2C17.250212%7C42.885330%2C17.579727%7CParking+Ston%2C+Croatia",
+          "roads": "INA Makarska-Ratac · D8/Jadranska Magistrala · Pelješki most · D8 · D416 · D414/Pelješki put · Put Braće Mihanović · D414 · Jadranska Magistrala · Jadranska cesta · Batahovina · Obala Ivana Pavla II · Obala Stjepana Radića/Nikole Tesle · Hrvatskog Crvenog Kriza",
+          "notes": "Reine Fahrzeit: ca. 3 h 09.\n\nAuf der D8 südwärts mit kurzem Küstenstopp in Drvenik, weiter im Raum Ploče zur Pelješac-Brücke und über Ston nach Dubrovnik. Keine A1-Abkürzung und kein Neum-Transit. Der Brückenanker liegt direkt auf der Fahrbahn. Wind und Brückenfreigabe bei HAK vor Abfahrt prüfen. Das Ziel ist vorläufig ein Ortsanker ausserhalb der Altstadt; die genaue Zufahrt zur gewählten Aussenbasis folgt mit der Unterkunftsentscheidung.\n\nOSCAR Suite: Die öffentliche Gebäudeadresse ist geprüft; Garageneinfahrt nach der Buchung bestätigen.\n\nOrientierungspunkt Makarska: INA Makarska-Ratac, Vukovarska 135 (43.306819, 17.007086). Ankunft und nächste Abfahrt verwenden diesen festen Punkt. Die Adresse von «Der Blick» wird erst nach Buchung bekannt; zur tatsächlich gewählten Unterkunft am jeweiligen Tag separat navigieren. Diese letzte Strecke ist nicht in Kilometer und Fahrzeit enthalten.",
+          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=43.3068190%2C17.0070860&destination=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&travelmode=driving&waypoints=43.155031%2C17.250212%7C42.885330%2C17.579727%7CParking+Ston%2C+Croatia",
           "accommodation": {
+            "id": "dubrovnik-lapad",
+            "booking": "open",
+            "bookingRevision": "37a8e5053f2d821812e583720e2c17c04f52619838a49a110bdf159bcf135d57",
+            "bookingContext": "38399288cb359facd7a7b53ad90fbb35d5b5d6f552cf2280f5dae4b052d47e3e",
+            "startDate": "2026-10-06",
+            "endDate": "2026-10-09",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
@@ -147150,80 +147277,64 @@
                 "kind": "road",
                 "coordinates": [
                   [
-                    17.010186,
-                    43.306871
+                    17.007081,
+                    43.306811
                   ],
                   [
-                    17.010148,
-                    43.306903
+                    17.007224,
+                    43.306757
                   ],
                   [
-                    17.009864,
-                    43.307112
+                    17.007465,
+                    43.306501
                   ],
                   [
-                    17.009548,
-                    43.307345
+                    17.007477,
+                    43.306488
                   ],
                   [
-                    17.009195,
-                    43.307032
+                    17.007934,
+                    43.306001
                   ],
                   [
-                    17.009324,
-                    43.306946
+                    17.008071,
+                    43.305885
                   ],
                   [
-                    17.009582,
-                    43.306742
+                    17.00823,
+                    43.305745
                   ],
                   [
-                    17.009718,
-                    43.306551
+                    17.008514,
+                    43.305518
                   ],
                   [
-                    17.009826,
-                    43.3064
+                    17.008656,
+                    43.30542
                   ],
                   [
-                    17.01011,
-                    43.306175
+                    17.008856,
+                    43.30529
                   ],
                   [
-                    17.01067,
-                    43.305799
+                    17.009091,
+                    43.305153
                   ],
                   [
-                    17.010889,
-                    43.305649
+                    17.009276,
+                    43.305056
                   ],
                   [
-                    17.01106,
-                    43.305467
+                    17.009345,
+                    43.30502
                   ],
                   [
-                    17.010869,
-                    43.305394
+                    17.009479,
+                    43.304954
                   ],
                   [
-                    17.010614,
-                    43.305216
-                  ],
-                  [
-                    17.010412,
-                    43.305082
-                  ],
-                  [
-                    17.010384,
-                    43.305064
-                  ],
-                  [
-                    17.010064,
-                    43.304825
-                  ],
-                  [
-                    17.010037,
-                    43.304805
+                    17.009767,
+                    43.304816
                   ],
                   [
                     17.009937,
@@ -165663,6 +165774,13 @@
           "notes": "Stadttag ohne Motorradlogistik.",
           "mapsURL": "",
           "accommodation": {
+            "id": "dubrovnik-lapad",
+            "booking": "open",
+            "bookingRevision": "37a8e5053f2d821812e583720e2c17c04f52619838a49a110bdf159bcf135d57",
+            "bookingContext": "38399288cb359facd7a7b53ad90fbb35d5b5d6f552cf2280f5dae4b052d47e3e",
+            "startDate": "2026-10-06",
+            "endDate": "2026-10-09",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
@@ -165701,6 +165819,13 @@
           "notes": "Zweiter voller Tag für Erholung, Wetter oder einen ruhigen Küstentag.",
           "mapsURL": "",
           "accommodation": {
+            "id": "dubrovnik-lapad",
+            "booking": "open",
+            "bookingRevision": "37a8e5053f2d821812e583720e2c17c04f52619838a49a110bdf159bcf135d57",
+            "bookingContext": "38399288cb359facd7a7b53ad90fbb35d5b5d6f552cf2280f5dae4b052d47e3e",
+            "startDate": "2026-10-06",
+            "endDate": "2026-10-09",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
@@ -165739,6 +165864,13 @@
           "notes": "Reine Fahrzeit: ca. 2 h 03.\n\nDie Wartezeit am Grenzübergang Karasovići kann stark schwanken und ist nicht Teil der berechneten Fahrzeit. EES gilt nicht für Schweizer Staatsangehörige und Inhaber gültiger Schengen-Aufenthaltstitel. Reisepass und gegebenenfalls Aufenthaltstitel im Original mitführen; Dokumentenprüfung und Wartezeiten bleiben bestehen. Montenegro hat eigene Einreiseregeln. Die schöne Linie bleibt bewusst rund um die Bucht über Perast statt über die Kamenari-Fähre. In Perast auf der Hauptstrasse bleiben, die historische Uferzone nur zu Fuss besuchen; Maps-Neuberechnung vor Abfahrt prüfen.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. \n\nDas Ziel ist der öffentliche Strassenanker in Sveti Stasije, nicht die private Haustür. Die genaue Wohnungslage wird von Airbnb erst nach der Buchung mitgeteilt.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&destination=42.466333%2C18.764400&travelmode=driving&waypoints=Karasovici+Border+Crossing%7C42.454424%2C18.531573%7C42.486779%2C18.699843",
           "accommodation": {
+            "id": "kotor-dobrota",
+            "booking": "open",
+            "bookingRevision": "86ac1adb5301077da84cadd04ac6405bc16e1aef06822e82aa73db52abe7c3a8",
+            "bookingContext": "bf75e17f9525caa1a7d698288ad690267eb913e5a1d0a48d751d6d865be5905a",
+            "startDate": "2026-10-09",
+            "endDate": "2026-10-13",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
@@ -183995,6 +184127,13 @@
           "notes": "Die vollständige Buchtrunde misst nur etwa 50–60 km, braucht auf der schmalen Uferstrasse aber Zeit. Perast und Risan ruhig angehen.",
           "mapsURL": "",
           "accommodation": {
+            "id": "kotor-dobrota",
+            "booking": "open",
+            "bookingRevision": "86ac1adb5301077da84cadd04ac6405bc16e1aef06822e82aa73db52abe7c3a8",
+            "bookingContext": "bf75e17f9525caa1a7d698288ad690267eb913e5a1d0a48d751d6d865be5905a",
+            "startDate": "2026-10-09",
+            "endDate": "2026-10-13",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
@@ -184033,6 +184172,13 @@
           "notes": "Ruhetag oder kurze Buchtrunde auf Hauptstrassen. Motorrad ausserhalb der engen Kerne abstellen.",
           "mapsURL": "",
           "accommodation": {
+            "id": "kotor-dobrota",
+            "booking": "open",
+            "bookingRevision": "86ac1adb5301077da84cadd04ac6405bc16e1aef06822e82aa73db52abe7c3a8",
+            "bookingContext": "bf75e17f9525caa1a7d698288ad690267eb913e5a1d0a48d751d6d865be5905a",
+            "startDate": "2026-10-09",
+            "endDate": "2026-10-13",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
@@ -184071,6 +184217,13 @@
           "notes": "Lovćen nur trocken, windarm und nach Tagesprüfung. Keine spontane Hin-und-zurück-Fahrt; alternativ ein weiterer ruhiger Tag an der Bucht.",
           "mapsURL": "",
           "accommodation": {
+            "id": "kotor-dobrota",
+            "booking": "open",
+            "bookingRevision": "86ac1adb5301077da84cadd04ac6405bc16e1aef06822e82aa73db52abe7c3a8",
+            "bookingContext": "bf75e17f9525caa1a7d698288ad690267eb913e5a1d0a48d751d6d865be5905a",
+            "startDate": "2026-10-09",
+            "endDate": "2026-10-13",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
@@ -184102,25 +184255,32 @@
           "date": "2026-10-13",
           "title": "Kotor – Perast – Dubrovnik-Umfahrung – Ston",
           "rest": false,
-          "distance": "ca. 150 km",
-          "duration": "ca. 3 h 08",
+          "distance": "ca. 141 km",
+          "duration": "ca. 3 h 06",
           "overnight": "Ston / Mali Ston",
-          "roads": "E65/E80/M1 · Karasovići · D8/Jadranska Magistrala · D414 · Put Nuncijate",
-          "notes": "Reine Fahrzeit: ca. 3 h 08.\n\nNach vier vollen Nächten Montenegro rund um die Bucht auf der Hauptstrasse oberhalb von Perast, ohne Kamenari-Fähre. Über Karasovići und die D8 an Dubrovnik vorbei, ohne Altstadtzufahrt, bis Ston. Die Grenzwartezeit ist nicht Teil der berechneten Fahrzeit. Unterkunft bevorzugt in Luka oder Hodilje ausserhalb der historischen Ortskerne; die letzten Kilometer und die Zufahrt zum gewählten Haus vor Buchung prüfen. Am Fahrtag AMSCG und HAK für Strassen, Wind und Grenze kontrollieren.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. \n\nDer Start verwendet denselben öffentlichen Strassenanker in Sveti Stasije. Das Ziel führt anhand veröffentlichter Koordinaten zu Apartman I&M in Luka.",
-          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=42.466333%2C18.764400&destination=42.860800%2C17.681200&travelmode=driving&waypoints=42.486779%2C18.699843%7CKarasovici+Border+Crossing",
+          "roads": "E65/E80/M1 · Karasovići · D8/Jadranska Magistrala · D414 · Hodilje",
+          "notes": "Reine Fahrzeit: ca. 3 h 06.\n\nNach vier vollen Nächten Montenegro rund um die Bucht auf der Hauptstrasse oberhalb von Perast, ohne Kamenari-Fähre. Über Karasovići und die D8 an Dubrovnik vorbei, ohne Altstadtzufahrt, bis Ston. Die Grenzwartezeit ist nicht Teil der berechneten Fahrzeit. Ziel ist Apartments Ivanka in Hodilje 118, am veröffentlichten Booking-Kartenmarker. Am Fahrtag AMSCG und HAK für Strassen, Wind und Grenze kontrollieren.\n\nDer Start verwendet denselben öffentlichen Strassenanker in Sveti Stasije.",
+          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=42.466333%2C18.764400&destination=42.8546860%2C17.6900870&travelmode=driving&waypoints=42.486779%2C18.699843%7CKarasovici+Border+Crossing",
           "accommodation": {
+            "id": "ston-return",
+            "booking": "open",
+            "bookingRevision": "8c9a8a2fb992285ea09331dd90cef562907d7272b3d9b65ffbf802291da5aef7",
+            "bookingContext": "1ddd72df2837a1597b9c78959d44a920db196d0df5329f0c1da5406055538d7c",
+            "startDate": "2026-10-13",
+            "endDate": "2026-10-14",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
-              "name": "Apartman I&M · Luka bei Ston · Meerblick und Küche",
-              "url": "https://www.booking.com/hotel/hr/i-amp-m.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
-              "note": ""
+              "name": "Apartments Ivanka · Hodilje",
+              "url": "https://www.booking.com/hotel/hr/apartments-ivanka-ston1.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Adresse: Hodilje 118, Ston, Croatia. Deluxe Doppelzimmer mit Balkon, 20 m²; keine Ferienwohnung/Küche zugesagt. Kostenloser Privatparkplatz; Kühlschrank und Balkon im Zimmer. Ruhiger Übernachtungsort ausserhalb der Altstadt. Pool laut Kleingedrucktem am Reisetermin geschlossen. Am 10.09.2026 für 2026-10-13 bis 2026-10-14 und zwei Erwachsene verfügbar angezeigt: CHF 66 insgesamt, kostenlos stornierbar vor 2026-10-06. Momentaufnahme, nicht gebucht."
             },
             "alternative": {
-              "name": "Apartmani Mirjana · Hodilje · Apartment ausserhalb von Ston",
-              "url": "https://www.booking.com/hotel/hr/apartmani-mirjana-hodilje.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
-              "note": ""
+              "name": "Hotel Ostrea · Mali Ston",
+              "url": "https://www.booking.com/hotel/hr/ostrea.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+              "note": "Adresse: Obala dr. Ante Starčevića 9, Mali Ston, Croatia. Economy Doppelzimmer mit Frühstück. Parkplätze am Hotel, Lage am Wasser neben dem historischen Kern; Anfahrt muss zum Hotelparkplatz führen. Hotelquelle: https://www.ostrea.hr/hotel-ostrea/ Am 10.09.2026: CHF 181 insgesamt für zwei Erwachsene, kostenlos stornierbar vor 2026-10-10."
             },
-            "notes": "Beide Inserate nennen private Parkplätze. Ebener, sicherer Stellplatz für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kandidaten, nicht gebucht: Verfügbarkeit für 13.–14.10., Mindestaufenthalt, Gesamtpreis und kostenlose Stornofrist noch offen; beide Adressen nennen den 2. Stock."
+            "notes": "Am 10.09.2026 für die Reisedaten als verfügbar geprüft, nicht gebucht. Preis, Verfügbarkeit und Stornofrist bei späterer Buchung erneut prüfen. Privatparkplatz laut Inserat; sicherer Platz für zwei beladene Motorräder und geeignete Einfahrt nicht verbindlich bestätigt. Navigation zur veröffentlichten Kartenposition von Apartments Ivanka · Hodilje (Hodilje 118, Ston, Croatia). Die konkrete Parkplatzeinfahrt vor Ort bzw. mit dem Gastgeber abgleichen. Ausgewählt ist ein Doppelzimmer ohne zugesagte Küche; der Pool ist zum Reisetermin geschlossen."
           },
           "map": {
             "lines": [
@@ -208716,124 +208876,16 @@
                     42.854618
                   ],
                   [
-                    17.689614,
-                    42.855317
-                  ],
-                  [
-                    17.689571,
-                    42.855364
-                  ],
-                  [
-                    17.689126,
-                    42.855918
-                  ],
-                  [
-                    17.688923,
-                    42.856103
-                  ],
-                  [
-                    17.688648,
-                    42.856321
-                  ],
-                  [
-                    17.688319,
-                    42.856509
-                  ],
-                  [
-                    17.68741,
-                    42.856899
-                  ],
-                  [
-                    17.687225,
-                    42.856991
-                  ],
-                  [
-                    17.686507,
-                    42.857351
-                  ],
-                  [
-                    17.685953,
-                    42.857629
-                  ],
-                  [
-                    17.684832,
-                    42.858232
-                  ],
-                  [
-                    17.684423,
-                    42.858459
-                  ],
-                  [
-                    17.684109,
-                    42.858652
-                  ],
-                  [
-                    17.683423,
-                    42.85925
-                  ],
-                  [
-                    17.683355,
-                    42.859284
-                  ],
-                  [
-                    17.682847,
-                    42.859536
-                  ],
-                  [
-                    17.682677,
-                    42.859609
-                  ],
-                  [
-                    17.682518,
-                    42.859644
-                  ],
-                  [
-                    17.681984,
-                    42.85971
-                  ],
-                  [
-                    17.681937,
-                    42.859766
-                  ],
-                  [
-                    17.681855,
-                    42.859838
-                  ],
-                  [
-                    17.681806,
-                    42.859882
-                  ],
-                  [
-                    17.681721,
-                    42.859967
-                  ],
-                  [
-                    17.681632,
-                    42.860078
-                  ],
-                  [
-                    17.681453,
-                    42.860416
-                  ],
-                  [
-                    17.68131,
-                    42.86055
-                  ],
-                  [
-                    17.68119,
-                    42.860672
-                  ],
-                  [
-                    17.681109,
-                    42.860749
+                    17.690157,
+                    42.85472
                   ]
                 ]
               }
             ],
             "stop": {
               "coordinate": [
-                17.681109,
-                42.860749
+                17.690157,
+                42.85472
               ],
               "label": "Ston / Mali Ston",
               "approximate": true
@@ -208847,12 +208899,19 @@
           "title": "Ston – Pelješac-Brücke – Split / Nachtfähre nach Ancona",
           "rest": false,
           "distance": "ca. 185 km plus Nachtfähre",
-          "duration": "ca. 2 h 29",
+          "duration": "ca. 2 h 27",
           "overnight": "Ancona",
-          "roads": "D414 · D8 · Pelješki most · D8 · D425 · A1/E65 · D1 · D8/Jadranska Magistrala · Zbora narodne garde · Poljička · Kralja Zvonimira · Gat Svetog Duje",
-          "notes": "Reine Fahrzeit an Land: ca. 2 h 29.\n\nÜber die Pelješac-Brücke ohne Neum-Transit und ab Karamatići bewusst auf der A1 bis Dugopolje, dann zum Hafen Split. Check-in und Überfahrt sind nicht Teil der berechneten Fahrzeit an Land. Morgens losfahren, am frühen Nachmittag ankommen; keine zusätzliche Küstenrunde. Check-in spätestens 18:00 als Planwert, verbindlich gelten Ticket und Reederei. Geplant: Abfahrt 14.10. um 20:00, Ankunft 15.10. um 07:00. Die Kartenlinie folgt an Land den Strassen; die Seeverbindung ist schematisch, der Google-Maps-Link endet am Hafen Split. Jadrolinija nennt am 03.09. einen technischen Unterbruch bis 09.09.2026; Wiederaufnahme, Kabine und zwei Motorradplätze am 22.09. bestätigen. Nicht gebucht und noch nicht operativ gesichert.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. \n\nDie Navigation endet an der öffentlichen Hafenstrasse Gat Svetog Duje. Fahrzeugspur und Liegeplatz richten sich nach Ticket und Beschilderung vor Ort.",
-          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=42.860800%2C17.681200&destination=Gat+Svetog+Duje%2C+Split&travelmode=driving&waypoints=42.885330%2C17.579727%7C43.590818%2C16.571883",
+          "roads": "Hodilje · D414 · D8 · Pelješki most · D8 · D425 · A1/E65 · D1 · D8/Jadranska Magistrala · Zbora narodne garde · Poljička · Kralja Zvonimira · Gat Svetog Duje",
+          "notes": "Reine Fahrzeit an Land: ca. 2 h 27.\n\nÜber die Pelješac-Brücke ohne Neum-Transit und ab Karamatići bewusst auf der A1 bis Dugopolje, dann zum Hafen Split. Check-in und Überfahrt sind nicht Teil der berechneten Fahrzeit an Land. Morgens losfahren, am frühen Nachmittag ankommen; keine zusätzliche Küstenrunde. Check-in spätestens 18:00 als Planwert, verbindlich gelten Ticket und Reederei. Geplant: Abfahrt 14.10. um 20:00, Ankunft 15.10. um 07:00. Die Kartenlinie folgt an Land den Strassen; die Seeverbindung ist schematisch, der Google-Maps-Link endet am Hafen Split. Jadrolinija nennt am 03.09. einen technischen Unterbruch bis 09.09.2026; Wiederaufnahme, Kabine und zwei Motorradplätze am 22.09. bestätigen. Nicht gebucht und noch nicht operativ gesichert.\n\nDie Navigation endet an der öffentlichen Hafenstrasse Gat Svetog Duje. Fahrzeugspur und Liegeplatz richten sich nach Ticket und Beschilderung vor Ort.\n\nStart bei Apartments Ivanka, Hodilje 118, am selben Kartenpunkt wie die Ankunft.",
+          "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=42.8546860%2C17.6900870&destination=Gat+Svetog+Duje%2C+Split&travelmode=driving&waypoints=42.885330%2C17.579727%7C43.590818%2C16.571883",
           "accommodation": {
+            "id": "split-ancona-cabin",
+            "booking": "open",
+            "bookingRevision": "7faeab1a4d0487dba9f97895aa04c3ac3f611dc905fc0a20e96c602648747164",
+            "bookingContext": "066a06ee9b9c16211cf6b6bba6bf4667d087c88a9a96122e9d2b1659e4bf0a2f",
+            "startDate": "2026-10-14",
+            "endDate": "2026-10-15",
+            "bookingEditable": false,
             "status": "Offen",
             "first": {
               "name": "Aussenkabine auf der Nachtfähre Split–Ancona",
@@ -208872,116 +208931,8 @@
                 "kind": "road",
                 "coordinates": [
                   [
-                    17.681109,
-                    42.860749
-                  ],
-                  [
-                    17.68119,
-                    42.860672
-                  ],
-                  [
-                    17.68131,
-                    42.86055
-                  ],
-                  [
-                    17.681453,
-                    42.860416
-                  ],
-                  [
-                    17.681632,
-                    42.860078
-                  ],
-                  [
-                    17.681721,
-                    42.859967
-                  ],
-                  [
-                    17.681806,
-                    42.859882
-                  ],
-                  [
-                    17.681855,
-                    42.859838
-                  ],
-                  [
-                    17.681937,
-                    42.859766
-                  ],
-                  [
-                    17.681984,
-                    42.85971
-                  ],
-                  [
-                    17.682518,
-                    42.859644
-                  ],
-                  [
-                    17.682677,
-                    42.859609
-                  ],
-                  [
-                    17.682847,
-                    42.859536
-                  ],
-                  [
-                    17.683355,
-                    42.859284
-                  ],
-                  [
-                    17.683423,
-                    42.85925
-                  ],
-                  [
-                    17.684109,
-                    42.858652
-                  ],
-                  [
-                    17.684423,
-                    42.858459
-                  ],
-                  [
-                    17.684832,
-                    42.858232
-                  ],
-                  [
-                    17.685953,
-                    42.857629
-                  ],
-                  [
-                    17.686507,
-                    42.857351
-                  ],
-                  [
-                    17.687225,
-                    42.856991
-                  ],
-                  [
-                    17.68741,
-                    42.856899
-                  ],
-                  [
-                    17.688319,
-                    42.856509
-                  ],
-                  [
-                    17.688648,
-                    42.856321
-                  ],
-                  [
-                    17.688923,
-                    42.856103
-                  ],
-                  [
-                    17.689126,
-                    42.855918
-                  ],
-                  [
-                    17.689571,
-                    42.855364
-                  ],
-                  [
-                    17.689614,
-                    42.855317
+                    17.690157,
+                    42.85472
                   ],
                   [
                     17.69025,
@@ -222118,6 +222069,13 @@
           "notes": "Reine Fahrzeit: ca. 1 h 51.\n\nNach der Ausschiffung zunächst bewusst rund 40 km A14 bis zum Anschluss Fano, ohne Altstadtdurchfahrt. Danach zur alten Via Flaminia: die Kartenlinie durchquert die Furlo-Schlucht von der Calmazzo-Seite nach Furlo und führt über die SP43 Richtung Fermignano/Urbino. Kein Abstecher auf die Bergstrasse Furlo Monte. Die Ausschiffung ist nicht Teil der berechneten Fahrzeit. Die offizielle Öffnungsmeldung stammt von 2022 und bestätigt den Reisetag nicht: vor der Fahrt bei der Reservatsverwaltung prüfen. Nur bei freigegebener, trockener Strasse durchfahren. Bei Sperre oder schlechtem Wetter Furlo auslassen und ab Fano auf SS73bis über Fossombrone Richtung Urbino bleiben, keine Bergumfahrung suchen. Start und Ziel sind vorläufige Ortsanker; genaue Hafen- und Unterkunftszufahrt ausserhalb der ZTL noch separat prüfen.\n\nStart ist die öffentliche Strasse bei Porta Pia nach der Ausschiffung. Die tatsächliche Hafenausfahrt richtet sich nach der Ankunftsspur.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Porta+Pia%2C+Ancona&destination=Il+Casale+di+Nicolo%2C+Via+San+Marino+11%2C+Urbino&travelmode=driving&waypoints=43.614775%2C13.383244%7C43.646917%2C12.726267%7C43.668461%2C12.649920",
           "accommodation": {
+            "id": "urbino-country",
+            "booking": "open",
+            "bookingRevision": "8540f2603767fa90544ead1f7752304af6c7bcf2ba9dc674c6a95e58c3b094d8",
+            "bookingContext": "1ba4922f472bee5743bf27722e48c127b062f6427abadc4b6bafaacdb0e018d3",
+            "startDate": "2026-10-15",
+            "endDate": "2026-10-17",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Casale di Nicolò · Appartamento Country",
@@ -231778,6 +231736,13 @@
           "notes": "Renaissance-Stadt, Erholung und optional eine kurze Runde durch die sanften Hügel des Montefeltro.",
           "mapsURL": "",
           "accommodation": {
+            "id": "urbino-country",
+            "booking": "open",
+            "bookingRevision": "8540f2603767fa90544ead1f7752304af6c7bcf2ba9dc674c6a95e58c3b094d8",
+            "bookingContext": "1ba4922f472bee5743bf27722e48c127b062f6427abadc4b6bafaacdb0e018d3",
+            "startDate": "2026-10-15",
+            "endDate": "2026-10-17",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Casale di Nicolò · Appartamento Country",
@@ -231828,6 +231793,13 @@
             }
           ],
           "accommodation": {
+            "id": "ravenna",
+            "booking": "open",
+            "bookingRevision": "3d4d4dbcc152d21fdc1e7fe700a65ad7f12e6e634b1c9fcaaabf522c8d580b6b",
+            "bookingContext": "9dfc2136907130d0e1edd7d0bb6f2f16cb3347d7df81c3d8ef887c8b382627b5",
+            "startDate": "2026-10-17",
+            "endDate": "2026-10-18",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Grand Hotel Mattei · Ravenna-Nord",
@@ -248032,6 +248004,13 @@
             }
           ],
           "accommodation": {
+            "id": "arqua-petrarca",
+            "booking": "open",
+            "bookingRevision": "cf4a5fcf3dec18425247bcf27899eaf5494747c9bf73efe54d235125a6477cce",
+            "bookingContext": "2384ff8b0ea08a40d4db01679e351d8bb116a7112612dc10ce64c2988c1d8c48",
+            "startDate": "2026-10-18",
+            "endDate": "2026-10-20",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Agriturismo Giulio Fufo · Ferienwohnung",
@@ -260348,6 +260327,13 @@
           "notes": "Ruhiger Hügeltag, Therme oder vollständige Erholung. Keine Pflichtkilometer.",
           "mapsURL": "",
           "accommodation": {
+            "id": "arqua-petrarca",
+            "booking": "open",
+            "bookingRevision": "cf4a5fcf3dec18425247bcf27899eaf5494747c9bf73efe54d235125a6477cce",
+            "bookingContext": "2384ff8b0ea08a40d4db01679e351d8bb116a7112612dc10ce64c2988c1d8c48",
+            "startDate": "2026-10-18",
+            "endDate": "2026-10-20",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Agriturismo Giulio Fufo · Ferienwohnung",
@@ -260386,6 +260372,13 @@
           "notes": "Reine Fahrzeit: ca. 2 h 42.\n\nNorditalienische Übergangsetappe. Die tiefe Landstrassenverbindung über Via Dietro Cero und San Feliciano bleibt bestehen. Nach dem A4-Abschnitt führt ein zusätzlicher Strassenpunkt über Via Gorgo bei Custoza nach Valeggio. Kein Abstecher zur Anhöhe mit Kirche und keine Rad-/MTB-Runde. In Valeggio am öffentlichen Parkplatz Piazza della Repubblica halten; danach über San Giovanni Bosco und die östliche SR249 weiterfahren. Die A4 hält Zeitreserve für den Aufenthalt und den Seeuferverkehr frei. Pausen und Besuchszeit kommen hinzu.\n\nDer regionale Motorradbezug ist belegt; eine unabhängige Empfehlung jeder einzelnen Zufahrtsstrasse liegt nicht vor. Die konkrete Strassenfolge wurde im Google-Browser und mit der Entwurfslinie verglichen. \n\nCa Nildes liegt an einer privaten Hofzufahrt. Der Link endet an der öffentlichen Via San Rocco beim Anwesen. Tor- und Parkhinweise nach der Buchung beim Gastgeber erfragen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Via+Scalette+2%2C+Arqua+Petrarca&destination=Ca+Nildes%2C+Via+Argine+della+Valle+3%2C+Clusane&travelmode=driving&waypoints=45.422522%2C11.376301%7C45.378694%2C10.804508%7CParcheggio+Pubblico+Valeggio%2C+Piazza+della+Repubblica%2C+Valeggio+sul+Mincio",
           "accommodation": {
+            "id": "iseo",
+            "booking": "open",
+            "bookingRevision": "bcac0c9e3c3512f5a0159f9407dbe2c20a0894de31ac24f92d11f1637c07495d",
+            "bookingContext": "7412236b25e1d16a775422334f8cb0fabe29583fb762851b04b8c01a7d799740",
+            "startDate": "2026-10-20",
+            "endDate": "2026-10-22",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Ca’ Nildes · Ferienwohnung in Clusane",
@@ -274322,6 +274315,13 @@
           "notes": "Letzter echter Genuss- und Wettertag vor der Heimreise.",
           "mapsURL": "",
           "accommodation": {
+            "id": "iseo",
+            "booking": "open",
+            "bookingRevision": "bcac0c9e3c3512f5a0159f9407dbe2c20a0894de31ac24f92d11f1637c07495d",
+            "bookingContext": "7412236b25e1d16a775422334f8cb0fabe29583fb762851b04b8c01a7d799740",
+            "startDate": "2026-10-20",
+            "endDate": "2026-10-22",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Ca’ Nildes · Ferienwohnung in Clusane",
@@ -274360,6 +274360,13 @@
           "notes": "Reine Fahrzeit: ca. 1 h 23.\n\nKurzer, tiefer und wetterrobuster Rückfahrtstag; Stadtzufahrten und ZTL beachten.\n\nDie letzten Meter sind eine private Gästezufahrt. Tor- und Parkhinweise nach der Buchung beim Gastgeber erfragen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Ca+Nildes%2C+Via+Argine+della+Valle+3%2C+Clusane&destination=Antica+Corte+Lazzago%2C+Via+Lazzago+8%2C+Como&travelmode=driving",
           "accommodation": {
+            "id": "como-lazzago",
+            "booking": "open",
+            "bookingRevision": "4dad2a79c9673911f981ac79077da42b012000295dc5c222241e1996a5f86c38",
+            "bookingContext": "21cd3e477c09d596683e01e62aafa7a49345a858661457a1e2cd91b84f6e15e3",
+            "startDate": "2026-10-22",
+            "endDate": "2026-10-23",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "L’Antica Corte Lazzago · Como-Süd",
@@ -302230,6 +302237,13 @@
           "notes": "Autobahnen nicht vermeiden. Französische Umweltplakette Crit’Air und Hotelgarage in Grenoble vorab klären.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Berikon%2C+Switzerland&destination=Grenoble%2C+France&travelmode=driving",
           "accommodation": {
+            "id": "grenoble",
+            "booking": "open",
+            "bookingRevision": "02f85f05e1073ff96a6acc119519097baa04d8516af68e19b336fb2d3a3493a9",
+            "bookingContext": "d5736050c033eed00a75cb727a703eff8e57a1560dc3d5a8eac34f8ad6f24a2f",
+            "startDate": "2026-09-24",
+            "endDate": "2026-09-25",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Logis Hôtel Le Néron",
@@ -353374,6 +353388,13 @@
           "notes": "N85 halten; keine kleinen Seitenpässe bei schlechtem Wetter.\n\nGoogle meldet derzeit eine lokale Sperrung in Gap und umfährt sie automatisch. Vor der Fahrt erneut prüfen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Grenoble%2C+France&destination=Sisteron%2C+France&travelmode=driving&waypoints=Vizille%2C+France%7CLaffrey%2C+France%7CLa+Mure%2C+France%7CCorps%2C+France%7CGap%2C+France",
           "accommodation": {
+            "id": "sisteron",
+            "booking": "open",
+            "bookingRevision": "1af1467e9f80ec7d7cf4953f6f1d458309cc91e9f0f5d9ab59b83d3ddb86bbc5",
+            "bookingContext": "37fd0ad731f782d0d34da5fa5a1aadb2da5cdf09bce9ec3b93e569a4c987b216",
+            "startDate": "2026-09-25",
+            "endDate": "2026-09-26",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hôtel Les Chênes",
@@ -376146,6 +376167,13 @@
           "notes": "Digne ist kein Pflichtpunkt. In Bonnieux und Lourmarin am Ortsrand parkieren.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Sisteron%2C+France&destination=Lourmarin%2C+France&travelmode=driving&waypoints=Ch%C3%A2teau-Arnoux-Saint-Auban%2C+France%7CMalijai%2C+France%7CForcalquier%2C+France%7CC%C3%A9reste%2C+France%7CApt%2C+France%7CParking+Bonnieux%2C+France",
           "accommodation": {
+            "id": "lourmarin",
+            "booking": "open",
+            "bookingRevision": "8c3a2d5906c179d0d8ba25856dc0271aee48f1e463fcb652397febfcec752315",
+            "bookingContext": "31a23c7f8e9bf731122f7c861ce052ab22d646e03a0f13e84b46aa5475c08a18",
+            "startDate": "2026-09-26",
+            "endDate": "2026-09-27",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Le Moulin, Beaumier",
@@ -395098,6 +395126,13 @@
           "notes": "Nicht auf den schmalen Meerdeich Digue à la Mer fahren. Auch keine Salinenpisten, Schutzgebiets- oder Strandwege verwenden.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Lourmarin%2C+France&destination=N%C3%AEmes%2C+France&travelmode=driving&waypoints=Arles%2C+France%7CParc+ornithologique+du+Pont+de+Gau%2C+France%7CSaintes-Maries-de-la-Mer%2C+France%7CAigues-Mortes%2C+France",
           "accommodation": {
+            "id": "nimes",
+            "booking": "open",
+            "bookingRevision": "6b860957eb626ff3c9d4ca52c8883d144133bd746d9096862b4242972bdab10c",
+            "bookingContext": "ff3ebb250a85a5df02a61ee8322bbefdbc9a600a68428cfe014c87579d98a124",
+            "startDate": "2026-09-27",
+            "endDate": "2026-09-28",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Nimotel",
@@ -412138,6 +412173,13 @@
           "notes": "Bei Verkehr, Wind oder Regen abschnittsweise A9/A61 wählen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=N%C3%AEmes%2C+France&destination=Carcassonne%2C+France&travelmode=driving&waypoints=Sommi%C3%A8res%2C+France%7CP%C3%A9zenas%2C+France%7CB%C3%A9ziers%2C+France%7CCapestang%2C+France",
           "accommodation": {
+            "id": "carcassonne",
+            "booking": "open",
+            "bookingRevision": "5f55d5dee7494465a41281ddcc06ff72a86e3cc7df661fb6c6e991b77f10b911",
+            "bookingContext": "68154fed8fac069072b32b832fe6b5ff54fd2325c612a2554c2963fc3c18c6d4",
+            "startDate": "2026-09-28",
+            "endDate": "2026-09-29",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hôtel Montségur",
@@ -430642,6 +430684,13 @@
           "notes": "Keine kleinen Pyrenäenpässe. Hotel nahe R2-Bahnhof und mit geschlossener Garage wählen; für Barcelona die Motorräder stehen lassen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Carcassonne%2C+France&destination=Castelldefels%2C+Spain&travelmode=driving",
           "accommodation": {
+            "id": "castelldefels-1",
+            "booking": "open",
+            "bookingRevision": "b3b8d5bdf22ac9606b2dcd0b81839a4d69aedfb39b9a35d17312fe1442e45ce8",
+            "bookingContext": "3dd439582a814ca04000953f537c7e04810af9161e90cf0dfa19c8539a0352bd",
+            "startDate": "2026-09-29",
+            "endDate": "2026-10-01",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "ibis Barcelona Castelldefels",
@@ -458542,6 +458591,13 @@
           "notes": "Motorräder beim Hotel lassen. Barcelona nur besuchen, wenn Energie und Lust passen.",
           "mapsURL": "",
           "accommodation": {
+            "id": "castelldefels-1",
+            "booking": "open",
+            "bookingRevision": "b3b8d5bdf22ac9606b2dcd0b81839a4d69aedfb39b9a35d17312fe1442e45ce8",
+            "bookingContext": "3dd439582a814ca04000953f537c7e04810af9161e90cf0dfa19c8539a0352bd",
+            "startDate": "2026-09-29",
+            "endDate": "2026-10-01",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "ibis Barcelona Castelldefels",
@@ -458580,6 +458636,13 @@
           "notes": "Die schönsten Punkte der früheren Priorat-Runde sind in den Anreisetag integriert. Bei dichtem Küstenverkehr Sitges auslassen; Porrera und Gratallops auf Asphalt anfahren.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Castelldefels%2C+Spain&destination=Falset%2C+Spain&travelmode=driving&waypoints=Sitges%2C+Spain%7CTarragona%2C+Spain%7CReus%2C+Spain%7CPorrera%2C+Spain%7CGratallops%2C+Spain",
           "accommodation": {
+            "id": "falset",
+            "booking": "open",
+            "bookingRevision": "83051a862f63459e6eb05e3f765f100c0ea6059f782e5645d7157286e41116f2",
+            "bookingContext": "2e33f9b0e54fd7da5a448d0fd6c1d30b77ccb6bf1bde58c822d5ce21648e3473",
+            "startDate": "2026-10-01",
+            "endDate": "2026-10-02",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel-Hostal Sport",
@@ -478120,6 +478183,13 @@
           "notes": "N-420 bis Teruel und A-1512 nach Albarracín halten. Nicht in die Altstadt routen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Falset%2C+Spain&destination=Albarrac%C3%ADn%2C+Spain&travelmode=driving&waypoints=Gandesa%2C+Spain%7CAlca%C3%B1iz%2C+Spain%7CTeruel%2C+Spain%7CGea+de+Albarrac%C3%ADn%2C+Spain",
           "accommodation": {
+            "id": "albarracin",
+            "booking": "open",
+            "bookingRevision": "3d3a56e20500cd034286ff9fedfc6af7bb524843ead0e803bd75287821e86b32",
+            "bookingContext": "cb4a71070cef2f26974c3a6ffd98c56ba6e93fea85aee482e3b5c8ccf1eb6402",
+            "startDate": "2026-10-02",
+            "endDate": "2026-10-04",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel Doña Blanca",
@@ -503168,6 +503238,13 @@
           "notes": "Nur fahren, wenn Google klar auf Asphalt führt; sonst Ruhetag.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Albarrac%C3%ADn%2C+Spain&destination=Albarrac%C3%ADn%2C+Spain&travelmode=driving&waypoints=Orihuela+del+Tremedal%2C+Spain%7CBronchales%2C+Spain%7CNoguera+de+Albarrac%C3%ADn%2C+Spain%7CTramacastilla%2C+Spain",
           "accommodation": {
+            "id": "albarracin",
+            "booking": "open",
+            "bookingRevision": "3d3a56e20500cd034286ff9fedfc6af7bb524843ead0e803bd75287821e86b32",
+            "bookingContext": "cb4a71070cef2f26974c3a6ffd98c56ba6e93fea85aee482e3b5c8ccf1eb6402",
+            "startDate": "2026-10-02",
+            "endDate": "2026-10-04",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel Doña Blanca",
@@ -511280,6 +511357,13 @@
           "notes": "Bei gutem Wetter N-234-Abschnitte, sonst A-23. Ziel ist das Olympia Hotel in Alboraya; sichere Abstellung für zwei Motorräder vor der Buchung bestätigen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Albarrac%C3%ADn%2C+Spain&destination=Olympia+Hotel%2C+Events+%26+Spa%2C+Alboraya%2C+Spain&travelmode=driving&waypoints=Teruel%2C+Spain%7CSegorbe%2C+Spain",
           "accommodation": {
+            "id": "alboraya",
+            "booking": "open",
+            "bookingRevision": "64df07323cba36b7dd7f5e9f3c67e0c9117e2c5373e59078a4540e7b3fd87105",
+            "bookingContext": "8327ccfda32ac1109f1641f5700c6a38431956e53f33a43201ab1df3ecae1800",
+            "startDate": "2026-10-04",
+            "endDate": "2026-10-06",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Olympia Hotel, Events & Spa · Alboraya",
@@ -521704,6 +521788,13 @@
           "notes": "Motorräder beim Hotel lassen und je nach Energie Strandtag oder Stadtbesuch wählen.",
           "mapsURL": "",
           "accommodation": {
+            "id": "alboraya",
+            "booking": "open",
+            "bookingRevision": "64df07323cba36b7dd7f5e9f3c67e0c9117e2c5373e59078a4540e7b3fd87105",
+            "bookingContext": "8327ccfda32ac1109f1641f5700c6a38431956e53f33a43201ab1df3ecae1800",
+            "startDate": "2026-10-04",
+            "endDate": "2026-10-06",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Olympia Hotel, Events & Spa · Alboraya",
@@ -521742,6 +521833,13 @@
           "notes": "Kurviger Tag. Nur eine Nacht in Altea; am Folgetag beginnt die Küstenetappe nach Águilas.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Olympia+Hotel%2C+Events+%26+Spa%2C+Alboraya%2C+Spain&destination=Altea%2C+Spain&travelmode=driving&waypoints=X%C3%A0tiva%2C+Spain%7CBocairent%2C+Spain%7CAlcoy%2C+Spain%7CGuadalest%2C+Spain",
           "accommodation": {
+            "id": "altea",
+            "booking": "open",
+            "bookingRevision": "8e19b8f62324cff3fa9980cad8297f5909c296ba17856a4fe2aa83c98a621b84",
+            "bookingContext": "6a7b8a6ead9cec4d02f8fd0286a06d77ae7d129c0f595c24d0de008a18a53808",
+            "startDate": "2026-10-06",
+            "endDate": "2026-10-07",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel Cap Negret",
@@ -551954,6 +552052,13 @@
           "notes": "Cartagena als längeren Mittagsstopp nutzen. Danach folgt der schönere Küstenabschnitt über La Azohía; bei Müdigkeit oder dichtem Verkehr direkt über A-7/RM-11 nach Águilas fahren.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Altea%2C+Spain&destination=Senator+%C3%81guilas%2C+%C3%81guilas%2C+Spain&travelmode=driving&waypoints=Puerto+de+Cartagena%2C+Spain%7CLa+Azoh%C3%ADa%2C+Spain%7CPuerto+de+Mazarr%C3%B3n%2C+Spain",
           "accommodation": {
+            "id": "aguilas",
+            "booking": "open",
+            "bookingRevision": "775f672ccf5f8d712cec0fbe978013908148b2f0ba381bc01e3dd9234fcd1079",
+            "bookingContext": "29123122c9a3a19f89affac91cf40e8bea3e216b24cb5828861c63251d7ddd1f",
+            "startDate": "2026-10-07",
+            "endDate": "2026-10-08",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Senator Águilas",
@@ -574466,6 +574571,13 @@
           "notes": "Nach dem Frühstück am Meer die direkte Hauptstrecke nehmen. Granada-Zentrum vermeiden; nach Monachil mit einfacher Zufahrt routen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Senator+%C3%81guilas%2C+%C3%81guilas%2C+Spain&destination=Monachil%2C+Granada%2C+Spain&travelmode=driving",
           "accommodation": {
+            "id": "monachil",
+            "booking": "open",
+            "bookingRevision": "23db78c274c2a56caf3dbe7481ee4c1abe7360de762f0205d9535079fbeb632d",
+            "bookingContext": "6551c0cd0e36eddfc71635185f06516c1d01d534f1208fe129cf95133adebef6",
+            "startDate": "2026-10-08",
+            "endDate": "2026-10-11",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "La Almunia del Valle",
@@ -591190,6 +591302,13 @@
           "notes": "Motorräder beim Hotel lassen und für Granada Taxi oder Bus verwenden.",
           "mapsURL": "",
           "accommodation": {
+            "id": "monachil",
+            "booking": "open",
+            "bookingRevision": "23db78c274c2a56caf3dbe7481ee4c1abe7360de762f0205d9535079fbeb632d",
+            "bookingContext": "6551c0cd0e36eddfc71635185f06516c1d01d534f1208fe129cf95133adebef6",
+            "startDate": "2026-10-08",
+            "endDate": "2026-10-11",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "La Almunia del Valle",
@@ -591228,6 +591347,13 @@
           "notes": "Pampaneira reicht als Wendepunkt; Trevélez nicht erzwingen.\n\nGoogle meldet derzeit Sperrungen auf der A-348 und berechnet eine Umfahrung. Kurz vor der Reise neu prüfen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Monachil%2C+Granada%2C+Spain&destination=Monachil%2C+Granada%2C+Spain&travelmode=driving&waypoints=Lanjar%C3%B3n%2C+Spain%7C%C3%93rgiva%2C+Spain%7CPampaneira%2C+Spain",
           "accommodation": {
+            "id": "monachil",
+            "booking": "open",
+            "bookingRevision": "23db78c274c2a56caf3dbe7481ee4c1abe7360de762f0205d9535079fbeb632d",
+            "bookingContext": "6551c0cd0e36eddfc71635185f06516c1d01d534f1208fe129cf95133adebef6",
+            "startDate": "2026-10-08",
+            "endDate": "2026-10-11",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "La Almunia del Valle",
@@ -612996,6 +613122,13 @@
           "notes": "Campillos ist die verlässliche Hauptlinie. El Burgo nur trocken und ausgeruht.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Monachil%2C+Granada%2C+Spain&destination=Ronda%2C+Spain&travelmode=driving&waypoints=Antequera%2C+Spain%7CCampillos%2C+Spain",
           "accommodation": {
+            "id": "ronda",
+            "booking": "open",
+            "bookingRevision": "825e9a060ac0cb4ca4883770636e991a959231a4fbda8d854f451830f64630f3",
+            "bookingContext": "0af868771beba75291dafb0e777bd257e22dd1dbcb9cc57fef9248fc94f64004",
+            "startDate": "2026-10-11",
+            "endDate": "2026-10-14",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel San Francisco",
@@ -629036,6 +629169,13 @@
           "notes": "CA-9104 nur offen, trocken und bei guter Sicht fahren.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Ronda%2C+Spain&destination=Ronda%2C+Spain&travelmode=driving&waypoints=Grazalema%2C+Spain%7CPuerto+de+las+Palomas%2C+Spain%7CZahara+de+la+Sierra%2C+Spain%7CEl+Bosque%2C+Spain%7CUbrique%2C+Spain",
           "accommodation": {
+            "id": "ronda",
+            "booking": "open",
+            "bookingRevision": "825e9a060ac0cb4ca4883770636e991a959231a4fbda8d854f451830f64630f3",
+            "bookingContext": "0af868771beba75291dafb0e777bd257e22dd1dbcb9cc57fef9248fc94f64004",
+            "startDate": "2026-10-11",
+            "endDate": "2026-10-14",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel San Francisco",
@@ -648908,6 +649048,13 @@
           "notes": "Bewusster Puffertag. Nur eine kurze Zusatzrunde fahren, wenn Wetter und Energie passen.",
           "mapsURL": "",
           "accommodation": {
+            "id": "ronda",
+            "booking": "open",
+            "bookingRevision": "825e9a060ac0cb4ca4883770636e991a959231a4fbda8d854f451830f64630f3",
+            "bookingContext": "0af868771beba75291dafb0e777bd257e22dd1dbcb9cc57fef9248fc94f64004",
+            "startDate": "2026-10-11",
+            "endDate": "2026-10-14",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel San Francisco",
@@ -648946,6 +649093,13 @@
           "notes": "Ruhiger Inlandtag; Baeza als kurzer Stopp, Úbeda als Basis.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Ronda%2C+Spain&destination=%C3%9Abeda%2C+Spain&travelmode=driving&waypoints=Antequera%2C+Spain%7CJa%C3%A9n%2C+Spain%7CBaeza%2C+Spain",
           "accommodation": {
+            "id": "ubeda",
+            "booking": "open",
+            "bookingRevision": "05f9ae50d60d828ad6b47b829b772928da229228c663f1eec89cc2fd6a6bfe39",
+            "bookingContext": "f1f694e32f18e6ea3d198bfccecaaf07b5fc6e28204f70e0e6f368404dd4da21",
+            "startDate": "2026-10-14",
+            "endDate": "2026-10-16",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "La Posada Boutique Hotel",
@@ -671146,6 +671300,13 @@
           "notes": "Kurzer Kultur- und Puffertag.",
           "mapsURL": "",
           "accommodation": {
+            "id": "ubeda",
+            "booking": "open",
+            "bookingRevision": "05f9ae50d60d828ad6b47b829b772928da229228c663f1eec89cc2fd6a6bfe39",
+            "bookingContext": "f1f694e32f18e6ea3d198bfccecaaf07b5fc6e28204f70e0e6f368404dd4da21",
+            "startDate": "2026-10-14",
+            "endDate": "2026-10-16",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "La Posada Boutique Hotel",
@@ -671184,6 +671345,13 @@
           "notes": "Albacete wird nicht mehr als Stadtziel angefahren. In Alcalá del Júcar am Ortsrand parkieren.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=%C3%9Abeda%2C+Spain&destination=Cuenca%2C+Spain&travelmode=driving&waypoints=Alcal%C3%A1+del+J%C3%BAcar%2C+Spain",
           "accommodation": {
+            "id": "cuenca",
+            "booking": "open",
+            "bookingRevision": "cf19f9d9cb4a2f1ce8651929f9ef5759c6d00c248e2aa2aeaed825b58d8dae98",
+            "bookingContext": "aa4eec134137e8dd0f560909775eeb8765aa965f57c015fae4fb1cc82077fbfb",
+            "startDate": "2026-10-16",
+            "endDate": "2026-10-18",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Isis de Cuenca",
@@ -695816,6 +695984,13 @@
           "notes": "Der zusätzliche Tag entschärft den langen Vortag und hält den Rückweg zur Fähre flexibel.",
           "mapsURL": "",
           "accommodation": {
+            "id": "cuenca",
+            "booking": "open",
+            "bookingRevision": "cf19f9d9cb4a2f1ce8651929f9ef5759c6d00c248e2aa2aeaed825b58d8dae98",
+            "bookingContext": "aa4eec134137e8dd0f560909775eeb8765aa965f57c015fae4fb1cc82077fbfb",
+            "startDate": "2026-10-16",
+            "endDate": "2026-10-18",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Isis de Cuenca",
@@ -695854,6 +696029,13 @@
           "notes": "Landschaftlich, aber nicht auf kleinere Abkürzungen wechseln. Bei Wetter direkter fahren.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Cuenca%2C+Spain&destination=Zaragoza%2C+Spain&travelmode=driving&waypoints=Molina+de+Arag%C3%B3n%2C+Spain%7CCalatayud%2C+Spain",
           "accommodation": {
+            "id": "zaragoza",
+            "booking": "open",
+            "bookingRevision": "3dbac0650abd825d51beb71c6994d820e0201d7d8059efb54ca4f8889cd7ceb6",
+            "bookingContext": "b780b63359fc7f9d087f49779e2d0cda5f8c9e0f89001a4e825e4b94302bb01b",
+            "startDate": "2026-10-18",
+            "endDate": "2026-10-19",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel Sauce",
@@ -731838,6 +732020,13 @@
           "notes": "Montblanc nur als kurzer Stopp. In Castelldefels Garage für zwei Nächte und frühe Abfahrt zum Fährterminal vorsehen.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Zaragoza%2C+Spain&destination=Castelldefels%2C+Spain&travelmode=driving&waypoints=Lleida%2C+Spain%7CMontblanc%2C+Spain",
           "accommodation": {
+            "id": "castelldefels-2",
+            "booking": "open",
+            "bookingRevision": "88616f8e8fe813f998ed5f43d30aa10f0a1cf953ef18f960581449aa982e6fb5",
+            "bookingContext": "8a9f083fdd90eb713517e29ca2f9a7fbded980433e2d873551b8e38801f0e8cf",
+            "startDate": "2026-10-19",
+            "endDate": "2026-10-21",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "ibis Barcelona Castelldefels",
@@ -751978,6 +752167,13 @@
           "notes": "Motorräder stehen lassen und den Tag ruhig halten. Wecker, Check-in-Unterlagen und Zufahrt zum Terminal für den frühen nächsten Morgen vorbereiten.",
           "mapsURL": "",
           "accommodation": {
+            "id": "castelldefels-2",
+            "booking": "open",
+            "bookingRevision": "88616f8e8fe813f998ed5f43d30aa10f0a1cf953ef18f960581449aa982e6fb5",
+            "bookingContext": "8a9f083fdd90eb713517e29ca2f9a7fbded980433e2d873551b8e38801f0e8cf",
+            "startDate": "2026-10-19",
+            "endDate": "2026-10-21",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "ibis Barcelona Castelldefels",
@@ -752016,6 +752212,13 @@
           "notes": "Frühstück und Tankstopp vorziehen. Mindestens den bestätigten Check-in-Puffer einhalten und die Terminalangabe auf dem Ticket verwenden.",
           "mapsURL": "",
           "accommodation": {
+            "id": "ferry",
+            "booking": "open",
+            "bookingRevision": "f78ae58f4e5cc92033ad2667efdc3839df76b44b1191bafa5ffb95d90702cd27",
+            "bookingContext": "11ff4e3a385f17e2d49c30b53b1d00d1197779e4342f4b4fee9f260dc29373af",
+            "startDate": "2026-10-21",
+            "endDate": "2026-10-22",
+            "bookingEditable": false,
             "status": "Offen",
             "first": {
               "name": "Kabine an Bord",
@@ -752064,6 +752267,13 @@
           "notes": "Zeit für die Ausschiffung lassen und danach direkt nach Aosta fahren.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Genoa%2C+Italy&destination=Aosta%2C+Italy&travelmode=driving",
           "accommodation": {
+            "id": "aosta",
+            "booking": "open",
+            "bookingRevision": "ebf1d997669ce916a5ac0ffb9236d36a01d8d6d9d70f746b525fefdd394bcbe1",
+            "bookingContext": "db8938c28a7934eeecdc2b18026821329b564baca297daa034071ba5bbb726d1",
+            "startDate": "2026-10-22",
+            "endDate": "2026-10-23",
+            "bookingEditable": true,
             "status": "Offen",
             "first": {
               "name": "Hotel Le Pageot",

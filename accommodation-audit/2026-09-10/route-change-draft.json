@@ -1,0 +1,242 @@
+{
+  "tripId": "trip_adria_2026",
+  "baseVersion": "2026-09-10T09:58:35.540Z",
+  "createdAt": "2026-09-10T11:29:57.091Z",
+  "state": "integrated-awaiting-deployment",
+  "readyToPublish": true,
+  "primaryOptions": [
+    {
+      "stayId": "zadar",
+      "rank": 1,
+      "name": "Arborea, luxury apartment with private yard",
+      "checkIn": "2026-09-29",
+      "checkOut": "2026-10-01",
+      "url": "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+      "unit": "Apartment mit 2 Schlafzimmern, 65 m²",
+      "displayedTotalCHF": 197,
+      "freeCancellationBefore": "2026-09-28",
+      "address": "Ulica Augusta Šenoe 38a, Zadar, Croatia",
+      "listingEvidence": "Eigene Küche, Waschmaschine, Privatparkplatz am Haus, private Aussenfläche; Inseratsadresse mit Zusatz Prizemlje (Erdgeschoss).",
+      "availabilityEvidence": "Datiertes Booking-Angebot für zwei Erwachsene, auswählbare Einheit CHF 197, kostenlose Stornierung vor 28.09.2026.",
+      "openQuestions": [
+        "Sichere Abstellung für zwei beladene Motorräder verbindlich bestätigen",
+        "Asphalt, Gefälle, Rangierfläche und genaue Einfahrt bestätigen"
+      ],
+      "affectedDays": [
+        6,
+        8
+      ]
+    },
+    {
+      "stayId": "makarska-base",
+      "rank": 1,
+      "name": "Der Blick / The View",
+      "checkIn": "2026-10-03",
+      "checkOut": "2026-10-06",
+      "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+      "unit": "Gesamtes Apartment mit zwei Schlafzimmern, erstattungsfähiger Tarif",
+      "displayedTotalCHF": 241.5,
+      "freeCancellationBefore": "2026-10-02",
+      "address": null,
+      "listingEvidence": "Küche, eigene kostenlose Waschmaschine, ein Stellplatz auf dem Grundstück; eine Bewertung bestätigt reservierten Parkplatz, andere beschreibt Steigung vom Strand zur Wohnung.",
+      "availabilityEvidence": "Datiertes Airbnb-Angebot für zwei Gäste und drei Nächte; erstattungsfähiger Tarif CHF 241.50 und Reservieren-Schaltfläche. Voreingestellt CHF 217.45 nicht erstattungsfähig nach anfänglichem 24-Stunden-Fenster.",
+      "openQuestions": [
+        "Exakte Adresse und Einfahrt vom Gastgeber erhalten",
+        "Zwei beladene Motorräder auf dem einen Stellplatz verbindlich bestätigen",
+        "Steigung, Asphalt und Rangieren bestätigen"
+      ],
+      "affectedDays": [
+        10,
+        13
+      ]
+    },
+    {
+      "stayId": "ston-return",
+      "rank": 1,
+      "name": "Apartments Ivanka · Hodilje",
+      "checkIn": "2026-10-13",
+      "checkOut": "2026-10-14",
+      "url": "https://www.booking.com/hotel/hr/apartments-ivanka-ston1.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+      "unit": "Deluxe Doppelzimmer mit Balkon, 20 m²; keine Ferienwohnung/Küche zugesagt",
+      "displayedTotalCHF": 66,
+      "freeCancellationBefore": "2026-10-06",
+      "address": "Hodilje 118, Ston, Croatia",
+      "listingEvidence": "Kostenloser Privatparkplatz; Kühlschrank und Balkon im Zimmer. Ruhiger Übernachtungsort ausserhalb der Altstadt. Pool laut Kleingedrucktem am Reisetermin geschlossen.",
+      "availabilityEvidence": "Datiertes Booking-Angebot CHF 66 für zwei Erwachsene; kostenlose Stornierung vor 06.10.2026; keine Zahlung vor 04.10.2026.",
+      "openQuestions": [
+        "Zwei sichere Motorradplätze bestätigen",
+        "Asphaltierte Einfahrt, Gefälle und Rangierfläche bestätigen",
+        "Später Check-in am Grenztag klären"
+      ],
+      "affectedDays": [
+        20,
+        21
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "id": "adria-6",
+      "day": 6,
+      "date": "2026-09-29",
+      "title": "Senj – Karlobag – Starigrad – Zadar",
+      "stayId": "zadar",
+      "changedField": "destination",
+      "previousEndpoint": "44.1393374,15.2162747",
+      "proposedEndpoint": "44.1324734,15.2179360",
+      "proposedAccommodation": "Arborea, luxury apartment with private yard",
+      "retainedMapWaypoints": "44.447464,15.183677|44.272672,15.493408|44.222638,15.523357",
+      "proposedMapUrl": "https://www.google.com/maps/dir/?api=1&origin=44.9941346%2C14.9021456&destination=44.1324734%2C15.2179360&travelmode=driving&waypoints=44.447464%2C15.183677%7C44.272672%2C15.493408%7C44.222638%2C15.523357",
+      "status": "integrated",
+      "roadApproach": false,
+      "geometry": "routes/adria-6.json",
+      "distanceMeters": 159110,
+      "durationSeconds": 11828.3,
+      "verification": {
+        "verified": true,
+        "scope": "Published marker and recalculated road sequence; private driveway not confirmed",
+        "evidence": "routes/google-review.json"
+      }
+    },
+    {
+      "id": "adria-8",
+      "day": 8,
+      "date": "2026-10-01",
+      "title": "Zadar – Biograd – Vodice – Šibenik",
+      "stayId": "zadar",
+      "changedField": "origin",
+      "previousEndpoint": "Adria Concept Boutique Apartments, Zadar",
+      "proposedEndpoint": "44.1324734,15.2179360",
+      "proposedAccommodation": "Arborea, luxury apartment with private yard",
+      "retainedMapWaypoints": "44.001038,15.371490|43.885446,15.544167|43.736842,15.900025",
+      "proposedMapUrl": "https://www.google.com/maps/dir/?api=1&origin=44.1324734%2C15.2179360&destination=My+Adriatic+Place%2C+Podsolarsko+136%2C+Sibenik&travelmode=driving&waypoints=44.001038%2C15.371490%7C43.885446%2C15.544167%7C43.736842%2C15.900025",
+      "status": "integrated",
+      "roadApproach": false,
+      "geometry": "routes/adria-8.json",
+      "distanceMeters": 84932.2,
+      "durationSeconds": 5995.6,
+      "verification": {
+        "verified": true,
+        "scope": "Published marker and recalculated road sequence; private driveway not confirmed",
+        "evidence": "routes/google-review.json"
+      }
+    },
+    {
+      "id": "adria-10",
+      "day": 10,
+      "date": "2026-10-03",
+      "title": "Šibenik – Primošten – Trogir – Omiš – Makarska",
+      "stayId": "makarska-base",
+      "changedField": "destination",
+      "previousEndpoint": "Villa Pehar, Makarska",
+      "proposedEndpoint": "43.3068190,17.0070860",
+      "proposedAccommodation": "Der Blick / The View",
+      "retainedMapWaypoints": "43.589164,15.926309|43.528071,16.267208|43.445153,16.638084",
+      "proposedMapUrl": "https://www.google.com/maps/dir/?api=1&origin=My+Adriatic+Place%2C+Podsolarsko+136%2C+Sibenik&destination=43.3068190%2C17.0070860&travelmode=driving&waypoints=43.589164%2C15.926309%7C43.528071%2C16.267208%7C43.445153%2C16.638084",
+      "status": "integrated",
+      "roadApproach": false,
+      "geometry": "routes/adria-10.json",
+      "distanceMeters": 135414.1,
+      "durationSeconds": 9997.1,
+      "verification": {
+        "verified": true,
+        "scope": "Published marker and recalculated road sequence; private driveway not confirmed",
+        "evidence": "routes/google-review.json"
+      }
+    },
+    {
+      "id": "adria-13",
+      "day": 13,
+      "date": "2026-10-06",
+      "title": "Makarska – Drvenik – Pelješac-Brücke – Ston – Dubrovnik",
+      "stayId": "makarska-base",
+      "changedField": "origin",
+      "previousEndpoint": "Villa Pehar, Makarska",
+      "proposedEndpoint": "43.3068190,17.0070860",
+      "proposedAccommodation": "Der Blick / The View",
+      "retainedMapWaypoints": "43.155031,17.250212|42.885330,17.579727|Parking Ston, Croatia",
+      "proposedMapUrl": "https://www.google.com/maps/dir/?api=1&origin=43.3068190%2C17.0070860&destination=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&travelmode=driving&waypoints=43.155031%2C17.250212%7C42.885330%2C17.579727%7CParking+Ston%2C+Croatia",
+      "status": "integrated",
+      "roadApproach": false,
+      "geometry": "routes/adria-13.json",
+      "distanceMeters": 161127.1,
+      "durationSeconds": 11363.3,
+      "verification": {
+        "verified": true,
+        "scope": "Published marker and recalculated road sequence; private driveway not confirmed",
+        "evidence": "routes/google-review.json"
+      }
+    },
+    {
+      "id": "adria-20",
+      "day": 20,
+      "date": "2026-10-13",
+      "title": "Kotor – Perast – Dubrovnik-Umfahrung – Ston",
+      "stayId": "ston-return",
+      "changedField": "destination",
+      "previousEndpoint": "42.860800,17.681200",
+      "proposedEndpoint": "42.8546860,17.6900870",
+      "proposedAccommodation": "Apartments Ivanka · Hodilje",
+      "retainedMapWaypoints": "42.486779,18.699843|Karasovici Border Crossing",
+      "proposedMapUrl": "https://www.google.com/maps/dir/?api=1&origin=42.466333%2C18.764400&destination=42.8546860%2C17.6900870&travelmode=driving&waypoints=42.486779%2C18.699843%7CKarasovici+Border+Crossing",
+      "status": "integrated",
+      "roadApproach": false,
+      "geometry": "routes/adria-20.json",
+      "distanceMeters": 140779.4,
+      "durationSeconds": 11135.8,
+      "verification": {
+        "verified": true,
+        "scope": "Published marker and recalculated road sequence; private driveway not confirmed",
+        "evidence": "routes/google-review.json"
+      }
+    },
+    {
+      "id": "adria-21",
+      "day": 21,
+      "date": "2026-10-14",
+      "title": "Ston – Pelješac-Brücke – Split / Nachtfähre nach Ancona",
+      "stayId": "ston-return",
+      "changedField": "origin",
+      "previousEndpoint": "42.860800,17.681200",
+      "proposedEndpoint": "42.8546860,17.6900870",
+      "proposedAccommodation": "Apartments Ivanka · Hodilje",
+      "retainedMapWaypoints": "42.885330,17.579727|43.590818,16.571883",
+      "proposedMapUrl": "https://www.google.com/maps/dir/?api=1&origin=42.8546860%2C17.6900870&destination=Gat+Svetog+Duje%2C+Split&travelmode=driving&waypoints=42.885330%2C17.579727%7C43.590818%2C16.571883",
+      "status": "integrated",
+      "roadApproach": true,
+      "geometry": "routes/adria-21.json",
+      "distanceMeters": 184651.5,
+      "durationSeconds": 8829.2,
+      "verification": {
+        "verified": true,
+        "scope": "Published marker and recalculated road sequence; private driveway not confirmed",
+        "evidence": "routes/google-review.json"
+      }
+    }
+  ],
+  "unchanged": {
+    "startDate": "2026-09-24",
+    "dayCount": 30,
+    "restDays": [
+      "adria-7",
+      "adria-9",
+      "adria-11",
+      "adria-12",
+      "adria-14",
+      "adria-15",
+      "adria-17",
+      "adria-18",
+      "adria-19",
+      "adria-23",
+      "adria-26",
+      "adria-28"
+    ],
+    "ferryDate": "2026-10-14",
+    "ferryRoadDestination": "Gat Svetog Duje, Split"
+  },
+  "publicationRequirements": [
+    "Integration checks and live deployment verification"
+  ],
+  "integratedVersion": "2026-09-10T11:49:30.989Z",
+  "publicationBaseVersion": "2026-09-10T11:48:47.045Z"
+}

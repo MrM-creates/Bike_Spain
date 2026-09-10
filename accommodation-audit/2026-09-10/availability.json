@@ -1,0 +1,324 @@
+{
+  "checkedOn": "2026-09-10",
+  "tripId": "trip_adria_2026",
+  "planVersion": "2026-09-10T09:58:35.540Z",
+  "method": "Live-Browserprüfung der verlinkten Booking-/Airbnb-Inserate mit exakten Aufenthaltsdaten, zwei Erwachsenen und einer Unterkunft. Angebote und Verfügbarkeitsmeldungen im gerenderten Buchungsbereich abgelesen; kein Buchungsabschluss.",
+  "scope": "16 Unterkünfte an Land plus drei vorhandene Alternativen; Fährkabine 14.–15.10. separat, nicht geprüft.",
+  "limitation": "Nichtverfügbarkeit gilt für den geprüften Buchungsweg. Keine Aussage über andere Kontingente oder Direktanfragen. Preise sind angezeigte Momentaufnahmen; keine Reservierung oder Stellplatzzusage. Der Abgleich mit Routen bezieht sich auf den lokalen Planstand; der Abruf der öffentlichen Produktionsdatei war technisch blockiert.",
+  "observations": [
+    {
+      "id": "innsbruck-mutters",
+      "name": "Hotel dasMEI · Mutters",
+      "checkIn": "2026-09-24",
+      "checkOut": "2026-09-25",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 168,
+      "sourceUrl": "https://www.booking.com/hotel/at/dasmei-medical-selfness.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Koi mit Balkon; Frühstück; kostenlose Stornierung vor 21.09.2026.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "lienz",
+      "name": "Hotel Holunderhof · Lienz",
+      "checkIn": "2026-09-25",
+      "checkOut": "2026-09-26",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 158,
+      "sourceUrl": "https://www.booking.com/hotel/at/holunderhof.de.html?checkin=2026-09-25&checkout=2026-09-26&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Comfort Doppelzimmer; ohne Frühstück; kostenlose Stornierung bereits vor 11.09.2026.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "graz-west",
+      "name": "Hotel Steiermarkhof · Graz-Wetzelsdorf",
+      "checkIn": "2026-09-26",
+      "checkOut": "2026-09-27",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 117,
+      "sourceUrl": "https://www.booking.com/hotel/at/steiermarkhof.de.html?checkin=2026-09-26&checkout=2026-09-27&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Superior Doppelzimmer; Frühstück zusätzlich; kostenlose Stornierung vor 25.09.2026.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "ljubljana-ring",
+      "name": "Urban Ring Hotel · Ljubljana-Rudnik",
+      "checkIn": "2026-09-27",
+      "checkOut": "2026-09-28",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 109,
+      "sourceUrl": "https://www.booking.com/hotel/si/urban-ring.de.html?checkin=2026-09-27&checkout=2026-09-28&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Doppelzimmer mit Zustellbett, Belegung zwei Erwachsene; Frühstück; kostenlose Stornierung vor 24.09.2026.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "senj",
+      "name": "Zora · ruhiges Apartment in Senj",
+      "checkIn": "2026-09-28",
+      "checkOut": "2026-09-29",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 66,
+      "sourceUrl": "https://www.booking.com/hotel/hr/zora-senj.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Ganzes Apartment; kostenlose Stornierung vor 14.09.2026.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "zadar",
+      "name": "Adria Concept Boutique Apartments · Diklo",
+      "checkIn": "2026-09-29",
+      "checkOut": "2026-10-01",
+      "adults": 2,
+      "units": 1,
+      "status": "unavailable_on_linked_platform",
+      "displayedTotalCHF": null,
+      "sourceUrl": "https://www.booking.com/hotel/hr/adria-concept-boutique-apartments.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Booking zeigt für 29.09.–01.10.2026 keine verfügbaren Zimmer; sämtliche dargestellten Kategorien nicht verfügbar.",
+      "affectedDayNumbers": [
+        6,
+        8
+      ]
+    },
+    {
+      "id": "sibenik",
+      "name": "My Adriatic Place · Podsolarsko",
+      "checkIn": "2026-10-01",
+      "checkOut": "2026-10-03",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 214,
+      "sourceUrl": "https://www.booking.com/hotel/hr/my-adriatic-place.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Apartment mit einem Schlafzimmer. Angezeigter Mitgliederpreis: Erstattung durch Booking.com vor 27.09.2026; kein gewöhnlicher kostenloser Stornotarif. Nicht erstattbarer Tarif CHF 195.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "makarska-base",
+      "name": "Villa Pehar · ruhige Wohnung mit Meer- und Biokovo-Blick",
+      "checkIn": "2026-10-03",
+      "checkOut": "2026-10-06",
+      "adults": 2,
+      "units": 1,
+      "status": "unavailable_on_linked_platform",
+      "displayedTotalCHF": null,
+      "sourceUrl": "https://www.airbnb.ch/rooms/35830801?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+      "evidence": "Airbnb-Buchungsfeld: „Dieser Zeitraum ist nicht verfügbar“, bei 03.–06.10.2026 und zwei Gästen. Allgemeine Stornotexte sind trotzdem sichtbar und beweisen keine Buchbarkeit.",
+      "affectedDayNumbers": [
+        10,
+        13
+      ]
+    },
+    {
+      "id": "dubrovnik-lapad",
+      "name": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
+      "checkIn": "2026-10-06",
+      "checkOut": "2026-10-09",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 352,
+      "sourceUrl": "https://www.airbnb.ch/rooms/648206203313909249?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
+      "evidence": "OSCAR Suite; datiertes Angebot mit Gesamtpreis und Reservieren-Schaltfläche; kostenlose Stornierung vor 01.10.2026.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "kotor-dobrota",
+      "name": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
+      "checkIn": "2026-10-09",
+      "checkOut": "2026-10-13",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 359,
+      "sourceUrl": "https://www.airbnb.ch/rooms/906512978879018565?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2&locale=de",
+      "evidence": "Datiertes Angebot mit Gesamtpreis und Reservieren-Schaltfläche; kostenlose Stornierung vor 04.10.2026. Sichere Motorradabstellung weiterhin ungeklärt.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "ston-return",
+      "name": "Apartman I&M · Luka bei Ston · Meerblick und Küche",
+      "checkIn": "2026-10-13",
+      "checkOut": "2026-10-14",
+      "adults": 2,
+      "units": 1,
+      "status": "unavailable_on_linked_platform",
+      "displayedTotalCHF": null,
+      "sourceUrl": "https://www.booking.com/hotel/hr/i-amp-m.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Booking zeigt für 13.–14.10.2026 keine verfügbaren Zimmer; Apartment mit Meerblick nicht verfügbar.",
+      "affectedDayNumbers": [
+        20,
+        21
+      ]
+    },
+    {
+      "id": "urbino-country",
+      "name": "Casale di Nicolò · Appartamento Country",
+      "checkIn": "2026-10-15",
+      "checkOut": "2026-10-17",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 166,
+      "sourceUrl": "https://www.airbnb.ch/rooms/49005441?adults=2&check_in=2026-10-15&check_out=2026-10-17&locale=de",
+      "evidence": "Country-Apartment; datiertes Angebot mit Gesamtpreis und Reservieren-Schaltfläche; kostenlose Stornierung vor 14.10.2026.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "ravenna",
+      "name": "Grand Hotel Mattei · Ravenna-Nord",
+      "checkIn": "2026-10-17",
+      "checkOut": "2026-10-18",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 131,
+      "sourceUrl": "https://www.booking.com/hotel/it/holiday-inn-ravenna.de.html?checkin=2026-10-17&checkout=2026-10-18&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Doppelzimmer mit Frühstück, kostenlos stornierbar vor 15.10.2026. Günstigerer Tarif CHF 121 nicht kostenlos stornierbar.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "arqua-petrarca",
+      "name": "Agriturismo Giulio Fufo · Ferienwohnung",
+      "checkIn": "2026-10-18",
+      "checkOut": "2026-10-20",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 263,
+      "sourceUrl": "https://www.booking.com/hotel/it/agriturismo-giulio-fufo.de.html?checkin=2026-10-18&checkout=2026-10-20&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "45-m²-Apartment; kostenlos stornierbar vor 17.10.2026. Nicht erstattbarer Tarif CHF 237.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "iseo",
+      "name": "Ca’ Nildes · Ferienwohnung in Clusane",
+      "checkIn": "2026-10-20",
+      "checkOut": "2026-10-22",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 242,
+      "sourceUrl": "https://www.airbnb.ch/rooms/942578923582417304?adults=2&check_in=2026-10-20&check_out=2026-10-22&locale=de",
+      "evidence": "Ca’ Nildes; datiertes Angebot mit Gesamtpreis und Reservieren-Schaltfläche; kostenlose Stornierung vor 15.10.2026. Inserat nennt eine separat zu entrichtende Kurtaxe.",
+      "affectedDayNumbers": []
+    },
+    {
+      "id": "como-lazzago",
+      "name": "L’Antica Corte Lazzago · Como-Süd",
+      "checkIn": "2026-10-22",
+      "checkOut": "2026-10-23",
+      "adults": 2,
+      "units": 1,
+      "status": "available",
+      "displayedTotalCHF": 190,
+      "sourceUrl": "https://www.booking.com/hotel/it/l-39-antica-corte-lazzago.de.html?checkin=2026-10-22&checkout=2026-10-23&group_adults=2&no_rooms=1&group_children=0",
+      "evidence": "Superior Apartment; angezeigter Mitgliederpreis; kostenlose Stornierung vor 08.10.2026.",
+      "affectedDayNumbers": []
+    }
+  ],
+  "alternatives": [
+    {
+      "id": "zadar",
+      "status": "unavailable_on_linked_platform",
+      "displayedTotalCHF": null,
+      "evidence": "Booking: beide dargestellten Apartmentkategorien für 29.09.–01.10.2026 nicht verfügbar.",
+      "name": "Diklo – Modern 2 bedroom apartments",
+      "sourceUrl": "https://www.booking.com/hotel/hr/diklo-modern-2-bedroom-apartments.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+      "checkIn": "2026-09-29",
+      "checkOut": "2026-10-01",
+      "adults": 2
+    },
+    {
+      "id": "makarska-base",
+      "status": "available",
+      "displayedTotalCHF": 241.5,
+      "evidence": "Airbnb bietet für 03.–06.10.2026, zwei Gäste, den erstattungsfähigen Tarif CHF 241.50; kostenlose Stornierung vor 02.10.2026. Voreingestellt ist der nicht erstattungsfähige Tarif CHF 217.45 (nur anfängliches 24-Stunden-Fenster). Reservieren-Schaltfläche vorhanden.",
+      "name": "Der Blick · modernes Apartment mit zwei Schlafzimmern",
+      "sourceUrl": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+      "checkIn": "2026-10-03",
+      "checkOut": "2026-10-06",
+      "adults": 2
+    },
+    {
+      "id": "ston-return",
+      "status": "unavailable_on_linked_platform",
+      "displayedTotalCHF": null,
+      "evidence": "Booking: beide dargestellten Apartments für 13.–14.10.2026 nicht verfügbar.",
+      "name": "Apartmani Mirjana · Hodilje · Apartment ausserhalb von Ston",
+      "sourceUrl": "https://www.booking.com/hotel/hr/apartmani-mirjana-hodilje.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+      "checkIn": "2026-10-13",
+      "checkOut": "2026-10-14",
+      "adults": 2
+    }
+  ],
+  "routeImpact": [
+    {
+      "accommodationId": "zadar",
+      "days": [
+        {
+          "day": 6,
+          "id": "adria-6",
+          "title": "Senj – Karlobag – Starigrad – Zadar",
+          "origin": "44.9941346,14.9021456",
+          "destination": "44.1393374,15.2162747"
+        },
+        {
+          "day": 8,
+          "id": "adria-8",
+          "title": "Zadar – Biograd – Vodice – Šibenik",
+          "origin": "Adria Concept Boutique Apartments, Zadar",
+          "destination": "My Adriatic Place, Podsolarsko 136, Sibenik"
+        }
+      ],
+      "state": "Unterkunftsabhängige Start-/Zielpunkte müssen vor endgültiger Navigation ersetzt und erneut geprüft werden."
+    },
+    {
+      "accommodationId": "makarska-base",
+      "days": [
+        {
+          "day": 10,
+          "id": "adria-10",
+          "title": "Šibenik – Primošten – Trogir – Omiš – Makarska",
+          "origin": "My Adriatic Place, Podsolarsko 136, Sibenik",
+          "destination": "Villa Pehar, Makarska"
+        },
+        {
+          "day": 13,
+          "id": "adria-13",
+          "title": "Makarska – Drvenik – Pelješac-Brücke – Ston – Dubrovnik",
+          "origin": "Villa Pehar, Makarska",
+          "destination": "Hrvatskog Crvenog Kriza 10, Dubrovnik"
+        }
+      ],
+      "state": "Unterkunftsabhängige Start-/Zielpunkte müssen vor endgültiger Navigation ersetzt und erneut geprüft werden."
+    },
+    {
+      "accommodationId": "ston-return",
+      "days": [
+        {
+          "day": 20,
+          "id": "adria-20",
+          "title": "Kotor – Perast – Dubrovnik-Umfahrung – Ston",
+          "origin": "42.466333,18.764400",
+          "destination": "42.860800,17.681200"
+        },
+        {
+          "day": 21,
+          "id": "adria-21",
+          "title": "Ston – Pelješac-Brücke – Split / Nachtfähre nach Ancona",
+          "origin": "42.860800,17.681200",
+          "destination": "Ancona, Italy"
+        }
+      ],
+      "state": "Unterkunftsabhängige Start-/Zielpunkte müssen vor endgültiger Navigation ersetzt und erneut geprüft werden."
+    }
+  ]
+}

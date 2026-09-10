@@ -1,0 +1,553 @@
+{
+  "version": "2026-09-10T11:48:47.045Z",
+  "accommodations": [
+    {
+      "id": "innsbruck-mutters",
+      "title": "Innsbruck",
+      "startDate": "2026-09-24",
+      "endDate": "2026-09-25",
+      "currentFirstChoice": "Hotel dasMEI · Mutters",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/at/dasmei-medical-selfness.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Muttererhof · Mutters",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/at/muttererhof.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
+      "booking": "asked"
+    },
+    {
+      "id": "lienz",
+      "title": "Lienz",
+      "startDate": "2026-09-25",
+      "endDate": "2026-09-26",
+      "booking": "open",
+      "currentFirstChoice": "Hotel Holunderhof · Lienz",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/at/holunderhof.de.html?checkin=2026-09-25&checkout=2026-09-26&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Gasthof Schlossberghof · Lienz",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/at/gasthof-schlossberghof.de.html?checkin=2026-09-25&checkout=2026-09-26&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+    },
+    {
+      "id": "graz-west",
+      "title": "Graz",
+      "startDate": "2026-09-26",
+      "endDate": "2026-09-27",
+      "booking": "open",
+      "currentFirstChoice": "Hotel Steiermarkhof · Graz-Wetzelsdorf",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/at/steiermarkhof.de.html?checkin=2026-09-26&checkout=2026-09-27&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Hotel AT HOME · Graz-Südost",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/at/athome.de.html?checkin=2026-09-26&checkout=2026-09-27&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+    },
+    {
+      "id": "ljubljana-ring",
+      "title": "Ljubljana",
+      "startDate": "2026-09-27",
+      "endDate": "2026-09-28",
+      "booking": "open",
+      "currentFirstChoice": "Urban Ring Hotel · Ljubljana-Rudnik",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/si/urban-ring.de.html?checkin=2026-09-27&checkout=2026-09-28&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "B&B Pod vrbo · Ljubljana-Trnovo",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/si/guesthouse-pod-vrbo.de.html?checkin=2026-09-27&checkout=2026-09-28&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+    },
+    {
+      "id": "senj",
+      "title": "Senj",
+      "startDate": "2026-09-28",
+      "endDate": "2026-09-29",
+      "booking": "open",
+      "currentFirstChoice": "Zora · ruhiges Apartment in Senj",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/zora-senj.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Beautiful Sea View Studio Danijela · Senj",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/hr/apartment-barbic.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+    },
+    {
+      "id": "zadar",
+      "title": "Zadar",
+      "startDate": "2026-09-29",
+      "endDate": "2026-10-01",
+      "booking": "open",
+      "currentFirstChoice": "Adria Concept Boutique Apartments · Diklo",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/adria-concept-boutique-apartments.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Diklo – Modern 2 bedroom apartments",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/hr/diklo-modern-2-bedroom-apartments.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Erste Wahl: Garage laut Anbieter; Alternative: Privatparkplatz laut Inserat. Zugewiesenen Platz für zwei Maschinen schriftlich bestätigen lassen.",
+      "reviewedAt": "2026-09-03",
+      "motorcycleParking": "unknown",
+      "currentFirstChoiceNotes": "Wohnung in Diklo ausserhalb der Altstadt. Küche und Waschmaschine laut Anbieter; Garage für B4 beschrieben, nicht automatisch für jede Einheit. Am 03.09. für 29.09.–01.10. angezeigt: Standard-Erdgeschosswohnung, CHF 252 insgesamt, kostenlos stornierbar vor 22.09., ein Parkplatz inklusive. Garagenzuordnung und Waschmaschine dieser Einheit bestätigen.",
+      "currentAlternativeNotes": "Ganze Erdgeschosswohnung in Diklo mit Küche, Waschmaschine und privatem Parkplatz laut Inserat; keine Garage zugesichert. Am 03.09. für 29.09.–01.10. angezeigt: CHF 349 insgesamt, kostenlos stornierbar vor 15.09. Diese frühe Frist beachten; Platz für beide Motorräder bestätigen.",
+      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "reviewSources": [
+        "https://booking.adria-concept.com/rentals/apartment-zadar-adria-concept-boutique-apartments-b4-summer-glamou-414473.html"
+      ]
+    },
+    {
+      "id": "sibenik",
+      "title": "Šibenik",
+      "startDate": "2026-10-01",
+      "endDate": "2026-10-03",
+      "booking": "open",
+      "currentFirstChoice": "My Adriatic Place · Podsolarsko",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/my-adriatic-place.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Comfy apartment in a quiet neighborhood · Ražine",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/hr/comfy-apartment-in-a-queit-neighborhood.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Erste Wahl: Garage im Inserat genannt; Alternative: Privatparkplatz. Sichere Abstellung für zwei Maschinen noch schriftlich bestätigen lassen.",
+      "reviewedAt": "2026-09-03",
+      "motorcycleParking": "unknown",
+      "currentFirstChoiceNotes": "Erdgeschosswohnung mit Garten in Podsolarsko, ausserhalb des Zentrums. Küche und Waschmaschine laut Inserat; Garage für zwei Motorräder bestätigen. Am 03.09. für 01.–03.10. angezeigt: CHF 215 insgesamt als Mitgliederpreis, vollständig erstattbar durch Booking vor 27.09. Rabatt und Erstattungsbedingungen im eigenen Konto prüfen; kein gewöhnlicher kostenloser Stornotarif.",
+      "currentAlternativeNotes": "Ganze Erdgeschosswohnung mit Garten in Ražine, Danilska 45. Küche, Waschmaschine und privater Parkplatz laut Inserat. Ruhige Wohnlage statt Altstadt; keine abschliessbare Garage belegt. Am 03.09. für 01.–03.10. angezeigt: CHF 170 insgesamt, kostenlos stornierbar vor 30.09.",
+      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "reviewSources": [
+        "https://www.airbnb.com/rooms/50787604"
+      ]
+    },
+    {
+      "id": "makarska-base",
+      "title": "Makarska",
+      "startDate": "2026-10-03",
+      "endDate": "2026-10-06",
+      "booking": "open",
+      "currentFirstChoice": "Villa Pehar · ruhige Wohnung mit Meer- und Biokovo-Blick",
+      "currentFirstChoiceUrl": "https://www.airbnb.ch/rooms/35830801?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+      "currentAlternative": "Der Blick · modernes Apartment mit zwei Schlafzimmern",
+      "currentAlternativeUrl": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+      "parking": "Die private Abstellfläche vor der Buchung schriftlich für zwei Maschinen bestätigen lassen; eine Bewertung nennt teilweise öffentliche Plätze neben dem Haus.",
+      "reviewedAt": "2026-09-03",
+      "motorcycleParking": "unknown",
+      "currentFirstChoiceNotes": "Villa Pehar: Küche und Waschmaschine im Inserat, ruhige Lage und Dachgeschoss. Private Stellplätze werden genannt; eine Bewertung beschreibt weitere Plätze im öffentlichen Bereich. Exakten privaten Platz sichern. Am 03.09. für 03.–06.10. und zwei Erwachsene angezeigt: CHF 192 insgesamt, kostenlos stornierbar vor 28.09.; Momentaufnahme, keine Buchung.",
+      "currentAlternativeNotes": "Der Blick: Küche, eigene kostenlose Waschmaschine und ein Stellplatz auf dem Grundstück. Passt auch für eine Waschpause. Platz für zwei Motorräder und Steigung der Zufahrt klären. Am 03.09. für 03.–06.10. angezeigt: CHF 242 insgesamt, kostenlos stornierbar vor 02.10.; vollständige Frist mit Uhrzeit vor Buchung prüfen.",
+      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "reviewSources": []
+    },
+    {
+      "id": "dubrovnik-lapad",
+      "title": "Dubrovnik (Aussenbasis)",
+      "startDate": "2026-10-06",
+      "endDate": "2026-10-09",
+      "booking": "open",
+      "currentFirstChoice": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
+      "currentFirstChoiceUrl": "https://www.airbnb.ch/rooms/648206203313909249?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
+      "currentAlternative": "Miss Mia · Apartment mit Meerblick und Balkon",
+      "currentAlternativeUrl": "https://www.airbnb.ch/rooms/599181579397214439?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
+      "parking": "Den vorhandenen Innenstellplatz vor der Buchung schriftlich für zwei Maschinen bestätigen lassen",
+      "reviewedAt": "2026-09-03",
+      "motorcycleParking": "unknown",
+      "currentFirstChoiceNotes": "OSCAR Suite: Küche, eigene kostenlose Waschmaschine und ein Garagenstellplatz ausdrücklich im Inserat. Ruhige Wohnlage ausserhalb der Altstadt. Am 03.09. für 06.–09.10. und zwei Erwachsene angezeigt: CHF 352 insgesamt, kostenlos stornierbar vor 01.10. Beide Motorräder müssen auf den zugesagten Platz passen.",
+      "currentAlternativeNotes": "Miss Mia: Küche, Waschmaschine und privater Stellplatz am Haus, keine Garage belegt. Ausserhalb der Altstadt; laut Beschreibung 15–20 Minuten zu Fuss dorthin. Rangierfläche prüfen. Am 03.09. für 06.–09.10. angezeigt: CHF 393 insgesamt, kostenlos stornierbar vor 01.10.; keine Preis- oder Verfügbarkeitsgarantie.",
+      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "reviewSources": []
+    },
+    {
+      "id": "kotor-dobrota",
+      "title": "Kotor oder Perast",
+      "startDate": "2026-10-09",
+      "endDate": "2026-10-13",
+      "booking": "open",
+      "currentFirstChoice": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
+      "currentFirstChoiceUrl": "https://www.airbnb.ch/rooms/906512978879018565?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2&locale=de",
+      "currentAlternative": "Bright & Elegant Secret Vacation Home · Dobrota",
+      "currentAlternativeUrl": "https://www.airbnb.com/rooms/1138334092306069668?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2",
+      "parking": "Wunschwohnung: nur Strassenparkplätze im Inserat. Sichere Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen.",
+      "reviewedAt": "2026-09-03",
+      "motorcycleParking": "unknown",
+      "currentFirstChoiceNotes": "Euer Favorit bleibt erste Wahl: ganze Wohnung in Sveti Stasije/Dobrota, Küche und eigene kostenlose Waschmaschine. Wichtig: nur kostenlose Strassenparkplätze, kein gesicherter Privatplatz belegt; kein Rauchmelder aufgeführt. Am 03.09. für 09.–13.10. und zwei Erwachsene angezeigt: CHF 359 insgesamt, kostenlos stornierbar vor 04.10. Erst nach Klärung der Abstellung buchen.",
+      "currentAlternativeNotes": "Bright & Elegant: ganzes Studio mit Küche, eigener Waschmaschine und Trockenständer. Laut Gastgeber ruhige Wohnlage und beleuchteter Stellbereich am Haus, keine abschliessbare Garage belegt. Am 03.09. für 09.–13.10. angezeigt: erstattungsfähiger Tarif CHF 232.70 insgesamt, kostenlos stornierbar vor 04.10. Diesen Tarif wählen, nicht den voreingestellten nicht erstattbaren Tarif für CHF 214.90.",
+      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "reviewSources": []
+    },
+    {
+      "id": "ston-return",
+      "title": "Ston / Mali Ston",
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-14",
+      "booking": "open",
+      "currentFirstChoice": "Apartman I&M · Luka bei Ston · Meerblick und Küche",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/i-amp-m.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Apartmani Mirjana · Hodilje · Apartment ausserhalb von Ston",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/hr/apartmani-mirjana-hodilje.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Beide Inserate nennen private Parkplätze. Ebener, sicherer Stellplatz für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kandidaten, nicht gebucht: Verfügbarkeit für 13.–14.10., Mindestaufenthalt, Gesamtpreis und kostenlose Stornofrist noch offen; beide Adressen nennen den 2. Stock."
+    },
+    {
+      "id": "split-ancona-cabin",
+      "title": "Ancona",
+      "startDate": "2026-10-14",
+      "endDate": "2026-10-15",
+      "booking": "open",
+      "currentFirstChoice": "Aussenkabine auf der Nachtfähre Split–Ancona",
+      "currentFirstChoiceUrl": "https://www.jadrolinija.hr/de/reise-buchen",
+      "currentAlternative": "Innenkabine auf der Nachtfähre Split–Ancona",
+      "currentAlternativeUrl": "https://www.jadrolinija.hr/de/reise-buchen",
+      "parking": "Kabine und Plätze für zwei Maschinen am 22. September gemeinsam bestätigen"
+    },
+    {
+      "id": "urbino-country",
+      "title": "Urbino",
+      "startDate": "2026-10-15",
+      "endDate": "2026-10-17",
+      "booking": "open",
+      "currentFirstChoice": "Casale di Nicolò · Appartamento Country",
+      "currentFirstChoiceUrl": "https://www.airbnb.ch/rooms/49005441?adults=2&check_in=2026-10-15&check_out=2026-10-17&locale=de",
+      "currentAlternative": "Cà Maggetti · Ferienwohnung im Grünen",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/it/ca-39-maggetti.de.html?checkin=2026-10-15&checkout=2026-10-17&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Cà Maggetti nennt einen umzäunten Parkplatz. Bei Nicolò ist die sichere Abstellung ungeklärt. Platz für zwei Maschinen und asphaltierte Zufahrt schriftlich bestätigen lassen.",
+      "reviewedAt": "2026-09-03",
+      "motorcycleParking": "unknown",
+      "currentFirstChoiceNotes": "Country-Apartment für zwei Personen im Grünen: Erdgeschoss, Küche, eigene Waschmaschine und Garten. Am 03.09. bei Airbnb für 15.–17.10. angezeigt: CHF 166 insgesamt, kostenlos stornierbar vor 14.10. Deshalb erste Wahl. Parkplatz am Haus aufgeführt, sichere Abstellung noch bestätigen. Direktbuchung hat andere Bedingungen: Anzahlung nur auf späteren Aufenthalt anrechenbar.",
+      "currentAlternativeNotes": "Landgut ausserhalb Urbinos. Küche, Waschmaschine und umzäunter Parkplatz laut Anbieter. Am 03.09. für 15.–17.10. grosse 100-m²-Wohnung angezeigt: CHF 426 als Mitgliederpreis insgesamt, kostenlos stornierbar nur vor 15.09. Deutlich teurer und frühe Frist; vor Fährbestätigung keine nicht erstattbare Bindung eingehen. Kleinere Einheit separat anfragen.",
+      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "reviewSources": [
+        "https://camaggetti.vacation-bookings.com/",
+        "https://www.casaledinicolo.it/sistemazioni/appartamento-country/"
+      ]
+    },
+    {
+      "id": "ravenna",
+      "title": "Ravenna",
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-18",
+      "booking": "open",
+      "currentFirstChoice": "Grand Hotel Mattei · Ravenna-Nord",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/it/holiday-inn-ravenna.de.html?checkin=2026-10-17&checkout=2026-10-18&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Hotel Classicano · Ravenna-Süd",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/it/classicano.de.html?checkin=2026-10-17&checkout=2026-10-18&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+    },
+    {
+      "id": "arqua-petrarca",
+      "title": "Arquà Petrarca",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-20",
+      "booking": "open",
+      "currentFirstChoice": "Agriturismo Giulio Fufo · Ferienwohnung",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/it/agriturismo-giulio-fufo.de.html?checkin=2026-10-18&checkout=2026-10-20&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "Holiday House Petrarca · Ferienhaus im Olivenhain",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/it/holiday-house-petrarca-arqua-petrarca.de.html?checkin=2026-10-18&checkout=2026-10-20&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Beide nennen Privatparkplätze. Bei Petrarca steile Zufahrt laut Bewertung. Sichere Fläche für zwei Maschinen und asphaltierte Zufahrt schriftlich bestätigen lassen.",
+      "reviewedAt": "2026-09-03",
+      "motorcycleParking": "unknown",
+      "currentFirstChoiceNotes": "Ganze 45-m²-Wohnung mit Küche, Waschmaschine, Terrasse und Privatparkplatz laut Inserat. Via Scalette 2, laut Gastgeber etwa 500 m ausserhalb des historischen Zentrums. Am 03.09. für 18.–20.10. angezeigt: CHF 264 insgesamt, kostenlos stornierbar vor 17.10. Einfache Unterkunft; genaue Zufahrt und sichere Motorradabstellung bestätigen.",
+      "currentAlternativeNotes": "Eigenes Ferienhaus im Olivenhain mit Küche, Waschmaschine und Privatparkplatz. Am 03.09. bei Booking für 18.–20.10. und zwei Erwachsene angezeigt: grosses 200-m²-Haus, CHF 539 insgesamt, kostenlos stornierbar vor 16.10. Steile Anfahrt laut Bewertung: nur wählen, wenn asphaltierte Zufahrt und Rangieren auch bei Nässe passen. Nicht mit dem allgemeinen Villa-Couple-Ab-Preis verwechseln.",
+      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "reviewSources": [
+        "https://www.hhpetrarca.com/"
+      ]
+    },
+    {
+      "id": "iseo",
+      "title": "Lago d’Iseo",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-22",
+      "booking": "open",
+      "currentFirstChoice": "Ca’ Nildes · Ferienwohnung in Clusane",
+      "currentFirstChoiceUrl": "https://www.airbnb.ch/rooms/942578923582417304?adults=2&check_in=2026-10-20&check_out=2026-10-22&locale=de",
+      "currentAlternative": "Casa Monalba · Ferienwohnung in Predore",
+      "currentAlternativeUrl": "https://www.airbnb.ch/rooms/951224785764956985?adults=2&check_in=2026-10-20&check_out=2026-10-22&locale=de",
+      "parking": "Ca’ Nildes: Innenhof mit Tor und schmalem Stellplatz; Casa Monalba: private Garage laut Inserat. Eignung für zwei Maschinen schriftlich bestätigen lassen.",
+      "reviewedAt": "2026-09-03",
+      "motorcycleParking": "unknown",
+      "currentFirstChoiceNotes": "Erdgeschosswohnung in Clusane, nicht im Zentrum von Iseo: Küche, eigene Waschmaschine und Innenhofstellplatz hinter automatischem Tor. Laut Gastgeber nur 1,90 m Fahrzeugbreite vorgesehen; Platz und Rangieren für beide Motorräder bestätigen. Am 03.09. bei Airbnb für 20.–22.10. angezeigt: CHF 242 insgesamt, kostenlos stornierbar vor 15.10.; bei Booking für diese Daten nicht verfügbar.",
+      "currentAlternativeNotes": "Ganze Wohnung mit Seeblick, Küche, Waschmaschine, Garten und privater Garage laut Inserat. Ruhige Lage in Predore am Westufer. Am 03.09. bei Airbnb für 20.–22.10. angezeigt: CHF 282 insgesamt, kostenlos stornierbar vor 15.10. Bei Wahl dieser Alternative An- und Abfahrt auf Predore anpassen und prüfen; die vorhandene Tagesroute bleibt bis dahin bei Iseo.",
+      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "reviewSources": [
+        "https://visitlakeiseo.info/en/hotels/ca-nildes/",
+        "https://visitlakeiseo.info/ospitalita/casa-monalba/"
+      ]
+    },
+    {
+      "id": "como-lazzago",
+      "title": "Como",
+      "startDate": "2026-10-22",
+      "endDate": "2026-10-23",
+      "booking": "open",
+      "currentFirstChoice": "L’Antica Corte Lazzago · Como-Süd",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/it/l-39-antica-corte-lazzago.de.html?checkin=2026-10-22&checkout=2026-10-23&group_adults=2&no_rooms=1&group_children=0",
+      "currentAlternative": "SantAgata Bed & Breakfast · Como",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/it/santagata-bed-amp-breakfast.de.html?checkin=2026-10-22&checkout=2026-10-23&group_adults=2&no_rooms=1&group_children=0",
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+    }
+  ],
+  "trip": {
+    "id": "trip_adria_2026",
+    "name": "Adria & Balkan 2026",
+    "dataVersion": "2026-09-10T11:48:47.045Z",
+    "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
+    "characterText": "Durch das Pustertal und Drautal, mit einer Pause am Wörthersee, führt die Reise über Graz nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
+    "startDate": "2026-09-24",
+    "startPlace": "Berikon",
+    "endPlace": "Berikon",
+    "timezone": "Europe/Zurich",
+    "utcOffset": "+02:00",
+    "participantCount": 2,
+    "motorcycleCount": 2,
+    "routeGeometryUrl": "/assets/adria-routes.geojson",
+    "transportMatchers": [
+      "Fährtag",
+      "Nachtfähre.*Split.*Ancona",
+      "Nachtfähre nach Ancona"
+    ],
+    "capabilities": {
+      "storage": "local",
+      "fullReplanning": true,
+      "originalPlan": false,
+      "downloads": false,
+      "mapNarrativeSource": "stages"
+    },
+    "placeCoordinates": {
+      "Berikon": {
+        "latitude": 47.351,
+        "longitude": 8.372,
+        "countryCode": "CH"
+      },
+      "Innsbruck": {
+        "latitude": 47.269,
+        "longitude": 11.405,
+        "countryCode": "AT"
+      },
+      "Lienz": {
+        "latitude": 46.829,
+        "longitude": 12.769,
+        "countryCode": "AT"
+      },
+      "Graz": {
+        "latitude": 47.071,
+        "longitude": 15.439,
+        "countryCode": "AT"
+      },
+      "Ljubljana": {
+        "latitude": 46.056,
+        "longitude": 14.506,
+        "countryCode": "SI"
+      },
+      "Senj": {
+        "latitude": 44.989,
+        "longitude": 14.905,
+        "countryCode": "HR"
+      },
+      "Zadar": {
+        "latitude": 44.119,
+        "longitude": 15.232,
+        "countryCode": "HR"
+      },
+      "Šibenik": {
+        "latitude": 43.735,
+        "longitude": 15.895,
+        "countryCode": "HR"
+      },
+      "Makarska": {
+        "latitude": 43.296,
+        "longitude": 17.017,
+        "countryCode": "HR"
+      },
+      "Ston / Mali Ston": {
+        "latitude": 42.838,
+        "longitude": 17.697,
+        "countryCode": "HR"
+      },
+      "Dubrovnik (Aussenbasis)": {
+        "latitude": 42.651,
+        "longitude": 18.094,
+        "countryCode": "HR"
+      },
+      "Kotor oder Perast": {
+        "latitude": 42.486,
+        "longitude": 18.699,
+        "countryCode": "ME"
+      },
+      "Ancona": {
+        "latitude": 43.615,
+        "longitude": 13.51,
+        "countryCode": "IT"
+      },
+      "Urbino": {
+        "latitude": 43.726,
+        "longitude": 12.636,
+        "countryCode": "IT"
+      },
+      "Ravenna": {
+        "latitude": 44.418,
+        "longitude": 12.204,
+        "countryCode": "IT"
+      },
+      "Arquà Petrarca": {
+        "latitude": 45.27,
+        "longitude": 11.718,
+        "countryCode": "IT"
+      },
+      "Lago d’Iseo": {
+        "latitude": 45.659,
+        "longitude": 10.05,
+        "countryCode": "IT"
+      },
+      "Como": {
+        "latitude": 45.808,
+        "longitude": 9.086,
+        "countryCode": "IT"
+      }
+    },
+    "preferences": {
+      "routeStyle": "mixed",
+      "ridingRhythm": "slow",
+      "targetDailyRidingHours": 4,
+      "maxDailyRidingHours": 5,
+      "accommodationStyle": "Ab zwei Nächten bevorzugt ganze Ferienwohnung oder Ferienhaus mit eigener Küche und möglichst eigener Waschmaschine; ruhige Lage ausserhalb historischer Zentren, sichere Abstellung für zwei Motorräder. Airbnb oder Booking nach konkreten Tarifbedingungen wählen.",
+      "apartmentFromNights": 2,
+      "preferPrivateKitchen": true,
+      "preferWashingMachine": true,
+      "avoidHistoricCenters": true,
+      "flexibleCancellationPreferred": true,
+      "preferGoodWeather": true,
+      "asphaltOnly": true
+    },
+    "planningProfile": {
+      "countries": [
+        "Schweiz",
+        "Österreich",
+        "Italien",
+        "Slowenien",
+        "Kroatien",
+        "Montenegro"
+      ],
+      "routeConstraints": [
+        "Pro Fahrtag rund 4 Stunden reine Fahrzeit anstreben; 5 Stunden reine Fahrzeit sind die Obergrenze, kein tägliches Ziel.",
+        "Die angezeigte reine Fahrzeit stammt aus der gespeicherten Routenberechnung und wird auf volle Minuten gerundet. Keine pauschalen Zeitaufschläge und keine zusätzliche Berechnung von Pausen oder Gesamtunterwegszeiten. Grenzwartezeiten, Check-in und Überfahrt sind nicht Teil der Fahrzeit.",
+        "Nicht durch optimistisch verkürzte Zeitangaben passend rechnen: Überschreitungen offen melden und die Strecke vereinfachen. Übernachtungen oder Reisedaten nur nach Rücksprache verschieben.",
+        "Nockalmstraße und Murau gehören nicht mehr zum Fahrtag Lienz–Graz, auch nicht als zusätzliche Schönwettervariante.",
+        "Vier Nächte Montenegro sowie die vorhandenen Ruhetage erhalten. Rückweg am 13.10. nur bis Ston/Mali Ston, am 14.10. über Pelješac-Brücke und A1 zum Hafen Split. Keine zusätzliche Küstenrunde am Fährtag; Verbindliche Fähr- und Check-in-Termine beachten; Wartezeiten und Überfahrt nicht zur Fahrzeit zählen."
+      ],
+      "seasonalRisks": [
+        "spätherbstliches Alpenwetter am Arlberg, im Pustertal und auf der A2 im Bereich Pack",
+        "Bura an der Velebitküste und auf der D8",
+        "Stau im Korridor Trogir–Split–Makarska",
+        "Grenzwartezeiten Kroatien–Montenegro",
+        "saisonale Verkehrsanordnungen am Lovćen",
+        "fester Fahrplantag und begrenzte Motorradplätze auf der Fähre Split–Ancona; laut Reedereimeldung am 03.09. technischer Betriebsunterbruch bis 09.09.2026, Wiederaufnahme noch bestätigen",
+        "ZTL und Stadtverkehr in italienischen Altstädten",
+        "Oktoberwetter und Verkehr am Gotthard"
+      ]
+    },
+    "placeAliases": {
+      "Dubrovnik, Croatia": "Dubrovnik (Aussenbasis)",
+      "Kotor, Montenegro": "Kotor oder Perast"
+    },
+    "planningAlternatives": [
+      {
+        "id": "nightjet-feldkirch-graz",
+        "title": "Schlechtwetter-Alternative: Nightjet Feldkirch–Graz",
+        "status": "reserve",
+        "summary": "Bei einer ungünstigen Alpenlage können die Motorräder in Feldkirch verladen werden. Graz bleibt damit Ausgangspunkt für Slowenien, ohne die Hauptplanung über Lienz und den Wörthersee zu ersetzen.",
+        "replacesDays": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "steps": [
+          "Tag 1: Berikon–Feldkirch und Motorräder verladen",
+          "Über Nacht mit dem ÖBB Nightjet nach Graz",
+          "Am Folgetag Graz–Ljubljana",
+          "Die gewonnenen Tage bleiben als Wetter- und Slowenienpuffer; Anschluss an Tag 5 nach Senj"
+        ],
+        "decision": "Etwa 5–7 Tage vor Abreise anhand Alpenprognose und verfügbarer Motorradplätze entscheiden.",
+        "sourceUrl": "https://www.nightjet.com/de/angebote/automotorrad"
+      },
+      {
+        "id": "split-ancona-ferry-watch",
+        "title": "Fährkontrolle: Split–Ancona",
+        "status": "watch",
+        "summary": "Die Abfahrt am 14. Oktober steht im offiziellen Fahrplan. Die am 03.09. gelesene Reedereimeldung nennt einen technischen Unterbruch bis 09.09.2026. Wiederaufnahme und Verfügbarkeit sind noch zu bestätigen; die Oktoberfahrt ist nicht als operativ gesichert markiert.",
+        "replacesDays": [
+          21
+        ],
+        "steps": [
+          "Am 22. September offizielle Wiederaufnahme der Linie 53 kontrollieren",
+          "Verfügbarkeit für zwei Personen, zwei Motorräder und eine Kabine prüfen",
+          "Erst danach die Fähre verbindlich als gebucht markieren",
+          "Falls die Linie nicht wieder aufgenommen wird, Rückweg ab Split über Slowenien und Norditalien neu planen"
+        ],
+        "decision": "Kontrolltermin 22.09.2026; bis dahin nur flexibel stornierbare Unterkünfte buchen.",
+        "sourceUrl": "https://www.jadrolinija.hr/en/news/linije-u-prekidu_2"
+      }
+    ],
+    "fixPoints": [
+      {
+        "id": "fix_adria_start",
+        "kind": "start",
+        "title": "Start in Berikon",
+        "place": "Berikon",
+        "startsAt": "2026-09-24T08:00:00+02:00",
+        "locks": [
+          "date",
+          "origin"
+        ],
+        "source": "draft"
+      },
+      {
+        "id": "fix_adria_ferry_split_ancona",
+        "kind": "transport",
+        "title": "Nachtfähre Split → Ancona",
+        "stageDay": 21,
+        "place": "Split",
+        "startsAt": "2026-10-14T20:00:00+02:00",
+        "endsAt": "2026-10-15T07:00:00+02:00",
+        "locks": [
+          "date",
+          "time",
+          "place",
+          "stage",
+          "route"
+        ],
+        "source": "official-timetable"
+      },
+      {
+        "id": "fix_adria_end",
+        "kind": "end",
+        "title": "Rückkehr nach Berikon",
+        "place": "Berikon",
+        "startsAt": "2026-10-23T18:00:00+02:00",
+        "locks": [
+          "date",
+          "destination",
+          "overnight"
+        ],
+        "source": "draft"
+      }
+    ],
+    "narrativeSegments": [
+      {
+        "title": "Über die Alpen nach Slowenien.",
+        "text": "Über Arlberg und Pustertal nach Lienz, dann durchs Drautal mit Seepause am Wörthersee nach Graz. Ljubljana bekommt eine eigene Nacht; die Nockalm entfällt zugunsten kürzerer Fahrtage.",
+        "fromDay": 1,
+        "toDay": 5,
+        "mapGroup": 0
+      },
+      {
+        "title": "Dalmatien ohne Eile.",
+        "text": "Ab Senj folgt die Reise der D8. Zadar, Šibenik und Makarska werden zu echten Basen statt blossen Übernachtungsorten.",
+        "fromDay": 6,
+        "toDay": 12,
+        "mapGroup": 1
+      },
+      {
+        "title": "Dubrovnik und die Bucht von Kotor.",
+        "text": "Der südliche Schwerpunkt bleibt unangetastet: Dubrovnik erhält drei, Kotor und Perast vier Nächte.",
+        "fromDay": 13,
+        "toDay": 19,
+        "mapGroup": 2
+      },
+      {
+        "title": "Mit der Nachtfähre über die Adria.",
+        "text": "Von Kotor geht es entspannt bis Ston, mit einer Nacht in der Umgebung von Mali Ston. Am nächsten Tag führen Pelješac-Brücke und Autobahn mit Zeitreserve zum Hafen Split; über Nacht geht es nach Ancona.",
+        "fromDay": 20,
+        "toDay": 21,
+        "mapGroup": 3
+      },
+      {
+        "title": "Durch die Marken und Norditalien nach Hause.",
+        "text": "Furlo, Urbino, Ravenna, die Colli Euganei und der Lago d’Iseo bilden einen eigenständigen Rückweg bis Como und durch den Gotthardtunnel.",
+        "fromDay": 22,
+        "toDay": 30,
+        "mapGroup": 4
+      }
+    ]
+  }
+}

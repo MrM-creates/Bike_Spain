@@ -6,3 +6,5 @@ tests/
 scripts/
 *.md
 companion/
+
+accommodation-audit/
