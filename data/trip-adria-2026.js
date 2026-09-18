@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-18T07:26:11.786Z",
+  "publishedVersion": "2026-09-18T08:44:15.869Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1051,7 +1051,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "km": "ca. 111 km plus Nachtfähre",
       "time": "ca. 1 h 59",
       "points": "41.446792,19.706222",
-      "note": "Reine Fahrzeit an Land: ca. 1 h 59.\n\nVon der Wohnung auf der SH1 über Lezhë und Milot, dann bewusst auf der mautpflichtigen A1 Thumanë–Kashar und der SH2 nach Durrës. Kein Abstecher nach Tirana oder Kruja. Der Wegpunkt liegt direkt auf der südlichen Autobahnfahrbahn. Ziel ist die Fahrzeugzufahrt Tor 4 bei der Dajlani-Brücke, nicht die Reederei-Stadtagentur und nicht ein Fussgängertor. Innerhalb des kontrollierten Hafens der Beschilderung und den Einweisern folgen.\n\nFeste Planung: Adria Ferries / AF MIA, 14.10. 19:00 bis 15.10. 11:30. Spätestens 16:00 am Hafen einplanen (mindestens drei Stunden vor Abfahrt); Check-in schliesst laut Reederei eine Stunde vorher. Nach dem Checkout am Vormittag losfahren, keine weitere Besichtigung fest einplanen. Verbindlich sind Ticket und aktuelle Reedereiangaben. Check-in, Wartezeiten und die Überfahrt zählen nicht zur reinen Fahrzeit. Google Maps endet an Land; die Seelinie ist schematisch. Preisprüfung am 18.09.: EUR 362 für zwei Personen, zwei Motorräder und exklusive Zweibett-Aussenkabine mit WC / Dusche. Noch nicht gebucht.",
+      "note": "Reine Fahrzeit an Land: ca. 1 h 59.\n\nVon der Wohnung auf der SH1 über Lezhë und Milot, dann bewusst auf der mautpflichtigen A1 Thumanë–Kashar und der SH2 nach Durrës. Kein Abstecher nach Tirana oder Kruja. Der Wegpunkt liegt direkt auf der südlichen Autobahnfahrbahn. Ziel ist die Fahrzeugzufahrt Tor 4 bei der Dajlani-Brücke, nicht die Reederei-Stadtagentur und nicht ein Fussgängertor. Innerhalb des kontrollierten Hafens der Beschilderung und den Einweisern folgen.\n\nGebuchte Überfahrt: Adria Ferries / AF MIA, 14.10. 19:00 bis 15.10. 11:30. Spätestens 16:00 am Hafen einplanen (mindestens drei Stunden vor Abfahrt); Check-in schliesst laut Reederei eine Stunde vorher. Nach dem Checkout am Vormittag losfahren, keine weitere Besichtigung fest einplanen. Verbindlich sind Ticket und aktuelle Reedereiangaben. Check-in, Wartezeiten und die Überfahrt zählen nicht zur reinen Fahrzeit. Google Maps endet an Land; die Seelinie ist schematisch. Preisprüfung am 18.09.: EUR 362 für zwei Personen, zwei Motorräder und exklusive Zweibett-Aussenkabine mit WC / Dusche. Buchung am 18.09.2026 vom Nutzer als bestätigt gemeldet.",
       "main": "https://www.google.com/maps/dir/?api=1&origin=42.07142304764%2C19.513024609089&destination=41.3167417%2C19.4654539&travelmode=driving&waypoints=41.446792%2C19.706222",
       "status": "planned"
     },
@@ -1444,13 +1444,13 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "title": "Ancona",
       "startDate": "2026-10-14",
       "endDate": "2026-10-15",
-      "booking": "open",
+      "booking": "booked",
       "currentFirstChoice": "Adria Ferries AF MIA · exklusive Zweibett-Aussenkabine",
       "currentFirstChoiceUrl": "https://booking.adriaferries.com/?language=en",
       "currentAlternative": "Innenkabine auf derselben Abfahrt · Preis/Verfügbarkeit offen",
       "currentAlternativeUrl": "https://booking.adriaferries.com/?language=en",
-      "parking": "Zwei Motorräder im Fahrzeugdeck; zusammen mit der Kabine buchen. Keine separate Motorradreservierung erfolgt.",
-      "currentFirstChoiceNotes": "Durrës 14.10. 19: 00 → Ancona 15.10. 11: 30. Am 18.09. im offiziellen System geprüft: EUR 362 gesamt für 2 Erwachsene, 2 MOTO/SCOOTER und exklusive Aussenkabine mit 2 Etagenbetten, WC / Dusche. Noch kein Ticket gekauft. Nutzer akzeptiert als persönliches Änderungsrisiko maximalen Verlust von EUR 362; keine Zusage über Erstattung.",
+      "parking": "Zwei Motorräder im Fahrzeugdeck zusammen mit der Kabine gebucht; Buchung am 18.09.2026 vom Nutzer als bestätigt gemeldet.",
+      "currentFirstChoiceNotes": "Gebucht und bestätigt laut Nutzer am 18.09.2026: Durrës 14.10. 19:00 → Ancona 15.10. 11:30, Adria Ferries / AF MIA. Vorbereitete und im offiziellen Checkout geprüfte Auswahl: EUR 362 gesamt für 2 Erwachsene, 2 MOTO/SCOOTER und exklusive Aussenkabine mit 2 Etagenbetten, WC / Dusche. Buchungsbestätigung liegt dem Nutzer vor; Buchungsnummer und persönliche Ticketdaten sind nicht im gemeinsamen Plan hinterlegt.",
       "currentAlternativeNotes": "Nur Ausweichkategorie bei gleicher Überfahrt; kein konkreter Tarif geprüft.",
       "reviewedAt": "2026-09-18",
       "reviewSources": [
@@ -1548,7 +1548,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-18T07:26:11.786Z",
+    "dataVersion": "2026-09-18T08:44:15.869Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
@@ -1710,7 +1710,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "Stau im Korridor Trogir–Split–Makarska",
         "Grenzwartezeiten Kroatien–Montenegro",
         "saisonale Verkehrsanordnungen am Lovćen",
-        "Feste Fähre Durrës–Ancona, Ticket und zwei Motorradplätze noch nicht gebucht; Check-in und Tagesbetrieb kontrollieren.",
+        "Fähre Durrës–Ancona mit Kabine und zwei Motorradplätzen gebucht und bestätigt; Check-in und Tagesbetrieb vor Abfahrt kontrollieren.",
         "ZTL und Stadtverkehr in italienischen Altstädten",
         "Oktoberwetter und Verkehr am Gotthard",
         "Baustelle Tivat–Jaz; aktuelle Asphaltbefahrbarkeit prüfen",
@@ -1771,7 +1771,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "stage",
           "route"
         ],
-        "source": "official-booking-system-checked-not-booked"
+        "source": "user-confirmed-booking"
       },
       {
         "id": "fix_adria_end",

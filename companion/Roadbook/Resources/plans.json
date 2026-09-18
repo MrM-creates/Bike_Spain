@@ -4,7 +4,7 @@
     {
       "id": "trip_adria_2026",
       "name": "Adria & Balkan 2026",
-      "version": "2026-09-18T07:26:11.786Z",
+      "version": "2026-09-18T08:44:15.869Z",
       "status": "Veröffentlichter Reiseplan",
       "startDate": "2026-09-24",
       "endDate": "2026-10-23",
@@ -47,7 +47,7 @@
           "accommodation": {
             "id": "innsbruck-mutters",
             "booking": "booked",
-            "bookingRevision": "07fad9699ab8241c7e960e90b87d21c3a884e9b2449400057c43d2167fbb0f77",
+            "bookingRevision": "d06b610a3caf0b95b2075ece288ae21bd37cca54bb374bed3948a0db3693f982",
             "bookingContext": "d9f3644346cb080adfe12b05d22afc4261052e08c31932b0b1b3f370c5a02172",
             "startDate": "2026-09-24",
             "endDate": "2026-09-25",
@@ -30710,7 +30710,7 @@
           "accommodation": {
             "id": "lienz",
             "booking": "open",
-            "bookingRevision": "164a8e03b30a25b0bba7295aa7632b2724eb00c885dea5e4cf29b05d736437f2",
+            "bookingRevision": "65baa1e6d66a0a94a9a0f297ba8fd9132249029b5033e815868a45343b98a848",
             "bookingContext": "7356ba90391d25b2f4c0336fa5d8208efb515626ac1c80c19f05e31c9ae37ed0",
             "startDate": "2026-09-25",
             "endDate": "2026-09-26",
@@ -51541,7 +51541,7 @@
           "accommodation": {
             "id": "graz-west",
             "booking": "open",
-            "bookingRevision": "eaf1f310bcce988f7b5d5adb60882cb6bfc4bcccfceeedd84def8ed168f539d1",
+            "bookingRevision": "96f57db85438cf0781b041f236b82cf0d4176e98243709b3e437cbd5a0db1379",
             "bookingContext": "14bf948b8d5aa0944e93a483e120058bb220ef4a3002f8b1f778f2cf90ef3b67",
             "startDate": "2026-09-26",
             "endDate": "2026-09-27",
@@ -72476,7 +72476,7 @@
           "accommodation": {
             "id": "ljubljana-ring",
             "booking": "open",
-            "bookingRevision": "63e2ce8f7f9036d92f0d48bbf94d61cfd2189d7dff9c7f941d3abc8655411b21",
+            "bookingRevision": "c0e1c4ddd915abf8e01609d722508ee8a12b71e65d9d94d786dd08e624eaad3e",
             "bookingContext": "910cefeca27ee99e69dcaff470018d6f16b64a4ef395e9ba32f367a5940aaacf",
             "startDate": "2026-09-27",
             "endDate": "2026-09-28",
@@ -82191,7 +82191,7 @@
           "accommodation": {
             "id": "senj",
             "booking": "open",
-            "bookingRevision": "14a122c60d38660bab10fa8e74dd86299f229e1595a901ae8aaca94918afec12",
+            "bookingRevision": "ac4c934d8e1e5481b0b957bea2b239ffacb17ef5728c5fd81ab17867efc193ad",
             "bookingContext": "e97ce31c5a8ad42bbab7d671f4df28a76983fc278117cb70d4b0e5ba0dd466d1",
             "startDate": "2026-09-28",
             "endDate": "2026-09-29",
@@ -101674,7 +101674,7 @@
           "accommodation": {
             "id": "zadar",
             "booking": "open",
-            "bookingRevision": "e932e3b3d0cdb2f85592a71cb079d95b96467782a4a1baed3798bfd56b069543",
+            "bookingRevision": "dea814001e068e7b8bbf431e577617ace4ca5a94b3ef7dbe506d1a2976d5a339",
             "bookingContext": "02f52990082bc2fdd98b1712938f5885bf7b73c4a241ea13d31fa3060b47971a",
             "startDate": "2026-09-29",
             "endDate": "2026-10-01",
@@ -122469,7 +122469,7 @@
           "accommodation": {
             "id": "zadar",
             "booking": "open",
-            "bookingRevision": "e932e3b3d0cdb2f85592a71cb079d95b96467782a4a1baed3798bfd56b069543",
+            "bookingRevision": "dea814001e068e7b8bbf431e577617ace4ca5a94b3ef7dbe506d1a2976d5a339",
             "bookingContext": "02f52990082bc2fdd98b1712938f5885bf7b73c4a241ea13d31fa3060b47971a",
             "startDate": "2026-09-29",
             "endDate": "2026-10-01",
@@ -122514,7 +122514,7 @@
           "accommodation": {
             "id": "sibenik",
             "booking": "open",
-            "bookingRevision": "f2d4a4e96290b1671e54e94103f7402104193675eb1ac8afa664c5c23bd8810b",
+            "bookingRevision": "e83bb8dc91afd195b39928965a86f8ed3eb3b0ba8a74f05ddff3b747fb248747",
             "bookingContext": "8545d12b08c34db29361f0e97e5e563d7655a70266741ad087edda9955ced7fe",
             "startDate": "2026-10-01",
             "endDate": "2026-10-03",
@@ -130233,7 +130233,7 @@
           "accommodation": {
             "id": "sibenik",
             "booking": "open",
-            "bookingRevision": "f2d4a4e96290b1671e54e94103f7402104193675eb1ac8afa664c5c23bd8810b",
+            "bookingRevision": "e83bb8dc91afd195b39928965a86f8ed3eb3b0ba8a74f05ddff3b747fb248747",
             "bookingContext": "8545d12b08c34db29361f0e97e5e563d7655a70266741ad087edda9955ced7fe",
             "startDate": "2026-10-01",
             "endDate": "2026-10-03",
@@ -130278,7 +130278,7 @@
           "accommodation": {
             "id": "makarska-base",
             "booking": "open",
-            "bookingRevision": "b3ccd8c4db0b11454f009b8a9fb707ad0c2539abdc9837ff0b66df4b7434f954",
+            "bookingRevision": "0ba5beb858c78ac38fb48e348a10994abb7b24b47eacb586a1cb1f8f2aa45b77",
             "bookingContext": "f0f034b64ce5486bbdc1e5a61d9d4922c91581f2ca358116b362ee138ce2347a",
             "startDate": "2026-10-03",
             "endDate": "2026-10-06",
@@ -147185,7 +147185,7 @@
           "accommodation": {
             "id": "makarska-base",
             "booking": "open",
-            "bookingRevision": "b3ccd8c4db0b11454f009b8a9fb707ad0c2539abdc9837ff0b66df4b7434f954",
+            "bookingRevision": "0ba5beb858c78ac38fb48e348a10994abb7b24b47eacb586a1cb1f8f2aa45b77",
             "bookingContext": "f0f034b64ce5486bbdc1e5a61d9d4922c91581f2ca358116b362ee138ce2347a",
             "startDate": "2026-10-03",
             "endDate": "2026-10-06",
@@ -147230,7 +147230,7 @@
           "accommodation": {
             "id": "makarska-base",
             "booking": "open",
-            "bookingRevision": "b3ccd8c4db0b11454f009b8a9fb707ad0c2539abdc9837ff0b66df4b7434f954",
+            "bookingRevision": "0ba5beb858c78ac38fb48e348a10994abb7b24b47eacb586a1cb1f8f2aa45b77",
             "bookingContext": "f0f034b64ce5486bbdc1e5a61d9d4922c91581f2ca358116b362ee138ce2347a",
             "startDate": "2026-10-03",
             "endDate": "2026-10-06",
@@ -147275,7 +147275,7 @@
           "accommodation": {
             "id": "dubrovnik-lapad",
             "booking": "open",
-            "bookingRevision": "8bfb62578d30e05295d981079cfc3852d2d3d2028b2c3d227cd89b7b47c3606d",
+            "bookingRevision": "da7c19ac3a2c23e25d649a4a55e638e430feec1909ede8faea6afccf92915948",
             "bookingContext": "38399288cb359facd7a7b53ad90fbb35d5b5d6f552cf2280f5dae4b052d47e3e",
             "startDate": "2026-10-06",
             "endDate": "2026-10-09",
@@ -165798,7 +165798,7 @@
           "accommodation": {
             "id": "dubrovnik-lapad",
             "booking": "open",
-            "bookingRevision": "8bfb62578d30e05295d981079cfc3852d2d3d2028b2c3d227cd89b7b47c3606d",
+            "bookingRevision": "da7c19ac3a2c23e25d649a4a55e638e430feec1909ede8faea6afccf92915948",
             "bookingContext": "38399288cb359facd7a7b53ad90fbb35d5b5d6f552cf2280f5dae4b052d47e3e",
             "startDate": "2026-10-06",
             "endDate": "2026-10-09",
@@ -165843,7 +165843,7 @@
           "accommodation": {
             "id": "dubrovnik-lapad",
             "booking": "open",
-            "bookingRevision": "8bfb62578d30e05295d981079cfc3852d2d3d2028b2c3d227cd89b7b47c3606d",
+            "bookingRevision": "da7c19ac3a2c23e25d649a4a55e638e430feec1909ede8faea6afccf92915948",
             "bookingContext": "38399288cb359facd7a7b53ad90fbb35d5b5d6f552cf2280f5dae4b052d47e3e",
             "startDate": "2026-10-06",
             "endDate": "2026-10-09",
@@ -165888,7 +165888,7 @@
           "accommodation": {
             "id": "kotor-dobrota",
             "booking": "open",
-            "bookingRevision": "ee0251222c2dc32f08afe1c0b89eceddb1a5c1367a638d551191847a64132061",
+            "bookingRevision": "67195757e8c701b9fec5de323ef2ea0f88b1813005c426f6171bde495bd71c4b",
             "bookingContext": "a61ec4ebf1d22a01cbc33c47f575e59d3c17f70404677a152a6a421d462feeee",
             "startDate": "2026-10-09",
             "endDate": "2026-10-12",
@@ -184151,7 +184151,7 @@
           "accommodation": {
             "id": "kotor-dobrota",
             "booking": "open",
-            "bookingRevision": "ee0251222c2dc32f08afe1c0b89eceddb1a5c1367a638d551191847a64132061",
+            "bookingRevision": "67195757e8c701b9fec5de323ef2ea0f88b1813005c426f6171bde495bd71c4b",
             "bookingContext": "a61ec4ebf1d22a01cbc33c47f575e59d3c17f70404677a152a6a421d462feeee",
             "startDate": "2026-10-09",
             "endDate": "2026-10-12",
@@ -184196,7 +184196,7 @@
           "accommodation": {
             "id": "kotor-dobrota",
             "booking": "open",
-            "bookingRevision": "ee0251222c2dc32f08afe1c0b89eceddb1a5c1367a638d551191847a64132061",
+            "bookingRevision": "67195757e8c701b9fec5de323ef2ea0f88b1813005c426f6171bde495bd71c4b",
             "bookingContext": "a61ec4ebf1d22a01cbc33c47f575e59d3c17f70404677a152a6a421d462feeee",
             "startDate": "2026-10-09",
             "endDate": "2026-10-12",
@@ -184241,7 +184241,7 @@
           "accommodation": {
             "id": "shkoder",
             "booking": "open",
-            "bookingRevision": "246284b26d5bee63576da32292e0d9a2a03fadc35ef35e63844ab35e1d9d92be",
+            "bookingRevision": "545a8958c36c2c58eae11fdbcc7863d27e2a5b743207b988ba197473cb6fe1a2",
             "bookingContext": "4a2f969291d3d79e0f4c78c5d96b9789368ac14701338ca9b518e358a9240470",
             "startDate": "2026-10-12",
             "endDate": "2026-10-14",
@@ -219152,7 +219152,7 @@
           "accommodation": {
             "id": "shkoder",
             "booking": "open",
-            "bookingRevision": "246284b26d5bee63576da32292e0d9a2a03fadc35ef35e63844ab35e1d9d92be",
+            "bookingRevision": "545a8958c36c2c58eae11fdbcc7863d27e2a5b743207b988ba197473cb6fe1a2",
             "bookingContext": "4a2f969291d3d79e0f4c78c5d96b9789368ac14701338ca9b518e358a9240470",
             "startDate": "2026-10-12",
             "endDate": "2026-10-14",
@@ -219192,28 +219192,28 @@
           "duration": "ca. 1 h 59",
           "overnight": "Ancona",
           "roads": "Rruga Lekë Dukagjini · SH1 · Lezhë · Milot · A1 Thumanë–Kashar · SH2 · Dajlani · Fahrzeugtor 4",
-          "notes": "Reine Fahrzeit an Land: ca. 1 h 59.\n\nVon der Wohnung auf der SH1 über Lezhë und Milot, dann bewusst auf der mautpflichtigen A1 Thumanë–Kashar und der SH2 nach Durrës. Kein Abstecher nach Tirana oder Kruja. Der Wegpunkt liegt direkt auf der südlichen Autobahnfahrbahn. Ziel ist die Fahrzeugzufahrt Tor 4 bei der Dajlani-Brücke, nicht die Reederei-Stadtagentur und nicht ein Fussgängertor. Innerhalb des kontrollierten Hafens der Beschilderung und den Einweisern folgen.\n\nFeste Planung: Adria Ferries / AF MIA, 14.10. 19:00 bis 15.10. 11:30. Spätestens 16:00 am Hafen einplanen (mindestens drei Stunden vor Abfahrt); Check-in schliesst laut Reederei eine Stunde vorher. Nach dem Checkout am Vormittag losfahren, keine weitere Besichtigung fest einplanen. Verbindlich sind Ticket und aktuelle Reedereiangaben. Check-in, Wartezeiten und die Überfahrt zählen nicht zur reinen Fahrzeit. Google Maps endet an Land; die Seelinie ist schematisch. Preisprüfung am 18.09.: EUR 362 für zwei Personen, zwei Motorräder und exklusive Zweibett-Aussenkabine mit WC / Dusche. Noch nicht gebucht.",
+          "notes": "Reine Fahrzeit an Land: ca. 1 h 59.\n\nVon der Wohnung auf der SH1 über Lezhë und Milot, dann bewusst auf der mautpflichtigen A1 Thumanë–Kashar und der SH2 nach Durrës. Kein Abstecher nach Tirana oder Kruja. Der Wegpunkt liegt direkt auf der südlichen Autobahnfahrbahn. Ziel ist die Fahrzeugzufahrt Tor 4 bei der Dajlani-Brücke, nicht die Reederei-Stadtagentur und nicht ein Fussgängertor. Innerhalb des kontrollierten Hafens der Beschilderung und den Einweisern folgen.\n\nGebuchte Überfahrt: Adria Ferries / AF MIA, 14.10. 19:00 bis 15.10. 11:30. Spätestens 16:00 am Hafen einplanen (mindestens drei Stunden vor Abfahrt); Check-in schliesst laut Reederei eine Stunde vorher. Nach dem Checkout am Vormittag losfahren, keine weitere Besichtigung fest einplanen. Verbindlich sind Ticket und aktuelle Reedereiangaben. Check-in, Wartezeiten und die Überfahrt zählen nicht zur reinen Fahrzeit. Google Maps endet an Land; die Seelinie ist schematisch. Preisprüfung am 18.09.: EUR 362 für zwei Personen, zwei Motorräder und exklusive Zweibett-Aussenkabine mit WC / Dusche. Buchung am 18.09.2026 vom Nutzer als bestätigt gemeldet.",
           "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=42.07142304764%2C19.513024609089&destination=41.3167417%2C19.4654539&travelmode=driving&waypoints=41.446792%2C19.706222",
           "accommodation": {
             "id": "durres-ancona-cabin",
-            "booking": "open",
-            "bookingRevision": "5e22cbc1cffeee095033bfb966f454030092dd8972782746851d9bbdd20c656c",
+            "booking": "booked",
+            "bookingRevision": "eef765c58a9f1c7f30f1bdb3f7e911c88e272ccd62d8176ac1b81f3f83eb958c",
             "bookingContext": "551e2a729192b7391704201c4420052f0004fd7178480f1d40d36e047e78e72a",
             "startDate": "2026-10-14",
             "endDate": "2026-10-15",
             "bookingEditable": false,
-            "status": "Offen",
+            "status": "Gebucht",
             "first": {
               "name": "Adria Ferries AF MIA · exklusive Zweibett-Aussenkabine",
               "url": "https://booking.adriaferries.com/?language=en",
-              "note": "Durrës 14.10. 19: 00 → Ancona 15.10. 11: 30. Am 18.09. im offiziellen System geprüft: EUR 362 gesamt für 2 Erwachsene, 2 MOTO/SCOOTER und exklusive Aussenkabine mit 2 Etagenbetten, WC / Dusche. Noch kein Ticket gekauft. Nutzer akzeptiert als persönliches Änderungsrisiko maximalen Verlust von EUR 362; keine Zusage über Erstattung."
+              "note": "Gebucht und bestätigt laut Nutzer am 18.09.2026: Durrës 14.10. 19:00 → Ancona 15.10. 11:30, Adria Ferries / AF MIA. Vorbereitete und im offiziellen Checkout geprüfte Auswahl: EUR 362 gesamt für 2 Erwachsene, 2 MOTO/SCOOTER und exklusive Aussenkabine mit 2 Etagenbetten, WC / Dusche. Buchungsbestätigung liegt dem Nutzer vor; Buchungsnummer und persönliche Ticketdaten sind nicht im gemeinsamen Plan hinterlegt."
             },
             "alternative": {
               "name": "Innenkabine auf derselben Abfahrt · Preis/Verfügbarkeit offen",
               "url": "https://booking.adriaferries.com/?language=en",
               "note": "Nur Ausweichkategorie bei gleicher Überfahrt; kein konkreter Tarif geprüft."
             },
-            "notes": "Zwei Motorräder im Fahrzeugdeck; zusammen mit der Kabine buchen. Keine separate Motorradreservierung erfolgt."
+            "notes": "Zwei Motorräder im Fahrzeugdeck zusammen mit der Kabine gebucht; Buchung am 18.09.2026 vom Nutzer als bestätigt gemeldet."
           },
           "map": {
             "lines": [
@@ -227109,7 +227109,7 @@
           "accommodation": {
             "id": "urbino-country",
             "booking": "open",
-            "bookingRevision": "580e680b44d987a37ccfc656451246654a4265568e5d874ee8b0e927248abf6d",
+            "bookingRevision": "bdeaeb3591566cf493ef255e904eb7d427e342a8ab6adbdd691ac8d7ab86a2cf",
             "bookingContext": "1ba4922f472bee5743bf27722e48c127b062f6427abadc4b6bafaacdb0e018d3",
             "startDate": "2026-10-15",
             "endDate": "2026-10-17",
@@ -233372,7 +233372,7 @@
           "accommodation": {
             "id": "urbino-country",
             "booking": "open",
-            "bookingRevision": "580e680b44d987a37ccfc656451246654a4265568e5d874ee8b0e927248abf6d",
+            "bookingRevision": "bdeaeb3591566cf493ef255e904eb7d427e342a8ab6adbdd691ac8d7ab86a2cf",
             "bookingContext": "1ba4922f472bee5743bf27722e48c127b062f6427abadc4b6bafaacdb0e018d3",
             "startDate": "2026-10-15",
             "endDate": "2026-10-17",
@@ -233429,7 +233429,7 @@
           "accommodation": {
             "id": "ravenna",
             "booking": "open",
-            "bookingRevision": "890ff24180d90ced1c8142db84e8c6ff729f19fbb1a1a54be087958b4e3af7fd",
+            "bookingRevision": "3248f6921b5e1c6c6cd73ffa0708a2ba2a628f98900c2e02c4e3b58829f68ad1",
             "bookingContext": "9dfc2136907130d0e1edd7d0bb6f2f16cb3347d7df81c3d8ef887c8b382627b5",
             "startDate": "2026-10-17",
             "endDate": "2026-10-18",
@@ -249640,7 +249640,7 @@
           "accommodation": {
             "id": "arqua-petrarca",
             "booking": "open",
-            "bookingRevision": "82a7665c3041e74be738b539592cd905e2cf1851a97666682cf3ab6d908072c4",
+            "bookingRevision": "73cfd8323e7a76381b47c3ca4ef7a96bc34a74291db4bbf4cc11e13e86af1af2",
             "bookingContext": "2384ff8b0ea08a40d4db01679e351d8bb116a7112612dc10ce64c2988c1d8c48",
             "startDate": "2026-10-18",
             "endDate": "2026-10-20",
@@ -261963,7 +261963,7 @@
           "accommodation": {
             "id": "arqua-petrarca",
             "booking": "open",
-            "bookingRevision": "82a7665c3041e74be738b539592cd905e2cf1851a97666682cf3ab6d908072c4",
+            "bookingRevision": "73cfd8323e7a76381b47c3ca4ef7a96bc34a74291db4bbf4cc11e13e86af1af2",
             "bookingContext": "2384ff8b0ea08a40d4db01679e351d8bb116a7112612dc10ce64c2988c1d8c48",
             "startDate": "2026-10-18",
             "endDate": "2026-10-20",
@@ -262008,7 +262008,7 @@
           "accommodation": {
             "id": "iseo",
             "booking": "open",
-            "bookingRevision": "e90cb8042a5678d5a1f643eeb277d2ef391cd2cbbcf75f9929dce05d8d666559",
+            "bookingRevision": "a7425c43c1134f7c9a0cecfdd1749e03d99600678c98025eb48c634fadcaebab",
             "bookingContext": "7412236b25e1d16a775422334f8cb0fabe29583fb762851b04b8c01a7d799740",
             "startDate": "2026-10-20",
             "endDate": "2026-10-22",
@@ -275951,7 +275951,7 @@
           "accommodation": {
             "id": "iseo",
             "booking": "open",
-            "bookingRevision": "e90cb8042a5678d5a1f643eeb277d2ef391cd2cbbcf75f9929dce05d8d666559",
+            "bookingRevision": "a7425c43c1134f7c9a0cecfdd1749e03d99600678c98025eb48c634fadcaebab",
             "bookingContext": "7412236b25e1d16a775422334f8cb0fabe29583fb762851b04b8c01a7d799740",
             "startDate": "2026-10-20",
             "endDate": "2026-10-22",
@@ -275996,7 +275996,7 @@
           "accommodation": {
             "id": "como-lazzago",
             "booking": "open",
-            "bookingRevision": "ac5ee27407aaef0a79288e8aa693fceea12b65b267bf2dba7a04be60f90f337f",
+            "bookingRevision": "3955a3f57e82ecf350e3995a0c57a11ecabfb2df0eb3cddfdc433206fa455620",
             "bookingContext": "21cd3e477c09d596683e01e62aafa7a49345a858661457a1e2cd91b84f6e15e3",
             "startDate": "2026-10-22",
             "endDate": "2026-10-23",
