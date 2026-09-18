@@ -1,6 +1,18 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { companionFeed, tripForCompanion } = require('../lib/companion-feed');
+test('description and itinerary use the same published source as the planning overview', () => {
+  const { readPublishedTrip, tripTarget } = require('../lib/published-trips');
+  const fs = require('node:fs');
+  const path = require('node:path');
+  for (const trip of companionFeed().trips) {
+    const source = readPublishedTrip(fs.readFileSync(path.join(__dirname, '..', tripTarget(trip.id).path), 'utf8'), trip.id);
+    assert.equal(trip.description, source.trip.characterText || '');
+    assert.deepEqual(trip.narrativeSegments, (source.trip.narrativeSegments || source.narrativeSegments || []).map(({title, text}) => ({title, text})));
+  }
+  const snapshot = { trip: { id: 'test', name: 'test', startDate: '2026-01-01' }, days: [{id:'day-1'}] };
+  assert.deepEqual(tripForCompanion(snapshot).narrativeSegments, []);
+});
 test('read-only companion contains both trips and preserves stable stage IDs', () => {
   const feed = companionFeed();
   assert.equal(feed.schemaVersion, 1);

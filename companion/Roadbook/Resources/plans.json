@@ -9,6 +9,28 @@
       "startDate": "2026-09-24",
       "endDate": "2026-10-23",
       "description": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
+      "narrativeSegments": [
+        {
+          "title": "Über die Alpen nach Slowenien.",
+          "text": "Über Arlberg und Pustertal nach Lienz, dann durchs Drautal mit Seepause am Wörthersee nach Graz. Ljubljana bekommt eine eigene Nacht; die Nockalm entfällt zugunsten kürzerer Fahrtage."
+        },
+        {
+          "title": "Dalmatien ohne Eile.",
+          "text": "Ab Senj folgt die Reise der D8. Zadar, Šibenik und Makarska werden zu echten Basen statt blossen Übernachtungsorten."
+        },
+        {
+          "title": "Dubrovnik und die Bucht von Kotor.",
+          "text": "Drei Nächte Dubrovnik und drei Nächte an der Bucht von Kotor lassen Zeit für die südliche Adria."
+        },
+        {
+          "title": "Zwei Nächte Albanien und über die Adria.",
+          "text": "Über die Küstenhauptstrasse nach Shkodër mit einem ganzen freien Tag. Danach direkt zum Fahrzeugtor in Durrës und mit der Nachtfähre nach Ancona."
+        },
+        {
+          "title": "Durch die Marken und Norditalien nach Hause.",
+          "text": "Von Ancona direkt nach Urbino. Ravenna, die Colli Euganei, der Lago d’Iseo und Como bleiben vor dem Rückweg durch den Gotthardtunnel."
+        }
+      ],
       "days": [
         {
           "id": "adria-1",
@@ -303835,6 +303857,24 @@
       "startDate": "2026-09-24",
       "endDate": "2026-10-23",
       "description": "Eine ausgedehnte Motorradreise von den Westalpen über Südfrankreich bis nach Andalusien. Kurvige Berg- und Küstenstraßen wechseln sich mit entspannten Ruhetagen ab; die gebuchte Fähre von Barcelona nach Genua setzt den festen Schlusspunkt in Spanien.",
+      "narrativeSegments": [
+        {
+          "title": "Über die Alpen in den Süden.",
+          "text": "Von Berikon geht es über Grenoble und die Route Napoléon durch die Provence bis an die katalanische Küste."
+        },
+        {
+          "title": "Zwischen Küste und Hinterland.",
+          "text": "Priorat, Albarracín, La Patacona, die Costa Blanca und Águilas verbinden kurvige Fahrtage mit bewussten Pausen am Meer."
+        },
+        {
+          "title": "Andalusische Höhepunkte.",
+          "text": "Von Águilas führt die Reise nach Monachil; die Alpujarras, Ronda und die weißen Dörfer bilden den südlichen Schwerpunkt."
+        },
+        {
+          "title": "Über das Inland zurück zur Fähre.",
+          "text": "Úbeda, Cuenca und Zaragoza führen zurück nach Castelldefels. Die gebuchte Fähre nach Genua bleibt der geschützte Fixpunkt für den Heimweg."
+        }
+      ],
       "days": [
         {
           "id": "day-1",
