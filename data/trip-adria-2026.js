@@ -1,6 +1,6 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-18T05:36:13.700Z",
-  "planKind": "published",
+  "publishedVersion": "2026-09-18T07:26:11.786Z",
+  "planKind": "adjusted",
   "originalDays": [
     {
       "id": "adria-1",
@@ -995,14 +995,37 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
     {
       "id": "adria-19",
       "day": 19,
-      "title": "Kotor / Wetter- und Entscheidungstag",
+      "title": "Kotor – Budva – Bar – Ulcinj – Shkodër",
+      "type": "Küstenfahrt / Albanien",
+      "overnight": "Shkodër",
+      "origin": "42.466333,18.764400",
+      "destination": "42.07142304764,19.513024609089",
+      "waypoints": [
+        "42.285903,18.811442",
+        "41.936187,19.220266",
+        "42.064946,19.508881"
+      ],
+      "roads": "M1/E65/E80 · Vrmac-Tunnel · Budva · Petrovac · Bar · M1/E851 · Ulcinj-Aussenrand · Sukobin–Muriqan · SH41 · SH1 · Rruga Studenti · Rruga Lekë Dukagjini",
+      "routeStyle": "scenic",
+      "rest": false,
+      "km": "ca. 133 km",
+      "time": "ca. 3 h 12",
+      "points": "42.285903,18.811442 · 41.936187,19.220266 · 42.064946,19.508881",
+      "note": "Reine Fahrzeit: ca. 3 h 12.\n\nNach drei Nächten an der Bucht weiter nach Albanien. Über den Vrmac-Tunnel und die Küstenhauptstrasse bei Budva und Petrovac nach Bar, am Rand von Ulcinj auf der M1 zum Grenzübergang Sukobin–Muriqan. Die Zwischenpunkte halten die Route auf der Hauptstrasse und vermeiden Topliški Put sowie die Abkürzung über Kamenički most. Keine Lovćen-Bergstrecke und keine Altstadtzufahrt in Ulcinj. Pause nur an einem legalen Parkplatz, nicht an den Wegpunkten auf der Durchgangsstrasse. Grenzwartezeit ist nicht Teil der Fahrzeit.\n\nTivat–Jaz ist ein Baustellenkorridor: vor Abfahrt AMSCG und lokale Auskunft zu Befahrbarkeit/Belag prüfen. Es liegt keine Freigabe für den 12.10. vor; keine unbefestigte Baustellenumfahrung improvisieren. In Albanien aufmerksam und defensiv fahren. Ziel ist der veröffentlichte Kartenmarker der All Seasons Apartments; genaue Toreinfahrt und zwei Motorradplätze mit der Unterkunft klären. Start bleibt der bisherige öffentliche Strassenanker Sveti Stasije bei der gewünschten Kotor-Unterkunft; die private Hauszufahrt bleibt zu klären.",
+      "main": "https://www.google.com/maps/dir/?api=1&origin=42.466333%2C18.764400&destination=42.07142304764%2C19.513024609089&travelmode=driving&waypoints=42.285903%2C18.811442%7C41.936187%2C19.220266%7C42.064946%2C19.508881",
+      "status": "planned"
+    },
+    {
+      "id": "adria-20",
+      "day": 20,
+      "title": "Shkodër / freier Tag",
       "type": "Ruhetag / Basis",
-      "overnight": "Kotor oder Perast",
+      "overnight": "Shkodër",
       "km": "",
       "time": "",
       "roads": "Keine feste Fahrroute",
-      "points": "Erholung · Wetterreserve · kurzer Ausflug optional",
-      "note": "Lovćen nur trocken, windarm und nach Tagesprüfung. Keine spontane Hin-und-zurück-Fahrt; alternativ ein weiterer ruhiger Tag an der Bucht.",
+      "points": "Altstadt zu Fuss · Café · Rozafa optional · Wäsche und Erholung",
+      "note": "Ein voller Tag in Albanien ohne Unterkunftswechsel. Durch die Fussgängerzone schlendern und Zeit für Kaffee, Wäsche und Erholung lassen. Rozafa bei gutem Wetter optional zu Fuss bzw. mit Taxi-Zubringer; keine Motorradnavigation in Burgzufahrt oder Fussgängerzone. Ein Besuch am See bleibt eine spontane Option, keine zusätzliche Pflichtetappe. Am Abend Fährunterlagen und Abfahrt für den nächsten Tag prüfen.",
       "rest": true,
       "origin": "",
       "destination": "",
@@ -1010,73 +1033,48 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "status": "planned"
     },
     {
-      "id": "adria-20",
-      "day": 20,
-      "title": "Kotor – Perast – Dubrovnik-Umfahrung – Ston",
-      "type": "Rückfahrt zur Fähre",
-      "overnight": "Ston / Mali Ston",
-      "km": "ca. 141 km",
-      "time": "ca. 3 h 06",
-      "roads": "E65/E80/M1 · Karasovići · D8/Jadranska Magistrala · D414 · Hodilje",
-      "points": "42.486779,18.699843 · Karasovici Border Crossing",
-      "note": "Reine Fahrzeit: ca. 3 h 06.\n\nNach vier vollen Nächten Montenegro rund um die Bucht auf der Hauptstrasse oberhalb von Perast, ohne Kamenari-Fähre. Über Karasovići und die D8 an Dubrovnik vorbei, ohne Altstadtzufahrt, bis Ston. Die Grenzwartezeit ist nicht Teil der berechneten Fahrzeit. Ziel ist Apartments Ivanka in Hodilje 118, am veröffentlichten Booking-Kartenmarker. Am Fahrtag AMSCG und HAK für Strassen, Wind und Grenze kontrollieren.\n\nDer Start verwendet denselben öffentlichen Strassenanker in Sveti Stasije.",
-      "rest": false,
-      "origin": "42.466333,18.764400",
-      "destination": "42.8546860,17.6900870",
-      "waypoints": [
-        "42.486779,18.699843",
-        "Karasovici Border Crossing"
-      ],
-      "main": "https://www.google.com/maps/dir/?api=1&origin=42.466333%2C18.764400&destination=42.8546860%2C17.6900870&travelmode=driving&waypoints=42.486779%2C18.699843%7CKarasovici+Border+Crossing",
-      "status": "planned",
-      "routeStyle": "scenic"
-    },
-    {
       "id": "adria-21",
       "day": 21,
-      "title": "Ston – Pelješac-Brücke – Split / Nachtfähre nach Ancona",
+      "title": "Shkodër – Durrës / Nachtfähre nach Ancona",
       "type": "Fährtag",
       "overnight": "Ancona",
-      "km": "ca. 185 km plus Nachtfähre",
-      "time": "ca. 2 h 27",
-      "roads": "Hodilje · D414 · D8 · Pelješki most · D8 · D425 · A1/E65 · D1 · D8/Jadranska Magistrala · Zbora narodne garde · Poljička · Kralja Zvonimira · Gat Svetog Duje",
-      "points": "42.885330,17.579727 · 43.590818,16.571883",
-      "note": "Reine Fahrzeit an Land: ca. 2 h 27.\n\nÜber die Pelješac-Brücke ohne Neum-Transit und ab Karamatići bewusst auf der A1 bis Dugopolje, dann zum Hafen Split. Check-in und Überfahrt sind nicht Teil der berechneten Fahrzeit an Land. Morgens losfahren, am frühen Nachmittag ankommen; keine zusätzliche Küstenrunde. Check-in spätestens 18:00 als Planwert, verbindlich gelten Ticket und Reederei. Geplant: Abfahrt 14.10. um 20:00, Ankunft 15.10. um 07:00. Die Kartenlinie folgt an Land den Strassen; die Seeverbindung ist schematisch, der Google-Maps-Link endet am Hafen Split. Jadrolinija nennt am 03.09. einen technischen Unterbruch bis 09.09.2026; Wiederaufnahme, Kabine und zwei Motorradplätze am 22.09. bestätigen. Nicht gebucht und noch nicht operativ gesichert.\n\nDie Navigation endet an der öffentlichen Hafenstrasse Gat Svetog Duje. Fahrzeugspur und Liegeplatz richten sich nach Ticket und Beschilderung vor Ort.\n\nStart bei Apartments Ivanka, Hodilje 118, am selben Kartenpunkt wie die Ankunft.",
-      "rest": false,
-      "origin": "42.8546860,17.6900870",
+      "origin": "42.07142304764,19.513024609089",
       "destination": "Ancona, Italy",
       "waypoints": [
-        "42.885330,17.579727",
-        "43.590818,16.571883",
-        "Gat Svetog Duje, Split"
+        "41.446792,19.706222",
+        "41.3167417,19.4654539"
       ],
-      "main": "https://www.google.com/maps/dir/?api=1&origin=42.8546860%2C17.6900870&destination=Gat+Svetog+Duje%2C+Split&travelmode=driving&waypoints=42.885330%2C17.579727%7C43.590818%2C16.571883",
-      "status": "planned",
+      "roads": "Rruga Lekë Dukagjini · SH1 · Lezhë · Milot · A1 Thumanë–Kashar · SH2 · Dajlani · Fahrzeugtor 4",
       "routeStyle": "direct",
-      "roadApproach": true
+      "roadApproach": true,
+      "rest": false,
+      "km": "ca. 111 km plus Nachtfähre",
+      "time": "ca. 1 h 59",
+      "points": "41.446792,19.706222",
+      "note": "Reine Fahrzeit an Land: ca. 1 h 59.\n\nVon der Wohnung auf der SH1 über Lezhë und Milot, dann bewusst auf der mautpflichtigen A1 Thumanë–Kashar und der SH2 nach Durrës. Kein Abstecher nach Tirana oder Kruja. Der Wegpunkt liegt direkt auf der südlichen Autobahnfahrbahn. Ziel ist die Fahrzeugzufahrt Tor 4 bei der Dajlani-Brücke, nicht die Reederei-Stadtagentur und nicht ein Fussgängertor. Innerhalb des kontrollierten Hafens der Beschilderung und den Einweisern folgen.\n\nFeste Planung: Adria Ferries / AF MIA, 14.10. 19:00 bis 15.10. 11:30. Spätestens 16:00 am Hafen einplanen (mindestens drei Stunden vor Abfahrt); Check-in schliesst laut Reederei eine Stunde vorher. Nach dem Checkout am Vormittag losfahren, keine weitere Besichtigung fest einplanen. Verbindlich sind Ticket und aktuelle Reedereiangaben. Check-in, Wartezeiten und die Überfahrt zählen nicht zur reinen Fahrzeit. Google Maps endet an Land; die Seelinie ist schematisch. Preisprüfung am 18.09.: EUR 362 für zwei Personen, zwei Motorräder und exklusive Zweibett-Aussenkabine mit WC / Dusche. Noch nicht gebucht.",
+      "main": "https://www.google.com/maps/dir/?api=1&origin=42.07142304764%2C19.513024609089&destination=41.3167417%2C19.4654539&travelmode=driving&waypoints=41.446792%2C19.706222",
+      "status": "planned"
     },
     {
       "id": "adria-22",
       "day": 22,
-      "title": "Ancona – Fano – Furlo-Schlucht – Urbino",
-      "type": "Italien / Genussfahrt",
+      "title": "Ancona – Urbino direkt",
+      "type": "Italien / direkte Weiterfahrt",
       "overnight": "Urbino",
-      "km": "ca. 112 km",
-      "time": "ca. 1 h 51",
-      "roads": "Banchina Giovanni da Chio/Nazario Sauro · Scalo Vittorio Emanuele · Via dell’Appannaggio · Via XXIX Settembre · Via Guglielmo Marconi · Via Flaminia · Via Conca · SS16 · SS76 · A14 · SS73bis · SS3/Calmazzo · alte Via Flaminia/Furlo · SP43 · Via Metauro · Borzaga/SS73bis · Via dei Molinelli · Via San Marino",
-      "points": "43.614775,13.383244 · 43.646917,12.726267 · 43.668461,12.649920",
-      "note": "Reine Fahrzeit: ca. 1 h 51.\n\nNach der Ausschiffung zunächst bewusst rund 40 km A14 bis zum Anschluss Fano, ohne Altstadtdurchfahrt. Danach zur alten Via Flaminia: die Kartenlinie durchquert die Furlo-Schlucht von der Calmazzo-Seite nach Furlo und führt über die SP43 Richtung Fermignano/Urbino. Kein Abstecher auf die Bergstrasse Furlo Monte. Die Ausschiffung ist nicht Teil der berechneten Fahrzeit. Die offizielle Öffnungsmeldung stammt von 2022 und bestätigt den Reisetag nicht: vor der Fahrt bei der Reservatsverwaltung prüfen. Nur bei freigegebener, trockener Strasse durchfahren. Bei Sperre oder schlechtem Wetter Furlo auslassen und ab Fano auf SS73bis über Fossombrone Richtung Urbino bleiben, keine Bergumfahrung suchen. Start und Ziel sind vorläufige Ortsanker; genaue Hafen- und Unterkunftszufahrt ausserhalb der ZTL noch separat prüfen.\n\nStart ist die öffentliche Strasse bei Porta Pia nach der Ausschiffung. Die tatsächliche Hafenausfahrt richtet sich nach der Ankunftsspur.",
-      "rest": false,
       "origin": "Porta Pia, Ancona",
       "destination": "Il Casale di Nicolo, Via San Marino 11, Urbino",
       "waypoints": [
-        "43.614775,13.383244",
-        "43.646917,12.726267",
-        "43.668461,12.649920"
+        "43.668116,13.297034"
       ],
-      "main": "https://www.google.com/maps/dir/?api=1&origin=Porta+Pia%2C+Ancona&destination=Il+Casale+di+Nicolo%2C+Via+San+Marino+11%2C+Urbino&travelmode=driving&waypoints=43.614775%2C13.383244%7C43.646917%2C12.726267%7C43.668461%2C12.649920",
-      "status": "planned",
-      "routeStyle": "scenic"
+      "roads": "Porta Pia · Via Enrico Mattei · Via Flaminia · Via Conca · SS16 · SS76 · A14 bis Fano · SS73bis über Fossombrone · Via dei Molinelli · Via San Marino",
+      "routeStyle": "direct",
+      "rest": false,
+      "km": "ca. 94 km",
+      "time": "ca. 1 h 22",
+      "points": "43.668116,13.297034",
+      "note": "Reine Fahrzeit: ca. 1 h 22.\n\nNach der planmässigen Fährankunft um 11:30 direkt zur bestehenden Unterkunft Casale di Nicolò bei Urbino. Auf der A14 bis zum Anschluss Fano, dann SS73bis über Fossombrone Richtung Urbino und zur Unterkunft ausserhalb der Altstadt. Keine Furlo-Schlucht und keine Fano-Besichtigung. Der Ruhetag in Urbino am 16.10. bleibt. Ausschiffung und Grenzkontrollen kommen zur Ankunftszeit hinzu und zählen nicht zur Fahrzeit. Start ist der öffentliche Strassenanker bei Porta Pia; die tatsächliche kontrollierte Hafenausfahrt folgt der Einweisung vor Ort. Die letzte Haus- und Parkplatzanfahrt bleibt mit dem Gastgeber abzugleichen.",
+      "main": "https://www.google.com/maps/dir/?api=1&origin=Porta+Pia%2C+Ancona&destination=Il+Casale+di+Nicolo%2C+Via+San+Marino+11%2C+Urbino&travelmode=driving&waypoints=43.668116%2C13.297034",
+      "status": "planned"
     },
     {
       "id": "adria-23",
@@ -1406,52 +1404,59 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "id": "kotor-dobrota",
       "title": "Kotor oder Perast",
       "startDate": "2026-10-09",
-      "endDate": "2026-10-13",
+      "endDate": "2026-10-12",
       "booking": "open",
       "currentFirstChoice": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
       "currentFirstChoiceUrl": "https://www.airbnb.ch/rooms/906512978879018565?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2&locale=de",
       "currentAlternative": "Bright & Elegant Secret Vacation Home · Dobrota",
-      "currentAlternativeUrl": "https://www.airbnb.com/rooms/1138334092306069668?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2",
+      "currentAlternativeUrl": "https://www.airbnb.com/rooms/1138334092306069668?check_in=2026-10-09&check_out=2026-10-12&guests=2&adults=2",
       "parking": "Wunschwohnung: nur Strassenparkplätze im Inserat. Sichere Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen.",
-      "reviewedAt": "2026-09-03",
+      "reviewedAt": "2026-09-18",
       "motorcycleParking": "unknown",
-      "currentFirstChoiceNotes": "Euer Favorit bleibt erste Wahl: ganze Wohnung in Sveti Stasije/Dobrota, Küche und eigene kostenlose Waschmaschine. Wichtig: nur kostenlose Strassenparkplätze, kein gesicherter Privatplatz belegt; kein Rauchmelder aufgeführt. Am 03.09. für 09.–13.10. und zwei Erwachsene angezeigt: CHF 359 insgesamt, kostenlos stornierbar vor 04.10. Erst nach Klärung der Abstellung buchen.",
-      "currentAlternativeNotes": "Bright & Elegant: ganzes Studio mit Küche, eigener Waschmaschine und Trockenständer. Laut Gastgeber ruhige Wohnlage und beleuchteter Stellbereich am Haus, keine abschliessbare Garage belegt. Am 03.09. für 09.–13.10. angezeigt: erstattungsfähiger Tarif CHF 232.70 insgesamt, kostenlos stornierbar vor 04.10. Diesen Tarif wählen, nicht den voreingestellten nicht erstattbaren Tarif für CHF 214.90.",
-      "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
+      "currentFirstChoiceNotes": "Derzeit nicht verfügbar: Airbnb zeigte am 18.09. sowohl 09.–12.10. als auch 09.–13.10. als nicht buchbar. Nutzer bestätigt: noch nicht gebucht. Wunschwohnung wegen der Aussicht als Wunsch erhalten; keine gesicherte Unterkunft. Vier Nächte buchen und nach drei Nächten abreisen löst die fehlende Verfügbarkeit derzeit nicht. Historischer Preis CHF 359 vom 03.09. für vier Nächte ist kein aktuelles Angebot. Küche und eigene Waschmaschine; nur Strassenparkplatz, gesicherter Motorradplatz nicht bestätigt.",
+      "currentAlternativeNotes": "Nur Reserve, kein geplanter Wechsel: Bright & Elegant mit Küche, eigener Waschmaschine und Stellbereich. Für 09.–12.10. am 18.09. verfügbar angezeigt: erstattungsfähiger Tarif CHF 196.10 insgesamt, kostenlose Stornierung vor 04.10. Sichere Abstellung und genaue Zufahrt nicht bestätigt.",
+      "reviewNote": "Aufenthalt 09.–12.10., drei Nächte. Wunschwohnung derzeit nicht verfügbar, auch nicht für 09.–13.10.; laut Nutzer noch nicht gebucht. Alternative bleibt Reserve. Öffentlicher Routenanker Sveti Stasije ist vorläufig: nach Wahl einer anderen Unterkunft Ankunft und Abfahrt sowie private Hauszufahrt anpassen. Keine Buchung oder Nachricht vorgenommen.",
       "reviewSources": []
     },
     {
-      "id": "ston-return",
-      "title": "Ston / Mali Ston",
-      "startDate": "2026-10-13",
+      "id": "shkoder",
+      "title": "Shkodër",
+      "startDate": "2026-10-12",
       "endDate": "2026-10-14",
       "booking": "open",
-      "currentFirstChoice": "Apartments Ivanka · Hodilje",
-      "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/apartments-ivanka-ston1.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
-      "currentAlternative": "Hotel Ostrea · Mali Ston",
-      "currentAlternativeUrl": "https://www.booking.com/hotel/hr/ostrea.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
-      "parking": "Privatparkplatz laut Inserat; sicherer Platz für zwei beladene Motorräder und geeignete Einfahrt nicht verbindlich bestätigt.",
-      "currentFirstChoiceNotes": "Adresse: Hodilje 118, Ston, Croatia. Deluxe Doppelzimmer mit Balkon, 20 m²; keine Ferienwohnung/Küche zugesagt. Kostenloser Privatparkplatz; Kühlschrank und Balkon im Zimmer. Ruhiger Übernachtungsort ausserhalb der Altstadt. Pool laut Kleingedrucktem am Reisetermin geschlossen. Am 10.09.2026 für 2026-10-13 bis 2026-10-14 und zwei Erwachsene verfügbar angezeigt: CHF 66 insgesamt, kostenlos stornierbar vor 2026-10-06. Momentaufnahme, nicht gebucht.",
-      "currentAlternativeNotes": "Adresse: Obala dr. Ante Starčevića 9, Mali Ston, Croatia. Economy Doppelzimmer mit Frühstück. Parkplätze am Hotel, Lage am Wasser neben dem historischen Kern; Anfahrt muss zum Hotelparkplatz führen. Hotelquelle: https://www.ostrea.hr/hotel-ostrea/ Am 10.09.2026: CHF 181 insgesamt für zwei Erwachsene, kostenlos stornierbar vor 2026-10-10.",
-      "reviewedAt": "2026-09-10",
+      "currentFirstChoice": "All Seasons Apartments · 2-Schlafzimmer-Wohnung",
+      "currentFirstChoiceUrl": "https://www.booking.com/hotel/al/all-seasons-apartment-1.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF",
+      "currentAlternative": "RIRA’s apartment · 1-Schlafzimmer-Wohnung",
+      "currentAlternativeUrl": "https://www.booking.com/hotel/al/riras-apartment.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF",
+      "parking": "All Seasons: Privatparkplatz und Gästebewertung über Motorräder im abgeschlossenen Innenhof. Zwei reservierte Plätze und asphaltierte Einfahrt noch bestätigen.",
+      "reviewedAt": "2026-09-18",
       "motorcycleParking": "unknown",
-      "reviewNote": "Am 10.09.2026 für die Reisedaten als verfügbar geprüft, nicht gebucht. Preis, Verfügbarkeit und Stornofrist bei späterer Buchung erneut prüfen. Privatparkplatz laut Inserat; sicherer Platz für zwei beladene Motorräder und geeignete Einfahrt nicht verbindlich bestätigt. Navigation zur veröffentlichten Kartenposition von Apartments Ivanka · Hodilje (Hodilje 118, Ston, Croatia). Die konkrete Parkplatzeinfahrt vor Ort bzw. mit dem Gastgeber abgleichen. Ausgewählt ist ein Doppelzimmer ohne zugesagte Küche; der Pool ist zum Reisetermin geschlossen.",
+      "currentFirstChoiceNotes": "Ganze Wohnung 65 m² mit Doppelbett, eigener Küche, Waschmaschine und Balkon. Rruga Lek Dukagjini; ruhige Lage laut Gastgeber, Zentrum zu Fuss. Am 18.09. für 12.–14.10. / 2 Erwachsene: CHF 162 insgesamt inkl. Steuern, kostenlos stornierbar vor 11.10. (günstigerer CHF 139-Tarif nur vor 28.09.). Vorauszahlung innerhalb 24 h vor Anreise; Abwicklung direkt klären, Hausregeln nennen Barzahlung. Check-in 14:00–23:30, Checkout bis 10:00. 9, 9/453 Bewertungen. Nicht gebucht.",
+      "currentAlternativeNotes": "63 m², Doppelbett, eigene Küche/Waschmaschine, Balkon und kostenloser Privatparkplatz. Dritter Stock, nur Treppen. Am 18.09. für 12.–14.10. / 2 Erwachsene CHF 85 insgesamt inkl. Steuern; kostenlos stornierbar vor 11.10.; keine Vorauszahlung, Zahlung vor Ort.9, 2/5 Bewertungen. Sichere Abstellung nicht bestätigt. Check-in 11:30–21:00, Checkout bis 10:00. Nicht gebucht.",
+      "reviewNote": "Beide Kandidaten für die konkreten Daten live geprüft; Momentaufnahme ohne Reservierung. All Seasons wird als Routenanker verwendet. Der veröffentlichte Kartenmarker ist keine bestätigte private Toreinfahrt. Zwei beladene Motorräder, feste asphaltierte Zufahrt und Rangierplatz vor Buchung mit Gastgeber bestätigen. Shkodra Garden Apartment war für die Daten nicht verfügbar und wurde verworfen.",
       "reviewSources": [
-        "https://www.booking.com/hotel/hr/apartments-ivanka-ston1.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0",
-        "https://www.booking.com/hotel/hr/ostrea.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0"
+        "https://www.booking.com/hotel/al/all-seasons-apartment-1.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF",
+        "https://www.booking.com/hotel/al/riras-apartment.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF"
       ]
     },
     {
-      "id": "split-ancona-cabin",
+      "id": "durres-ancona-cabin",
       "title": "Ancona",
       "startDate": "2026-10-14",
       "endDate": "2026-10-15",
       "booking": "open",
-      "currentFirstChoice": "Aussenkabine auf der Nachtfähre Split–Ancona",
-      "currentFirstChoiceUrl": "https://www.jadrolinija.hr/de/reise-buchen",
-      "currentAlternative": "Innenkabine auf der Nachtfähre Split–Ancona",
-      "currentAlternativeUrl": "https://www.jadrolinija.hr/de/reise-buchen",
-      "parking": "Kabine und Plätze für zwei Maschinen am 22. September gemeinsam bestätigen"
+      "currentFirstChoice": "Adria Ferries AF MIA · exklusive Zweibett-Aussenkabine",
+      "currentFirstChoiceUrl": "https://booking.adriaferries.com/?language=en",
+      "currentAlternative": "Innenkabine auf derselben Abfahrt · Preis/Verfügbarkeit offen",
+      "currentAlternativeUrl": "https://booking.adriaferries.com/?language=en",
+      "parking": "Zwei Motorräder im Fahrzeugdeck; zusammen mit der Kabine buchen. Keine separate Motorradreservierung erfolgt.",
+      "currentFirstChoiceNotes": "Durrës 14.10. 19: 00 → Ancona 15.10. 11: 30. Am 18.09. im offiziellen System geprüft: EUR 362 gesamt für 2 Erwachsene, 2 MOTO/SCOOTER und exklusive Aussenkabine mit 2 Etagenbetten, WC / Dusche. Noch kein Ticket gekauft. Nutzer akzeptiert als persönliches Änderungsrisiko maximalen Verlust von EUR 362; keine Zusage über Erstattung.",
+      "currentAlternativeNotes": "Nur Ausweichkategorie bei gleicher Überfahrt; kein konkreter Tarif geprüft.",
+      "reviewedAt": "2026-09-18",
+      "reviewSources": [
+        "https://www.adriaferries.com/it/check-in-e-imbarco.html",
+        "https://durresport.al/en/routes-to-the-port/"
+      ]
     },
     {
       "id": "urbino-country",
@@ -1543,9 +1548,9 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-18T05:36:13.700Z",
+    "dataVersion": "2026-09-18T07:26:11.786Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
-    "characterText": "Durch das Pustertal und Drautal, mit einer Pause am Wörthersee, führt die Reise über Graz nach Slowenien. Danach folgen die D8, lange Aufenthalte an der dalmatinischen Küste und vier Nächte in der Bucht von Kotor. Die Nachtfähre nach Ancona öffnet einen eigenständigen Rückweg durch die Marken und Norditalien.",
+    "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
     "startPlace": "Berikon",
     "endPlace": "Berikon",
@@ -1556,7 +1561,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
     "routeGeometryUrl": "/assets/adria-routes.geojson",
     "transportMatchers": [
       "Fährtag",
-      "Nachtfähre.*Split.*Ancona",
+      "Nachtfähre.*Durrës.*Ancona",
       "Nachtfähre nach Ancona"
     ],
     "capabilities": {
@@ -1656,6 +1661,16 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "latitude": 45.808,
         "longitude": 9.086,
         "countryCode": "IT"
+      },
+      "Shkodër": {
+        "latitude": 42.07142304764,
+        "longitude": 19.513024609089,
+        "countryCode": "AL"
+      },
+      "Durrës": {
+        "latitude": 41.3167417,
+        "longitude": 19.4654539,
+        "countryCode": "AL"
       }
     },
     "preferences": {
@@ -1679,14 +1694,15 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "Italien",
         "Slowenien",
         "Kroatien",
-        "Montenegro"
+        "Montenegro",
+        "Albanien"
       ],
       "routeConstraints": [
         "Pro Fahrtag rund 4 Stunden reine Fahrzeit anstreben; 5 Stunden reine Fahrzeit sind die Obergrenze, kein tägliches Ziel.",
         "Die angezeigte reine Fahrzeit stammt aus der gespeicherten Routenberechnung und wird auf volle Minuten gerundet. Keine pauschalen Zeitaufschläge und keine zusätzliche Berechnung von Pausen oder Gesamtunterwegszeiten. Grenzwartezeiten, Check-in und Überfahrt sind nicht Teil der Fahrzeit.",
         "Nicht durch optimistisch verkürzte Zeitangaben passend rechnen: Überschreitungen offen melden und die Strecke vereinfachen. Übernachtungen oder Reisedaten nur nach Rücksprache verschieben.",
         "Nockalmstraße und Murau gehören nicht mehr zum Fahrtag Lienz–Graz, auch nicht als zusätzliche Schönwettervariante.",
-        "Vier Nächte Montenegro sowie die vorhandenen Ruhetage erhalten. Rückweg am 13.10. nur bis Ston/Mali Ston, am 14.10. über Pelješac-Brücke und A1 zum Hafen Split. Keine zusätzliche Küstenrunde am Fährtag; Verbindliche Fähr- und Check-in-Termine beachten; Wartezeiten und Überfahrt nicht zur Fahrzeit zählen."
+        "Drei Nächte Kotor (9.–12.10.), zwei Nächte Shkodër (12.–14.10.). Feste Fähre Durrës 14.10. um 19:00 – Ancona 15.10. um 11:30; Hafenankunft bis 16:00. Danach direkt nach Urbino; Italiennächte und Rückkehr am 23.10. bleiben erhalten."
       ],
       "seasonalRisks": [
         "spätherbstliches Alpenwetter am Arlberg, im Pustertal und auf der A2 im Bereich Pack",
@@ -1694,9 +1710,11 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "Stau im Korridor Trogir–Split–Makarska",
         "Grenzwartezeiten Kroatien–Montenegro",
         "saisonale Verkehrsanordnungen am Lovćen",
-        "fester Fahrplantag und begrenzte Motorradplätze auf der Fähre Split–Ancona; laut Reedereimeldung am 03.09. technischer Betriebsunterbruch bis 09.09.2026, Wiederaufnahme noch bestätigen",
+        "Feste Fähre Durrës–Ancona, Ticket und zwei Motorradplätze noch nicht gebucht; Check-in und Tagesbetrieb kontrollieren.",
         "ZTL und Stadtverkehr in italienischen Altstädten",
-        "Oktoberwetter und Verkehr am Gotthard"
+        "Oktoberwetter und Verkehr am Gotthard",
+        "Baustelle Tivat–Jaz; aktuelle Asphaltbefahrbarkeit prüfen",
+        "Grenze Montenegro–Albanien; Versicherungsdeckung AL für beide Motorräder prüfen"
       ]
     },
     "placeAliases": {
@@ -1723,23 +1741,6 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         ],
         "decision": "Etwa 5–7 Tage vor Abreise anhand Alpenprognose und verfügbarer Motorradplätze entscheiden.",
         "sourceUrl": "https://www.nightjet.com/de/angebote/automotorrad"
-      },
-      {
-        "id": "split-ancona-ferry-watch",
-        "title": "Fährkontrolle: Split–Ancona",
-        "status": "watch",
-        "summary": "Die Abfahrt am 14. Oktober steht im offiziellen Fahrplan. Die am 03.09. gelesene Reedereimeldung nennt einen technischen Unterbruch bis 09.09.2026. Wiederaufnahme und Verfügbarkeit sind noch zu bestätigen; die Oktoberfahrt ist nicht als operativ gesichert markiert.",
-        "replacesDays": [
-          21
-        ],
-        "steps": [
-          "Am 22. September offizielle Wiederaufnahme der Linie 53 kontrollieren",
-          "Verfügbarkeit für zwei Personen, zwei Motorräder und eine Kabine prüfen",
-          "Erst danach die Fähre verbindlich als gebucht markieren",
-          "Falls die Linie nicht wieder aufgenommen wird, Rückweg ab Split über Slowenien und Norditalien neu planen"
-        ],
-        "decision": "Kontrolltermin 22.09.2026; bis dahin nur flexibel stornierbare Unterkünfte buchen.",
-        "sourceUrl": "https://www.jadrolinija.hr/en/news/linije-u-prekidu_2"
       }
     ],
     "fixPoints": [
@@ -1756,13 +1757,13 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "source": "draft"
       },
       {
-        "id": "fix_adria_ferry_split_ancona",
+        "id": "fix_adria_ferry_durres_ancona",
         "kind": "transport",
-        "title": "Nachtfähre Split → Ancona",
+        "title": "Nachtfähre Durrës → Ancona",
         "stageDay": 21,
-        "place": "Split",
-        "startsAt": "2026-10-14T20:00:00+02:00",
-        "endsAt": "2026-10-15T07:00:00+02:00",
+        "place": "Durrës",
+        "startsAt": "2026-10-14T19:00:00+02:00",
+        "endsAt": "2026-10-15T11:30:00+02:00",
         "locks": [
           "date",
           "time",
@@ -1770,7 +1771,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "stage",
           "route"
         ],
-        "source": "official-timetable"
+        "source": "official-booking-system-checked-not-booked"
       },
       {
         "id": "fix_adria_end",
@@ -1803,21 +1804,21 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       },
       {
         "title": "Dubrovnik und die Bucht von Kotor.",
-        "text": "Der südliche Schwerpunkt bleibt unangetastet: Dubrovnik erhält drei, Kotor und Perast vier Nächte.",
+        "text": "Drei Nächte Dubrovnik und drei Nächte an der Bucht von Kotor lassen Zeit für die südliche Adria.",
         "fromDay": 13,
-        "toDay": 19,
+        "toDay": 18,
         "mapGroup": 2
       },
       {
-        "title": "Mit der Nachtfähre über die Adria.",
-        "text": "Von Kotor geht es entspannt bis Ston, mit einer Nacht in der Umgebung von Mali Ston. Am nächsten Tag führen Pelješac-Brücke und Autobahn mit Zeitreserve zum Hafen Split; über Nacht geht es nach Ancona.",
-        "fromDay": 20,
+        "title": "Zwei Nächte Albanien und über die Adria.",
+        "text": "Über die Küstenhauptstrasse nach Shkodër mit einem ganzen freien Tag. Danach direkt zum Fahrzeugtor in Durrës und mit der Nachtfähre nach Ancona.",
+        "fromDay": 19,
         "toDay": 21,
         "mapGroup": 3
       },
       {
         "title": "Durch die Marken und Norditalien nach Hause.",
-        "text": "Furlo, Urbino, Ravenna, die Colli Euganei und der Lago d’Iseo bilden einen eigenständigen Rückweg bis Como und durch den Gotthardtunnel.",
+        "text": "Von Ancona direkt nach Urbino. Ravenna, die Colli Euganei, der Lago d’Iseo und Como bleiben vor dem Rückweg durch den Gotthardtunnel.",
         "fromDay": 22,
         "toDay": 30,
         "mapGroup": 4

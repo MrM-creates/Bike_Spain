@@ -1,6 +1,6 @@
 # Rahmenbedingungen Adria & Balkan 2026
 
-Stand: 10. September 2026
+Stand: 18. September 2026
 Reise: Adria & Balkan 2026
 Reisezeit: 24. September bis 23. Oktober 2026
 Status: zentrale lesbare Zusammenfassung der gemeinsam definierten Planungsvorgaben
@@ -29,7 +29,7 @@ Bei einem Widerspruch muss dieser vor einer Veröffentlichung geklärt werden. D
 - Wetterpräferenz: gutes Wetter bevorzugen, ohne den Plan durch unrealistische Annahmen passend zu rechnen
 - Es besteht **keine Zielvorgabe von 5'000 km** oder einer anderen Gesamtdistanz.
 - Der aktuelle Plan umfasst 18 Fahrt-/Transporttage und 12 Ruhe-/Basistage.
-- Die gespeicherte Landstrecke liegt bei ungefähr 3'062 km; Seemeilen, freiwillige Ausflüge und noch nicht bestätigte letzte Hauszufahrten sind darin nicht enthalten.
+- Die gespeicherte Landstrecke liegt bei ungefähr 2'912 km; Seemeilen, freiwillige Ausflüge und noch nicht bestätigte letzte Hauszufahrten sind darin nicht enthalten.
 
 ## 3. Fahrzeit und Länge der Tagesetappen
 
@@ -49,7 +49,7 @@ Bei einem Widerspruch muss dieser vor einer Veröffentlichung geklärt werden. D
 - Es gibt bewusst **keine starre Kilometerobergrenze**, weil Strassentyp, Verkehr, Ortsdurchfahrten, Wetter und Stopps wichtiger sind als die reine Distanz.
 - Als Orientierung gelten für Genussetappen meist ungefähr **120 bis 260 km**.
 - Längere Strecken sind nur als bewusste Transferetappen vorgesehen.
-- Im aktuellen Plan liegen die Fahrtage ungefähr zwischen **80 und 295 km** und zwischen **1 Stunde 23 Minuten und 3 Stunden 39 Minuten** berechneter reiner Fahrzeit.
+- Im aktuellen Plan liegen die Fahrtage ungefähr zwischen **80 und 295 km** und zwischen **1 Stunde 22 Minuten und 3 Stunden 39 Minuten** berechneter reiner Fahrzeit.
 - Eine kurze, verkehrsreiche Küstenetappe kann anstrengender und zeitaufwendiger sein als eine längere Autobahnetappe.
 
 ## 4. Grundsätzliche Routenanforderungen
@@ -123,7 +123,7 @@ Bosnien und Herzegowina ist **nicht Bestandteil der derzeit veröffentlichten Ba
 
 ## 9. Montenegro
 
-- **Vier Nächte in Montenegro bleiben erhalten.** Der südliche Teil der Reise wird zugunsten anderer Etappen nicht gekürzt.
+- **Drei Nächte in Montenegro, 9.–12. Oktober.** Bewusster Nutzerentscheid vom 18. September zugunsten zweier Nächte Shkodër; zwei volle freie Tage an der Bucht bleiben.
 - Die Bucht von Kotor ist ein längerer Aufenthalt und nicht nur ein Fotostopp.
 - Die Buchtumfahrung erfolgt auf der etablierten asphaltierten M1.
 - Es wird keine ungeprüfte Ufer-, Berg- oder Fährabkürzung verwendet.
@@ -133,14 +133,14 @@ Bosnien und Herzegowina ist **nicht Bestandteil der derzeit veröffentlichten Ba
 - Enge Spitzkehren und schmale Bergstrassen werden nicht allein wegen ihres Motorradcharakters in den Plan aufgenommen.
 - Grenzwartezeiten Kroatien–Montenegro werden zusätzlich zur reinen Fahrzeit ausgewiesen.
 
-## 10. Fährtag Split–Ancona
+## 10. Albanien und Fährtag Durrës–Ancona
 
-- Die Nachtfähre Split–Ancona ist ein geschützter Fixpunkt des Plans.
+- Die Nachtfähre Durrës–Ancona ist ein geschützter Fixpunkt des Plans.
 - Geplanter Termin:
-  - Abfahrt Split: **14. Oktober 2026, 20:00 Uhr**
-  - Ankunft Ancona: **15. Oktober 2026, 07:00 Uhr**
-- Am 13. Oktober führt die Rückfahrt aus Montenegro nur bis Ston/Mali Ston.
-- Am 14. Oktober führt die Landroute über Pelješac-Brücke und A1 zum Hafen Split.
+  - Abfahrt Durrës: **14. Oktober 2026, 19:00 Uhr**
+  - Ankunft Ancona: **15. Oktober 2026, 11:30 Uhr**
+- Am 12. Oktober führt die Küstenhauptstrasse über Budva, Bar, Ulcinj und Sukobin–Muriqan nach Shkodër. Am 13. Oktober bleibt ein voller freier Tag.
+- Am 14. Oktober führt die Landroute über SH1, A1 Thumanë–Kashar und SH2 zum Fahrzeugtor 4 in Durrës. Spätestens 16:00 am Hafen eintreffen. Am 15. Oktober direkt über A14/Fano und SS73bis zur bestehenden Unterkunft bei Urbino; keine Furlo-Schlucht.
 - Am Fährtag wird keine zusätzliche Küstenrunde angehängt.
 - Check-in und Überfahrt bleiben getrennt von der berechneten Fahrzeit an Land. Zusätzliche Pausenzeiten werden nicht berechnet.
 - Die Navigation bildet nur die Landzufahrt bis zum korrekten Hafenpunkt ab; die Seestrecke ist keine Motorradnavigation.
@@ -221,10 +221,10 @@ Für jede betroffene Etappe sind insbesondere zu berücksichtigen:
 - Stau im Korridor Trogir–Split–Makarska;
 - Grenzwartezeiten Kroatien–Montenegro;
 - saisonale Verkehrsanordnungen am Lovćen;
-- Betriebsstand und Kapazität der Fähre Split–Ancona;
+- Betriebsstand und Kapazität der Fähre Durrës–Ancona;
 - ZTL und Stadtverkehr in italienischen Altstädten;
 - Oktoberwetter und Verkehr am Gotthard;
-- mögliche saisonale Sperrung der Furlo-Durchfahrt.
+- Baustellenkorridor Tivat–Jaz, Grenze Montenegro–Albanien und aktuelle Lage auf SH1/A1/SH2.
 
 Eine zum Prüfzeitpunkt bestehende Baustelle oder Störung darf nicht ohne Beleg als Zustand am tatsächlichen Reisetag dargestellt werden. Umgekehrt muss ein strukturelles oder saisonales Risiko auch dann erwähnt bleiben, wenn am Prüftag keine akute Störung vorliegt.
 
@@ -246,6 +246,7 @@ Bevorzugte offizielle Quellen nach Land:
 - Slowenien: Promet.si, DRSI, ARSO
 - Kroatien: HAK, DHMZ
 - Montenegro: Regierung beziehungsweise Strassenbehörden, AMSCG, ZHMS
+- Albanien: Verkehrsministerium, Autobahnbetreiber und Hafenbehörde Durrës
 
 Zusätzlich werden offizielle Motorradtourismus-Routen und aktuelle unabhängige Motorrad-Reiseberichte verwendet. Erfahrungsberichte dienen zur qualitativen Einschätzung und müssen mit Karte, Router und mindestens einer offiziellen Quelle plausibel zusammenpassen.
 
@@ -255,11 +256,11 @@ Folgende Punkte dürfen nicht stillschweigend verschoben oder verändert werden:
 
 - Start in Berikon am **24. September 2026**;
 - Rückkehr nach Berikon am **23. Oktober 2026**;
-- vier Nächte Montenegro;
+- drei Nächte Montenegro und zwei Nächte Shkodër;
 - vorhandene Ruhe- und Basistage;
-- Rückfahrt am 13. Oktober nur bis Ston/Mali Ston;
-- Fahrt am 14. Oktober über Pelješac-Brücke und A1 zum Hafen Split;
-- Nachtfähre Split–Ancona mit Datum, Zeit, Ort und zugehöriger Etappe.
+- freier Tag in Shkodër am 13. Oktober;
+- Fahrt am 14. Oktober über SH1, A1 und SH2 zum Fahrzeugtor 4 in Durrës;
+- Nachtfähre Durrës–Ancona mit Datum, Zeit, Ort und zugehöriger Etappe.
 
 Start, Ziel und Übernachtung eines zur Prüfung übergebenen Tages bilden feste Grenzen. Eine Änderung daran ist keine kleine Routenoptimierung, sondern eine Planänderung und benötigt eine bewusste Freigabe.
 
@@ -282,12 +283,12 @@ Ein Entwurf darf den veröffentlichten Reiseplan niemals stillschweigend übersc
 ## 18. Noch vor beziehungsweise während der Reise zu prüfen
 
 - Aktuelle Alpenprognose und Entscheidung über die Nightjet-Reserve.
-- Aktueller Betriebsstand, Buchung, Kabine, zwei Motorradplätze, Check-in und Fahrzeugzufahrt der Fähre Split–Ancona.
+- Aktueller Betriebsstand, Buchung, Kabine, zwei Motorradplätze, Check-in und Fahrzeugzufahrt der Fähre Durrës–Ancona.
 - Tagesaktuelle HAK-Lage vor den D8-Etappen.
 - Aktuelle Grenzlage Kroatien–Montenegro.
 - Aktuelle R-1-Regelung vor einer allfälligen Lovćen-Fahrt.
 - Tagesaktuelle Baustellen und Sperren in Slowenien, Österreich und Italien.
-- Furlo-Durchfahrt; bei Sperre auslassen und keine ungeprüfte Bergumfahrung wählen.
+- Versicherungsschutz AL für beide Motorräder sowie Tageslage Tivat–Jaz und Montenegro–Albanien prüfen.
 - Bestätigte Adresse und letzte Zufahrt jeder tatsächlich gebuchten Unterkunft.
 - Sichere Abstellung für beide Motorräder schriftlich klären.
 - Google-Maps-Übergabe der endgültigen Abschnitte auf den tatsächlich verwendeten Geräten prüfen.

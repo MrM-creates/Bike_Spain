@@ -12,7 +12,7 @@ test('read-only companion contains both trips and preserves stable stage IDs', (
   }
   assert.equal(feed.trips[0].days[15].id, 'adria-16');
   assert.equal(feed.trips[0].status, 'Veröffentlichter Reiseplan');
-  assert.equal(new URL(feed.trips[0].days[20].mapsURL).searchParams.get('destination'), 'Gat Svetog Duje, Split');
+  assert.equal(new URL(feed.trips[0].days[20].mapsURL).searchParams.get('destination'), '41.3167417,19.4654539');
 });
 test('journal properties never enter public plan feed', () => {
   const snapshot = { trip: { id: 'test', name: 'test', startDate: '2026-01-01' }, days: [{id:'stable',title:'Day',journal:'SECRET', photos:['SECRET']}], journal: 'SECRET' };

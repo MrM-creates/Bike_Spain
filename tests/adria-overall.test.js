@@ -29,7 +29,7 @@ test('Balkan: all driving times equal the saved route calculation rounded to a m
     if (original.main === day.main) assert.equal(original.time, day.time);
     const maps = new URL(day.main);
     assert.equal(maps.searchParams.get('origin'), day.origin);
-    assert.equal(maps.searchParams.get('destination'), day.roadApproach ? 'Gat Svetog Duje, Split' : day.destination);
+    assert.equal(maps.searchParams.get('destination'), day.roadApproach ? day.waypoints.at(-1) : day.destination);
     assert.equal(maps.searchParams.get('waypoints') || '', (day.roadApproach ? day.waypoints.slice(0, -1) : day.waypoints).join('|'));
     for (const part of navigationParts(day, day.main) || [{ mapsURL: day.main }]) {
       assert.ok(routePoints(part.mapsURL).length <= 5, `Tag ${day.day}: maximal drei Zwischenpunkte je Abschnitt`);

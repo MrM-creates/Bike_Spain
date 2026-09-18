@@ -24,7 +24,7 @@ test('both trips carry exact original geometry, no direct routes or optional exc
 test('Balkan ferry separates road approach from schematic sea crossing', () => {
   const map = companionFeed().trips[0].days[20].map;
   assert.deepEqual(map.lines.map(l => l.kind), ['road', 'ferry']);
-  assert.equal(map.lines[1].coordinates.length, 2);
+  assert.equal(map.lines[1].coordinates.length, 5);
   assert.deepEqual(map.lines[0].coordinates.at(-1), map.lines[1].coordinates[0]);
   assert.deepEqual(map.lines[1].coordinates.at(-1), [13.510,43.615]);
 });
