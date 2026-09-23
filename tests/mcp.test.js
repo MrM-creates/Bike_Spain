@@ -112,6 +112,23 @@ test('OAuth with real SDK: consent, PKCE, resource binding, replay protection, r
   const listed = await (await mcp('tools/list', {})).json();
   assert.equal(listed.result.tools.length, 5);
   assert.deepEqual(discoveryEvents, [{ toolCount: 5, errorCode: null }]);
+  const portableArrays = schema => {
+    if (!schema || typeof schema !== 'object') return;
+    if (schema.type === 'array') assert.ok(schema.items && !Array.isArray(schema.items), 'tool array schemas must use a single items schema, not tuple-form items');
+    for (const value of Object.values(schema)) {
+      if (Array.isArray(value)) value.forEach(portableArrays);
+      else portableArrays(value);
+    }
+  };
+  listed.result.tools.forEach(tool => portableArrays(tool.inputSchema));
+  for (const coordinate of [[181, 0], [0, 91], [0], [0, 0, 0]]) {
+    const invalid = await (await mcp('tools/call', { name: 'prepare_accommodation_change', arguments: {
+      tripId: 'trip_adria_2026', baseVersion: 'test', stayId: 'test', reason: 'Schema test',
+      options: [{ id: 'test', name: 'Test', booking: 'open', coordinate }]
+    } })).json();
+    assert.equal(invalid.result.isError, true);
+    assert.match(JSON.stringify(invalid.result), /coordinate/, 'invalid coordinates must fail schema validation before any plan operation');
+  }
   const read = await (await mcp('tools/call', { name: 'get_trip', arguments: { tripId: 'trip_adria_2026' } })).json();
   assert.equal(read.result.structuredContent.trip.id, 'trip_adria_2026');
   assert.ok(!JSON.stringify(read).includes('test-pin'));
