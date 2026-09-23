@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "roadbook": {
+      "type": "http",
+      "url": "https://motorrad-roadbook-spanien-2026.vercel.app/mcp"
+    }
+  }
+}

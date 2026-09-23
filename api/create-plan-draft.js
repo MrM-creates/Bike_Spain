@@ -248,11 +248,12 @@ const protectedStartIssue = (days, lockedStart) => {
   return "";
 };
 
-const routeContinuityIssue = (days, startIndex, endIndex) => {
+const continuityPlace = (value, aliases = {}) => Object.hasOwn(aliases, value) ? cleanText(aliases[value], 160) : value;
+const routeContinuityIssue = (days, startIndex, endIndex, aliases = {}) => {
   for (let index = startIndex; index < endIndex; index += 1) {
     const day = days[index];
     const previousOvernight = cleanText(days[index - 1]?.overnight, 160);
-    const departure = day.rest ? cleanText(day.overnight, 160) : cleanText(day.origin, 180);
+    const departure = day.rest ? cleanText(day.overnight, 160) : continuityPlace(cleanText(day.origin, 180), aliases);
     const dayNumber = index + 1;
 
     if (previousOvernight && !departure) {
@@ -262,7 +263,7 @@ const routeContinuityIssue = (days, startIndex, endIndex) => {
       return `Tag ${dayNumber} beginnt in ${departure}, obwohl Tag ${dayNumber - 1} in ${previousOvernight} endet.`;
     }
     if (!day.rest) {
-      const destination = cleanText(day.destination, 180);
+      const destination = continuityPlace(cleanText(day.destination, 180), aliases);
       if (!destination) return `Tag ${dayNumber} hat keinen Zielort.`;
       if (!placesMatch(destination, day.overnight)) {
         return `Tag ${dayNumber} endet laut Route in ${destination}, die Übernachtung ist aber in ${day.overnight}.`;
@@ -584,6 +585,9 @@ module.exports = async (request, response) => {
     }
 
     if (payload.stage === "verify-route") {
+      // The authenticated caller may supply aliases from the already published
+      // hotel navigation. They affect continuity only, never the actual route.
+      const locationAliases = payload.locationAliases && typeof payload.locationAliases === 'object' && !Array.isArray(payload.locationAliases) ? payload.locationAliases : {};
       const routeStyleOnly = payload.change?.scope === "route-style";
       const singleStage = routeStyleOnly || payload.change?.scope === "stage";
       const replaceFromDay = Math.max(1, Math.min(currentDays.length, Number(payload.replaceFromDay) || 1));
@@ -666,9 +670,9 @@ module.exports = async (request, response) => {
       const startIssue = protectedStartIssue(verifiedDays, lockedStart);
       if (startIssue) throw new Error(`Die automatische Routenprüfung verletzt einen Fixpunkt: ${startIssue}`);
       const continuityEndIndex = singleStage ? endIndex : boundaryIndex;
-      let continuityIssue = routeContinuityIssue(verifiedDays, startIndex, continuityEndIndex);
+      let continuityIssue = routeContinuityIssue(verifiedDays, startIndex, continuityEndIndex, locationAliases);
       if (!continuityIssue && singleStage && verifiedDays[endIndex]) {
-        const nextDeparture = cleanText(verifiedDays[endIndex].origin || verifiedDays[endIndex].overnight, 180);
+        const nextDeparture = continuityPlace(cleanText(verifiedDays[endIndex].origin || verifiedDays[endIndex].overnight, 180), locationAliases);
         if (nextDeparture && !placesMatch(verifiedDays[endIndex - 1].overnight, nextDeparture)) {
           continuityIssue = `Tag ${endIndex + 1} beginnt in ${nextDeparture}, obwohl Tag ${endIndex} in ${verifiedDays[endIndex - 1].overnight} endet.`;
         }

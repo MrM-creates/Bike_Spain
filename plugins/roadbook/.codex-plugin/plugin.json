@@ -1,0 +1,27 @@
+{
+  "name": "roadbook",
+  "version": "1.0.0",
+  "description": "Gemeinsame Motorrad-Reisepläne im Chat lesen, prüfen und veröffentlichen.",
+  "author": {
+    "name": "MrM-creates"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Roadbook",
+    "shortDescription": "Eure Reise im Chat planen.",
+    "longDescription": "Aktuelle Etappen und Unterkünfte lesen, Änderungen prüfen und auf Auftrag in Admin und Roadbook App übernehmen.",
+    "developerName": "MrM-creates",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Lade unseren aktuellen Adria-Reiseplan.",
+      "Ich möchte eine Etappe besprechen."
+    ]
+  },
+  "mcpServers": "./.mcp.json",
+  "homepage": "https://motorrad-roadbook-spanien-2026.vercel.app/roadbook-connection.html",
+  "repository": "https://github.com/MrM-creates/Bike_Spain"
+}

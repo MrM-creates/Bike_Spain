@@ -219,3 +219,6 @@ module.exports = async (request, response) => {
     });
   }
 };
+
+// The MCP preview must use exactly the same allowlist as publication.
+module.exports.normalizeDay = normalizeDay;

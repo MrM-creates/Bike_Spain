@@ -22,9 +22,45 @@
     "api/publish-accommodations.js": {
       "maxDuration": 120,
       "includeFiles": "{assets/*-routes.geojson,data/companion-maps.json}"
+    },
+    "api/roadbook-mcp.js": {
+      "maxDuration": 300,
+      "includeFiles": "{assets/*-routes.geojson,data/companion-maps.json}"
     }
   },
   "rewrites": [
+    {
+      "source": "/mcp",
+      "destination": "/api/roadbook-mcp?mcp_path=/mcp"
+    },
+    {
+      "source": "/authorize",
+      "destination": "/api/roadbook-mcp?mcp_path=/authorize"
+    },
+    {
+      "source": "/token",
+      "destination": "/api/roadbook-mcp?mcp_path=/token"
+    },
+    {
+      "source": "/register",
+      "destination": "/api/roadbook-mcp?mcp_path=/register"
+    },
+    {
+      "source": "/revoke",
+      "destination": "/api/roadbook-mcp?mcp_path=/revoke"
+    },
+    {
+      "source": "/roadbook-connect",
+      "destination": "/api/roadbook-mcp?mcp_path=/roadbook-connect"
+    },
+    {
+      "source": "/.well-known/oauth-authorization-server",
+      "destination": "/api/roadbook-mcp?mcp_path=/.well-known/oauth-authorization-server"
+    },
+    {
+      "source": "/.well-known/oauth-protected-resource/mcp",
+      "destination": "/api/roadbook-mcp?mcp_path=/.well-known/oauth-protected-resource/mcp"
+    },
     {
       "source": "/",
       "destination": "/reise-roadbook-2026.html"

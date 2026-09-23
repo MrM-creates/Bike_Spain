@@ -2,6 +2,8 @@
 .playwright-cli/
 output/playwright/
 .DS_Store
+node_modules/
+.env*
 companion/.build/
 companion/DerivedData/
 companion/**/*.xcuserstate
