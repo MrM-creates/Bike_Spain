@@ -6,10 +6,10 @@ const { ORIGIN, SCOPES, createSealer, createGithubStore } = require('../lib/mcp-
 const { createAuthProvider } = require('../lib/mcp-auth');
 const { createMcpServer } = require('../lib/mcp-tools');
 
-function createApp({ origin = ORIGIN, sealer, store, pin, call, fetchImpl } = {}) {
+function createApp({ origin = ORIGIN, sealer, store, pin, call, fetchImpl, reportAuthEvent } = {}) {
   sealer ||= createSealer(process.env.ROADBOOK_MCP_SECRET, origin);
   store ||= createGithubStore({ token: process.env.GITHUB_ROADBOOK_TOKEN, repo: process.env.GITHUB_REPO, branch: process.env.GITHUB_BRANCH });
-  const provider = createAuthProvider({ sealer, store, origin, pin: pin ?? process.env.ROADBOOK_PUBLISH_SECRET });
+  const provider = createAuthProvider({ sealer, store, origin, pin: pin ?? process.env.ROADBOOK_PUBLISH_SECRET, reportAuthEvent });
   const app = express();
   app.disable('x-powered-by');
   app.set('trust proxy', 1);

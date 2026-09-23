@@ -49,7 +49,8 @@ test('GitHub one-time claims are atomic and distinguish duplicate markers from s
 
 test('OAuth with real SDK: consent, PKCE, resource binding, replay protection, refresh rotation and MCP scopes', async t => {
   const store = memoryStore();
-  const app = createApp({ sealer: seal(), store, pin: 'test-pin' });
+  const authEvents = [];
+  const app = createApp({ sealer: seal(), store, pin: 'test-pin', reportAuthEvent: event => authEvents.push(event) });
   const listener = app.listen(0, '127.0.0.1');
   await new Promise(resolve => listener.once('listening', resolve));
   t.after(() => listener.close());
@@ -74,6 +75,22 @@ test('OAuth with real SDK: consent, PKCE, resource binding, replay protection, r
   const ticket = page.match(/name="ticket" value="([^"]+)"/)[1];
   assert.equal((await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: cookie, Origin: 'https://evil.example' })).status, 403);
   assert.equal((await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: cookie, Origin: 'null' })).status, 403);
+  assert.equal((await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: cookie })).status, 403);
+  assert.equal((await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Origin: ORIGIN })).status, 403);
+  const mismatch = await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: '__Host-roadbook-connect=another-window', Origin: ORIGIN });
+  assert.equal(mismatch.status, 403);
+  const recoveryPage = await mismatch.text();
+  assert.ok(!recoveryPage.includes('name="pin"'), 'failed browser binding must not offer a broken PIN form');
+  assert.ok(!recoveryPage.includes('test-pin'));
+  const restart = recoveryPage.match(/href="([^\"]+)">Anmeldung neu starten/)[1].replaceAll('&amp;', '&');
+  assert.deepEqual(Object.fromEntries(new URL(restart, ORIGIN).searchParams), params, 'recovery preserves exactly the original OAuth request');
+  const restarted = await get(restart);
+  assert.equal(restarted.status, 200);
+  const freshCookie = restarted.headers.get('set-cookie').split(';')[0];
+  const freshTicket = (await restarted.text()).match(/name="ticket" value="([^\"]+)"/)[1];
+  assert.equal((await post('/roadbook-connect', { ticket: freshTicket, pin: 'wrong' }, { Cookie: freshCookie, Origin: ORIGIN })).status, 401, 'recovery establishes a usable new browser binding');
+  assert.deepEqual(authEvents, ['origin_mismatch', 'origin_null', 'origin_missing', 'cookie_missing', 'cookie_mismatch'].map(reason => ({ event: 'consent_rejected', reason })), 'diagnostics contain no submitted data or OAuth secrets');
+  assert.equal(store.used.size, 0, 'rejected browser binding and wrong PIN do not grant access');
   assert.equal((await post('/roadbook-connect', { ticket, pin: 'wrong' }, { Cookie: cookie, Origin: ORIGIN })).status, 401);
   const consent = await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: cookie, Origin: ORIGIN });
   assert.equal(consent.status, 303);
