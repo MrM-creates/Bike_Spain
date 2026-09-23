@@ -19,7 +19,8 @@ global.fetch = async (url, options = {}) => {
   const p = new URL(url).pathname;
   const body = options.body ? JSON.parse(options.body) : {};
   let result;
-  if (p.includes('/contents/')) result = { sha: `blob-${revision}`, content: Buffer.from(source).toString('base64') };
+  if (p.includes('/contents/') && options.method === 'PUT') { source = Buffer.from(body.content, 'base64').toString(); revision++; pending = true; result = {commit:{sha:`next-${revision}`}}; }
+  else if (p.includes('/contents/')) result = { sha: `blob-${revision}`, content: Buffer.from(source).toString('base64') };
   else if (p.includes('/git/ref/heads/')) result = { object: { sha: `head-${revision}` } };
   else if (p.includes('/git/commits/head-')) result = { tree: { sha: 'base-tree' } };
   else if (p.endsWith('/git/blobs')) { nextSource = body.content; result = { sha: 'next-blob' }; }
@@ -27,12 +28,14 @@ global.fetch = async (url, options = {}) => {
   else if (p.endsWith('/git/commits')) result = { sha: `next-commit-${revision}` };
   else if (p.includes('/git/refs/heads/')) { source = nextSource; revision++; pending = true; result = {}; }
   else throw new Error(`Unknown fixture endpoint: ${p}`);
-  return { ok: true, text: async () => JSON.stringify(result) };
+  return { ok: true, json: async () => result, text: async () => JSON.stringify(result) };
 };
 http.createServer(async (request, response) => {
   const url = new URL(request.url, 'http://127.0.0.1');
   response.setHeader('Cache-Control', 'no-store');
   try {
+    if (url.pathname === '/api/update-booking-status') return await require('../api/update-booking-status')(request,response);
+    if (url.pathname === '/api/update-accommodation-options') return await require('../api/update-accommodation-options')(request,response);
     if (url.pathname === '/api/publish-roadbook') return await publish(request, response);
     if (url.pathname === '/api/create-plan-draft') {
       const chunks = []; for await (const chunk of request) chunks.push(chunk);
@@ -61,4 +64,4 @@ http.createServer(async (request, response) => {
     // Only this localhost fixture supplies its non-secret test PIN; production files are unchanged.
     response.end(relative === 'reise-roadbook-2026.html' ? content.toString().replace('<head>', '<head><script>window.prompt = () => "test-only";</script>') : content);
   } catch (error) { response.statusCode = 500; response.end(error.message); }
-}).listen(4399, '127.0.0.1', () => console.log('Local publication fixture: http://127.0.0.1:4399 — PIN test-only; no external writes'));
+}).listen(Number(process.env.PORT || 4399), '127.0.0.1', () => console.log(`Local publication fixture: http://127.0.0.1:${process.env.PORT || 4399} — PIN test-only; no external writes`));

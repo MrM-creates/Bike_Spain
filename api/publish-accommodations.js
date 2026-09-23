@@ -50,6 +50,7 @@ const normalizeEntry = (entry) => {
     }
   });
   if (output.booking && !["asked", "booked"].includes(output.booking)) delete output.booking;
+  if (entry?.options) output.options = require('../assets/accommodation-options').validateOptions(entry.options);
   return output;
 };
 
@@ -100,7 +101,12 @@ module.exports = async (request, response) => {
       return;
     }
     if (!tripData.baselineAccommodations) tripData.baselineAccommodations = tripData.accommodations;
+    const previousPlan = structuredClone(tripData);
     tripData.accommodations = state;
+    require('../lib/preserve-accommodation-options').preserveAccommodationOptions(previousPlan, tripData);
+    for (const {id,stay} of require('../lib/booking-status').staysFor(tripData)) {
+      if (stay.options) await require('../lib/accommodation-routes').updateAccommodationRoutes(tripData,id);
+    }
     tripData.publishedVersion = new Date().toISOString();
     const updatedContent = serializeTripData(tripData);
 

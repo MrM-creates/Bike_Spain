@@ -15,7 +15,7 @@ test('replacement stops join arrivals, rest days and departures without changing
  assert.deepEqual(snapshot.originalDays,baseline.originalDays);
 
  for(const d of snapshot.days.filter(d=>![6,8,10,13,19,20,21,22].includes(d.day)))assert.deepEqual(d,baseline.days.find(b=>b.id===d.id));
- for(const s of snapshot.accommodations.filter(s=>!['innsbruck-mutters','zadar','makarska-base','kotor-dobrota','shkoder','durres-ancona-cabin'].includes(s.id)))assert.deepEqual(s,publicationBase.accommodations.find(b=>b.id===s.id));
+ for(const s of snapshot.accommodations.filter(s=>!['innsbruck-mutters','zadar','makarska-base','kotor-dobrota','shkoder','durres-ancona-cabin'].includes(s.id))){ const {options,activeOptionId,accommodationNavigation,booking,...legacy}=s; const {booking:oldBooking,...old}=publicationBase.accommodations.find(b=>b.id===s.id); assert.deepEqual(legacy,old); if(s.id!=='lienz')assert.equal(booking,oldBooking); if(options) assert.ok(options.every(o=>['open','asked','booked','unavailable'].includes(o.booking))); }
 });
 test('Makarska orientation point stays distinct from lodging and ferry navigation ends on land',()=>{
  const m=feed.days[9];assert.match(m.accommodation.first.name,/Der Blick/);assert.match(m.notes,/Orientierungspunkt Makarska/);

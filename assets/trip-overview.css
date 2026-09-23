@@ -643,3 +643,15 @@ body.generic-trip-enabled.generic-roadbook-view:is(.generic-original-draft, .gen
 @media (prefers-reduced-motion: reduce) {
   .generic-inspector { transition: none; }
 }
+.accommodation-editor { width: min(620px, calc(100vw - 28px)); max-height: 90vh; overflow: auto; border: 1px solid var(--border, #ccc); border-radius: 16px; padding: 24px; color: var(--ink, #222); }
+.accommodation-editor::backdrop { background: #0006; }
+.accommodation-editor form, .accommodation-editor fieldset { display: grid; gap: 14px; }
+.accommodation-editor fieldset { margin: 18px 0; border: 1px solid var(--border, #ccc); border-radius: 10px; padding: 16px; }
+.accommodation-editor label { display: grid; gap: 6px; font-size: 14px; }
+.accommodation-editor input, .accommodation-editor select, .accommodation-editor textarea { width: 100%; box-sizing: border-box; padding: 10px; font: inherit; border: 1px solid #aaa; border-radius: 6px; }
+.accommodation-editor button { padding: 12px; min-height: 44px; font: inherit; cursor: pointer; }
+.accommodation-editor p { font-size: 14px; line-height: 1.5; }
+.accommodation-editor-actions, .accommodation-location { display: flex; gap: 12px; }
+.accommodation-location label { min-width: 0; flex: 1; }
+.accommodation-editor button[type=submit] { background: var(--accent, #176b46); color: white; border: 0; border-radius: 8px; }
+.accommodation-editor [role=status] { white-space: pre-line; }

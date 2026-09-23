@@ -1,8 +1,8 @@
 (function (root, factory) {
-  const api = factory(typeof module === "object" && module.exports ? require("./route-navigation") : root.RoadbookNavigation);
+  const api = factory(typeof module === "object" && module.exports ? require("./route-navigation") : root.RoadbookNavigation, typeof module === "object" && module.exports ? require("./accommodation-options") : root.RoadbookAccommodations);
   if (typeof module === "object" && module.exports) module.exports = api;
   else root.MotorcycleTravelModel = api;
-})(typeof globalThis !== "undefined" ? globalThis : this, function (navigation) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (navigation, hotels) {
   "use strict";
 
   const DAY_MS = 86400000;
@@ -187,6 +187,7 @@
         startDate: stage.date,
         endDate: addDays(stage.date, 1),
         nightCount: 1,
+        sourceStayId: legacyAccommodation?.id || null,
         accommodationOptionIds: [],
         selectedAccommodationId: null,
         reviewNote: legacyAccommodation?.reviewNote || "",
@@ -239,6 +240,21 @@
         };
         accommodationOptions.push(alternative);
         stay.accommodationOptionIds.push(alternative.id);
+      }
+      if (legacyAccommodation?.options) {
+        const obsolete = new Set(stay.accommodationOptionIds);
+        for(let i=accommodationOptions.length-1;i>=0;i--) if(obsolete.has(accommodationOptions[i].id)) accommodationOptions.splice(i,1);
+        for(let i=bookings.length-1;i>=0;i--) if(bookings[i].stayId===stay.id) bookings.splice(i,1);
+        stay.accommodationOptionIds=[];
+        const active=hotels.activeOption(legacyAccommodation);
+        for(const [index,item] of hotels.optionsFor(legacyAccommodation).entries()) {
+          const id=stableId("accommodation", `${stay.id}-${item.id}`);
+          accommodationOptions.push({...item,id,sourceOptionId:item.id,stayId:stay.id,notes:item.note||'',checkedAt:legacyAccommodation.reviewedAt||null,priority:index,latitude:item.coordinate?.[1]??null,longitude:item.coordinate?.[0]??null,motorcycleParking:'unknown'});
+          stay.accommodationOptionIds.push(id);
+          if(item.id===active?.id) stay.selectedAccommodationId=id;
+          if(item.booking!=='open')bookings.push({id:stableId('booking',id),stayId:stay.id,accommodationOptionId:id,status:item.booking==='asked'?'requested':item.booking,protected:item.booking==='booked'});
+        }
+        if(!active) stay.selectedAccommodationId=null;
       }
       stays.push(stay);
     });

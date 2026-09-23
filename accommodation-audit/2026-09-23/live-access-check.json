@@ -1,0 +1,205 @@
+{
+  "checkedAt": "2026-09-23T14:29:37.335Z",
+  "note": "Isolated snapshots only, no real booking changed.",
+  "results": [
+    {
+      "id": "innsbruck-mutters",
+      "routes": [
+        {
+          "id": "adria-1",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-2",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "lienz",
+      "routes": [
+        {
+          "id": "adria-2",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-3",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "graz-west",
+      "routes": [
+        {
+          "id": "adria-3",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-4",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "ljubljana-ring",
+      "routes": [
+        {
+          "id": "adria-4",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-5",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "senj",
+      "routes": [
+        {
+          "id": "adria-5",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-6",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "zadar",
+      "routes": [
+        {
+          "id": "adria-6",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-8",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "sibenik",
+      "routes": [
+        {
+          "id": "adria-8",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-10",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "makarska-base",
+      "routes": []
+    },
+    {
+      "id": "shkoder",
+      "routes": [
+        {
+          "id": "adria-19",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-21",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "urbino-country",
+      "routes": [
+        {
+          "id": "adria-22",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-24",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "ravenna",
+      "routes": [
+        {
+          "id": "adria-24",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-25",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "arqua-petrarca",
+      "routes": [
+        {
+          "id": "adria-25",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-27",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "iseo",
+      "routes": [
+        {
+          "id": "adria-27",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-29",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    },
+    {
+      "id": "como-lazzago",
+      "routes": [
+        {
+          "id": "adria-29",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        },
+        {
+          "id": "adria-30",
+          "state": "ready",
+          "message": "Zufahrt aktualisiert · Fahrzeit geschätzt"
+        }
+      ]
+    }
+  ]
+}

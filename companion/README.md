@@ -1,64 +1,65 @@
 # Roadbook – persönliche Reisebegleitung
 
-Native SwiftUI-App für iPhone/iPad ab iOS 17. Projekt: `Roadbook.xcodeproj`, Scheme `Roadbook`.
+Native SwiftUI-App für iPhone und iPad ab iOS 17. Projekt: `Roadbook.xcodeproj`, Scheme: `Roadbook`.
 
-## Umfang dieser ersten Version
+## Aktueller Stand
 
-- Balkan und Spanien als getrennte, read-only Roadbooks; Balkan zuerst in der Auswahl.
-- Tagesetappen, Ruhetage, Unterkunftskandidaten, Status, Quellenhinweise und originale Google-Maps-Links.
-- Gebündelter Startstand, validierte Downloads und atomarer Offline-Cache.
-- Übersichtskarte je Reise, Tageskarten und vergrösserbare Apple-Karte mit gespeicherten Streckenlinien. Fährverbindungen schematisch; Übernachtungsorte ausdrücklich ungefähr, keine bestätigten Hotelkoordinaten. Datenübergabe und Prüfung: `MAPS.md`.
-- Kartenbetonte Tagesansicht: grosse Karte zuerst, danach Maps-Link, wichtige Originalhinweise und aufklappbare Strecke/Unterkunft/Einträge. Unterkunftsname, Status, Eintragsanzahl und Schreibaktion bleiben sichtbar. Darstellungsprüfung der Hinweise: `DAY-LAYOUT.md`.
-- Tagespfeile oben rechts wechseln direkt zum vorherigen/nächsten Tag, inklusive aktualisierter Karte und persönlichem Eintragskontext. Der normale Zurück-Pfeil kehrt zur Einstiegsansicht zurück.
-- Persönliche Texte und bis zu acht Fotos pro Erinnerung; bearbeiten/löschen mit Bestätigung.
-- Tagebuch unabhängig vom Reiseplan: Trip-/Etappen-ID plus ursprünglicher Titel/Datum. Keine automatische Löschung bei Planänderungen.
-- Tagebucheinträge zeigen die zugehörige aktuelle Tagesroute samt Karte und Link zum Tages-Roadbook. Ursprünglicher Titel und Datum bleiben erhalten; bei entfernter Etappe wird keine andere Route zugeordnet. Bisher keine historische Streckenkopie je Eintrag, deutlich als aktueller Plan gekennzeichnet.
-- Native PhotosPicker-Auswahl, JPEG-Kopien mit maximal 2’400 Pixeln längster Kante, Bildbeschreibung. Originale unverändert; EXIF/Standortmetadaten nicht übernommen.
-- Keine Schreiboperation vom Mobilgerät auf den Planungsserver. Keine Journal-/Fotodaten im öffentlichen Feed oder bei ChatGPT.
+**Version 0.1.0 (19)**, am 10. September 2026 für beide bestehenden TestFlight-Gruppen freigegeben; beide zeigen „Im Test“. Die geöffnete App prüft alle 15 Sekunden auf veröffentlichte Änderungen, sodass ein auf dem anderen Gerät geänderter Hotelstatus automatisch erscheint. Im Hintergrund pausiert der Abruf; unveränderte Pläne werden nicht erneut heruntergeladen. Nach bestätigtem Speichern steht der neue Buchungsstatus sofort beim Hotel. Während der gemeinsame Feed nachläuft, erscheint ein kleiner Hinweis darunter. Zwei gezielte iPhone-Tests und der iPad-Test bestanden, Screenshots und Release-Signatur geprüft. Die PIN-Freischaltung bleibt auf dem jeweiligen Gerät gespeichert. Ablauf und Grenzen: [BOOKING-STATUS.md](BOOKING-STATUS.md), Veröffentlichung: [Distribution/TESTFLIGHT.md](Distribution/TESTFLIGHT.md).
 
-## Entwicklungsstand und Grenzen
+Die App-Version und die Reiseplanversion sind getrennt. Der gebündelte Stand und der öffentliche Companion-Feed stimmen bei der Prüfung vom 10. September vollständig überein:
 
-Standardmässig **private CloudKit-Ablage** im eigenen Container `iCloud.com.mrm.roadbook`. Development-Signing und Berechtigungen wurden am 3. September 2026 erfolgreich erstellt und geprüft. Der Nutzer hat anschliessend den echten Abgleich von Testnotizen und Fotos zwischen iPhone und iPad bestätigt. Die Trennung zweier Apple-Accounts ist noch nicht geprüft. Ein eingerichteter Speicher bedeutet nicht, dass jeder Hintergrundabgleich bereits erfolgreich war. App-Store-Connect-Eintrag und Production-Schema sind seit 4. September vorbereitet; Build 11 ist seit 5. September in der internen TestFlight-Gruppe. Eigenständiges App-Icon eingebunden; Gestaltung und Prompts: `ICON-DESIGN.md`. Es gibt keine Offline-Karten, Turn-by-turn-Navigation oder gemeinsame Tagebuchfreigabe. Die iPad-Version verwendet dieselbe adaptive Listen-Navigation; kein eigener Desktop-Arbeitsplatz.
+- Balkan: `2026-09-10T09:58:35.540Z`, 30 Tage.
+- Spanien: `2026-08-16T14:49:12.000Z`, 30 Tage.
 
-Die Leseschnittstelle `/api/companion-plan` ist veröffentlicht (Commit `c958ed6`, HTTP 200, beide Reisen mit je 30 Tagen geprüft). Die App lädt beim Start automatisch den Online-Stand. Manuell: Zahnrad → Einstellungen → Reisepläne → „Reisepläne aktualisieren“. Die Reiseauswahl zeigt pro Reise den Planstand aus deren Version, nicht den Downloadzeitpunkt. Bestehende Web-UI unverändert. Nur im Repository veröffentlichte Änderungen erscheinen im Feed; lokale Browserentwürfe nicht. Beide produktiven Reisen werden als „Veröffentlichter Reiseplan“ angezeigt.
+Der Server für Buchungsstatus ist produktiv bereitgestellt. Änderungen werden in dieselben Reiseplandaten geschrieben, die auch die Admin-App liest. Die App benötigt zum Speichern Internet; Tagebuch und Fotos bleiben privat.
 
-**Veröffentlichung angebunden:** Der Balkan-Editor speichert Änderungen zunächst lokal. `Plan veröffentlichen` gibt Route und passende Unterkünfte nach PIN-Eingabe zentral frei. Die Oberfläche bestätigt die Übergabe erst, wenn der Companion-Feed die neue Version liefert. Ausgangsversion, stabile IDs und geschützte Fixpunkte werden geprüft. Details und Tests: `../publication-handoff.md`. Kein Push-Dienst und kein App-Store-Update je Routenänderung.
+## Funktionen
 
-## Xcode und Datenquelle
+- Balkan und Spanien als getrennte Roadbooks mit Tagesetappen, Unterkünften, Status, Quellen und Google-Maps-Links.
+- Übersichtskarte, Tageskarten und gespeicherte Streckenlinien. Fährlinien sind schematisch; Übernachtungsorte können ungefähr sein. Keine Offline-Karten oder Turn-by-turn-Navigation.
+- Validierter Startbestand, Online-Aktualisierung und atomarer Offline-Cache der Pläne. Einstellungen → Reisepläne → Reisepläne aktualisieren; die App lädt auch beim Start den Online-Stand.
+- Ab Build 17: Hotelname und Buchungsstatus sichtbar ohne Aufklappen; nach Freischaltung in den Einstellungen Offen/Angefragt/Gebucht für die vorgesehene Unterkunft ändern. Abgleich mit dem öffentlichen Reiseplan, für alle Nächte des Aufenthalts.
+- Persönliches Tagebuch mit Text und bis zu acht Fotos pro Eintrag. Einträge behalten Reise-/Etappen-ID sowie ursprünglichen Titel und Datum, auch wenn der Plan später geändert wird.
+- Neue Einträge bieten den Mikrofonbutton und „Lieber tippen“. Stoppen, Prüfen, Bearbeiten und Weiterdiktieren; gespeichert wird nur Text. Die automatische Zeichensetzung ist seit Build 15 aktiv. Ablauf und Grenzen: [VOICE-NOTES.md](VOICE-NOTES.md).
+- Privat gespeicherte Fotos werden verkleinert und ohne Standortmetadaten übernommen; Originale bleiben in der Mediathek.
+
+## Entwickeln
+
+Eigene Identitäten: `com.mrm.roadbook` und `iCloud.com.mrm.roadbook`. Die App verwendet nicht den Container von Spur oder Mindmap.
+
+Auf diesem Mac liegt Xcode unter `/Applications/Xcode-beta.app`; im Terminal ist derzeit Command Line Tools ausgewählt. Beispiel aus dem Repository-Stamm mit explizitem temporärem Build-Ausgabeordner:
 
 ```sh
-node scripts/export-companion.js
-DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer xcodebuild -project companion/Roadbook.xcodeproj -scheme Roadbook -destination 'generic/platform=iOS Simulator' -derivedDataPath companion/DerivedData CODE_SIGNING_ALLOWED=NO build
+DEVELOPER_DIR=/Applications/Xcode-beta.app/Contents/Developer xcodebuild \
+  -project companion/Roadbook.xcodeproj -scheme Roadbook \
+  -destination 'generic/platform=iOS Simulator' \
+  -derivedDataPath /tmp/Roadbook-Development-Check CODE_SIGNING_ALLOWED=NO build
 ```
 
-`Resources/plans.json` wird aus den kanonischen Reisedaten erzeugt, nicht manuell gepflegt. `api/companion-plan.js` erzeugt denselben Feed zur Laufzeit. Quell-IDs müssen bei Umplanungen erhalten bleiben; IDs gelöschter Tage dürfen nicht für andere Tage wiederverwendet werden. Einträge entfernten Tagen bleiben unter Mein Tagebuch erreichbar.
+`-derivedDataPath` legt nur die Build-Ausgabe fest und kann auf einen anderen vorhandenen Ausgabeordner zeigen. Es ist keine Projektverlagerung notwendig. **Die lokale Signierung wurde am 10. September wiederhergestellt**; Simulator-Build und signaturgeprüftes Release-Archiv mit der neuen Apple-Development-Identität sind erfolgreich. Der anschliessende Build 16 wurde erfolgreich für TestFlight exportiert und veröffentlicht. Siehe [ENTWICKLUNGSSTATUS.md](ENTWICKLUNGSSTATUS.md).
 
-## TestFlight-Vorbereitung
+`Roadbook/Resources/plans.json` wird mit `node scripts/export-companion.js` vom Repository-Stamm aus den kanonischen Reisedaten erzeugt. Es wird nicht manuell gepflegt. `api/companion-plan.js` liefert denselben Feed. IDs müssen bei Umplanungen stabil bleiben; entfernte Etappen-IDs dürfen nicht neu vergeben werden.
 
-Version **0.1.0 (11)** wurde am 5. September 2026 mit der vollständigen Balkanroute und der neuen Wegpunktdarstellung als Release archiviert, lokal exportiert, signaturgeprüft und erfolgreich zu App Store Connect hochgeladen; Apple verarbeitet das Paket. Noch keine Beta-Prüfung oder Einladung. Apple-Portalname **Roadbook by Mr M**, App-ID **6808538943**. Production-Schema nach ausdrücklicher Nutzerfreigabe bereitgestellt. Vor dem Wechsel müssen die bestehenden Development-Einträge gesichert und anschliessend bewusst übernommen werden. Details, Paketpfade, Beta-Texte und Freigabeschritte: [Distribution/TESTFLIGHT.md](Distribution/TESTFLIGHT.md).
+## Prüfen
 
-## Eigene iCloud-Ablage – Development-Abgleich bestätigt, Production offen
+Vom Repository-Stamm: `node --test tests/*.test.js`. Die Katalogprüfung berücksichtigt die im Release vom 7. September korrigierten Entfernungen und kennzeichnet genau die zehn überarbeiteten Kartenlinien als geprüft.
 
-Spur (Projekt To do) dient als Referenz: SwiftData + private CloudKit-Datenbank. Das bestehende Developer-Team ist in `Config.xcconfig` übernommen. **Nicht den Container von Spur oder MindMap verwenden.**
+`RoadbookUITests` im Xcode-Scheme verwendet mit `-ui-testing` einen separaten lokalen Store ohne CloudKit. Der Test `testPlanStatusAndRefreshInSettings` erwartet den gebündelten Balkan-Planstand vom 7. September. Echte Sprache und geräteübergreifender Abgleich benötigen zusätzlich den [Gerätecheck](GERAETECHECK.md).
 
-1. Eigene App-ID `com.mrm.roadbook` und Container `iCloud.com.mrm.roadbook`: Development-Profil erfolgreich durch Xcode bereitgestellt. Keine Änderung an Spur oder MindMap.
-2. CloudKit- und Development-Push-Berechtigungen sind in `Roadbook.entitlements` aktiviert; `Info.plist` enthält Remote notifications und den expandierten Container-Namen.
-3. `ROADBOOK_CLOUD_CONTAINER = iCloud.com.mrm.roadbook` ist gesetzt. Development-Schema und echte Entwicklungssynchronisation bestätigt; Production-Schema am 4. September bereitgestellt. Distribution-Signatur mit Production-CloudKit und Production-Push geprüft. Echte Production-Synchronisation noch offen.
-4. Mit echten Geräten prüfen: zwei Geräte desselben Accounts sehen nur dessen Daten; zweiter Account sieht diese Einträge nicht. Kein CKShare und keine Public/Shared Database verwenden.
-5. iCloud-Ausfall, voller Speicher, gleichzeitiges Bearbeiten, grosse Fotos und Accountwechsel testen. Accountwechsel schliesst die bisherige Ansicht und wählt einen getrennten Store. Bei fehlender Accountprüfung wird nicht automatisch unter einem anderen Account hochgeladen.
+## Veröffentlichung der Reisepläne
 
-Lokale Testeinträge werden **nicht automatisch migriert**. Debug behält den bisherigen Pfad; Release verwendet ab Build 9 `PrivateJournalProduction/<owner>`. Einstellungen → Tagebuch sichern ermöglicht einen bewussten Export und kontrolliertes Einlesen. Datei ist unverschlüsselt und muss geschützt gespeichert werden. Details: [JOURNAL-BACKUP.md](JOURNAL-BACKUP.md).
+[Öffentliche Web-App](https://motorrad-roadbook-spanien-2026.vercel.app/) und [Companion-Feed](https://motorrad-roadbook-spanien-2026.vercel.app/api/companion-plan). Der Balkan-Editor speichert zunächst lokal. „Plan veröffentlichen“ gibt Änderungen nach PIN-Eingabe zentral frei und bestätigt die Übergabe erst nach Prüfung des Feeds. Einzelheiten: [publication-handoff.md](../publication-handoff.md).
 
-**Noch wichtige Einschränkung im Cloud-Modus:** Das Tagebuch verlangt bei kaltem App-Start derzeit eine erfolgreiche Accountprüfung. Bei ungeklärtem Konto bleiben beide Reisepläne, Etappen und Navigationslinks zugänglich; nur das Tagebuch ist gesperrt. Erneut versuchen und Rückkehr in den Vordergrund (höchstens alle 30 Sekunden, nur bei geschlossenem Speicher) können die Prüfung wiederholen. Bereits geöffnete Editoren werden durch blosse Vordergrundwechsel nicht verworfen. Echte Offline-Tagebuchnutzung nach Neustart ist noch nicht freigegeben. Vor Reiseeinsatz muss eine sichere Offline-Accountbindung mit Wiederanmeldung/Accountwechsel getestet werden. Im explizit unkonfigurierten lokalen Modus sind Kaltstart und Tagebuch offline möglich.
+Nur veröffentlichte Reiseänderungen erscheinen im Feed; lokale Browserentwürfe nicht. Persönliche Tagebuch-/Fotodaten werden weder in den öffentlichen Feed noch an ChatGPT übertragen. Ab Build 17 schreibt die native App ausschliesslich autorisierte Buchungsstatusänderungen auf den Planungsserver. Hotelwechsel und Routenbearbeitung bleiben in der Web-App. Eine Planaktualisierung benötigt kein neues TestFlight-Paket.
 
-SwiftData-Synchronisierung ist eventual consistency, kein Backup oder zugesagter Konfliktschutz. Die manuelle Sicherung enthält nur lokal verfügbare Daten; nicht auf zwei Geräten gleichzeitig importieren. Konfliktverhalten des laufenden Cloud-Abgleichs und vollständige Wiederherstellung auf echten Geräten bleiben zu prüfen. Kein Teilen-Schalter suggeriert bereits vorhandene Berechtigungen.
+## Private Daten und offene Geräteprüfungen
 
-## Tests
+SwiftData verwendet die private CloudKit-Ablage. Development-Abgleich zwischen iPhone/iPad wurde zuvor vom Nutzer bestätigt; Production-Schema und Distribution-Berechtigungen wurden eingerichtet. Der aktuelle persönliche Geräteabgleich wird durch die Entwicklerprüfung vom 10. September nicht erneut bestätigt.
 
-Node: `node --test tests/*.test.js` vom Repository-Stamm. Feed-Tests sichern stabile IDs, beide Reisen, korrekte Fähr-Hafenzufahrt und Ausschluss persönlicher Felder. Der Endpoint lehnt POST ab.
+- Zwei verschiedene Apple-Konten, Konflikte, voller Speicher und vollständige Wiederherstellung sind gesondert zu prüfen.
+- Beim kalten Start verlangt das Cloud-Tagebuch weiterhin eine erfolgreiche Kontoprüfung. Bei ungeklärtem Konto bleiben Reisepläne und Navigation erreichbar; das Tagebuch ist gesperrt. Sichere Offline-Tagebuchnutzung nach Neustart ist noch nicht freigegeben.
+- Hintergrundabgleich ist kein Backup und keine Garantie sofortiger Synchronisierung.
+- Development- und Production-Tagebücher verwenden getrennte Speicherwege. Lokale Entwicklungseinträge werden nicht automatisch übernommen.
+- Die manuelle Tagebuchsicherung enthält lokal verfügbare Daten und ist unverschlüsselt. Import/Wiederherstellung gehören nicht zum normalen Gerätecheck. Details: [JOURNAL-BACKUP.md](JOURNAL-BACKUP.md).
 
-Xcode-UI-Tests: Scheme Roadbook auf iPhone/iPad testen. `-ui-testing` verwendet einen separaten lokalen Store und greift auch bei aktivierter Cloud-Konfiguration nicht auf iCloud zu. Tests entfernen ausschliesslich selbst angelegte Testeinträge.
-
-## Vor einer Reiseversion
-
-Zwei-Account-Tests und explizite Gegenrichtungsprüfung; Offline-Neustart des Tagebuchs im Cloud-Modus; Speicherfehler und Wiederherstellung auf echten Geräten; Dynamic Type; freigegebener Plan-Feed; abschliessende Datenschutzangaben und TestFlight-Prüfung. Noch keine TestFlight- oder öffentliche Store-Veröffentlichung.
+Große `.build`-Archive, `DerivedData`, lokale Prüfartefakte und persönliche Tagebuchsicherungen gehören nicht in den Quellcode-Commit. Historische Buildberichte bleiben erhalten; „aktuell“ und „offen“ beziehen sich dort auf ihr jeweiliges Datum.

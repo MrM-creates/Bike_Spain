@@ -1,6 +1,6 @@
 window.__TRIP_DATA__ = Object.freeze({
   "schemaVersion": 1,
-  "publishedVersion": "2026-08-16T14:49:12.000Z",
+  "publishedVersion": "2026-09-23T14:22:26.199Z",
   "planKind": "published",
   "trip": {
     "id": "trip_spanien_2026",
@@ -23,7 +23,12 @@ window.__TRIP_DATA__ = Object.freeze({
       "asphaltOnly": true
     },
     "planningProfile": {
-      "countries": ["Schweiz", "Frankreich", "Spanien", "Italien"],
+      "countries": [
+        "Schweiz",
+        "Frankreich",
+        "Spanien",
+        "Italien"
+      ],
       "seasonalRisks": [
         "Hochpässe in Pyrenäen und Picos Anfang Oktober",
         "Starkregen und Wind an Mittelmeer- und Atlantikküste",
@@ -35,7 +40,10 @@ window.__TRIP_DATA__ = Object.freeze({
         "Eine Runde über Puerto de San Glorio benötigt eine geschlossene tiefere Alternative ab demselben Übernachtungsort"
       ]
     },
-    "transportMatchers": ["Fährtag", "Fähre Barcelona.*Genua"],
+    "transportMatchers": [
+      "Fährtag",
+      "Fähre Barcelona.*Genua"
+    ],
     "placeAliases": {
       "La Patacona / Alboraya": "La Patacona",
       "Kabine auf der Fähre": "Fähre Barcelona–Genua"
@@ -95,7 +103,10 @@ window.__TRIP_DATA__ = Object.freeze({
       "stageDay": 1,
       "place": "Berikon",
       "startsAt": "2026-09-24T08:00:00+02:00",
-      "locks": ["date", "origin"],
+      "locks": [
+        "date",
+        "origin"
+      ],
       "source": "import"
     },
     {
@@ -106,7 +117,14 @@ window.__TRIP_DATA__ = Object.freeze({
       "place": "Barcelona",
       "startsAt": "2026-10-21T08:30:00+02:00",
       "endsAt": "2026-10-22T09:00:00+02:00",
-      "locks": ["date", "time", "place", "stage", "route", "booking"],
+      "locks": [
+        "date",
+        "time",
+        "place",
+        "stage",
+        "route",
+        "booking"
+      ],
       "source": "booking",
       "bookingRef": "legacy-ferry-booking"
     },
@@ -117,7 +135,11 @@ window.__TRIP_DATA__ = Object.freeze({
       "stageDay": 30,
       "place": "Berikon",
       "startsAt": "2026-10-23T18:00:00+02:00",
-      "locks": ["date", "destination", "overnight"],
+      "locks": [
+        "date",
+        "destination",
+        "overnight"
+      ],
       "source": "import"
     }
   ],
@@ -1416,7 +1438,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Logis Hôtel Le Néron",
       "firstChoiceUrl": "https://www.hotel-grenoble-nord.fr/",
       "alternative": "Maison Barbillon",
-      "alternativeUrl": "https://maisonbarbillon.com/en/planning-your-stay-faq/"
+      "alternativeUrl": "https://maisonbarbillon.com/en/planning-your-stay-faq/",
+      "options": [
+        {
+          "id": "first",
+          "name": "Logis Hôtel Le Néron",
+          "url": "https://www.hotel-grenoble-nord.fr/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            5.724324,
+            45.188404
+          ],
+          "address": "Grenoble, France"
+        },
+        {
+          "id": "alternative",
+          "name": "Maison Barbillon",
+          "url": "https://maisonbarbillon.com/en/planning-your-stay-faq/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Logis Hôtel Le Néron",
+        "coordinate": [
+          5.724324,
+          45.188404
+        ],
+        "address": "Grenoble, France",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "sisteron": {
       "startDate": "2026-09-25",
@@ -1426,7 +1481,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Hôtel Les Chênes",
       "firstChoiceUrl": "https://www.hotel-les-chenes.com/",
       "alternative": "Hôtel Tivoli",
-      "alternativeUrl": "https://www.hoteltivoli-sisteron.fr/fr/hotel"
+      "alternativeUrl": "https://www.hoteltivoli-sisteron.fr/fr/hotel",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hôtel Les Chênes",
+          "url": "https://www.hotel-les-chenes.com/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            5.945487,
+            44.198375
+          ],
+          "address": "Sisteron, France"
+        },
+        {
+          "id": "alternative",
+          "name": "Hôtel Tivoli",
+          "url": "https://www.hoteltivoli-sisteron.fr/fr/hotel",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hôtel Les Chênes",
+        "coordinate": [
+          5.945487,
+          44.198375
+        ],
+        "address": "Sisteron, France",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "lourmarin": {
       "startDate": "2026-09-26",
@@ -1435,7 +1523,33 @@ window.__TRIP_DATA__ = Object.freeze({
       "title": "Lourmarin",
       "firstChoice": "Le Moulin, Beaumier",
       "firstChoiceUrl": "https://www.beaumier.com/en/properties/le-moulin-hotel/faq/",
-      "hideBaseline": "true"
+      "hideBaseline": "true",
+      "options": [
+        {
+          "id": "first",
+          "name": "Le Moulin, Beaumier",
+          "url": "https://www.beaumier.com/en/properties/le-moulin-hotel/faq/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            5.364397,
+            43.763399
+          ],
+          "address": "Lourmarin, France"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Le Moulin, Beaumier",
+        "coordinate": [
+          5.364397,
+          43.763399
+        ],
+        "address": "Lourmarin, France",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "nimes": {
       "startDate": "2026-09-27",
@@ -1445,7 +1559,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Nimotel",
       "firstChoiceUrl": "https://www.nimotel.com/",
       "alternative": "Royal Hôtel",
-      "alternativeUrl": "https://www.royalhotel-nimes.com/en/services"
+      "alternativeUrl": "https://www.royalhotel-nimes.com/en/services",
+      "options": [
+        {
+          "id": "first",
+          "name": "Nimotel",
+          "url": "https://www.nimotel.com/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            4.36157,
+            43.836315
+          ],
+          "address": "Nîmes, France"
+        },
+        {
+          "id": "alternative",
+          "name": "Royal Hôtel",
+          "url": "https://www.royalhotel-nimes.com/en/services",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Nimotel",
+        "coordinate": [
+          4.36157,
+          43.836315
+        ],
+        "address": "Nîmes, France",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "carcassonne": {
       "startDate": "2026-09-28",
@@ -1455,7 +1602,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Hôtel Montségur",
       "firstChoiceUrl": "https://hotelmontsegur.com/parking.html",
       "alternative": "Hôtel Espace Cité",
-      "alternativeUrl": "https://www.tourisme-carcassonne.fr/en/accomodation/hotel-espace-cite/"
+      "alternativeUrl": "https://www.tourisme-carcassonne.fr/en/accomodation/hotel-espace-cite/",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hôtel Montségur",
+          "url": "https://hotelmontsegur.com/parking.html",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            2.351278,
+            43.213012
+          ],
+          "address": "Carcassonne, France"
+        },
+        {
+          "id": "alternative",
+          "name": "Hôtel Espace Cité",
+          "url": "https://www.tourisme-carcassonne.fr/en/accomodation/hotel-espace-cite/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hôtel Montségur",
+        "coordinate": [
+          2.351278,
+          43.213012
+        ],
+        "address": "Carcassonne, France",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "castelldefels-1": {
       "startDate": "2026-09-29",
@@ -1465,7 +1645,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "ibis Barcelona Castelldefels",
       "firstChoiceUrl": "https://all.accor.com/hotel/3208/index.es.shtml",
       "alternative": "Hotel nach Wahl + Central Park",
-      "alternativeUrl": "https://www.centralparkcastelldefels.com/"
+      "alternativeUrl": "https://www.centralparkcastelldefels.com/",
+      "options": [
+        {
+          "id": "first",
+          "name": "ibis Barcelona Castelldefels",
+          "url": "https://all.accor.com/hotel/3208/index.es.shtml",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            1.979652,
+            41.278496
+          ],
+          "address": "Castelldefels, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel nach Wahl + Central Park",
+          "url": "https://www.centralparkcastelldefels.com/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "ibis Barcelona Castelldefels",
+        "coordinate": [
+          1.979652,
+          41.278496
+        ],
+        "address": "Castelldefels, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "falset": {
       "startDate": "2026-10-01",
@@ -1475,7 +1688,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Hotel-Hostal Sport",
       "firstChoiceUrl": "https://www.hotelpriorat-hostalsport.com/en/hotel-hostal-sport-your-hotel-priorat",
       "alternative": "Priorat Aparthotel",
-      "alternativeUrl": "https://www.theoriginhotels.com/es/priorat-aparthotel"
+      "alternativeUrl": "https://www.theoriginhotels.com/es/priorat-aparthotel",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel-Hostal Sport",
+          "url": "https://www.hotelpriorat-hostalsport.com/en/hotel-hostal-sport-your-hotel-priorat",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            0.820018,
+            41.146
+          ],
+          "address": "Falset, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Priorat Aparthotel",
+          "url": "https://www.theoriginhotels.com/es/priorat-aparthotel",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel-Hostal Sport",
+        "coordinate": [
+          0.820018,
+          41.146
+        ],
+        "address": "Falset, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "albarracin": {
       "startDate": "2026-10-02",
@@ -1485,7 +1731,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Hotel Doña Blanca",
       "firstChoiceUrl": "https://www.albarracindonablanca.com/",
       "alternative": "Hotel Albarrán",
-      "alternativeUrl": "https://hotelalbarran.es/"
+      "alternativeUrl": "https://hotelalbarran.es/",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel Doña Blanca",
+          "url": "https://www.albarracindonablanca.com/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -1.443752,
+            40.406882
+          ],
+          "address": "Albarracín, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel Albarrán",
+          "url": "https://hotelalbarran.es/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel Doña Blanca",
+        "coordinate": [
+          -1.443752,
+          40.406882
+        ],
+        "address": "Albarracín, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "alboraya": {
       "startDate": "2026-10-04",
@@ -1497,7 +1776,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "alternative": "La Mozaira · Alboraya",
       "alternativeUrl": "https://www.lamozaira.com/",
       "note": "Hotelparkplatz vorhanden; sichere Abstellung für zwei Motorräder vor der Buchung bestätigen.",
-      "hideBaseline": "true"
+      "hideBaseline": "true",
+      "options": [
+        {
+          "id": "first",
+          "name": "Olympia Hotel, Events & Spa · Alboraya",
+          "url": "https://www.olympiahotelvalencia.com/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -0.352511,
+            39.495278
+          ],
+          "address": "Olympia Hotel, Events & Spa, Alboraya, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "La Mozaira · Alboraya",
+          "url": "https://www.lamozaira.com/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Olympia Hotel, Events & Spa · Alboraya",
+        "coordinate": [
+          -0.352511,
+          39.495278
+        ],
+        "address": "Olympia Hotel, Events & Spa, Alboraya, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "altea": {
       "startDate": "2026-10-06",
@@ -1507,7 +1819,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Hotel Cap Negret",
       "firstChoiceUrl": "https://www.hotelcapnegret.es/servicios/",
       "alternative": "Hotel Altaia",
-      "alternativeUrl": "https://hotelaltaia.es/"
+      "alternativeUrl": "https://hotelaltaia.es/",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel Cap Negret",
+          "url": "https://www.hotelcapnegret.es/servicios/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -0.045006,
+            38.602915
+          ],
+          "address": "Altea, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel Altaia",
+          "url": "https://hotelaltaia.es/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel Cap Negret",
+        "coordinate": [
+          -0.045006,
+          38.602915
+        ],
+        "address": "Altea, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "aguilas": {
       "startDate": "2026-10-07",
@@ -1518,7 +1863,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoiceUrl": "https://www.senatorhr.com/senator-aguilas/",
       "alternative": "Hotel El Paso",
       "alternativeUrl": "https://www.turismoregiondemurcia.es/es/hotel/el-paso-2118/",
-      "note": "Senator liegt direkt am Meer und verfügt laut offizieller Tourismusinformation über Privatparkplatz; einen geschützten Platz für zwei Motorräder vor der Buchung bestätigen. Hotel El Paso nennt ausdrücklich eine kostenpflichtige Garage."
+      "note": "Senator liegt direkt am Meer und verfügt laut offizieller Tourismusinformation über Privatparkplatz; einen geschützten Platz für zwei Motorräder vor der Buchung bestätigen. Hotel El Paso nennt ausdrücklich eine kostenpflichtige Garage.",
+      "options": [
+        {
+          "id": "first",
+          "name": "Senator Águilas",
+          "url": "https://www.senatorhr.com/senator-aguilas/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -1.5998,
+            37.39709
+          ],
+          "address": "Senator Águilas, Águilas, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel El Paso",
+          "url": "https://www.turismoregiondemurcia.es/es/hotel/el-paso-2118/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Senator Águilas",
+        "coordinate": [
+          -1.5998,
+          37.39709
+        ],
+        "address": "Senator Águilas, Águilas, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "monachil": {
       "startDate": "2026-10-08",
@@ -1528,7 +1906,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "La Almunia del Valle",
       "firstChoiceUrl": "https://www.laalmuniadelvalle.com/en/service/parking-2/",
       "alternative": "Hotel Rural Huerta del Laurel",
-      "alternativeUrl": "https://monachil.es/donde-dormir"
+      "alternativeUrl": "https://monachil.es/donde-dormir",
+      "options": [
+        {
+          "id": "first",
+          "name": "La Almunia del Valle",
+          "url": "https://www.laalmuniadelvalle.com/en/service/parking-2/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -3.539807,
+            37.132189
+          ],
+          "address": "Monachil, Granada, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel Rural Huerta del Laurel",
+          "url": "https://monachil.es/donde-dormir",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "La Almunia del Valle",
+        "coordinate": [
+          -3.539807,
+          37.132189
+        ],
+        "address": "Monachil, Granada, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "ronda": {
       "startDate": "2026-10-11",
@@ -1538,7 +1949,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Hotel San Francisco",
       "firstChoiceUrl": "https://hotelsanfrancisco-ronda.com/en/services/",
       "alternative": "Hotel Andalucía",
-      "alternativeUrl": "https://www.hotel-andalucia.net/en/"
+      "alternativeUrl": "https://www.hotel-andalucia.net/en/",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel San Francisco",
+          "url": "https://hotelsanfrancisco-ronda.com/en/services/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -5.161098,
+            36.745988
+          ],
+          "address": "Ronda, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel Andalucía",
+          "url": "https://www.hotel-andalucia.net/en/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel San Francisco",
+        "coordinate": [
+          -5.161098,
+          36.745988
+        ],
+        "address": "Ronda, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "ubeda": {
       "startDate": "2026-10-14",
@@ -1548,7 +1992,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "La Posada Boutique Hotel",
       "firstChoiceUrl": "https://www.laposadaubeda.es/en",
       "alternative": "Hotel Rosaleda de Don Pedro",
-      "alternativeUrl": "https://www.hotelrosaledadonpedro.com/"
+      "alternativeUrl": "https://www.hotelrosaledadonpedro.com/",
+      "options": [
+        {
+          "id": "first",
+          "name": "La Posada Boutique Hotel",
+          "url": "https://www.laposadaubeda.es/en",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -3.37109,
+            38.010965
+          ],
+          "address": "Úbeda, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel Rosaleda de Don Pedro",
+          "url": "https://www.hotelrosaledadonpedro.com/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "La Posada Boutique Hotel",
+        "coordinate": [
+          -3.37109,
+          38.010965
+        ],
+        "address": "Úbeda, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "cuenca": {
       "startDate": "2026-10-16",
@@ -1558,7 +2035,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Isis de Cuenca",
       "firstChoiceUrl": "https://www.booking.com/hotel/es/hostal-isis.html",
       "alternative": "Hotel Torremangana",
-      "alternativeUrl": "https://www.hoteltorremangana.com/"
+      "alternativeUrl": "https://www.hoteltorremangana.com/",
+      "options": [
+        {
+          "id": "first",
+          "name": "Isis de Cuenca",
+          "url": "https://www.booking.com/hotel/es/hostal-isis.html",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -2.136858,
+            40.070184
+          ],
+          "address": "Cuenca, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel Torremangana",
+          "url": "https://www.hoteltorremangana.com/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Isis de Cuenca",
+        "coordinate": [
+          -2.136858,
+          40.070184
+        ],
+        "address": "Cuenca, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "zaragoza": {
       "startDate": "2026-10-18",
@@ -1568,7 +2078,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "Hotel Sauce",
       "firstChoiceUrl": "https://www.hotelsauce.com/en/information/faqs/hotel-sauce-saragossa/parking-en/",
       "alternative": "Hotel Río Arga",
-      "alternativeUrl": "https://www.hotelrioarga.es/"
+      "alternativeUrl": "https://www.hotelrioarga.es/",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel Sauce",
+          "url": "https://www.hotelsauce.com/en/information/faqs/hotel-sauce-saragossa/parking-en/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            -0.889102,
+            41.648802
+          ],
+          "address": "Zaragoza, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel Río Arga",
+          "url": "https://www.hotelrioarga.es/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel Sauce",
+        "coordinate": [
+          -0.889102,
+          41.648802
+        ],
+        "address": "Zaragoza, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "castelldefels-2": {
       "startDate": "2026-10-19",
@@ -1578,7 +2121,40 @@ window.__TRIP_DATA__ = Object.freeze({
       "firstChoice": "ibis Barcelona Castelldefels",
       "firstChoiceUrl": "https://all.accor.com/hotel/3208/index.es.shtml",
       "alternative": "Central Park Castelldefels",
-      "alternativeUrl": "https://www.centralparkcastelldefels.com/"
+      "alternativeUrl": "https://www.centralparkcastelldefels.com/",
+      "options": [
+        {
+          "id": "first",
+          "name": "ibis Barcelona Castelldefels",
+          "url": "https://all.accor.com/hotel/3208/index.es.shtml",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            1.979652,
+            41.278496
+          ],
+          "address": "Castelldefels, Spain"
+        },
+        {
+          "id": "alternative",
+          "name": "Central Park Castelldefels",
+          "url": "https://www.centralparkcastelldefels.com/",
+          "note": "",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "ibis Barcelona Castelldefels",
+        "coordinate": [
+          1.979652,
+          41.278496
+        ],
+        "address": "Castelldefels, Spain",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     "ferry": {
       "startDate": "2026-10-21",
@@ -1595,7 +2171,33 @@ window.__TRIP_DATA__ = Object.freeze({
       "title": "Aosta",
       "firstChoice": "Hotel Le Pageot",
       "firstChoiceUrl": "https://www.lepageot.it/en/services-2/",
-      "hideBaseline": "true"
+      "hideBaseline": "true",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel Le Pageot",
+          "url": "https://www.lepageot.it/en/services-2/",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            7.320518,
+            45.737126
+          ],
+          "address": "Aosta, Italy"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel Le Pageot",
+        "coordinate": [
+          7.320518,
+          45.737126
+        ],
+        "address": "Aosta, Italy",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     }
   },
   "originalPlanVersion": "2026-08-16T14:49:12.000Z",

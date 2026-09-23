@@ -76,6 +76,7 @@ const normalizeAccommodationEntry = (entry) => {
     }
   });
   if (output.booking && !["asked", "booked"].includes(output.booking)) delete output.booking;
+  if (entry?.options) output.options = require('../assets/accommodation-options').validateOptions(entry.options);
   return output;
 };
 
@@ -168,7 +169,15 @@ module.exports = async (request, response) => {
       json(response, 409, { error: "Der Online-Plan wurde inzwischen geändert. Lade den aktuellen Stand und erstelle den Entwurf erneut." });
       return;
     }
+    const previousPlan = structuredClone(tripData);
     const nextVersion = new Date().toISOString();
+    for (const day of days) {
+      const old = (tripData.days || tripData.publishedDays).find(d => d.id === day.id);
+      if(old && JSON.stringify(day.waypoints) === JSON.stringify(old.waypoints)) {
+        if(old.navigationBreaks) day.navigationBreaks = old.navigationBreaks;
+        if(old.navigationDestinationLabel) day.navigationDestinationLabel = old.navigationDestinationLabel;
+      }
+    }
     if (isAdria) {
       const { applyAdriaPublication } = require('../lib/adria-publication');
       applyAdriaPublication(tripData, payload, days);
@@ -176,6 +185,10 @@ module.exports = async (request, response) => {
     if (accommodations) {
       if (!tripData.baselineAccommodations) tripData.baselineAccommodations = tripData.accommodations;
       tripData.accommodations = accommodations;
+    }
+    require('../lib/preserve-accommodation-options').preserveAccommodationOptions(previousPlan, tripData);
+    for (const {id,stay} of require('../lib/booking-status').staysFor(tripData)) {
+      if (stay.options) await require('../lib/accommodation-routes').updateAccommodationRoutes(tripData,id);
     }
     tripData.publishedVersion = nextVersion;
     if (isAdria) tripData.trip.dataVersion = nextVersion;

@@ -6,7 +6,7 @@ const handler = require('../api/update-booking-status');
 const { tripTarget, readPublishedTrip, writePublishedTrip } = require('../lib/published-trips');
 const { tripForCompanion } = require('../lib/companion-feed');
 const { bookingInfo, staysFor } = require('../lib/booking-status');
-const fixture = id => readPublishedTrip(fs.readFileSync(tripTarget(id).path, 'utf8'), id);
+const fixture = id => {const t=readPublishedTrip(fs.readFileSync(tripTarget(id).path, 'utf8'), id);for(const s of Object.values(t.accommodations)){delete s.options;delete s.activeOptionId;delete s.accommodationNavigation;}return t;};
 
 async function run(payload, { id = 'trip_adria_2026', snapshot = fixture(id), race = false, method = 'POST', targetHandler = handler } = {}) {
   const oldFetch = global.fetch, oldEnv = { ...process.env };

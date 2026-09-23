@@ -1030,6 +1030,9 @@
     </form>
   </dialog>
 
+  <link rel="stylesheet" href="/assets/trip-overview.css?v=20260923">
+  <script src="/assets/accommodation-options.js?v=20260923"></script>
+  <script src="/assets/accommodation-editor.js?v=20260923"></script>
   <script src="/data/trip-spanien-2026.js?v=20260816ipad"></script>
   <script>
     const ADMIN_MODE = new URLSearchParams(window.location.search).get("admin") === "1";
@@ -1506,6 +1509,15 @@ Wichtig fuer das Import-JSON:
         item.append(strong, detail);
         customHotels.append(item);
       });
+      const activeHotel = window.RoadbookAccommodations.activeOption(data);
+      const current = document.createElement('p');
+      current.textContent = activeHotel ? `Aktuelle Unterkunft: ${activeHotel.name} · ${window.RoadbookAccommodations.label(activeHotel.booking)}` : 'Neue Unterkunft nötig';
+      customHotels.prepend(current);
+      if(data.options) {
+        const statuses=document.createElement('p');
+        statuses.textContent=data.options.map(o=>`${o.name}: ${window.RoadbookAccommodations.label(o.booking)}`).join(' · ');
+        customHotels.append(statuses);
+      }
       customHotels.hidden = !customHotels.children.length;
 
       let note = stay.querySelector(".stay-note");
@@ -1590,6 +1602,14 @@ Wichtig fuer das Import-JSON:
           });
         });
       });
+      stay.querySelectorAll('.state-button').forEach(button=>button.remove());
+      const manage = document.createElement('button');
+      manage.type='button'; manage.className='edit-stay'; manage.textContent='Unterkünfte & Status';
+      manage.onclick=()=>{
+        if(JSON.stringify(state)!==JSON.stringify(publishedAccommodationState)) { alert('Bitte lokale Unterkunftsänderungen zuerst veröffentlichen oder den Online-Stand laden.'); return; }
+        window.openAccommodationEditor(window.__TRIP_DATA__,id);
+      };
+      stay.querySelector('.booking-state')?.append(manage);
       if (ADMIN_MODE) {
         const editButton = document.createElement("button");
         editButton.className = "edit-stay";

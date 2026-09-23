@@ -4,12 +4,14 @@ import OSLog
 
 @MainActor @Observable
 final class PlanStore {
+    let bookings = BookingStore()
     private(set) var feed: PlanFeed?
     private(set) var message = "Mitgelieferter Reiseplan · offline verfügbar"
     private(set) var busy = false
     private(set) var error: String?
     private let file: URL
     private let bundled: PlanFeed?
+    private var feedETag: String?
     private let logger = Logger(subsystem: "com.mrm.roadbook", category: "ReadOnlyPlans")
     static let endpoint = URL(string: "https://motorrad-roadbook-spanien-2026.vercel.app/api/companion-plan")!
 
@@ -42,6 +44,20 @@ final class PlanStore {
             self.error = "Der gespeicherte Plan konnte nicht geladen oder gesichert werden. Der mitgelieferte Plan bleibt verfügbar."
         }
         logger.info("Loaded read-only plan: \(self.feed?.routeLineCount ?? 0) route lines")
+        if let feed { bookings.reconcile(feed) }
+    }
+
+    // SwiftUI owns and cancels this loop when the app leaves the foreground.
+    func refreshWhileActive() async {
+        var interval: UInt64 = 15_000_000_000
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-ui-test-live-refresh") { interval = 1_000_000_000 }
+        #endif
+        while !Task.isCancelled {
+            await refresh()
+            do { try await Task.sleep(nanoseconds: interval) }
+            catch { return }
+        }
     }
 
     func refresh() async {
@@ -51,8 +67,17 @@ final class PlanStore {
         do {
             var request = URLRequest(url: Self.endpoint, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 25)
             request.httpMethod = "GET"
-            let (data, response) = try await URLSession.shared.data(for: request)
-            guard (response as? HTTPURLResponse)?.statusCode == 200, data.count <= 10_000_000 else { throw PlanError.invalid }
+            if let feedETag { request.setValue(feedETag, forHTTPHeaderField: "If-None-Match") }
+            let (data, response) = try await BookingNetworking.session.data(for: request)
+            try Task.checkCancellation()
+            guard let http = response as? HTTPURLResponse else { throw PlanError.invalid }
+            if http.statusCode == 304, feedETag != nil, let feed {
+                bookings.reconcile(feed)
+                message = "Plan aktuell · \(Date().formatted(date: .abbreviated, time: .shortened))"
+                error = nil
+                return
+            }
+            guard http.statusCode == 200, data.count <= 10_000_000 else { throw PlanError.invalid }
             let next = enrich(try JSONDecoder().decode(PlanFeed.self, from: data).validated())
             // A stale deployment/cache must not silently roll back a downloaded plan.
             for trip in next.trips {
@@ -62,10 +87,13 @@ final class PlanStore {
             }
             try persist(next)
             feed = next
+            feedETag = http.value(forHTTPHeaderField: "ETag")
+            bookings.reconcile(next)
             logger.info("Refreshed read-only plan: \(next.routeLineCount) route lines")
             message = "Plan aktualisiert · \(Date().formatted(date: .abbreviated, time: .shortened))"
             error = nil
         } catch {
+            if Task.isCancelled || (error as? URLError)?.code == .cancelled { return }
             logger.error("Read-only plan refresh failed: \(String(describing: error), privacy: .public)")
             self.error = "Aktualisieren nicht möglich. Dein gespeicherter Plan bleibt verfügbar. Bitte später erneut versuchen."
         }

@@ -310,7 +310,7 @@ test("roadbook publication commits only the canonical data file to the configure
   }
 });
 
-test("publishing a hotel replacement leaves all roadbook days unchanged", async () => {
+test("legacy publisher rejects identity replacement for option-aware hotels", async () => {
   const previousFetch = global.fetch;
   const previousEnv = { ...process.env };
   let publishedContent = "";
@@ -328,10 +328,8 @@ test("publishing a hotel replacement leaves all roadbook days unchanged", async 
     const accommodations = structuredClone(tripData.accommodations);
     accommodations.alboraya.firstChoice = "Anderes Hotel in La Patacona";
     const result = await call(publishAccommodations, { secret: "test-pin", accommodations, baseVersion: tripData.publishedVersion });
-    assert.equal(result.status, 200);
-    const published = parseTripData(publishedContent);
-    assert.deepEqual(published.publishedDays, tripData.publishedDays);
-    assert.equal(published.accommodations.alboraya.firstChoice, "Anderes Hotel in La Patacona");
+    assert.equal(result.status, 409);
+    assert.equal(publishedContent, "");
   } finally {
     global.fetch = previousFetch;
     process.env = previousEnv;

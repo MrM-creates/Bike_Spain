@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-23T13:49:11.033Z",
+  "publishedVersion": "2026-09-23T14:27:31.314Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1270,7 +1270,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentAlternative": "Muttererhof · Mutters",
       "currentAlternativeUrl": "https://www.booking.com/hotel/at/muttererhof.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
       "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
-      "booking": "booked"
+      "booking": "booked",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel dasMEI · Mutters",
+          "url": "https://www.booking.com/hotel/at/dasmei-medical-selfness.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "booked",
+          "coordinate": [
+            11.375266,
+            47.230428
+          ],
+          "address": "Natterer Straße 20–22, 6162 Mutters, Austria"
+        },
+        {
+          "id": "alternative",
+          "name": "Muttererhof · Mutters",
+          "url": "https://www.booking.com/hotel/at/muttererhof.de.html?checkin=2026-09-24&checkout=2026-09-25&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "address": "Pension Muttererhof, 24, Natterer Straße, Raitis, Mutters, Bezirk Innsbruck-Land, Tirol, 6162, Österreich",
+          "coordinate": [
+            11.3751652,
+            47.2307055
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel dasMEI · Mutters",
+        "coordinate": [
+          11.375266,
+          47.230428
+        ],
+        "address": "Natterer Straße 20–22, 6162 Mutters, Austria",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "lienz",
@@ -1282,7 +1320,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/at/holunderhof.de.html?checkin=2026-09-25&checkout=2026-09-26&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Gasthof Schlossberghof · Lienz",
       "currentAlternativeUrl": "https://www.booking.com/hotel/at/gasthof-schlossberghof.de.html?checkin=2026-09-25&checkout=2026-09-26&group_adults=2&no_rooms=1&group_children=0",
-      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel Holunderhof · Lienz",
+          "url": "https://www.booking.com/hotel/at/holunderhof.de.html?checkin=2026-09-25&checkout=2026-09-26&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "booked",
+          "coordinate": [
+            12.775482,
+            46.8416
+          ],
+          "address": "Zettersfeldstraße 36, 9905 Gaimberg, Austria"
+        },
+        {
+          "id": "alternative",
+          "name": "Gasthof Schlossberghof · Lienz",
+          "url": "https://www.booking.com/hotel/at/gasthof-schlossberghof.de.html?checkin=2026-09-25&checkout=2026-09-26&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Am 23.09.2026 laut Nutzer nicht mehr verfügbar. Holunderhof ist gebucht.",
+          "booking": "unavailable",
+          "address": "Iseltaler Straße 21, 9900 Lienz, Austria",
+          "coordinate": [
+            12.7545062,
+            46.8293036
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel Holunderhof · Lienz",
+        "coordinate": [
+          12.775482,
+          46.8416
+        ],
+        "address": "Zettersfeldstraße 36, 9905 Gaimberg, Austria",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "graz-west",
@@ -1294,7 +1370,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/at/steiermarkhof.de.html?checkin=2026-09-26&checkout=2026-09-27&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Hotel AT HOME · Graz-Südost",
       "currentAlternativeUrl": "https://www.booking.com/hotel/at/athome.de.html?checkin=2026-09-26&checkout=2026-09-27&group_adults=2&no_rooms=1&group_children=0",
-      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
+      "options": [
+        {
+          "id": "first",
+          "name": "Hotel Steiermarkhof · Graz-Wetzelsdorf",
+          "url": "https://www.booking.com/hotel/at/steiermarkhof.de.html?checkin=2026-09-26&checkout=2026-09-27&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            15.391521,
+            47.049228
+          ],
+          "address": "Ekkehard-Hauer-Straße 33, 8052 Graz, Austria"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel AT HOME · Graz-Südost",
+          "url": "https://www.booking.com/hotel/at/athome.de.html?checkin=2026-09-26&checkout=2026-09-27&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "address": "Köglerweg 9, 8042 Graz, Austria",
+          "coordinate": [
+            15.4874047,
+            47.0395519
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Hotel Steiermarkhof · Graz-Wetzelsdorf",
+        "coordinate": [
+          15.391521,
+          47.049228
+        ],
+        "address": "Ekkehard-Hauer-Straße 33, 8052 Graz, Austria",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "ljubljana-ring",
@@ -1306,7 +1420,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/si/urban-ring.de.html?checkin=2026-09-27&checkout=2026-09-28&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "B&B Pod vrbo · Ljubljana-Trnovo",
       "currentAlternativeUrl": "https://www.booking.com/hotel/si/guesthouse-pod-vrbo.de.html?checkin=2026-09-27&checkout=2026-09-28&group_adults=2&no_rooms=1&group_children=0",
-      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
+      "options": [
+        {
+          "id": "first",
+          "name": "Urban Ring Hotel · Ljubljana-Rudnik",
+          "url": "https://www.booking.com/hotel/si/urban-ring.de.html?checkin=2026-09-27&checkout=2026-09-28&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            14.54101,
+            46.021107
+          ],
+          "address": "Dolenjska cesta 242c, 1000 Ljubljana, Slovenia"
+        },
+        {
+          "id": "alternative",
+          "name": "B&B Pod vrbo · Ljubljana-Trnovo",
+          "url": "https://www.booking.com/hotel/si/guesthouse-pod-vrbo.de.html?checkin=2026-09-27&checkout=2026-09-28&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "address": "Ziherlova ulica 36, 1000 Ljubljana, Slovenia",
+          "coordinate": [
+            14.5033776,
+            46.0407592
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Urban Ring Hotel · Ljubljana-Rudnik",
+        "coordinate": [
+          14.54101,
+          46.021107
+        ],
+        "address": "Dolenjska cesta 242c, 1000 Ljubljana, Slovenia",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "senj",
@@ -1318,7 +1470,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/zora-senj.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Beautiful Sea View Studio Danijela · Senj",
       "currentAlternativeUrl": "https://www.booking.com/hotel/hr/apartment-barbic.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
-      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
+      "options": [
+        {
+          "id": "first",
+          "name": "Zora · ruhiges Apartment in Senj",
+          "url": "https://www.booking.com/hotel/hr/zora-senj.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            14.9021456,
+            44.9941346
+          ],
+          "address": "Ulica Mateše Kuhačevića 5, 53270 Senj, Croatia"
+        },
+        {
+          "id": "alternative",
+          "name": "Beautiful Sea View Studio Danijela · Senj",
+          "url": "https://www.booking.com/hotel/hr/apartment-barbic.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "address": "Nikole Suzana 11A, Senj, Croatia",
+          "coordinate": [
+            14.902030200000013,
+            44.993504
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Zora · ruhiges Apartment in Senj",
+        "coordinate": [
+          14.9021456,
+          44.9941346
+        ],
+        "address": "Ulica Mateše Kuhačevića 5, 53270 Senj, Croatia",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "zadar",
@@ -1339,7 +1529,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "reviewSources": [
         "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
         "https://www.booking.com/hotel/hr/apartments-villa-karla.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0"
-      ]
+      ],
+      "options": [
+        {
+          "id": "first",
+          "name": "Arborea, luxury apartment with private yard",
+          "url": "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Adresse: Ulica Augusta Šenoe 38a, Zadar, Croatia. Apartment mit 2 Schlafzimmern, 65 m². Eigene Küche, Waschmaschine, Privatparkplatz am Haus, private Aussenfläche; Inseratsadresse mit Zusatz Prizemlje (Erdgeschoss). Am 10.09.2026 für 2026-09-29 bis 2026-10-01 und zwei Erwachsene verfügbar angezeigt: CHF 197 insgesamt, kostenlos stornierbar vor 2026-09-28. Momentaufnahme, nicht gebucht.",
+          "booking": "open",
+          "coordinate": [
+            15.217936041002558,
+            44.13247343788357
+          ],
+          "address": "Ulica Augusta Šenoe 38a, Zadar"
+        },
+        {
+          "id": "alternative",
+          "name": "Villa Karla",
+          "url": "https://www.booking.com/hotel/hr/apartments-villa-karla.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Adresse: Premudski prilaz 8, Zadar, Croatia. Standard Apartment, 45 m², Tarif für zwei Gäste. Eigene Küche; Waschmaschine und Trockner beschrieben; kostenlose Parkplätze an der Unterkunft. Am 10.09.2026: CHF 250 insgesamt für zwei Erwachsene, kostenlos stornierbar vor 2026-09-24.",
+          "booking": "open",
+          "address": "Premudski prilaz 8, Zadar, Croatia",
+          "coordinate": [
+            15.243803500000013,
+            44.1140134
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Arborea, luxury apartment with private yard",
+        "coordinate": [
+          15.217936041002558,
+          44.13247343788357
+        ],
+        "address": "Ulica Augusta Šenoe 38a, Zadar",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "sibenik",
@@ -1359,7 +1587,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
       "reviewSources": [
         "https://www.airbnb.com/rooms/50787604"
-      ]
+      ],
+      "options": [
+        {
+          "id": "first",
+          "name": "My Adriatic Place · Podsolarsko",
+          "url": "https://www.booking.com/hotel/hr/my-adriatic-place.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Erdgeschosswohnung mit Garten in Podsolarsko, ausserhalb des Zentrums. Küche und Waschmaschine laut Inserat; Garage für zwei Motorräder bestätigen. Am 03.09. für 01.–03.10. angezeigt: CHF 215 insgesamt als Mitgliederpreis, vollständig erstattbar durch Booking vor 27.09. Rabatt und Erstattungsbedingungen im eigenen Konto prüfen; kein gewöhnlicher kostenloser Stornotarif.",
+          "booking": "open",
+          "coordinate": [
+            15.893359,
+            43.704753
+          ],
+          "address": "Podsolarsko 136, 22000 Šibenik, Croatia"
+        },
+        {
+          "id": "alternative",
+          "name": "Comfy apartment in a quiet neighborhood · Ražine",
+          "url": "https://www.booking.com/hotel/hr/comfy-apartment-in-a-queit-neighborhood.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Ganze Erdgeschosswohnung mit Garten in Ražine, Danilska 45. Küche, Waschmaschine und privater Parkplatz laut Inserat. Ruhige Wohnlage statt Altstadt; keine abschliessbare Garage belegt. Am 03.09. für 01.–03.10. angezeigt: CHF 170 insgesamt, kostenlos stornierbar vor 30.09.",
+          "booking": "open",
+          "address": "Danilska 45, Šibenik, Croatia",
+          "coordinate": [
+            15.9267338,
+            43.7055214
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "My Adriatic Place · Podsolarsko",
+        "coordinate": [
+          15.893359,
+          43.704753
+        ],
+        "address": "Podsolarsko 136, 22000 Šibenik, Croatia",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "makarska-base",
@@ -1380,7 +1646,42 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "reviewSources": [
         "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
         "https://www.ina.hr/station/makarska-ratac/"
-      ]
+      ],
+      "options": [
+        {
+          "id": "first",
+          "name": "Der Blick / The View",
+          "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
+          "note": "Gesamtes Apartment mit zwei Schlafzimmern, erstattungsfähiger Tarif. Küche, eigene kostenlose Waschmaschine, ein Stellplatz auf dem Grundstück; eine Bewertung bestätigt reservierten Parkplatz, andere beschreibt Steigung vom Strand zur Wohnung. Am 10.09.2026 für 2026-10-03 bis 2026-10-06 und zwei Erwachsene verfügbar angezeigt: CHF 241.5 insgesamt, kostenlos stornierbar vor 2026-10-02. Momentaufnahme, nicht gebucht.",
+          "booking": "open"
+        },
+        {
+          "id": "alternative",
+          "name": "Sun Spalato Residence · bedingt passende Reserve",
+          "url": "https://www.booking.com/hotel/hr/sun-spalato-residence-ivano.de.html?checkin=2026-10-03&checkout=2026-10-06&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Zadarska ulica 1, Makarska. Am 10.09. für 03.–06.10. und zwei Erwachsene angezeigt: Erdgeschosswohnung, 55 m², Küche, Privatparkplatz, CHF 222 Mitgliederpreis. Kostenlose Stornierung nur vor 19.09.2026; deshalb weniger flexibel als Der Blick. Eigene Waschmaschine dieser Einheit nicht bestätigt.",
+          "booking": "open",
+          "address": "Zadarska ulica 1, Makarska, Croatia",
+          "coordinate": [
+            17.00894076581,
+            43.310369504573
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Der Blick / The View",
+        "coordinate": [
+          17.007086,
+          43.306819
+        ],
+        "address": "",
+        "fixed": true,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute",
+        "label": "INA Makarska-Ratac, Vukovarska 135",
+        "hotelCoordinate": null
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "dubrovnik-lapad",
@@ -1398,7 +1699,40 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceNotes": "OSCAR Suite: Küche, eigene kostenlose Waschmaschine und ein Garagenstellplatz ausdrücklich im Inserat. Ruhige Wohnlage ausserhalb der Altstadt. Am 03.09. für 06.–09.10. und zwei Erwachsene angezeigt: CHF 352 insgesamt, kostenlos stornierbar vor 01.10. Beide Motorräder müssen auf den zugesagten Platz passen.",
       "currentAlternativeNotes": "Miss Mia: Küche, Waschmaschine und privater Stellplatz am Haus, keine Garage belegt. Ausserhalb der Altstadt; laut Beschreibung 15–20 Minuten zu Fuss dorthin. Rangierfläche prüfen. Am 03.09. für 06.–09.10. angezeigt: CHF 393 insgesamt, kostenlos stornierbar vor 01.10.; keine Preis- oder Verfügbarkeitsgarantie.",
       "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
-      "reviewSources": []
+      "reviewSources": [],
+      "options": [
+        {
+          "id": "first",
+          "name": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
+          "url": "https://www.airbnb.ch/rooms/648206203313909249?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
+          "note": "OSCAR Suite: Küche, eigene kostenlose Waschmaschine und ein Garagenstellplatz ausdrücklich im Inserat. Ruhige Wohnlage ausserhalb der Altstadt. Am 03.09. für 06.–09.10. und zwei Erwachsene angezeigt: CHF 352 insgesamt, kostenlos stornierbar vor 01.10. Beide Motorräder müssen auf den zugesagten Platz passen.",
+          "booking": "open",
+          "coordinate": [
+            18.08846,
+            42.65196
+          ],
+          "address": "Hrvatskog Crvenog Kriza 10, Dubrovnik"
+        },
+        {
+          "id": "alternative",
+          "name": "Miss Mia · Apartment mit Meerblick und Balkon",
+          "url": "https://www.airbnb.ch/rooms/599181579397214439?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
+          "note": "Miss Mia: Küche, Waschmaschine und privater Stellplatz am Haus, keine Garage belegt. Ausserhalb der Altstadt; laut Beschreibung 15–20 Minuten zu Fuss dorthin. Rangierfläche prüfen. Am 03.09. für 06.–09.10. angezeigt: CHF 393 insgesamt, kostenlos stornierbar vor 01.10.; keine Preis- oder Verfügbarkeitsgarantie.",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
+        "coordinate": [
+          18.08846,
+          42.65196
+        ],
+        "address": "Hrvatskog Crvenog Kriza 10, Dubrovnik",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "kotor-dobrota",
@@ -1416,7 +1750,32 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceNotes": "Derzeit nicht verfügbar: Airbnb zeigte am 18.09. sowohl 09.–12.10. als auch 09.–13.10. als nicht buchbar. Nutzer bestätigt: noch nicht gebucht. Wunschwohnung wegen der Aussicht als Wunsch erhalten; keine gesicherte Unterkunft. Vier Nächte buchen und nach drei Nächten abreisen löst die fehlende Verfügbarkeit derzeit nicht. Historischer Preis CHF 359 vom 03.09. für vier Nächte ist kein aktuelles Angebot. Küche und eigene Waschmaschine; nur Strassenparkplatz, gesicherter Motorradplatz nicht bestätigt.",
       "currentAlternativeNotes": "Nur Reserve, kein geplanter Wechsel: Bright & Elegant mit Küche, eigener Waschmaschine und Stellbereich. Für 09.–12.10. am 18.09. verfügbar angezeigt: erstattungsfähiger Tarif CHF 196.10 insgesamt, kostenlose Stornierung vor 04.10. Sichere Abstellung und genaue Zufahrt nicht bestätigt.",
       "reviewNote": "Aufenthalt 09.–12.10., drei Nächte. Wunschwohnung derzeit nicht verfügbar, auch nicht für 09.–13.10.; laut Nutzer noch nicht gebucht. Alternative bleibt Reserve. Öffentlicher Routenanker Sveti Stasije ist vorläufig: nach Wahl einer anderen Unterkunft Ankunft und Abfahrt sowie private Hauszufahrt anpassen. Keine Buchung oder Nachricht vorgenommen.",
-      "reviewSources": []
+      "reviewSources": [],
+      "options": [
+        {
+          "id": "first",
+          "name": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
+          "url": "https://www.airbnb.ch/rooms/906512978879018565?check_in=2026-10-09&check_out=2026-10-13&guests=2&adults=2&locale=de",
+          "note": "Derzeit nicht verfügbar: Airbnb zeigte am 18.09. sowohl 09.–12.10. als auch 09.–13.10. als nicht buchbar. Nutzer bestätigt: noch nicht gebucht. Wunschwohnung wegen der Aussicht als Wunsch erhalten; keine gesicherte Unterkunft. Vier Nächte buchen und nach drei Nächten abreisen löst die fehlende Verfügbarkeit derzeit nicht. Historischer Preis CHF 359 vom 03.09. für vier Nächte ist kein aktuelles Angebot. Küche und eigene Waschmaschine; nur Strassenparkplatz, gesicherter Motorradplatz nicht bestätigt.",
+          "booking": "open"
+        },
+        {
+          "id": "alternative",
+          "name": "Bright & Elegant Secret Vacation Home · Dobrota",
+          "url": "https://www.airbnb.com/rooms/1138334092306069668?check_in=2026-10-09&check_out=2026-10-12&guests=2&adults=2",
+          "note": "Nur Reserve, kein geplanter Wechsel: Bright & Elegant mit Küche, eigener Waschmaschine und Stellbereich. Für 09.–12.10. am 18.09. verfügbar angezeigt: erstattungsfähiger Tarif CHF 196.10 insgesamt, kostenlose Stornierung vor 04.10. Sichere Abstellung und genaue Zufahrt nicht bestätigt.",
+          "booking": "open"
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Wohnung mit sensationeller Aussicht · Sveti Stasije, Dobrota",
+        "coordinate": null,
+        "address": "",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "shkoder",
@@ -1437,7 +1796,44 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "reviewSources": [
         "https://www.booking.com/hotel/al/all-seasons-apartment-1.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF",
         "https://www.booking.com/hotel/al/riras-apartment.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF"
-      ]
+      ],
+      "options": [
+        {
+          "id": "first",
+          "name": "All Seasons Apartments · 2-Schlafzimmer-Wohnung",
+          "url": "https://www.booking.com/hotel/al/all-seasons-apartment-1.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF",
+          "note": "Ganze Wohnung 65 m² mit Doppelbett, eigener Küche, Waschmaschine und Balkon. Rruga Lek Dukagjini; ruhige Lage laut Gastgeber, Zentrum zu Fuss. Am 18.09. für 12.–14.10. / 2 Erwachsene: CHF 162 insgesamt inkl. Steuern, kostenlos stornierbar vor 11.10. (günstigerer CHF 139-Tarif nur vor 28.09.). Vorauszahlung innerhalb 24 h vor Anreise; Abwicklung direkt klären, Hausregeln nennen Barzahlung. Check-in 14:00–23:30, Checkout bis 10:00. 9, 9/453 Bewertungen. Nicht gebucht.",
+          "booking": "open",
+          "coordinate": [
+            19.513024609089,
+            42.07142304764
+          ]
+        },
+        {
+          "id": "alternative",
+          "name": "RIRA’s apartment · 1-Schlafzimmer-Wohnung",
+          "url": "https://www.booking.com/hotel/al/riras-apartment.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF",
+          "note": "63 m², Doppelbett, eigene Küche/Waschmaschine, Balkon und kostenloser Privatparkplatz. Dritter Stock, nur Treppen. Am 18.09. für 12.–14.10. / 2 Erwachsene CHF 85 insgesamt inkl. Steuern; kostenlos stornierbar vor 11.10.; keine Vorauszahlung, Zahlung vor Ort.9, 2/5 Bewertungen. Sichere Abstellung nicht bestätigt. Check-in 11:30–21:00, Checkout bis 10:00. Nicht gebucht.",
+          "booking": "open",
+          "address": "3GC6+Q72 Shkodër, 4001 Shkodra, Albanien",
+          "coordinate": [
+            19.51053680614,
+            42.0718354642316
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "All Seasons Apartments · 2-Schlafzimmer-Wohnung",
+        "coordinate": [
+          19.513024609089,
+          42.07142304764
+        ],
+        "address": "",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "durres-ancona-cabin",
@@ -1477,7 +1873,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "reviewSources": [
         "https://camaggetti.vacation-bookings.com/",
         "https://www.casaledinicolo.it/sistemazioni/appartamento-country/"
-      ]
+      ],
+      "options": [
+        {
+          "id": "first",
+          "name": "Casale di Nicolò · Appartamento Country",
+          "url": "https://www.airbnb.ch/rooms/49005441?adults=2&check_in=2026-10-15&check_out=2026-10-17&locale=de",
+          "note": "Country-Apartment für zwei Personen im Grünen: Erdgeschoss, Küche, eigene Waschmaschine und Garten. Am 03.09. bei Airbnb für 15.–17.10. angezeigt: CHF 166 insgesamt, kostenlos stornierbar vor 14.10. Deshalb erste Wahl. Parkplatz am Haus aufgeführt, sichere Abstellung noch bestätigen. Direktbuchung hat andere Bedingungen: Anzahlung nur auf späteren Aufenthalt anrechenbar.",
+          "booking": "open",
+          "coordinate": [
+            12.678938,
+            43.717538
+          ],
+          "address": "Via San Marino 11, 61029 Urbino, Italy"
+        },
+        {
+          "id": "alternative",
+          "name": "Cà Maggetti · Ferienwohnung im Grünen",
+          "url": "https://www.booking.com/hotel/it/ca-39-maggetti.de.html?checkin=2026-10-15&checkout=2026-10-17&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Landgut ausserhalb Urbinos. Küche, Waschmaschine und umzäunter Parkplatz laut Anbieter. Am 03.09. für 15.–17.10. grosse 100-m²-Wohnung angezeigt: CHF 426 als Mitgliederpreis insgesamt, kostenlos stornierbar nur vor 15.09. Deutlich teurer und frühe Frist; vor Fährbestätigung keine nicht erstattbare Bindung eingehen. Kleinere Einheit separat anfragen.",
+          "booking": "open",
+          "address": "Via I Maggetti 38, Urbino, Italy",
+          "coordinate": [
+            12.6497712,
+            43.7398354
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Casale di Nicolò · Appartamento Country",
+        "coordinate": [
+          12.678938,
+          43.717538
+        ],
+        "address": "Via San Marino 11, 61029 Urbino, Italy",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "ravenna",
@@ -1489,7 +1923,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/it/holiday-inn-ravenna.de.html?checkin=2026-10-17&checkout=2026-10-18&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Hotel Classicano · Ravenna-Süd",
       "currentAlternativeUrl": "https://www.booking.com/hotel/it/classicano.de.html?checkin=2026-10-17&checkout=2026-10-18&group_adults=2&no_rooms=1&group_children=0",
-      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
+      "options": [
+        {
+          "id": "first",
+          "name": "Grand Hotel Mattei · Ravenna-Nord",
+          "url": "https://www.booking.com/hotel/it/holiday-inn-ravenna.de.html?checkin=2026-10-17&checkout=2026-10-18&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            12.210602,
+            44.436359
+          ],
+          "address": "Via Enrico Mattei 25, 48122 Ravenna, Italy"
+        },
+        {
+          "id": "alternative",
+          "name": "Hotel Classicano · Ravenna-Süd",
+          "url": "https://www.booking.com/hotel/it/classicano.de.html?checkin=2026-10-17&checkout=2026-10-18&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "address": "Hotel Classicano, 2, Via Cella, Madonna dell'Albero, Ravenna, Emilia-Romagna, 48124, Italia",
+          "coordinate": [
+            12.1984624,
+            44.3844881
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Grand Hotel Mattei · Ravenna-Nord",
+        "coordinate": [
+          12.210602,
+          44.436359
+        ],
+        "address": "Via Enrico Mattei 25, 48122 Ravenna, Italy",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "arqua-petrarca",
@@ -1509,7 +1981,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "reviewNote": "Kandidaten, nicht gebucht. Konkrete Wohnung, Verfügbarkeit, Mindestaufenthalt, Gesamtpreis und vollständige Stornobedingungen vor Buchung prüfen. Sichere Abstellung für zwei Maschinen, asphaltierte Zufahrt und Rangierfläche schriftlich bestätigen lassen. Kartenmarker und Tagesrouten zeigen noch den Reiseort, nicht die endgültige Hauszufahrt.",
       "reviewSources": [
         "https://www.hhpetrarca.com/"
-      ]
+      ],
+      "options": [
+        {
+          "id": "first",
+          "name": "Agriturismo Giulio Fufo · Ferienwohnung",
+          "url": "https://www.booking.com/hotel/it/agriturismo-giulio-fufo.de.html?checkin=2026-10-18&checkout=2026-10-20&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Ganze 45-m²-Wohnung mit Küche, Waschmaschine, Terrasse und Privatparkplatz laut Inserat. Via Scalette 2, laut Gastgeber etwa 500 m ausserhalb des historischen Zentrums. Am 03.09. für 18.–20.10. angezeigt: CHF 264 insgesamt, kostenlos stornierbar vor 17.10. Einfache Unterkunft; genaue Zufahrt und sichere Motorradabstellung bestätigen.",
+          "booking": "open",
+          "coordinate": [
+            11.715198,
+            45.273048
+          ],
+          "address": "Via Scalette 2, 35032 Arquà Petrarca, Italy"
+        },
+        {
+          "id": "alternative",
+          "name": "Holiday House Petrarca · Ferienhaus im Olivenhain",
+          "url": "https://www.booking.com/hotel/it/holiday-house-petrarca-arqua-petrarca.de.html?checkin=2026-10-18&checkout=2026-10-20&group_adults=2&no_rooms=1&group_children=0",
+          "note": "Eigenes Ferienhaus im Olivenhain mit Küche, Waschmaschine und Privatparkplatz. Am 03.09. bei Booking für 18.–20.10. und zwei Erwachsene angezeigt: grosses 200-m²-Haus, CHF 539 insgesamt, kostenlos stornierbar vor 16.10. Steile Anfahrt laut Bewertung: nur wählen, wenn asphaltierte Zufahrt und Rangieren auch bei Nässe passen. Nicht mit dem allgemeinen Villa-Couple-Ab-Preis verwechseln.",
+          "booking": "open",
+          "address": "Via Fontanelle 19, Arquà Petrarca, Italy",
+          "coordinate": [
+            11.71756194484412,
+            45.27640929669823
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Agriturismo Giulio Fufo · Ferienwohnung",
+        "coordinate": [
+          11.715198,
+          45.273048
+        ],
+        "address": "Via Scalette 2, 35032 Arquà Petrarca, Italy",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "iseo",
@@ -1530,7 +2040,45 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "reviewSources": [
         "https://visitlakeiseo.info/en/hotels/ca-nildes/",
         "https://visitlakeiseo.info/ospitalita/casa-monalba/"
-      ]
+      ],
+      "options": [
+        {
+          "id": "first",
+          "name": "Ca’ Nildes · Ferienwohnung in Clusane",
+          "url": "https://www.airbnb.ch/rooms/942578923582417304?adults=2&check_in=2026-10-20&check_out=2026-10-22&locale=de",
+          "note": "Erdgeschosswohnung in Clusane, nicht im Zentrum von Iseo: Küche, eigene Waschmaschine und Innenhofstellplatz hinter automatischem Tor. Laut Gastgeber nur 1,90 m Fahrzeugbreite vorgesehen; Platz und Rangieren für beide Motorräder bestätigen. Am 03.09. bei Airbnb für 20.–22.10. angezeigt: CHF 242 insgesamt, kostenlos stornierbar vor 15.10.; bei Booking für diese Daten nicht verfügbar.",
+          "booking": "open",
+          "coordinate": [
+            10.001583,
+            45.66385
+          ],
+          "address": "Via Argine della Valle 3, 25049 Clusane, Italy"
+        },
+        {
+          "id": "alternative",
+          "name": "Casa Monalba · Ferienwohnung in Predore",
+          "url": "https://www.airbnb.ch/rooms/951224785764956985?adults=2&check_in=2026-10-20&check_out=2026-10-22&locale=de",
+          "note": "Ganze Wohnung mit Seeblick, Küche, Waschmaschine, Garten und privater Garage laut Inserat. Ruhige Lage in Predore am Westufer. Am 03.09. bei Airbnb für 20.–22.10. angezeigt: CHF 282 insgesamt, kostenlos stornierbar vor 15.10. Bei Wahl dieser Alternative An- und Abfahrt auf Predore anpassen und prüfen; die vorhandene Tagesroute bleibt bis dahin bei Iseo.",
+          "booking": "open",
+          "address": "Via Calchera 10, 24060 Predore, Italien",
+          "coordinate": [
+            10.006829,
+            45.680636
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "Ca’ Nildes · Ferienwohnung in Clusane",
+        "coordinate": [
+          10.001583,
+          45.66385
+        ],
+        "address": "Via Argine della Valle 3, 25049 Clusane, Italy",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     },
     {
       "id": "como-lazzago",
@@ -1542,13 +2090,51 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/it/l-39-antica-corte-lazzago.de.html?checkin=2026-10-22&checkout=2026-10-23&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "SantAgata Bed & Breakfast · Como",
       "currentAlternativeUrl": "https://www.booking.com/hotel/it/santagata-bed-amp-breakfast.de.html?checkin=2026-10-22&checkout=2026-10-23&group_adults=2&no_rooms=1&group_children=0",
-      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen"
+      "parking": "Abstellmöglichkeit für zwei Maschinen vor der Buchung schriftlich bestätigen lassen",
+      "options": [
+        {
+          "id": "first",
+          "name": "L’Antica Corte Lazzago · Como-Süd",
+          "url": "https://www.booking.com/hotel/it/l-39-antica-corte-lazzago.de.html?checkin=2026-10-22&checkout=2026-10-23&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "coordinate": [
+            9.056209,
+            45.790235
+          ],
+          "address": "Antica Corte Lazzago, Via Lazzago 8, Como"
+        },
+        {
+          "id": "alternative",
+          "name": "SantAgata Bed & Breakfast · Como",
+          "url": "https://www.booking.com/hotel/it/santagata-bed-amp-breakfast.de.html?checkin=2026-10-22&checkout=2026-10-23&group_adults=2&no_rooms=1&group_children=0",
+          "note": "",
+          "booking": "open",
+          "address": "Via Francesco Petrarca 24, Como, Italy",
+          "coordinate": [
+            9.09330475582,
+            45.806725287384
+          ]
+        }
+      ],
+      "accommodationNavigation": {
+        "optionId": "first",
+        "name": "L’Antica Corte Lazzago · Como-Süd",
+        "coordinate": [
+          9.056209,
+          45.790235
+        ],
+        "address": "Antica Corte Lazzago, Via Lazzago 8, Como",
+        "fixed": false,
+        "source": "Bereits veröffentlichte und geprüfte Tagesroute"
+      },
+      "activeOptionId": "first"
     }
   ],
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-23T13:49:11.033Z",
+    "dataVersion": "2026-09-23T14:27:31.314Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",

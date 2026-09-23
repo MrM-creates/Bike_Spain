@@ -1,6 +1,283 @@
 import XCTest
 
 final class RoadbookUITests: XCTestCase {
+    private func openVoiceEditor(_ app: XCUIApplication) {
+        app.launch()
+        XCTAssertTrue(app.buttons["trip_adria_2026"].waitForExistence(timeout: 15))
+        app.buttons["Mein Tagebuch"].firstMatch.tap()
+        app.buttons["journal-compose"].tap()
+        app.buttons["choose-entry-stage"].tap()
+        app.buttons["choose-stage-adria-1"].tap()
+        XCTAssertTrue(app.buttons["memory-record"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["save-memory"].isEnabled)
+    }
+
+    private func openExistingNoteEditor(_ app: XCUIApplication, text: String) {
+        openVoiceEditor(app)
+        app.buttons["memory-type"].tap()
+        let editor = app.textViews["memory-text"]
+        editor.tap(); editor.typeText(text)
+        app.buttons["save-memory"].tap()
+        let note = app.staticTexts[text]
+        XCTAssertTrue(note.waitForExistence(timeout: 5))
+        note.tap()
+        app.buttons["Bearbeiten"].tap()
+        XCTAssertTrue(app.buttons["memory-edit-record"].waitForExistence(timeout: 5))
+        XCTAssertEqual(editor.value as? String, text)
+    }
+
+    private func finishEditRecording(_ app: XCUIApplication) {
+        app.buttons["memory-edit-record"].tap()
+        let ready = NSPredicate(format: "enabled == true")
+        expectation(for: ready, evaluatedWith: app.buttons["save-memory"])
+        waitForExpectations(timeout: 8)
+    }
+
+    private func deleteOpenTestNote(_ app: XCUIApplication) {
+        app.buttons["entry-more"].tap()
+        app.buttons["Eintrag löschen"].tap(); app.buttons["Löschen"].tap()
+    }
+
+    func testEditingNoteDictationPreservesTextAndPersists() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-ui-test-speech", "-ui-testing-light"]
+        app.launchEnvironment["ROADBOOK_TEST_TRANSCRIPT_1"] = "Gesprochene Ergänzung."
+        app.launchEnvironment["ROADBOOK_TEST_TRANSCRIPT_2"] = "Zweite Ergänzung."
+        let original = "Bestehender Eintrag \(UUID().uuidString.prefix(6))"
+        openExistingNoteEditor(app, text: original)
+        let editor = app.textViews["memory-text"]
+        let record = app.buttons["memory-edit-record"]
+        XCTAssertTrue(record.isHittable)
+        XCTAssertLessThanOrEqual(record.frame.maxY, editor.frame.minY)
+        XCTAssertFalse(app.buttons["choose-entry-stage"].exists)
+        let idle = XCTAttachment(screenshot: app.screenshot())
+        idle.name = "Edit existing note with speech button"; idle.lifetime = .keepAlways; add(idle)
+        record.tap()
+        XCTAssertTrue(editor.exists)
+        XCTAssertEqual(editor.value as? String, original + "\nGesprochene Ergänzung.")
+        XCTAssertFalse(app.buttons["save-memory"].isEnabled)
+        let live = XCTAttachment(screenshot: app.screenshot())
+        live.name = "Existing text retained during dictation"; live.lifetime = .keepAlways; add(live)
+        finishEditRecording(app)
+        editor.tap(); editor.typeText(" Von Hand ergänzt.")
+        let corrected = editor.value as! String
+        record.tap()
+        finishEditRecording(app)
+        let expected = corrected + "\nZweite Ergänzung."
+        XCTAssertEqual(editor.value as? String, expected)
+        app.buttons["save-memory"].tap()
+        XCTAssertEqual(app.staticTexts["journal-entry-text"].label, expected)
+        app.terminate(); app.launch()
+        app.buttons["Mein Tagebuch"].firstMatch.tap()
+        let note = app.staticTexts[expected]
+        XCTAssertTrue(note.waitForExistence(timeout: 10))
+        XCTAssertEqual(app.staticTexts.matching(NSPredicate(format: "label == %@", expected)).count, 1)
+        note.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["journal-stage-context"].firstMatch.label.contains("Tag 1"))
+        deleteOpenTestNote(app)
+    }
+
+    func testEditingNoteDiscardKeepsOriginalText() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-ui-test-speech", "-ui-testing-dark"]
+        app.launchEnvironment["ROADBOOK_TEST_TRANSCRIPT_1"] = "Nicht speichern."
+        let original = "Original bleibt \(UUID().uuidString.prefix(6))"
+        openExistingNoteEditor(app, text: original)
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "Edit speech button dark appearance"; shot.lifetime = .keepAlways; add(shot)
+        app.buttons["memory-edit-record"].tap()
+        finishEditRecording(app)
+        XCTAssertEqual(app.textViews["memory-text"].value as? String, original + "\nNicht speichern.")
+        app.buttons["Abbrechen"].tap(); app.buttons["Verwerfen"].tap()
+        XCTAssertEqual(app.staticTexts["journal-entry-text"].label, original)
+        app.buttons["Bearbeiten"].tap()
+        XCTAssertEqual(app.textViews["memory-text"].value as? String, original)
+        app.buttons["Abbrechen"].tap()
+        deleteOpenTestNote(app)
+    }
+
+    func testEditingNoteDeniedSpeechKeepsTextEditable() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-ui-test-speech-denied"]
+        let original = "Ohne Mikrofon \(UUID().uuidString.prefix(6))"
+        openExistingNoteEditor(app, text: original)
+        app.buttons["memory-edit-record"].tap()
+        XCTAssertTrue(app.staticTexts["memory-voice-error"].waitForExistence(timeout: 5))
+        let editor = app.textViews["memory-text"]
+        XCTAssertEqual(editor.value as? String, original)
+        XCTAssertTrue(editor.isEnabled)
+        editor.tap(); editor.typeText(" Weiter tippen.")
+        let expected = editor.value as! String
+        app.buttons["save-memory"].tap()
+        XCTAssertEqual(app.staticTexts["journal-entry-text"].label, expected)
+        deleteOpenTestNote(app)
+    }
+
+    func testVoiceNoteReviewResumeAndPersistence() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-ui-test-speech"]
+        openVoiceEditor(app)
+        let initial = XCTAttachment(screenshot: app.screenshot())
+        initial.name = "Voice first with stage context"; initial.lifetime = .keepAlways; add(initial)
+        app.buttons["memory-record"].tap()
+        XCTAssertTrue(app.staticTexts["memory-transcript"].label.contains("Heute über den Pass"))
+        XCTAssertFalse(app.buttons["save-memory"].isEnabled)
+        app.buttons["memory-record"].tap()
+        let editor = app.textViews["memory-text"]
+        XCTAssertTrue(editor.waitForExistence(timeout: 6))
+        XCTAssertEqual(editor.value as? String, "Heute über den Pass bis ans Meer gefahren.")
+        // A manual correction must survive switching back to speech.
+        editor.tap(); editor.typeText(" Herrliche Aussicht. \(UUID().uuidString.prefix(6)) ")
+        let corrected = editor.value as! String
+        app.buttons["memory-resume"].tap()
+        app.buttons["memory-record"].tap()
+        XCTAssertTrue(editor.waitForExistence(timeout: 6))
+        let expected = corrected + "\nAbends am Hafen gegessen."
+        XCTAssertEqual(editor.value as? String, expected)
+        let reviewed = XCTAttachment(screenshot: app.screenshot())
+        reviewed.name = "Dictated note ready to review"; reviewed.lifetime = .keepAlways; add(reviewed)
+        app.buttons["save-memory"].tap()
+        app.terminate(); app.launch()
+        app.buttons["Mein Tagebuch"].firstMatch.tap()
+        let note = app.staticTexts[expected]
+        XCTAssertTrue(note.waitForExistence(timeout: 10))
+        let listShot = XCTAttachment(screenshot: app.screenshot())
+        listShot.name = "Slim journal list"; listShot.lifetime = .keepAlways; add(listShot)
+        note.tap()
+        XCTAssertEqual(app.staticTexts["journal-entry-text"].label, expected)
+        XCTAssertTrue(app.descendants(matching: .any)["journal-stage-context"].firstMatch.label.contains("Tag 1"))
+        app.buttons["Bearbeiten"].tap()
+        XCTAssertEqual(editor.value as? String, expected)
+        app.buttons["Abbrechen"].tap()
+        app.buttons["entry-more"].tap()
+        app.buttons["Eintrag löschen"].tap(); app.buttons["Löschen"].tap()
+    }
+
+    func testVoicePermissionDeniedAllowsTyping() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-ui-test-speech-denied"]
+        openVoiceEditor(app)
+        app.buttons["memory-record"].tap()
+        XCTAssertTrue(app.staticTexts["memory-voice-error"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["memory-voice-error"].label.contains("Mikrofon"))
+        app.buttons["memory-type"].tap()
+        let editor = app.textViews["memory-text"]
+        editor.tap(); editor.typeText("Auch ohne Mikrofon möglich.")
+        XCTAssertTrue(app.buttons["save-memory"].isEnabled)
+        app.buttons["Abbrechen"].tap()
+        app.buttons["Weiter bearbeiten"].tap()
+        XCTAssertEqual(editor.value as? String, "Auch ohne Mikrofon möglich.")
+        app.buttons["Abbrechen"].tap(); app.buttons["Verwerfen"].tap()
+    }
+
+    func testVoiceSwitchToTypingAndBackgroundRetainsText() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-ui-test-speech"]
+        openVoiceEditor(app)
+        app.buttons["memory-record"].tap()
+        app.buttons["memory-type"].tap()
+        let editor = app.textViews["memory-text"]
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        XCTAssertEqual(editor.value as? String, "Heute über den Pass")
+        editor.tap(); editor.typeText(" mit einer Pause.")
+        let corrected = editor.value as! String
+        app.buttons["memory-resume"].tap()
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        XCTAssertTrue(editor.waitForExistence(timeout: 5))
+        XCTAssertEqual(editor.value as? String, corrected + "\nAbends am Hafen gegessen.")
+        XCTAssertTrue(app.buttons["save-memory"].isEnabled)
+        app.buttons["Abbrechen"].tap(); app.buttons["Weiter bearbeiten"].tap()
+        XCTAssertEqual(editor.value as? String, corrected + "\nAbends am Hafen gegessen.")
+        app.buttons["Abbrechen"].tap(); app.buttons["Verwerfen"].tap()
+    }
+
+    func testDirectDraftSurvivesStageSelectionAndChange() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-ui-testing-dark"]
+        app.launch()
+        XCTAssertTrue(app.buttons["trip_adria_2026"].waitForExistence(timeout: 15))
+        app.buttons["Mein Tagebuch"].firstMatch.tap()
+        XCTAssertFalse(app.staticTexts["Alle deine Einträge"].exists)
+        let empty = XCTAttachment(screenshot: app.screenshot())
+        empty.name = "Journal entry point"; empty.lifetime = .keepAlways; add(empty)
+        app.buttons["journal-compose"].tap()
+        XCTAssertTrue(app.buttons["memory-record"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["choose-entry-stage"].exists)
+        XCTAssertTrue(app.navigationBars["Eintrag"].exists)
+        XCTAssertFalse(app.staticTexts["Über die Spracherkennung"].exists)
+        app.buttons["memory-type"].tap()
+        let editor = app.textViews["memory-text"]
+        let note = "Direkter Eintrag \(UUID().uuidString.prefix(6))"
+        editor.tap(); editor.typeText(note)
+        XCTAssertFalse(app.buttons["save-memory"].isEnabled)
+        app.buttons["choose-entry-stage"].tap()
+        app.buttons["choose-stage-adria-1"].tap()
+        XCTAssertEqual(editor.value as? String, note)
+        XCTAssertTrue(app.buttons["save-memory"].isEnabled)
+        app.buttons["choose-entry-stage"].tap()
+        app.buttons["Abbrechen"].firstMatch.tap()
+        XCTAssertEqual(editor.value as? String, note)
+        app.buttons["choose-entry-stage"].tap()
+        app.buttons["choose-stage-adria-2"].tap()
+        XCTAssertEqual(editor.value as? String, note)
+        XCTAssertTrue(app.descendants(matching: .any)["editor-stage-context"].firstMatch.label.contains("Tag 2"))
+        let draft = XCTAttachment(screenshot: app.screenshot())
+        draft.name = "Draft after changing stage dark"; draft.lifetime = .keepAlways; add(draft)
+        app.buttons["save-memory"].tap()
+        app.staticTexts[note].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["journal-stage-context"].firstMatch.label.contains("Tag 2"))
+        app.buttons["Bearbeiten"].tap()
+        XCTAssertFalse(app.buttons["choose-entry-stage"].exists)
+        XCTAssertEqual(editor.value as? String, note)
+        app.buttons["Abbrechen"].tap()
+        app.buttons["entry-more"].tap()
+        app.buttons["Eintrag löschen"].tap(); app.buttons["Löschen"].tap()
+        app.buttons["journal-settings"].tap()
+        app.buttons["journal-privacy"].tap()
+        XCTAssertTrue(app.navigationBars["Datenschutz"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Spracherkennung"].exists)
+    }
+
+    func testPhotoEntryShowsPreviewAndSurvivesStageChange() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-ui-testing-light"]
+        app.launch()
+        XCTAssertTrue(app.buttons["trip_adria_2026"].waitForExistence(timeout: 15))
+        app.buttons["Mein Tagebuch"].firstMatch.tap()
+        app.buttons["journal-compose"].tap()
+        app.buttons["memory-add-photos"].tap()
+        let gridPhoto = app.images.matching(identifier: "PXGGridLayout-Info").firstMatch
+        guard gridPhoto.waitForExistence(timeout: 8) else { XCTFail(app.debugDescription); return }
+        gridPhoto.tap()
+        let addPhoto = app.buttons["Fertig"].firstMatch
+        XCTAssertTrue(addPhoto.waitForExistence(timeout: 3))
+        XCTAssertTrue(addPhoto.isEnabled)
+        addPhoto.tap()
+        XCTAssertTrue(app.textFields["Bildbeschreibung"].waitForExistence(timeout: 10), app.debugDescription)
+        XCTAssertFalse(app.buttons["save-memory"].isEnabled)
+        app.buttons["choose-entry-stage"].tap()
+        app.buttons["choose-stage-adria-1"].tap()
+        app.buttons["choose-entry-stage"].tap()
+        app.buttons["entry-trip-picker"].tap()
+        app.buttons["Spanien 2026"].tap()
+        app.buttons["choose-stage-day-1"].tap()
+        XCTAssertTrue(app.textFields["Bildbeschreibung"].exists)
+        app.buttons["save-memory"].tap()
+        let preview = app.images["journal-photo-preview"].firstMatch
+        XCTAssertTrue(preview.waitForExistence(timeout: 8))
+        let shot = XCTAttachment(screenshot: app.screenshot())
+        shot.name = "Journal with photo preview"; shot.lifetime = .keepAlways; add(shot)
+        app.staticTexts["Fotoeintrag"].firstMatch.tap()
+        reveal(app.buttons["journal-open-stage"], in: app)
+        XCTAssertTrue(app.descendants(matching: .any)["journal-stage-context"].firstMatch.label.contains("Spanien 2026 · Tag 1"))
+        app.buttons["Bearbeiten"].tap()
+        XCTAssertTrue(app.textFields["Bildbeschreibung"].waitForExistence(timeout: 5))
+        app.buttons["Abbrechen"].tap()
+        app.buttons["entry-more"].tap()
+        app.buttons["Eintrag löschen"].tap(); app.buttons["Löschen"].tap()
+    }
+
     func testBackupControlsAndPrivacyWarning() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing", "-ui-testing-dark"]
@@ -84,7 +361,7 @@ final class RoadbookUITests: XCTestCase {
         XCTAssertTrue(map.exists)
         let shot = XCTAttachment(screenshot: app.screenshot()); shot.name = "Next and previous day controls"; shot.lifetime = .keepAlways; add(shot)
         reveal(app.buttons["new-memory"], in: app); app.buttons["new-memory"].tap()
-        XCTAssertTrue(app.textViews["memory-text"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["memory-record"].waitForExistence(timeout: 5))
         let context = app.descendants(matching: .any)["editor-stage-context"].firstMatch
         XCTAssertTrue(context.label.contains("Tag 2"))
         XCTAssertTrue(context.label.contains("Innsbruck – Pustertal – Lienz"))
@@ -151,7 +428,7 @@ final class RoadbookUITests: XCTestCase {
         let details = XCTAttachment(screenshot: app.screenshot()); details.name = "Collapsible day details"; details.lifetime = .keepAlways; add(details)
         memories.tap()
         app.buttons["new-memory"].tap()
-        XCTAssertTrue(app.textViews["memory-text"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["memory-record"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.descendants(matching: .any)["editor-stage-context"].firstMatch.label.contains("Tag 1"))
         app.buttons["Abbrechen"].tap()
     }
@@ -181,7 +458,7 @@ final class RoadbookUITests: XCTestCase {
         app.launchArguments = ["-ui-testing"]
         app.launch()
         XCTAssertTrue(app.buttons["trip_adria_2026"].waitForExistence(timeout: 15))
-        XCTAssertTrue(app.buttons["trip_adria_2026"].label.contains("Planstand: 3. September 2026"))
+        XCTAssertTrue(app.buttons["trip_adria_2026"].label.contains("Planstand: 7. September 2026"))
         XCTAssertTrue(app.buttons["trip_spanien_2026"].label.contains("Planstand: 16. August 2026"))
         XCTAssertFalse(app.buttons["refresh-plans"].exists)
         XCTAssertFalse(app.staticTexts["Heruntergeladener Reiseplan · offline verfügbar"].exists)
@@ -234,6 +511,7 @@ final class RoadbookUITests: XCTestCase {
         let capture = app.buttons["new-memory"]
         reveal(capture, in: app)
         capture.tap()
+        app.buttons["memory-type"].tap()
         let editor = app.textViews["memory-text"]
         XCTAssertTrue(editor.waitForExistence(timeout: 5))
         let context = app.descendants(matching: .any)["editor-stage-context"].firstMatch
@@ -250,13 +528,13 @@ final class RoadbookUITests: XCTestCase {
         app.buttons["Mein Tagebuch"].firstMatch.tap()
         XCTAssertTrue(app.staticTexts[note].waitForExistence(timeout: 10))
         app.staticTexts[note].tap()
-        XCTAssertTrue(app.navigationBars["Erinnerung"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Eintrag"].waitForExistence(timeout: 5))
         let entryText = app.staticTexts["journal-entry-text"]
         XCTAssertEqual(entryText.label, note)
         XCTAssertTrue(entryText.isHittable)
         XCTAssertLessThan(entryText.frame.minY, app.frame.height * 0.5)
         XCTAssertFalse(app.buttons["open-day-map"].exists)
-        XCTAssertTrue(app.staticTexts["Nur für dich"].exists)
+        XCTAssertFalse(app.staticTexts["Nur für dich"].exists)
         XCTAssertTrue(app.staticTexts["journal-stage-context"].exists || app.otherElements["journal-stage-context"].exists)
         reveal(app.buttons["journal-open-stage"], in: app)
         let journalContext = XCTAttachment(screenshot: app.screenshot()); journalContext.name = "Journal with day context"; journalContext.lifetime = .keepAlways; add(journalContext)
@@ -267,7 +545,7 @@ final class RoadbookUITests: XCTestCase {
         XCTAssertTrue(app.textViews["memory-text"].waitForExistence(timeout: 5))
         XCTAssertEqual(app.textViews["memory-text"].value as? String, note)
         app.buttons["Abbrechen"].tap()
-        reveal(app.buttons["Eintrag löschen"], in: app)
+        app.buttons["entry-more"].tap()
         app.buttons["Eintrag löschen"].tap()
         app.buttons["Löschen"].tap()
         let removed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "exists == false"), object: app.staticTexts[note])
@@ -324,8 +602,9 @@ final class RoadbookUITests: XCTestCase {
         let suffix = UUID().uuidString.prefix(6)
         for dayNumber in [2, 1] {
             app.buttons["journal-compose"].tap()
-            app.buttons["choose-trip-trip_adria_2026"].tap()
+            app.buttons["choose-entry-stage"].tap()
             app.buttons["choose-stage-adria-\(dayNumber)"].tap()
+            app.buttons["memory-type"].tap()
             let editor = app.textViews["memory-text"]
             XCTAssertTrue(editor.waitForExistence(timeout: 5))
             let context = app.descendants(matching: .any)["editor-stage-context"].firstMatch
@@ -348,7 +627,7 @@ final class RoadbookUITests: XCTestCase {
             // Return to the top before locating the next section.
             app.swipeDown(); app.swipeDown()
             reveal(note, in: app); note.tap()
-            reveal(app.buttons["Eintrag löschen"], in: app)
+            app.buttons["entry-more"].tap()
             app.buttons["Eintrag löschen"].tap(); app.buttons["Löschen"].tap()
         }
     }

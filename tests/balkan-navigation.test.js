@@ -56,7 +56,7 @@ test('published Balkan plan preserves every point through the actual web and nat
 
 test('browser-loaded splitter and model retain the same Balkan sections as Node', () => {
   const context = vm.createContext({URL, URLSearchParams});
-  for (const file of ['assets/route-navigation.js','assets/travel-model.js']) {
+  for (const file of ['assets/accommodation-options.js', 'assets/route-navigation.js','assets/travel-model.js']) {
     vm.runInContext(fs.readFileSync(file,'utf8'),context,{filename:file});
   }
   const source = trip();

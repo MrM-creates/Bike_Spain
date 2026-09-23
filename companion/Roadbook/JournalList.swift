@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import ImageIO
 
 private struct JournalStageGroup: Identifiable {
     let id: String
@@ -39,96 +40,141 @@ struct JournalList: View {
 
     var body: some View {
         List {
-            Section {
-                Label("Alle deine Einträge", systemImage: "lock")
-                Text("Nach Reise und Tagesetappe geordnet. Nur für dich sichtbar — auch Fotos bleiben persönlich.")
-                    .font(.subheadline).foregroundStyle(.secondary)
-            }
             if entries.isEmpty {
-                ContentUnavailableView("Dein Reisetagebuch beginnt hier", systemImage: "book.closed",
-                                       description: Text("Wähle mit «Eintrag schreiben» eine Reise und Tagesetappe aus."))
+                VStack(spacing: 12) {
+                    Text("Noch keine Einträge").font(.headline)
+                    Button { composing = true } label: { Label("Eintrag hinzufügen", systemImage: "plus") }
+                        .frame(minHeight: 44)
+                        .accessibilityIdentifier("journal-compose")
+                        .disabled(!hasStages)
+                    if !hasStages { Text("Sobald eine Reise geladen ist, kannst du einen Eintrag hinzufügen.").font(.subheadline).foregroundStyle(.secondary) }
+                }
+                .frame(maxWidth: .infinity).padding(.vertical, 28)
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
             }
             ForEach(groups) { group in
                 Section {
                     ForEach(group.entries) { entry in
                         NavigationLink { EntryDetail(entry: entry, trip: group.trip, day: group.day) } label: {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(entry.text.isEmpty ? "Foto-Erinnerung" : entry.text).lineLimit(3)
-                                Text("Notiert \(entry.createdAt.formatted(date: .abbreviated, time: .shortened))")
-                                    .font(.caption).foregroundStyle(.secondary)
-                                if let day = group.day, entry.originalTitle != day.title || entry.originalDate != day.date {
-                                    Text("Ursprünglich: \(displayDate(entry.originalDate)) · \(entry.originalTitle)")
-                                        .font(.caption).foregroundStyle(.secondary)
-                                }
-                            }.padding(.vertical, 4)
+                            JournalPreview(entry: entry, day: group.day)
                         }.accessibilityIdentifier("journal-entry-\(entry.id)")
                     }
-                    if let trip = group.trip, let day = group.day {
-                        NavigationLink { DayView(trip: trip, day: day) } label: {
-                            Label("Tagesroute ansehen", systemImage: "map").font(.subheadline)
-                        }.accessibilityIdentifier("journal-route-\(day.id)")
-                    }
                 } header: {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(group.trip?.name ?? "Frühere Reise").font(.subheadline.weight(.semibold))
+                    VStack(alignment: .leading, spacing: 3) {
+                        if groups.first(where: { $0.entries[0].tripID == group.entries[0].tripID })?.id == group.id {
+                            Text(group.trip?.name ?? "Frühere Reise").font(.caption).foregroundStyle(.secondary)
+                        }
                         Text(group.day.map { "Tag \($0.number) · \(displayDate($0.date))" }
                              ?? "Frühere Etappe · \(displayDate(group.entries[0].originalDate))")
-                        Text(group.day?.title ?? group.entries[0].originalTitle).font(.headline)
+                            .font(.subheadline.weight(.semibold))
                     }
-                    .foregroundStyle(.primary).textCase(nil).padding(.vertical, 8)
+                    .foregroundStyle(.primary).textCase(nil)
                     .accessibilityElement(children: .combine)
                     .accessibilityIdentifier("journal-group-\(group.entries[0].tripID)-\(group.entries[0].stageID)")
                 }
             }
         }
         .toolbar {
-            Button { composing = true } label: { Label("Eintrag schreiben", systemImage: "square.and.pencil") }
-                .accessibilityIdentifier("journal-compose")
-                .disabled(plans.feed?.trips.isEmpty ?? true)
+            if !entries.isEmpty {
+                Button { composing = true } label: { Label("Eintrag hinzufügen", systemImage: "plus") }
+                    .accessibilityIdentifier("journal-compose")
+                    .disabled(!hasStages)
+            }
         }
-        .sheet(isPresented: $composing) { JournalComposer(trips: plans.feed?.trips ?? []) }
+        .sheet(isPresented: $composing) { EntryEditor(trips: plans.feed?.trips ?? []) }
+    }
+
+    private var hasStages: Bool { plans.feed?.trips.contains { !$0.days.isEmpty } ?? false }
+}
+
+private struct JournalPreview: View {
+    let entry: JournalEntry
+    let day: TripDay?
+    @Query private var photos: [JournalPhoto]
+    @State private var thumbnail: UIImage?
+
+    init(entry: JournalEntry, day: TripDay?) {
+        self.entry = entry
+        self.day = day
+        let id = entry.id
+        _photos = Query(filter: #Predicate<JournalPhoto> { $0.entryID == id }, sort: \JournalPhoto.id)
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            if let thumbnail {
+                Image(uiImage: thumbnail).resizable().scaledToFill()
+                    .frame(width: 64, height: 64).clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .accessibilityLabel("Foto zum Eintrag")
+                    .accessibilityIdentifier("journal-photo-preview")
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                Text(entry.text.isEmpty ? "Fotoeintrag" : entry.text).lineLimit(3)
+                Text(entry.createdAt.formatted(date: .omitted, time: .shortened))
+                    .font(.caption).foregroundStyle(.secondary)
+                if let day, entry.originalTitle != day.title || entry.originalDate != day.date {
+                    Text("Ursprünglich: \(displayDate(entry.originalDate)) · \(entry.originalTitle)")
+                        .font(.caption).foregroundStyle(.secondary)
+                }
+            }
+        }
+        .padding(.vertical, 4)
+        .task(id: photos.first?.jpeg) {
+            // Downsample the preview rather than rendering a full-size photo in every row.
+            guard let data = photos.first?.jpeg else { thumbnail = nil; return }
+            thumbnail = await Task.detached(priority: .utility) {
+                guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+                      let image = CGImageSourceCreateThumbnailAtIndex(source, 0, [
+                        kCGImageSourceCreateThumbnailFromImageAlways: true,
+                        kCGImageSourceCreateThumbnailWithTransform: true,
+                        kCGImageSourceThumbnailMaxPixelSize: 192
+                      ] as CFDictionary) else { return nil as UIImage? }
+                return UIImage(cgImage: image)
+            }.value
+        }
     }
 }
 
-private struct JournalComposer: View {
+struct EntryStagePicker: View {
     let trips: [TripPlan]
+    let onSelect: (EntryDestination) -> Void
     @Environment(\.dismiss) private var dismiss
-    @State private var selection: (trip: TripPlan, day: TripDay)?
+    @State private var tripID: String
+
+    init(trips: [TripPlan], selection: EntryDestination?, onSelect: @escaping (EntryDestination) -> Void) {
+        self.trips = trips
+        self.onSelect = onSelect
+        _tripID = State(initialValue: selection?.tripID ?? trips.first(where: { !$0.days.isEmpty })?.id ?? "")
+    }
+
     var body: some View {
-        if let selection {
-            EntryEditor(tripID: selection.trip.id, tripName: selection.trip.name, day: selection.day)
-        } else {
-            NavigationStack {
-                List {
-                    Section {
-                        ForEach(trips) { trip in
-                            NavigationLink {
-                                List(trip.days.sorted { $0.number < $1.number }) { day in
-                                    Button { selection = (trip, day) } label: {
-                                        VStack(alignment: .leading, spacing: 6) {
-                                            Text("Tag \(day.number) · \(displayDate(day.date))").font(.subheadline)
-                                            Text(day.title).font(.headline)
-                                            if day.rest { Text("Ruhetag").font(.caption).foregroundStyle(.secondary) }
-                                        }.foregroundStyle(.primary).padding(.vertical, 4)
-                                    }.accessibilityIdentifier("choose-stage-\(day.id)")
-                                }
-                                .navigationTitle("Tagesetappe wählen").navigationBarTitleDisplayMode(.inline)
-                                .safeAreaInset(edge: .top) {
-                                    Text(trip.name).font(.subheadline.weight(.semibold)).padding()
-                                        .frame(maxWidth: .infinity, alignment: .leading).background(.bar)
-                                }
-                            } label: {
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(trip.name).font(.headline)
-                                    Text("\(displayDate(trip.startDate)) – \(displayDate(trip.endDate))").font(.caption)
-                                }.padding(.vertical, 4)
-                            }.accessibilityIdentifier("choose-trip-\(trip.id)")
-                        }
-                    } footer: { Text("Dein Eintrag gehört anschliessend eindeutig zu dieser Reise und Tagesetappe.") }
+        NavigationStack {
+            List {
+                if trips.count > 1 {
+                    Picker("Reise", selection: $tripID) {
+                        ForEach(trips) { trip in Text(trip.name).tag(trip.id) }
+                    }.accessibilityIdentifier("entry-trip-picker")
                 }
-                .navigationTitle("Reise wählen").navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Abbrechen") { dismiss() } } }
+                if let trip = trips.first(where: { $0.id == tripID }) {
+                    Section {
+                        ForEach(trip.days.sorted { $0.number < $1.number }) { day in
+                            Button {
+                                onSelect(EntryDestination(tripID: trip.id, tripName: trip.name, day: day))
+                                dismiss()
+                            } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Tag \(day.number) · \(displayDate(day.date))").font(.subheadline.weight(.semibold))
+                                    Text(day.title).font(.subheadline).foregroundStyle(.secondary)
+                                }.foregroundStyle(.primary).padding(.vertical, 4)
+                            }.accessibilityIdentifier("choose-stage-\(day.id)")
+                        }
+                    }
+                }
             }
+            .navigationTitle("Etappe wählen").navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Abbrechen") { dismiss() } } }
         }
     }
 }

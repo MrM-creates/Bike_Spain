@@ -2,6 +2,8 @@ import SwiftUI
 import SwiftData
 
 enum RoadbookStyle {
+    // Same recording control accent as Spur (#E45B32).
+    static let voiceAccent = Color(red: 228.0 / 255, green: 91.0 / 255, blue: 50.0 / 255)
     static let accent = Color(red: 0.09, green: 0.42, blue: 0.28)
     static let lightAccent = Color(red: 0.34, green: 0.76, blue: 0.54)
     static let spacing: CGFloat = 16
@@ -10,6 +12,8 @@ enum RoadbookStyle {
 
 @main struct RoadbookApp: App {
     @State private var plans = PlanStore()
+    @State private var weather = WeatherStore()
+    @State private var animations = AnimationStore()
     @State private var journal = JournalSession()
     @Environment(\.scenePhase) private var scenePhase
     private var testColorScheme: ColorScheme? {
@@ -32,22 +36,34 @@ enum RoadbookStyle {
                 }
             }
             .tint(RoadbookStyle.accent)
+            .environment(plans)
+            .environment(weather)
+            .environment(animations)
             .preferredColorScheme(testColorScheme)
             .task { if journal.container == nil { await journal.open() } }
-            .task {
+            .task(id: "\(scenePhase)-\(weather.enabled)-\(weather.connectionRevision)-\(plans.feed?.trips.map(\.version).joined() ?? "")") {
+                guard scenePhase == .active, weather.enabled else { return }
+                await weather.refreshWhileActive(plans: plans)
+            }
+            .task(id: scenePhase) {
+                guard scenePhase == .active else { return }
                 #if DEBUG
-                if ProcessInfo.processInfo.arguments.contains("-ui-testing") { return }
+                if ProcessInfo.processInfo.arguments.contains("-ui-testing") && !ProcessInfo.processInfo.arguments.contains("-ui-test-live-refresh") { return }
                 #endif
-                await plans.refresh()
+                await plans.refreshWhileActive()
             }
             .onChange(of: scenePhase) { _, phase in
-                if phase == .active { Task { await journal.recheckIfNeeded() } }
+                if phase == .active {
+                    Task { await journal.recheckIfNeeded() }
+                }
             }
         }
     }
 }
 
 struct CompanionView: View {
+    @Environment(WeatherStore.self) private var weather
+    @Environment(\.colorScheme) private var colorScheme
     let plans: PlanStore
     let journal: JournalSession
     @State private var settings = false
@@ -90,13 +106,22 @@ struct CompanionView: View {
                     if journal.container != nil { JournalList(plans: plans) }
                     else { JournalUnavailableView(journal: journal) }
                 }.navigationTitle("Mein Tagebuch")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { settings = true } label: { Image(systemName: "gearshape") }
+                            .accessibilityLabel("Einstellungen").accessibilityIdentifier("journal-settings")
+                    }
+                }
             }.tabItem { Label("Mein Tagebuch", systemImage: "book.closed") }
+            NavigationStack {
+                AnimationLibrary()
+            }.tabItem { Label("Etappenanimationen", systemImage: "play.rectangle") }
         }
         .sheet(isPresented: $settings) {
             NavigationStack {
                 List {
                     Section("Reisepläne") {
-                        Text("Beim Start werden veröffentlichte Änderungen automatisch übernommen. Dein gespeicherter Plan bleibt auch ohne Empfang lesbar.")
+                        Text("Solange Roadbook geöffnet ist, werden veröffentlichte Änderungen automatisch übernommen. Dein gespeicherter Plan bleibt auch ohne Empfang lesbar.")
                             .font(.subheadline)
                         Text(plans.message).font(.caption).foregroundStyle(.secondary)
                         if let error = plans.error { Text(error).foregroundStyle(.secondary) }
@@ -104,15 +129,23 @@ struct CompanionView: View {
                             Label(plans.busy ? "Wird geladen …" : "Reisepläne aktualisieren", systemImage: "arrow.clockwise")
                         }.disabled(plans.busy).accessibilityIdentifier("refresh-plans")
                     }
+                    Section("Wetter") {
+                        @Bindable var weather = weather
+                        Toggle("Wetter pro Etappe", isOn: $weather.enabled)
+                            .accessibilityIdentifier("weather-enabled")
+                        Text("Vorhersagen werden bei geöffneter App automatisch aktualisiert und für unterwegs gespeichert. Für weiter entfernte Reisetage ist noch keine Vorhersage verfügbar.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
                     Section("Persönlich") {
-                        Label("Notizen und Fotos siehst nur du.", systemImage: "lock")
-                        Text("Keine automatische Freigabe an Mitreisende. Deine Einträge werden nicht an die Web-App oder ChatGPT gesendet.")
+                        NavigationLink("Datenschutz") { JournalPrivacyView() }
+                            .accessibilityIdentifier("journal-privacy")
                         if journal.container != nil {
                             NavigationLink { JournalBackupView(journal: journal) } label: {
                                 Label("Tagebuch sichern", systemImage: "externaldrive")
                             }.accessibilityIdentifier("journal-backup")
                         }
                     }
+                    BookingAccessView(bookings: plans.bookings)
                     Section("Speicher") {
                         Text("Roadbook \(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "") (\(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""))")
                         Text(journal.status)
@@ -127,6 +160,7 @@ struct CompanionView: View {
                     .toolbar { Button("Fertig") { settings = false } }
             }
         }
+        .tint(colorScheme == .dark ? RoadbookStyle.lightAccent : RoadbookStyle.accent)
     }
 }
 
@@ -134,13 +168,30 @@ struct TripView: View {
     let plans: PlanStore
     let tripID: String
     var journalAvailable = true
+    @State private var descriptionExpanded = false
     private var trip: TripPlan? { plans.feed?.trips.first { $0.id == tripID } }
     var body: some View {
         if let trip {
             List {
                 RouteMapSection(trip: trip)
                 Section {
-                    Text(trip.description)
+                    if !trip.description.isEmpty || !(trip.narrativeSegments?.isEmpty ?? true) {
+                        DisclosureGroup("Reisebeschreibung", isExpanded: $descriptionExpanded) {
+                            if !trip.description.isEmpty {
+                                Text(trip.description)
+                                    .accessibilityIdentifier("trip-description-summary")
+                            }
+                            ForEach(Array((trip.narrativeSegments ?? []).enumerated()), id: \.offset) { _, segment in
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(segment.title).font(.headline)
+                                    Text(segment.text)
+                                }
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding(.vertical, 4)
+                            }
+                        }
+                        .accessibilityIdentifier("trip-description")
+                    }
                     Text(trip.status).font(.caption).foregroundStyle(.secondary)
                     Text("Planstand: \(displayDate(String(trip.version.prefix(10))))").font(.caption).foregroundStyle(.secondary)
                 }
@@ -161,22 +212,26 @@ struct TripView: View {
                     }
                 }
             }.navigationTitle(trip.name).navigationBarTitleDisplayMode(.inline)
+                .refreshable { await plans.refresh() }
         } else { ContentUnavailableView("Reise nicht vorhanden", systemImage: "map") }
     }
 }
 
 struct DayView: View {
+    @Environment(PlanStore.self) private var plans
     let trip: TripPlan
     let day: TripDay
     var journalAvailable = true
     @State private var selectedDayID: String?
     @Environment(\.colorScheme) private var colorScheme
-    private var currentDay: TripDay { trip.days.first { $0.id == (selectedDayID ?? day.id) } ?? day }
-    private var previous: TripDay? { trip.adjacentDay(to: currentDay.id, offset: -1) }
-    private var next: TripDay? { trip.adjacentDay(to: currentDay.id, offset: 1) }
+    private var currentTrip: TripPlan { plans.feed?.trips.first { $0.id == trip.id } ?? trip }
+    private var currentDay: TripDay { currentTrip.days.first { $0.id == (selectedDayID ?? day.id) } ?? day }
+    private var previous: TripDay? { currentTrip.adjacentDay(to: currentDay.id, offset: -1) }
+    private var next: TripDay? { currentTrip.adjacentDay(to: currentDay.id, offset: 1) }
 
     var body: some View {
-        DayContent(trip: trip, day: currentDay, journalAvailable: journalAvailable)
+        DayContent(trip: currentTrip, day: currentDay, journalAvailable: journalAvailable)
+            .refreshable { await plans.refresh() }
             // A new day gets fresh scroll, map camera, disclosures and journal context.
             .id(trip.id + "/" + currentDay.id)
             .navigationTitle("Tag \(currentDay.number)").navigationBarTitleDisplayMode(.inline)
@@ -203,6 +258,7 @@ struct DayView: View {
 }
 
 private struct DayContent: View {
+    @Environment(PlanStore.self) private var plans
     let trip: TripPlan
     let day: TripDay
     var journalAvailable = true
@@ -211,6 +267,7 @@ private struct DayContent: View {
     @State private var routeExpanded = false
     @State private var stayExpanded = false
     @State private var navigationExpanded = false
+    private var awaitingPublication: Bool { plans.bookings.pending.contains { $0.tripID == trip.id } }
     private var importantNotes: [String] { DayNotes.important(tripID: trip.id, day: day) }
     private var routePoints: [String] {
         guard !day.mapsURL.isEmpty else { return [] }
@@ -231,10 +288,14 @@ private struct DayContent: View {
                     Text(day.title).font(.title3.weight(.semibold))
                     if !day.rest { Text("\(day.distance) · \(day.duration)").font(.subheadline).foregroundStyle(.secondary) }
                     else { Label("Ruhetag", systemImage: "sun.horizon").font(.subheadline).foregroundStyle(.secondary) }
+                    if day.routeStatus == "ready" || (day.routeStatus == "pending" && day.accommodation == nil), let message = day.routeMessage {
+                        Text(message).font(.caption).foregroundStyle(.secondary)
+                    }
                 }.padding(.vertical, 4)
             }
             RouteMapSection(trip: trip, day: day,
-                            prominentHeight: min(sizeClass == .regular ? 420 : 320, max(220, geometry.size.height * 0.48)))
+                            prominentHeight: min(sizeClass == .regular ? 420 : 320, max(220, geometry.size.height * 0.48)), updating: awaitingPublication)
+            StageWeatherSection(trip: trip, day: day)
             if !day.mapsURL.isEmpty {
                 Section {
                 if let parts = day.navigationParts, let first = parts.first, let url = URL(string: first.mapsURL) {
@@ -256,8 +317,8 @@ private struct DayContent: View {
                 } else if let url = URL(string: day.mapsURL) {
                     Link(destination: url) { Label("Route in Google Maps öffnen", systemImage: "arrow.triangle.turn.up.right.diamond") }
                 }
-                Text("Google Maps berechnet zwischen den Wegpunkten neu. Verlauf prüfen; keine Offline-Navigation zugesagt.").font(.caption).foregroundStyle(.secondary)
-                }
+                Text(awaitingPublication ? "Unterkunftsänderung wird abgeglichen. Bitte vor der Navigation aktualisieren." : "Google Maps berechnet zwischen den Wegpunkten neu. Verlauf prüfen; keine Offline-Navigation zugesagt.").font(.caption).foregroundStyle(.secondary)
+                }.disabled(awaitingPublication)
             }
             if !importantNotes.isEmpty {
                 Section {
@@ -289,17 +350,22 @@ private struct DayContent: View {
                 }
             }
             if let stay = day.accommodation {
-                Section {
+                Section("Unterkunft") {
+                    StayBookingSummary(plans: plans, tripID: trip.id, stay: stay)
+                    if day.routeStatus == "pending" {
+                        AccommodationRouteNotice(plans: plans, tripID: trip.id, stay: stay, message: day.routeMessage)
+                    }
                     DisclosureGroup(isExpanded: $stayExpanded) {
-                        if let option = stay.first { OptionView(option: option, label: "Erste Wahl") }
-                        if let option = stay.alternative { OptionView(option: option, label: "Alternative") }
-                        if !stay.notes.isEmpty { Text(stay.notes).font(.caption).foregroundStyle(.secondary) }
-                    } label: {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Label("Unterkunft · \(stay.status)", systemImage: "bed.double")
-                            Text(stay.first?.name ?? "Noch keine erste Wahl").font(.subheadline).foregroundStyle(.secondary)
+                        ForEach(Array(stay.availableOptions.enumerated()), id: \.offset) { index, option in
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text(index == 0 ? "Erste Wahl" : "Alternative \(index)").font(.caption).foregroundStyle(.secondary)
+                                StayBookingSummary(plans: plans, tripID: trip.id, stay: stay, option: option)
+                                if !option.url.isEmpty, let url = URL(string: option.url) { Link("Unterkunft öffnen", destination: url) }
+                                if !option.note.isEmpty { Text(option.note).font(.caption).foregroundStyle(.secondary) }
+                            }.buttonStyle(.borderless).padding(.vertical, 8)
                         }
-                    }.accessibilityIdentifier("stay-details-toggle")
+                        if !stay.notes.isEmpty { Text(stay.notes).font(.caption).foregroundStyle(.secondary) }
+                    } label: { Label("Details & Alternativen", systemImage: "bed.double").accessibilityIdentifier("stay-details-toggle") }
                 }
             }
             if journalAvailable { DayMemories(trip: trip, day: day) }
@@ -324,7 +390,7 @@ struct DayMemories: View {
     private var dayEntries: [JournalEntry] { entries.filter { $0.tripID == trip.id && $0.stageID == day.id } }
     var body: some View {
         Section {
-            Button { capture = true } label: { Label("Eintrag für Tag \(day.number)", systemImage: "square.and.pencil") }
+            Button { capture = true } label: { Label("Eintrag hinzufügen", systemImage: "plus") }
                 .accessibilityIdentifier("new-memory")
                 .sheet(isPresented: $capture) { EntryEditor(tripID: trip.id, tripName: trip.name, day: day) }
             DisclosureGroup(isExpanded: $expanded) {
@@ -334,8 +400,7 @@ struct DayMemories: View {
                 }
             } label: { Text("\(dayEntries.count) \(dayEntries.count == 1 ? "Eintrag" : "Einträge")") }
                 .accessibilityIdentifier("day-memories-toggle")
-        } header: { Label("Mein Tagebuch · Tag \(day.number)", systemImage: "lock") }
-          footer: { Text("Persönlich. Für Mitreisende nicht sichtbar.") }
+        } header: { Text("Tagebuch · Tag \(day.number)") }
     }
 }
 
@@ -373,8 +438,30 @@ struct EntryRow: View {
     let entry: JournalEntry
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
-            Text(entry.text.isEmpty ? "Foto-Erinnerung" : entry.text).lineLimit(3)
+            Text(entry.text.isEmpty ? "Fotoeintrag" : entry.text).lineLimit(3)
             Text("\(displayDate(entry.originalDate)) · \(entry.originalTitle)").font(.caption).foregroundStyle(.secondary)
         }
+    }
+}
+
+
+struct JournalPrivacyView: View {
+    var body: some View {
+        List {
+            Section("Deine Einträge") {
+                Text("Einträge und Fotos bleiben in deinem persönlichen Speicher. Bei aktiviertem iCloud-Speicher werden sie privat mit deinen Geräten abgeglichen. Mitreisende haben keinen Zugriff.")
+            }
+            Section("Spracherkennung") {
+                Text("Gespeichert wird nur dein Text, keine Audiodatei. Wenn dein Gerät es unterstützt, erfolgt die Erkennung auf dem Gerät. Sonst kann die Aufnahme zur Erkennung an Apple gesendet werden.")
+                Text("Mikrofon und Spracherkennung werden erst beim Starten einer Aufnahme angefragt.")
+            }
+            Section("Wetter") {
+                Text("Für die Vorhersage erhält Apple die geplanten Wetterpunkte entlang der Route. Dein aktueller Gerätestandort, Tagebuch und Buchungsdaten werden dafür nicht übermittelt. Vorhersagen bleiben auf deinem Gerät gespeichert. Du kannst das Wetter in den Einstellungen ausschalten.")
+            }
+            Section("Fotos") {
+                Text("Pro Eintrag sind bis zu 8 Fotos möglich. Roadbook speichert verkleinerte Kopien ohne Standortmetadaten. Die Originale bleiben in deiner Mediathek.")
+            }
+        }
+        .navigationTitle("Datenschutz").navigationBarTitleDisplayMode(.inline)
     }
 }

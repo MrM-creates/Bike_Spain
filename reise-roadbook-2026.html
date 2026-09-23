@@ -1701,6 +1701,7 @@
           nightCount: Number(data.nightCount) || (data.startDate && data.endDate
             ? Math.max(1, Math.round((Date.parse(data.endDate) - Date.parse(data.startDate)) / 86400000))
             : 1),
+          options: data.options, activeOptionId: data.activeOptionId,
           booking: data.booking || "",
           currentFirstChoice: concreteAccommodationName(data.firstChoice, baseline.firstChoice),
           currentFirstChoiceUrl: data.firstChoiceUrl || "",
@@ -3032,6 +3033,7 @@ Wichtig fuer das Import-JSON:
     };
 
     const accommodationStateFromContext = (items) => Object.fromEntries(items.map((stay) => [stay.id, {
+      options: stay.options, activeOptionId: stay.activeOptionId,
       booking: stay.booking,
       startDate: stay.startDate,
       endDate: stay.endDate,
@@ -3265,6 +3267,8 @@ Wichtig fuer das Import-JSON:
       openPlanChange();
     }
   </script>
+  <script src="/assets/accommodation-options.js?v=20260923"></script>
+  <script src="/assets/accommodation-editor.js?v=20260923"></script>
   <script src="/assets/travel-model.js?v=20260907parts"></script>
   <script src="/data/trip-adria-2026.js?v=20260907routes"></script>
   <script src="/assets/trip-catalog.js?v=20260903publish"></script>

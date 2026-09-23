@@ -28,6 +28,7 @@ struct RouteMapSection: View {
     let trip: TripPlan
     var day: TripDay? = nil
     var prominentHeight: CGFloat? = nil
+    var updating = false
     @State private var explanationExpanded = false
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var days: [TripDay] { day.map { [$0] } ?? trip.days }
@@ -37,6 +38,8 @@ struct RouteMapSection: View {
             if available {
                 RouteMapCanvas(days: days, interactive: false)
                     .frame(height: prominentHeight ?? (sizeClass == .regular ? 320 : 230))
+                    .opacity(updating ? 0 : 1)
+                    .overlay { if updating { Label("Route wird aktualisiert …", systemImage: "arrow.triangle.2.circlepath").padding() } }
                     .allowsHitTesting(false)
                     .accessibilityLabel(day == nil ? "Übersichtskarte der Reise" : "Karte der Tagesetappe")
                     .accessibilityIdentifier(day == nil ? "trip-map-preview" : "day-map-preview")
@@ -44,7 +47,7 @@ struct RouteMapSection: View {
                     RouteMapScreen(trip: trip, day: day)
                 } label: {
                     Label("Karte vergrössern", systemImage: "arrow.up.left.and.arrow.down.right")
-                }.accessibilityIdentifier(day == nil ? "open-trip-map" : "open-day-map")
+                }.disabled(updating).accessibilityIdentifier(day == nil ? "open-trip-map" : "open-day-map")
             }
             if prominentHeight != nil {
                 if days.contains(where: { !$0.rest && ($0.map?.lines.isEmpty ?? true) }) {
@@ -73,7 +76,7 @@ private struct MapExplanation: View {
             if days.contains(where: { $0.map?.lines.contains(where: { $0.kind == "ferry" }) == true }) {
                 Text("Grün: Strasse · gestrichelt: Fähre, schematischer Verlauf")
             } else { Text("Geplanter Verlauf · keine Neuberechnung") }
-            Text("Markierungen: Übernachtungsorte, ungefähre Lage — keine genauen Unterkunftsadressen.")
+            Text(days.contains(where: { $0.map?.stop?.approximate == false }) ? "Markierungen zeigen hinterlegte Unterkünfte; übrige Ortsmarker sind ungefähr." : "Markierungen: Übernachtungsorte, ungefähre Lage — keine genauen Unterkunftsadressen.")
             Text("Die Kartengrundlage benötigt gegebenenfalls Internet.")
         }.font(.caption).foregroundStyle(.secondary)
     }

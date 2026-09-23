@@ -6,6 +6,22 @@
     },
     "api/create-plan-draft.js": {
       "maxDuration": 300
+    },
+    "api/update-booking-status.js": {
+      "maxDuration": 120,
+      "includeFiles": "{assets/*-routes.geojson,data/companion-maps.json}"
+    },
+    "api/update-accommodation-options.js": {
+      "maxDuration": 120,
+      "includeFiles": "{assets/*-routes.geojson,data/companion-maps.json}"
+    },
+    "api/publish-roadbook.js": {
+      "maxDuration": 120,
+      "includeFiles": "{assets/*-routes.geojson,data/companion-maps.json}"
+    },
+    "api/publish-accommodations.js": {
+      "maxDuration": 120,
+      "includeFiles": "{assets/*-routes.geojson,data/companion-maps.json}"
     }
   },
   "rewrites": [

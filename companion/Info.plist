@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
 <key>RoadbookCloudContainer</key><string>$(ROADBOOK_CLOUD_CONTAINER)</string>
+<key>NSMicrophoneUsageDescription</key><string>Roadbook braucht das Mikrofon, damit du deine Etappen-Notiz sprechen kannst.</string>
+<key>NSSpeechRecognitionUsageDescription</key><string>Roadbook wandelt deine gesprochenen Erinnerungen mit Apples Spracherkennung in Text um.</string>
 <key>UIBackgroundModes</key><array><string>remote-notification</string></array>
 <key>UISupportedInterfaceOrientations</key><array>
 <string>UIInterfaceOrientationPortrait</string>

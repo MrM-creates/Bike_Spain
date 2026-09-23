@@ -1,0 +1,241 @@
+{
+  "trip_adria_2026": {
+    "innsbruck-mutters": {
+      "first": {
+        "name": "Hotel dasMEI · Mutters",
+        "address": "Natterer Straße 20–22, 6162 Mutters, Austria",
+        "source": "https://dasmei.at/",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Muttererhof · Mutters",
+        "address": "Pension Muttererhof, 24, Natterer Straße, Raitis, Mutters, Bezirk Innsbruck-Land, Tirol, 6162, Österreich",
+        "coordinate": [
+          11.3751652,
+          47.2307055
+        ],
+        "source": "https://www.openstreetmap.org/node/8168509158",
+        "checkedOn": "2026-09-23"
+      }
+    },
+    "lienz": {
+      "first": {
+        "name": "Hotel Holunderhof · Lienz",
+        "address": "Zettersfeldstraße 36, 9905 Gaimberg, Austria",
+        "source": "https://www.hotelholunderhof.at/en/contact/",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Gasthof Schlossberghof · Lienz",
+        "address": "Iseltaler Straße 21, 9900 Lienz, Austria",
+        "source": "https://schlossberghof.at/de/kontakt/",
+        "coordinate": [
+          12.7545062,
+          46.8293036
+        ]
+      }
+    },
+    "graz-west": {
+      "first": {
+        "name": "Hotel Steiermarkhof · Graz-Wetzelsdorf",
+        "address": "Ekkehard-Hauer-Straße 33, 8052 Graz, Austria",
+        "source": "https://www.steiermarkhof.at/ueber-uns/kontakt",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Hotel AT HOME · Graz-Südost",
+        "address": "Köglerweg 9, 8042 Graz, Austria",
+        "source": "https://www.hotel-athome.at/",
+        "coordinate": [
+          15.4874047,
+          47.0395519
+        ],
+        "mapSource": "https://www.openstreetmap.org/way/1035161993"
+      }
+    },
+    "ljubljana-ring": {
+      "first": {
+        "name": "Urban Ring Hotel · Ljubljana-Rudnik",
+        "address": "Dolenjska cesta 242c, 1000 Ljubljana, Slovenia",
+        "source": "https://urbanring.si/sobe/",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "B&B Pod vrbo · Ljubljana-Trnovo",
+        "address": "Ziherlova ulica 36, 1000 Ljubljana, Slovenia",
+        "source": "https://podvrbo.com/en/about-us/",
+        "coordinate": [
+          14.5033776,
+          46.0407592
+        ],
+        "mapSource": "https://www.openstreetmap.org/way/272822080"
+      }
+    },
+    "senj": {
+      "first": {
+        "name": "Zora · ruhiges Apartment in Senj",
+        "address": "Ulica Mateše Kuhačevića 5, 53270 Senj, Croatia",
+        "source": "https://www.booking.com/hotel/hr/zora-senj.hr.html",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Beautiful Sea View Studio Danijela · Senj",
+        "address": "Nikole Suzana 11A, Senj, Croatia",
+        "source": "https://www.booking.com/hotel/hr/apartment-barbic.de.html",
+        "coordinate": [
+          14.902030200000013,
+          44.993504
+        ],
+        "checkedOn": "2026-09-23"
+      }
+    },
+    "urbino-country": {
+      "first": {
+        "name": "Casale di Nicolò · Appartamento Country",
+        "address": "Via San Marino 11, 61029 Urbino, Italy",
+        "source": "https://www.casaledinicolo.it/sistemazioni/appartamento-country/",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Cà Maggetti · Ferienwohnung im Grünen",
+        "address": "Via I Maggetti 38, Urbino, Italy",
+        "source": "https://www.booking.com/hotel/it/ca-39-maggetti.it.html",
+        "coordinate": [
+          12.6497712,
+          43.7398354
+        ],
+        "mapSource": "https://www.openstreetmap.org/node/11264804945"
+      }
+    },
+    "iseo": {
+      "first": {
+        "name": "Ca’ Nildes · Ferienwohnung in Clusane",
+        "address": "Via Argine della Valle 3, 25049 Clusane, Italy",
+        "source": "https://visitlakeiseo.info/en/hotels/ca-nildes/",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Casa Monalba · Ferienwohnung in Predore",
+        "address": "Via Calchera 10, 24060 Predore, Italien",
+        "coordinate": [
+          10.006829,
+          45.680636
+        ],
+        "source": "https://www.booking.com/hotel/it/casa-vacanza-monalba-sul-lago-d-39-iseo.en-gb.html",
+        "identityEvidence": "Airbnb 951224785764956985 und Booking: identische Lizenz IT016174C2ERWGVD3A, Gastgeberin Monica.",
+        "checkedOn": "2026-09-23"
+      }
+    },
+    "sibenik": {
+      "first": {
+        "name": "My Adriatic Place · Podsolarsko",
+        "address": "Podsolarsko 136, 22000 Šibenik, Croatia",
+        "source": "https://www.booking.com/hotel/hr/my-adriatic-place.en-gb.html",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Comfy apartment in a quiet neighborhood · Ražine",
+        "address": "Danilska 45, Šibenik, Croatia",
+        "source": "https://www.booking.com/hotel/hr/comfy-apartment-in-a-queit-neighborhood.de.html",
+        "coordinate": [
+          15.9267338,
+          43.7055214
+        ],
+        "checkedOn": "2026-09-23"
+      }
+    },
+    "ravenna": {
+      "first": {
+        "name": "Grand Hotel Mattei · Ravenna-Nord",
+        "address": "Via Enrico Mattei 25, 48122 Ravenna, Italy",
+        "source": "https://www.grandhotelmattei.com/it/contatti/",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Hotel Classicano · Ravenna-Süd",
+        "address": "Hotel Classicano, 2, Via Cella, Madonna dell'Albero, Ravenna, Emilia-Romagna, 48124, Italia",
+        "coordinate": [
+          12.1984624,
+          44.3844881
+        ],
+        "source": "https://www.openstreetmap.org/way/157931741",
+        "checkedOn": "2026-09-23"
+      }
+    },
+    "arqua-petrarca": {
+      "first": {
+        "name": "Agriturismo Giulio Fufo · Ferienwohnung",
+        "address": "Via Scalette 2, 35032 Arquà Petrarca, Italy",
+        "source": "https://www.booking.com/hotel/it/agriturismo-giulio-fufo.it.html",
+        "checkedOn": "2026-09-04"
+      },
+      "alternative": {
+        "name": "Holiday House Petrarca · Ferienhaus im Olivenhain",
+        "address": "Via Fontanelle 19, Arquà Petrarca, Italy",
+        "source": "https://www.booking.com/hotel/it/holiday-house-petrarca-arqua-petrarca.de.html",
+        "coordinate": [
+          11.71756194484412,
+          45.27640929669823
+        ],
+        "checkedOn": "2026-09-23"
+      }
+    },
+    "como-lazzago": {
+      "alternative": {
+        "name": "SantAgata Bed & Breakfast · Como",
+        "address": "Via Francesco Petrarca 24, Como, Italy",
+        "source": "https://www.booking.com/hotel/it/santagata-bed-amp-breakfast.de.html",
+        "coordinate": [
+          9.09330475582,
+          45.806725287384
+        ],
+        "checkedOn": "2026-09-23"
+      }
+    },
+    "zadar": {
+      "alternative": {
+        "name": "Villa Karla",
+        "address": "Premudski prilaz 8, Zadar, Croatia",
+        "source": "https://www.booking.com/hotel/hr/apartments-villa-karla.de.html",
+        "coordinate": [
+          15.243803500000013,
+          44.1140134
+        ],
+        "checkedOn": "2026-09-23"
+      },
+      "first": {
+        "name": "Arborea, luxury apartment with private yard",
+        "address": "Ulica Augusta Šenoe 38a, Zadar",
+        "coordinate": [
+          15.217936041002558,
+          44.13247343788357
+        ],
+        "source": "accommodation-audit/2026-09-10/navigation-anchors.json"
+      }
+    },
+    "makarska-base": {
+      "alternative": {
+        "name": "Sun Spalato Residence · bedingt passende Reserve",
+        "address": "Zadarska ulica 1, Makarska, Croatia",
+        "source": "https://www.booking.com/hotel/hr/sun-spalato-residence-ivano.de.html",
+        "coordinate": [
+          17.00894076581,
+          43.310369504573
+        ],
+        "checkedOn": "2026-09-23"
+      }
+    },
+    "shkoder": {
+      "alternative": {
+        "name": "RIRA’s apartment · 1-Schlafzimmer-Wohnung",
+        "address": "3GC6+Q72 Shkodër, 4001 Shkodra, Albanien",
+        "coordinate": [
+          19.51053680614,
+          42.0718354642316
+        ],
+        "source": "https://www.booking.com/hotel/al/riras-apartment.de.html",
+        "checkedOn": "2026-09-23"
+      }
+    }
+  }
+}

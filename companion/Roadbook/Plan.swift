@@ -28,6 +28,11 @@ struct PlanFeed: Codable {
                   Set(trip.days.map(\.id)).count == trip.days.count else { throw PlanError.invalid }
             for day in trip.days {
                 guard !day.id.isEmpty, day.number > 0, day.date.count == 10 else { throw PlanError.invalid }
+                if let options = day.accommodation?.options {
+                    guard options.count <= 20, Set(options.compactMap(\.id)).count == options.count,
+                          options.allSatisfy({ !$0.name.isEmpty && ["open", "asked", "booked", "unavailable"].contains($0.booking ?? "") && ($0.coordinate.map(validCoordinate) ?? true) }),
+                          day.accommodation?.activeOptionId == nil || options.contains(where: { $0.id == day.accommodation?.activeOptionId }) else { throw PlanError.invalid }
+                }
                 if let map = day.map {
                     guard map.lines.count <= 10, map.lines.allSatisfy({ line in
                         ["road", "ferry"].contains(line.kind) && line.coordinates.count >= 2 &&
@@ -66,6 +71,7 @@ struct TripPlan: Codable, Identifiable {
     let endDate: String
     let description: String
     var days: [TripDay]
+    var narrativeSegments: [TripNarrativeSegment]? = nil
 
     func adjacentDay(to dayID: String, offset: Int) -> TripDay? {
         guard offset == -1 || offset == 1 else { return nil }
@@ -73,6 +79,10 @@ struct TripPlan: Codable, Identifiable {
         guard let index = ordered.firstIndex(where: { $0.id == dayID }), ordered.indices.contains(index + offset) else { return nil }
         return ordered[index + offset]
     }
+}
+struct TripNarrativeSegment: Codable {
+    let title: String
+    let text: String
 }
 struct TripDay: Codable, Identifiable {
     let id: String
@@ -89,6 +99,8 @@ struct TripDay: Codable, Identifiable {
     let accommodation: StayPlan?
     var map: StageMap? = nil
     var navigationParts: [NavigationPart]? = nil
+    var routeStatus: String? = nil
+    var routeMessage: String? = nil
 
     func sameRoute(as other: TripDay) -> Bool {
         id == other.id && title == other.title && rest == other.rest && mapsURL == other.mapsURL &&
@@ -136,15 +148,37 @@ struct RouteStop: Codable {
     let approximate: Bool
 }
 struct StayPlan: Codable {
+    var id: String? = nil
+    var booking: String? = nil
+    var bookingRevision: String? = nil
+    var bookingContext: String? = nil
+    var bookingEditable: Bool? = nil
+    var startDate: String? = nil
+    var endDate: String? = nil
     let status: String
     let first: StayOption?
     let alternative: StayOption?
     let notes: String
+    var options: [StayOption]? = nil
+    var activeOptionId: String? = nil
+    var directMapsURL: String? = nil
+    var availableOptions: [StayOption] { options ?? [first, alternative].compactMap { $0 } }
+    var activeOption: StayOption? {
+        if let options { return options.first { $0.id == activeOptionId } }
+        return first
+    }
 }
 struct StayOption: Codable {
     let name: String
     let url: String
     let note: String
+    var id: String? = nil
+    var booking: String? = nil
+    var bookingRevision: String? = nil
+    var bookingContext: String? = nil
+    var bookingEditable: Bool? = nil
+    var coordinate: [Double]? = nil
+    var address: String? = nil
 }
 enum PlanError: LocalizedError {
     case invalid

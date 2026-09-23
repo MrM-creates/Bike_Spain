@@ -6,12 +6,15 @@ Ergänzung 4. September (Build 9): Nutzer können eine unverschlüsselte JSON-Si
 
 ## Datenflüsse im aktuellen Quellcode
 
+Ergänzung 9. September (lokaler Entwicklungsstand): Etappen-Notizen können mit Apples Speech-/AVFoundation-Frameworks diktiert werden. Mikrofon- und Spracherkennungsfreigabe erst nach `Aufnahme starten`. `de-CH`, bevorzugt On-Device; andernfalls kann Apple die Aufnahme zur Erkennung verarbeiten. Roadbook legt keine Audiodatei ab. Nur der vom Nutzer geprüfte und gespeicherte Text geht in die bestehende private Tagebuchablage. Ab dem überarbeiteten Tagebuch (Build 14) steht diese Erklärung unter `Einstellungen → Datenschutz`; Tippen bleibt ohne diese Berechtigungen möglich.
+
 | Daten | Verarbeitung/Ziel | Stand |
 | --- | --- | --- |
 | Öffentliche Reisepläne | Mitgeliefertes JSON, lokaler Cache, GET an den eigenen HTTPS-Plan-Endpunkt | Keine Tagebuchinhalte/Account-ID im Request |
 | Notizen, Tageszuordnung, ausgewählte Fotokopien | SwiftData lokal und private CloudKit-Datenbank im eigenen Container | Kein CKShare, keine öffentliche/geteilte Tagebuchdatenbank |
 | CloudKit-Accountkennung | SHA-256 lokal als Ordnername zur Trennung der lokalen Stores | Nicht an den Planungsserver übertragen |
 | Fotos | Auswahl über PhotosPicker, neue JPEG-Kopie bis 2400 Pixel | Keine pauschale Fotobibliotheksfreigabe; EXIF/GPS nicht übernommen; sichtbare Bildinhalte können natürlich persönliche Informationen enthalten |
+| Gesprochene Notiz | Apple-Spracherkennung, wenn unterstützt auf dem Gerät | Keine Audiodatei in Roadbook; Aufnahme endet beim Schliessen oder im Hintergrund; keine Übermittlung an ChatGPT/Planungsserver |
 | Karten | Apple MapKit | Keine eigene Standortfreigabe oder Trackingfunktion implementiert |
 | Navigation/Unterkünfte | Externe Links nach Nutzeraktion | Datenschutz des jeweiligen externen Dienstes beachten |
 | Technische Anfragedaten beim Planabruf | Hosting beim Plan-Endpunkt (Vercel) | Zugriff/Retention von IP-Adressen und Betriebslogs noch konkret prüfen |
