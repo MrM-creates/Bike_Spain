@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-23T14:33:44.817Z",
+  "deployment": "dpl_4ScxpSLKpHhEJnvhpvXKWcLrDfFf",
+  "commit": "0c4b3ad1b6f5abef694fa06517f1cc9b0028bcc7",
+  "feedMatchesBundled": true,
+  "version": "2026-09-23T14:27:31.314Z",
+  "lienz": [
+    {
+      "name": "Hotel Holunderhof · Lienz",
+      "booking": "booked"
+    },
+    {
+      "name": "Gasthof Schlossberghof · Lienz",
+      "booking": "unavailable"
+    }
+  ],
+  "unauthenticatedWrites": 401
+}

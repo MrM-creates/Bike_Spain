@@ -90,7 +90,12 @@ final class BookingStatusUITests: XCTestCase {
         app.buttons["booking-select-booked"].tap()
         app.buttons["booking-save"].tap()
         let hotel = app.staticTexts["booking-hotel"].firstMatch
-        reveal(hotel, in: app)
+        // The alternative editor was below the current hotel; return upwards after saving.
+        for _ in 0..<6 {
+            if hotel.exists && hotel.isHittable { break }
+            app.swipeDown()
+        }
+        XCTAssertTrue(hotel.exists && hotel.isHittable)
         expectation(for: NSPredicate(format: "label CONTAINS %@", "Schlossberghof"), evaluatedWith: hotel)
         waitForExpectations(timeout: 15)
         if !app.buttons["booking-edit-first"].exists {
