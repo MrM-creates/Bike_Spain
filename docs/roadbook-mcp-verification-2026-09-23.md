@@ -39,3 +39,13 @@ An isolated native-browser test with a fabricated PIN also reproduced a separate
 - Production deployment: `dpl_5uFw8Vohc9Gmv8Yp4Nyu8SZENa4U`, READY.
 - Targeted MCP suite: 6/6 passed after each change. Covers category-only diagnostics, preserved OAuth state/PKCE/resource on recovery, fresh browser binding, retained CSRF rejection, and exact callback policy on initial and invalid-PIN forms.
 - A fresh ChatGPT authorization popup was opened, with the user asked to reload it manually before entering the PIN so the page and cookie are initialized together in their browser. Actual account connection and read-only trip test remain pending.
+
+## Live successful consent followed by desktop crash
+
+At 15:46:31 UTC the user's actual consent POST returned 303; at 15:46:34 the token endpoint returned 200. Authenticated MCP requests then returned 200/202 through 15:46:38. This establishes successful PIN validation and at least initial authenticated MCP communication; request bodies were not logged, so it is not evidence of a completed trip-read test. A later token request at 15:46:52 returned 400; its reason is not established.
+
+The user reported the desktop app closing with a crash report. The matching local macOS report confirms a native EXC_BAD_ACCESS/SIGSEGV in the CrBrowserMain thread, with the top frame in V8 Context::Enter. This establishes a native browser-component crash, but not its exact trigger. No crash report or credentials were uploaded.
+
+After restart, Roadbook remains listed among installed plugins, but its detail panel reports “Plugin nicht verfügbar”; some unrelated security settings also fail to load. Browser diagnostics show ChatGPT request failures and a managed challenge response. The final connected-account/tool state and read-only trip invocation are still unconfirmed. No further consent or PIN attempt was initiated during this investigation, and no trip writes were performed.
+
+A subsequent normal page reload completed successfully: the Roadbook settings now display the primary connected account and “Verbunden am 23. Sept. 2026”. This confirms account connection persistence across the desktop crash. Refreshing the connection produced authenticated MCP responses again. The settings still displayed no tools, so a read-only test was sent through the plugin's “Im Chat testen” action, explicitly requesting only `get_trip(trip_adria_2026)` and prohibiting any preparation/publication or other changes. The test returned that `get_trip` is unavailable; no trip values were invented and no data were changed. Added count-only discovery response diagnostics to isolate server delivery from ChatGPT tool exposure.

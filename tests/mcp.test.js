@@ -50,7 +50,8 @@ test('GitHub one-time claims are atomic and distinguish duplicate markers from s
 test('OAuth with real SDK: consent, PKCE, resource binding, replay protection, refresh rotation and MCP scopes', async t => {
   const store = memoryStore();
   const authEvents = [];
-  const app = createApp({ sealer: seal(), store, pin: 'test-pin', reportAuthEvent: event => authEvents.push(event) });
+  const discoveryEvents = [];
+  const app = createApp({ sealer: seal(), store, pin: 'test-pin', reportAuthEvent: event => authEvents.push(event), reportDiscovery: event => discoveryEvents.push(event) });
   const listener = app.listen(0, '127.0.0.1');
   await new Promise(resolve => listener.once('listening', resolve));
   t.after(() => listener.close());
@@ -110,6 +111,7 @@ test('OAuth with real SDK: consent, PKCE, resource binding, replay protection, r
   assert.equal((await mcp('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 'test', version: '1' } })).status, 200);
   const listed = await (await mcp('tools/list', {})).json();
   assert.equal(listed.result.tools.length, 5);
+  assert.deepEqual(discoveryEvents, [{ toolCount: 5, errorCode: null }]);
   const read = await (await mcp('tools/call', { name: 'get_trip', arguments: { tripId: 'trip_adria_2026' } })).json();
   assert.equal(read.result.structuredContent.trip.id, 'trip_adria_2026');
   assert.ok(!JSON.stringify(read).includes('test-pin'));

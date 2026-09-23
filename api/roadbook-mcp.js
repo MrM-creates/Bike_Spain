@@ -6,7 +6,7 @@ const { ORIGIN, SCOPES, createSealer, createGithubStore } = require('../lib/mcp-
 const { createAuthProvider } = require('../lib/mcp-auth');
 const { createMcpServer } = require('../lib/mcp-tools');
 
-function createApp({ origin = ORIGIN, sealer, store, pin, call, fetchImpl, reportAuthEvent } = {}) {
+function createApp({ origin = ORIGIN, sealer, store, pin, call, fetchImpl, reportAuthEvent, reportDiscovery = event => console.info('roadbook_mcp_discovery', event) } = {}) {
   sealer ||= createSealer(process.env.ROADBOOK_MCP_SECRET, origin);
   store ||= createGithubStore({ token: process.env.GITHUB_ROADBOOK_TOKEN, repo: process.env.GITHUB_REPO, branch: process.env.GITHUB_BRANCH });
   const provider = createAuthProvider({ sealer, store, origin, pin: pin ?? process.env.ROADBOOK_PUBLISH_SECRET, reportAuthEvent });
@@ -33,6 +33,15 @@ function createApp({ origin = ORIGIN, sealer, store, pin, call, fetchImpl, repor
   app.post('/mcp', express.json({ limit: '2mb' }), async (req, res) => {
     const server = createMcpServer({ store, sealer, call, origin, fetchImpl });
     const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined, enableJsonResponse: true });
+    if (req.body?.method === 'tools/list') {
+      const send = transport.send.bind(transport);
+      transport.send = async (message, options) => {
+        // Only public discovery counts/error codes; never credentials or trip data.
+        reportDiscovery({ toolCount: Array.isArray(message.result?.tools) ? message.result.tools.length : 0,
+          errorCode: typeof message.error?.code === 'number' ? message.error.code : null });
+        return send(message, options);
+      };
+    }
     res.on('close', () => { transport.close(); server.close(); });
     await server.connect(transport);
     await transport.handleRequest(req, res, req.body);
