@@ -27,3 +27,15 @@ The initial HTTP integration tests supplied an Origin header themselves and ther
 - Production response header confirmed as `strict-origin`.
 - Actual native browser consent submission using a deliberately invalid, non-secret test PIN reached the expected “Die PIN stimmt nicht. Bitte erneut eingeben.” response, instead of the previous restart error. This confirms the browser form passes the Origin/cookie check and reaches PIN validation.
 - Fresh empty consent form reopened for the user. Real authentication, ChatGPT tool discovery and the read-only production trip test remain pending; no production trip changes were made.
+
+## Follow-up browser failure and callback test
+
+The user's next direct form submission still returned HTTP 403 on the corrected deployment (production log at 15:38:28 UTC). Therefore the strict-origin fix alone did **not** establish that the user's browser session works. Added category-only diagnostics for missing/null/foreign Origin and missing/mismatched consent cookies. No PINs, cookie contents, URLs, authorization codes or tokens are logged. Rejected browser bindings now offer an explicit fresh GET authorization link reconstructed only from the authenticated consent ticket; no failed PIN form is retained. Invalid/expired consent no longer renders a permanently unusable empty-ticket PIN form.
+
+An isolated native-browser test with a fabricated PIN also reproduced a separate successful-login failure: the browser remained on the form when a 303 redirected outside the form's origin. The consent CSP now permits only the exact registered callback in addition to self. Repeating the same native-browser test then reached the local callback success screen. Local test servers and tab were closed.
+
+- Recovery/diagnostics commit: `ba9fc177f91803331127c06681489fb9b65037f3`.
+- Callback policy commit: `fba1be55c67192858240c86dcf525c4a712e9772`.
+- Production deployment: `dpl_5uFw8Vohc9Gmv8Yp4Nyu8SZENa4U`, READY.
+- Targeted MCP suite: 6/6 passed after each change. Covers category-only diagnostics, preserved OAuth state/PKCE/resource on recovery, fresh browser binding, retained CSRF rejection, and exact callback policy on initial and invalid-PIN forms.
+- A fresh ChatGPT authorization popup was opened, with the user asked to reload it manually before entering the PIN so the page and cookie are initialized together in their browser. Actual account connection and read-only trip test remain pending.
