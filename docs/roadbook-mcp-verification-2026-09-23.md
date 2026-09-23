@@ -1,5 +1,7 @@
 # Roadbook MCP verification — 23 September 2026
 
+**Final status: account connected, all five tools discovered, authenticated ChatGPT Work read verified successfully.** Historical pending states below document the investigation; the successful test at the end supersedes them. No live publication was requested or performed.
+
 Implementation commit: `5ead4ffc2058a23a04a8590223ab87065cd5465d`.
 Production deployment: `dpl_8C3DkoQJ2cafUnNs61e4eTY1PBhQ`, READY.
 
@@ -51,3 +53,19 @@ After restart, Roadbook remains listed among installed plugins, but its detail p
 A subsequent normal page reload completed successfully: the Roadbook settings now display the primary connected account and “Verbunden am 23. Sept. 2026”. This confirms account connection persistence across the desktop crash. Refreshing the connection produced authenticated MCP responses again. The settings still displayed no tools, so a read-only test was sent through the plugin's “Im Chat testen” action, explicitly requesting only `get_trip(trip_adria_2026)` and prohibiting any preparation/publication or other changes. The test returned that `get_trip` is unavailable; no trip values were invented and no data were changed. Added count-only discovery response diagnostics to isolate server delivery from ChatGPT tool exposure.
 
 At 15:53:42 UTC, refreshing the connected app on deployment `dpl_7VzEFkr46tNAAAYtANTD39RHVHDh` (commit `03cc73ff81e80005bdcc3c2f389f0168a3962a40`) emitted `roadbook_mcp_discovery { toolCount: 5, errorCode: null }` with HTTP 200. Thus production authenticated discovery returns all five tools, while the ChatGPT settings still say “Noch keine App-Tools verfügbar” and the actual read-only Work test reports `get_trip` unavailable. Account connection is confirmed; usable ChatGPT tool exposure and trip-read verification remain blocked/unconfirmed. No further PIN entry is needed for the currently saved connection.
+
+## Tool import compatibility correction
+
+The accommodation option schema used a positional `z.tuple`, which the MCP SDK advertised using JSON Schema draft-07 array-valued `items`. Replaced it with a homogeneous numeric array of exactly two elements plus runtime latitude validation. Longitude remains bounded to ±180 and latitude to ±90; the data format stays `[longitude, latitude]`. Added SDK-level checks for portable array schemas and rejection of invalid coordinates/lengths before plan operations. Targeted MCP suite passed 6/6.
+
+Fix commit `08bb865e63a592c9cbf25fe68f83c542e2f10797`, production deployment `dpl_2zAo9V7JrqUcMmVUoDPVZz3wtBf1` READY. After refreshing the existing connected app, ChatGPT immediately displayed all five tools with their scopes and schemas. No reconnection or PIN entry was needed. This before/after verifies the tuple schema was the import blocker in this integration. A fresh Work conversation was started through “Im Chat testen” to run the same read-only `get_trip` check.
+
+## Successful end-to-end ChatGPT Work read
+
+Test conversation: https://chatgpt.com/c/6ab3f74b-8cf0-83eb-92b1-8284af151627 (“Verbindungstest Reisedaten abrufen”). The selected Roadbook plugin invoked `get_trip` for `trip_adria_2026`; the visible activity confirms the actual trip-data retrieval. The final answer reports:
+
+- Published version: `2026-09-23T14:27:31.314Z`.
+- 30 travel days.
+- Booked stay in Lienz: Hotel Holunderhof, Zettersfeldstraße 36, 9905 Gaimberg.
+
+No trip change, draft preparation or publication was performed. The user can select Roadbook in supported ChatGPT conversations and use the existing saved OAuth connection. New conversations should be used after a metadata update so the new tools are available. The earlier desktop-native crash is documented but its exact trigger is not established; the later metadata refresh and successful read did not reproduce it.
