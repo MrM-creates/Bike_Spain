@@ -70,6 +70,7 @@ test('OAuth with real SDK: consent, PKCE, resource binding, replay protection, r
   const login = await get('/authorize?' + new URLSearchParams(params));
   assert.equal(login.status, 200);
   assert.equal(login.headers.get('referrer-policy'), 'strict-origin', 'native form POSTs must retain Origin without exposing OAuth query parameters');
+  assert.ok(login.headers.get('content-security-policy').includes("form-action 'self' " + registration.redirect_uris[0] + ';'), 'form policy permits the registered OAuth callback after the successful POST');
   const cookie = login.headers.get('set-cookie').split(';')[0];
   const page = await login.text();
   const ticket = page.match(/name="ticket" value="([^"]+)"/)[1];
@@ -91,7 +92,9 @@ test('OAuth with real SDK: consent, PKCE, resource binding, replay protection, r
   assert.equal((await post('/roadbook-connect', { ticket: freshTicket, pin: 'wrong' }, { Cookie: freshCookie, Origin: ORIGIN })).status, 401, 'recovery establishes a usable new browser binding');
   assert.deepEqual(authEvents, ['origin_mismatch', 'origin_null', 'origin_missing', 'cookie_missing', 'cookie_mismatch'].map(reason => ({ event: 'consent_rejected', reason })), 'diagnostics contain no submitted data or OAuth secrets');
   assert.equal(store.used.size, 0, 'rejected browser binding and wrong PIN do not grant access');
-  assert.equal((await post('/roadbook-connect', { ticket, pin: 'wrong' }, { Cookie: cookie, Origin: ORIGIN })).status, 401);
+  const wrongPin = await post('/roadbook-connect', { ticket, pin: 'wrong' }, { Cookie: cookie, Origin: ORIGIN });
+  assert.equal(wrongPin.status, 401);
+  assert.equal(wrongPin.headers.get('content-security-policy'), login.headers.get('content-security-policy'), 'retry form preserves the exact callback policy');
   const consent = await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: cookie, Origin: ORIGIN });
   assert.equal(consent.status, 303);
   const redirect = new URL(consent.headers.get('location'));
