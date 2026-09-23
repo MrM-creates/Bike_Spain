@@ -15,7 +15,10 @@ function createApp({ origin = ORIGIN, sealer, store, pin, call, fetchImpl } = {}
   app.set('trust proxy', 1);
   app.use((req, res, next) => {
     res.setHeader('Cache-Control', 'no-store');
-    res.setHeader('Referrer-Policy', 'no-referrer');
+    // Form POSTs under no-referrer carry Origin: null and fail the deliberate
+    // same-origin CSRF check. strict-origin retains that proof without leaking
+    // OAuth query parameters in the Referer header.
+    res.setHeader('Referrer-Policy', 'strict-origin');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
     next();

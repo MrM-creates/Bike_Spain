@@ -68,10 +68,12 @@ test('OAuth with real SDK: consent, PKCE, resource binding, replay protection, r
   const params = { client_id: client.client_id, redirect_uri: registration.redirect_uris[0], response_type: 'code', code_challenge: crypto.createHash('sha256').update(verifier).digest('base64url'), code_challenge_method: 'S256', scope: 'roadbook:read roadbook:write', resource: `${ORIGIN}/mcp`, state: 'test-state' };
   const login = await get('/authorize?' + new URLSearchParams(params));
   assert.equal(login.status, 200);
+  assert.equal(login.headers.get('referrer-policy'), 'strict-origin', 'native form POSTs must retain Origin without exposing OAuth query parameters');
   const cookie = login.headers.get('set-cookie').split(';')[0];
   const page = await login.text();
   const ticket = page.match(/name="ticket" value="([^"]+)"/)[1];
   assert.equal((await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: cookie, Origin: 'https://evil.example' })).status, 403);
+  assert.equal((await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: cookie, Origin: 'null' })).status, 403);
   assert.equal((await post('/roadbook-connect', { ticket, pin: 'wrong' }, { Cookie: cookie, Origin: ORIGIN })).status, 401);
   const consent = await post('/roadbook-connect', { ticket, pin: 'test-pin' }, { Cookie: cookie, Origin: ORIGIN });
   assert.equal(consent.status, 303);
