@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-26T13:24:47.991Z",
+  "publishedVersion": "2026-09-26T19:37:02.434Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1430,7 +1430,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "name": "Zora · ruhiges Apartment in Senj",
           "url": "https://www.booking.com/hotel/hr/zora-senj.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
           "note": "",
-          "booking": "open",
+          "booking": "booked",
           "coordinate": [
             14.9021456,
             44.9941346
@@ -1455,7 +1455,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "title": "Senj",
       "startDate": "2026-09-28",
       "endDate": "2026-09-29",
-      "booking": "open",
+      "booking": "booked",
       "currentFirstChoice": "Zora · ruhiges Apartment in Senj",
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/zora-senj.de.html?checkin=2026-09-28&checkout=2026-09-29&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Beautiful Sea View Studio Danijela · Senj",
@@ -2097,7 +2097,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-26T13:24:47.991Z",
+    "dataVersion": "2026-09-26T19:37:02.434Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
