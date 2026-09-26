@@ -9,6 +9,7 @@ const fixture=()=>{const t=readPublishedTrip(fs.readFileSync('data/trip-adria-20
 const fakeRoute=async(a,b)=>({coordinates:[a,b],distance:500,duration:60});
 const set=(t,id,booking,stayId='lienz')=>{const s=t.accommodations.find(s=>s.id===stayId);return applyBookingStatus(t,{stayId,optionId:id,booking,expectedRevision:bookingInfo(stayId,s,t.publishedVersion,id).bookingRevision},new Date(Date.parse(t.publishedVersion)+1000).toISOString());};
 
+
 test('legacy migration keeps booking on first option; unavailable fallback and third option have own status',()=>{
  const s={firstChoice:'First',alternative:'Second',booking:'booked'};
  assert.equal(optionsFor(s)[0].booking,'booked');assert.equal(optionsFor(s)[1].booking,'open');
@@ -30,10 +31,23 @@ test('Lienz alternative updates arrival and departure, preserves waypoints and u
  assert.ok(feed.days[1].map.lines[0].coordinates.length>1000);
  assert.equal(attachMaps(feed,JSON.parse(fs.readFileSync('data/companion-maps.json'))).days[1].map.stop.label,feed.days[1].accommodation.first.name);
 });
-test('failed route keeps booking but hides stale navigation, metrics and geometry; retry succeeds',async()=>{
+test('failed route keeps booking and selected hotel navigation while metrics and geometry stay pending; retry succeeds',async()=>{
  const t=fixture();set(t,'alternative','booked');await updateAccommodationRoutes(t,'lienz',{route:async()=>{throw new Error('Offline');}});
- const feed=tripForCompanion(t);assert.equal(feed.days[1].accommodation.status,'Gebucht');assert.equal(feed.days[1].mapsURL,'');assert.equal(feed.days[1].map,null);assert.equal(feed.days[1].distance,'Aktualisierung offen');assert.match(feed.days[1].accommodation.directMapsURL,/destination=/);
+ const feed=tripForCompanion(t);assert.equal(feed.days[1].accommodation.status,'Gebucht');assert.equal(new URL(feed.days[1].mapsURL).searchParams.get('destination'),'46.8293036,12.7545062');
+ assert.equal(new URL(feed.days[2].mapsURL).searchParams.get('origin'),'46.8293036,12.7545062');
+ assert.deepEqual(new URL(feed.days[1].mapsURL).searchParams.get('waypoints'),t.days[1].waypoints.join('|'));assert.equal(feed.days[1].map,null);assert.equal(feed.days[1].distance,'Aktualisierung offen');assert.match(feed.days[1].accommodation.directMapsURL,/destination=/);
  await updateAccommodationRoutes(t,'lienz',{route:fakeRoute});assert.equal(tripForCompanion(t).days[1].routeStatus,'ready');
+});
+test('third hotel after a waypoint edit keeps both full Maps targets without claiming a reviewed map',async()=>{
+ const t=fixture(),s=t.accommodations.find(stay=>stay.id==='lienz');
+ s.options.push({id:'third',name:'Third hotel',address:'Lienz',coordinate:[12.77,46.83],booking:'booked'});
+ const changed=new URL(t.days[1].main);changed.searchParams.set('waypoints',[...t.days[1].waypoints,'46.82,12.76'].join('|'));t.days[1].main=changed.href;
+ await updateAccommodationRoutes(t,'lienz',{route:fakeRoute});
+ const feed=tripForCompanion(t);assert.equal(feed.days[1].routeStatus,'pending');
+ assert.equal(new URL(feed.days[1].mapsURL).searchParams.get('destination'),'46.83,12.77');
+ assert.equal(new URL(feed.days[1].mapsURL).searchParams.get('waypoints'),changed.searchParams.get('waypoints'));
+ assert.equal(new URL(feed.days[2].mapsURL).searchParams.get('origin'),'46.83,12.77');
+ assert.equal(feed.days[1].map,null);assert.equal(feed.days[1].duration,'');
 });
 test('cannot silently book two hotels or use a stale option revision',()=>{
  const t=fixture();const s=t.accommodations[1],old=bookingInfo(s.id,s,t.publishedVersion,'first');set(t,'alternative','booked');
@@ -52,7 +66,7 @@ test('rest nights and next departure share selected hotel; all unavailable requi
  set(t,'alternative','unavailable','zadar');set(t,'first','unavailable','zadar');await updateAccommodationRoutes(t,'zadar',{route:fakeRoute});assert.equal(tripForCompanion(t).days[5].accommodation.status,'Neue Unterkunft nötig');assert.equal(tripForCompanion(t).days[5].mapsURL,'');
 });
 test('missing location saves option status and requests location, does not guess coordinates',async()=>{
- const t=fixture();delete t.accommodations[1].options[1].coordinate;set(t,'alternative','booked');await updateAccommodationRoutes(t,'lienz',{route:fakeRoute});assert.match(t.accommodationRoutes['adria-2'].message,/Lage fehlt/);
+ const t=fixture();delete t.accommodations[1].options[1].coordinate;set(t,'alternative','booked');await updateAccommodationRoutes(t,'lienz',{route:fakeRoute});assert.match(t.accommodationRoutes['adria-2'].message,/Lage fehlt/);assert.equal(tripForCompanion(t).days[1].mapsURL,'');
 });
 test('access adjustment retains exact reviewed middle and rejects distant relocation',async()=>{
  const p=[[12,46],[12.01,46],[12.1,46],[12.2,46],[12.21,46]];
