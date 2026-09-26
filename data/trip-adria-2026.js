@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-26T19:37:02.434Z",
+  "publishedVersion": "2026-09-26T19:51:09.303Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1480,7 +1480,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "name": "Arborea, luxury apartment with private yard",
           "url": "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
           "note": "Adresse: Ulica Augusta Šenoe 38a, Zadar, Croatia. Apartment mit 2 Schlafzimmern, 65 m². Eigene Küche, Waschmaschine, Privatparkplatz am Haus, private Aussenfläche; Inseratsadresse mit Zusatz Prizemlje (Erdgeschoss). Am 10.09.2026 für 2026-09-29 bis 2026-10-01 und zwei Erwachsene verfügbar angezeigt: CHF 197 insgesamt, kostenlos stornierbar vor 2026-09-28. Momentaufnahme, nicht gebucht.",
-          "booking": "open",
+          "booking": "booked",
           "coordinate": [
             15.217936041002558,
             44.13247343788357
@@ -1505,7 +1505,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "title": "Zadar",
       "startDate": "2026-09-29",
       "endDate": "2026-10-01",
-      "booking": "open",
+      "booking": "booked",
       "currentFirstChoice": "Arborea, luxury apartment with private yard",
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/arborea-luxury-apartment-with-private-yard.de.html?checkin=2026-09-29&checkout=2026-10-01&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Villa Karla",
@@ -2097,7 +2097,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-26T19:37:02.434Z",
+    "dataVersion": "2026-09-26T19:51:09.303Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
