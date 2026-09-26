@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-26T09:16:23.553Z",
+  "publishedVersion": "2026-09-26T09:19:59.435Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -2097,7 +2097,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-26T09:16:23.553Z",
+    "dataVersion": "2026-09-26T09:19:59.435Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
