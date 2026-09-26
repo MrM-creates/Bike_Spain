@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-26T19:57:17.411Z",
+  "publishedVersion": "2026-09-26T19:58:00.755Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1551,7 +1551,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "name": "Comfy apartment in a quiet neighborhood · Ražine",
           "url": "https://www.booking.com/hotel/hr/comfy-apartment-in-a-queit-neighborhood.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
           "note": "Ganze Erdgeschosswohnung mit Garten in Ražine, Danilska 45. Küche, Waschmaschine und privater Parkplatz laut Inserat. Ruhige Wohnlage statt Altstadt; keine abschliessbare Garage belegt. Am 03.09. für 01.–03.10. angezeigt: CHF 170 insgesamt, kostenlos stornierbar vor 30.09.",
-          "booking": "open",
+          "booking": "booked",
           "address": "Danilska 45, Šibenik, Croatia",
           "coordinate": [
             15.9267338,
@@ -1564,7 +1564,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "title": "Šibenik",
       "startDate": "2026-10-01",
       "endDate": "2026-10-03",
-      "booking": "",
+      "booking": "booked",
       "currentFirstChoice": "My Adriatic Place · Podsolarsko",
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/my-adriatic-place.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Comfy apartment in a quiet neighborhood · Ražine",
@@ -2097,7 +2097,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-26T19:57:17.411Z",
+    "dataVersion": "2026-09-26T19:58:00.755Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
