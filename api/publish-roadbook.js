@@ -2,6 +2,7 @@ const DEFAULT_REPO = "MrM-creates/Bike_Spain";
 const DEFAULT_BRANCH = "main";
 const { normalizePlanKind } = require("../lib/trip-data");
 const { tripTarget, readPublishedTrip, writePublishedTrip } = require("../lib/published-trips");
+const { readGithubText } = require("../lib/mcp-security");
 
 const json = (response, status, body) => {
   response.statusCode = status;
@@ -158,7 +159,8 @@ module.exports = async (request, response) => {
     const repo = process.env.GITHUB_REPO || DEFAULT_REPO;
     const branch = process.env.GITHUB_BRANCH || DEFAULT_BRANCH;
     const current = await githubRequest(`/repos/${repo}/contents/${encodeURIComponent(target.path)}?ref=${encodeURIComponent(branch)}`);
-    const tripData = readPublishedTrip(Buffer.from(current.content, "base64").toString("utf8"), tripId);
+    const source = await readGithubText(current, sha => githubRequest(`/repos/${repo}/git/blobs/${encodeURIComponent(sha)}`));
+    const tripData = readPublishedTrip(source, tripId);
     const currentVersion = tripData.publishedVersion || "legacy";
     const planKind = normalizePlanKind(payload.planKind, tripData.planKind);
     if (!payload.baseVersion) {
