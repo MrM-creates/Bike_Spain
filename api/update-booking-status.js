@@ -1,5 +1,6 @@
 const { createHash, timingSafeEqual } = require('node:crypto');
 const { tripTarget, readPublishedTrip, writePublishedTrip } = require('../lib/published-trips');
+const { readGithubText } = require('../lib/mcp-security');
 const { applyBookingStatus, staysFor, bookingInfo } = require('../lib/booking-status');
 
 const fail = (status, message) => { throw Object.assign(new Error(message), { status }); };
@@ -57,7 +58,8 @@ module.exports = async (request, response) => {
     const branch = process.env.GITHUB_BRANCH || 'main';
     const contentPath = `/repos/${repo}/contents/${encodeURIComponent(target.path)}`;
     const current = await github(`${contentPath}?ref=${encodeURIComponent(branch)}`);
-    const snapshot = readPublishedTrip(Buffer.from(current.content, 'base64').toString('utf8'), payload.tripId);
+    const source = await readGithubText(current, sha => github(`/repos/${repo}/git/blobs/${encodeURIComponent(sha)}`));
+    const snapshot = readPublishedTrip(source, payload.tripId);
     if (checking) {
       const matches = staysFor(snapshot).filter(item => item.id === payload.stayId);
       if (matches.length !== 1) fail(409, 'Die Unterkunft wurde inzwischen geändert. Bitte den Reiseplan aktualisieren.');
