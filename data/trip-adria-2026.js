@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-26T19:51:09.303Z",
+  "publishedVersion": "2026-09-26T19:55:17.448Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1539,7 +1539,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "name": "My Adriatic Place · Podsolarsko",
           "url": "https://www.booking.com/hotel/hr/my-adriatic-place.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
           "note": "Erdgeschosswohnung mit Garten in Podsolarsko, ausserhalb des Zentrums. Küche und Waschmaschine laut Inserat; Garage für zwei Motorräder bestätigen. Am 03.09. für 01.–03.10. angezeigt: CHF 215 insgesamt als Mitgliederpreis, vollständig erstattbar durch Booking vor 27.09. Rabatt und Erstattungsbedingungen im eigenen Konto prüfen; kein gewöhnlicher kostenloser Stornotarif.",
-          "booking": "open",
+          "booking": "booked",
           "coordinate": [
             15.893359,
             43.704753
@@ -1564,7 +1564,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "title": "Šibenik",
       "startDate": "2026-10-01",
       "endDate": "2026-10-03",
-      "booking": "open",
+      "booking": "booked",
       "currentFirstChoice": "My Adriatic Place · Podsolarsko",
       "currentFirstChoiceUrl": "https://www.booking.com/hotel/hr/my-adriatic-place.de.html?checkin=2026-10-01&checkout=2026-10-03&group_adults=2&no_rooms=1&group_children=0",
       "currentAlternative": "Comfy apartment in a quiet neighborhood · Ražine",
@@ -2097,7 +2097,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-26T19:51:09.303Z",
+    "dataVersion": "2026-09-26T19:55:17.448Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
