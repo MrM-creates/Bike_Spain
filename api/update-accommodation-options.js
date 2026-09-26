@@ -1,5 +1,6 @@
 const {createHash,timingSafeEqual}=require('node:crypto');
 const {tripTarget,readPublishedTrip,writePublishedTrip}=require('../lib/published-trips');
+const {readGithubText}=require('../lib/mcp-security');
 const {staysFor,bookingInfo}=require('../lib/booking-status');
 const {validateOptions,activeOption}=require('../assets/accommodation-options');
 const {updateAccommodationRoutes}=require('../lib/accommodation-routes');
@@ -24,7 +25,8 @@ module.exports=async(req,res)=>{
     const target=tripTarget(p.tripId),repo=process.env.GITHUB_REPO||'MrM-creates/Bike_Spain',branch=process.env.GITHUB_BRANCH||'main';
     const path=`/repos/${repo}/contents/${encodeURIComponent(target.path)}`;
     const file=await github(`${path}?ref=${encodeURIComponent(branch)}`);
-    const snapshot=readPublishedTrip(Buffer.from(file.content,'base64').toString(),p.tripId);
+    const source=await readGithubText(file,sha=>github(`/repos/${repo}/git/blobs/${encodeURIComponent(sha)}`));
+    const snapshot=readPublishedTrip(source,p.tripId);
     if(!p.baseVersion||p.baseVersion!==snapshot.publishedVersion)fail(409,'Der Reiseplan wurde inzwischen geändert. Bitte den Online-Stand laden; deine Eingaben bleiben hier erhalten.');
     const entry=staysFor(snapshot).find(s=>s.id===p.stayId);
     if(!entry||!bookingInfo(entry.id,entry.stay,snapshot.publishedVersion,require('../assets/accommodation-options').optionsFor(entry.stay)[0]?.id).bookingEditable)fail(409,'Diese Unterkunft kann hier nicht geändert werden.');
