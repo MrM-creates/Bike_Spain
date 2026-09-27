@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-26T19:58:00.755Z",
+  "publishedVersion": "2026-09-27T18:27:16.425Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1596,28 +1596,36 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "id": "first",
           "name": "Der Blick / The View",
           "url": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
-          "note": "Gesamtes Apartment mit zwei Schlafzimmern, erstattungsfähiger Tarif. Küche, eigene kostenlose Waschmaschine, ein Stellplatz auf dem Grundstück; eine Bewertung bestätigt reservierten Parkplatz, andere beschreibt Steigung vom Strand zur Wohnung. Am 10.09.2026 für 2026-10-03 bis 2026-10-06 und zwei Erwachsene verfügbar angezeigt: CHF 241.5 insgesamt, kostenlos stornierbar vor 2026-10-02. Momentaufnahme, nicht gebucht.",
-          "booking": "open"
+          "note": "Laut Nutzer für die Reisedaten nicht verfügbar.",
+          "booking": "unavailable"
         },
         {
           "id": "alternative",
           "name": "Sun Spalato Residence · bedingt passende Reserve",
           "url": "https://www.booking.com/hotel/hr/sun-spalato-residence-ivano.de.html?checkin=2026-10-03&checkout=2026-10-06&group_adults=2&no_rooms=1&group_children=0",
-          "note": "Zadarska ulica 1, Makarska. Am 10.09. für 03.–06.10. und zwei Erwachsene angezeigt: Erdgeschosswohnung, 55 m², Küche, Privatparkplatz, CHF 222 Mitgliederpreis. Kostenlose Stornierung nur vor 19.09.2026; deshalb weniger flexibel als Der Blick. Eigene Waschmaschine dieser Einheit nicht bestätigt.",
+          "note": "Reserve; eigene Waschmaschine nicht bestätigt.",
           "booking": "open",
-          "address": "Zadarska ulica 1, Makarska, Croatia",
           "coordinate": [
             17.00894076581,
             43.310369504573
-          ]
+          ],
+          "address": "Zadarska ulica 1, Makarska, Croatia"
+        },
+        {
+          "id": "west-apartment",
+          "name": "West Apartment in Zentrum mit Meerblick",
+          "url": "https://www.airbnb.de/rooms/6980111",
+          "note": "Nutzer hat 03.–06.10.2026 gebucht. 175 € für drei Nächte laut Nutzer. Küche und Waschmaschine; Ivan bestätigt überdachten Parkplatz für zwei Motorräder auf seiner Terrasse (sonst Mercedes-Stellplatz).",
+          "booking": "booked",
+          "address": "Biokovska ulica 14, 21300 Makarska, Kroatien"
         }
       ],
-      "activeOptionId": "first",
+      "activeOptionId": "west-apartment",
       "id": "makarska-base",
       "title": "Makarska",
       "startDate": "2026-10-03",
       "endDate": "2026-10-06",
-      "booking": "open",
+      "booking": "booked",
       "currentFirstChoice": "Der Blick / The View",
       "currentFirstChoiceUrl": "https://www.airbnb.ch/rooms/1152154313065696835?adults=2&check_in=2026-10-03&check_out=2026-10-06&locale=de",
       "currentAlternative": "Sun Spalato Residence · bedingt passende Reserve",
@@ -2097,7 +2105,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-26T19:58:00.755Z",
+    "dataVersion": "2026-09-27T18:27:16.425Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
@@ -36923,7 +36931,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       }
     },
     "adria-10": {
-      "key": "[\"[\\\"alternative\\\",\\\"Comfy apartment in a quiet neighborhood · Ražine\\\",[15.9267338,43.7055214],\\\"Danilska 45, Šibenik, Croatia\\\"]\",\"[\\\"first\\\",\\\"Der Blick / The View\\\",null,\\\"\\\"]\"]",
+      "key": "[\"[\\\"alternative\\\",\\\"Comfy apartment in a quiet neighborhood · Ražine\\\",[15.9267338,43.7055214],\\\"Danilska 45, Šibenik, Croatia\\\"]\",\"[\\\"west-apartment\\\",\\\"West Apartment in Zentrum mit Meerblick\\\",null,\\\"Biokovska ulica 14, 21300 Makarska, Kroatien\\\"]\"]",
       "state": "ready",
       "message": "Zufahrt aktualisiert · Fahrzeit geschätzt",
       "base": {
@@ -71178,7 +71186,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
             17.007081,
             43.306811
           ],
-          "label": "Der Blick / The View",
+          "label": "West Apartment in Zentrum mit Meerblick",
           "approximate": true
         }
       }
