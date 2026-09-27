@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-27T18:31:36.203Z",
+  "publishedVersion": "2026-09-27T18:33:26.219Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -871,20 +871,21 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "overnight": "Dubrovnik (Aussenbasis)",
       "km": "ca. 161 km",
       "time": "ca. 3 h 09",
-      "roads": "INA Makarska-Ratac · D8/Jadranska Magistrala · Pelješki most · D8 · D416 · D414/Pelješki put · Put Braće Mihanović · D414 · Jadranska Magistrala · Jadranska cesta · Batahovina · Obala Ivana Pavla II · Obala Stjepana Radića/Nikole Tesle · Hrvatskog Crvenog Kriza",
+      "roads": "Biokovska ulica · (Stadtstraßen Makarska) · D8/Jadranska Magistrala · Pelješki most · D8 (Ston-Umfahrung) · Zufahrtsstraße Ston/Put Braće Mihanović · Rückfahrt zur D8 · Jadranska Magistrala · Jadranska cesta · Batahovina · Obala Ivana Pavla II · Obala Stjepana Radića/Nikole Tesle · Hrvatskog Crvenog",
       "points": "43.155031,17.250212 · 42.885330,17.579727 · Parking Ston, Croatia",
-      "note": "Reine Fahrzeit: ca. 3 h 09.\n\nAuf der D8 südwärts mit kurzem Küstenstopp in Drvenik, weiter im Raum Ploče zur Pelješac-Brücke und über Ston nach Dubrovnik. Keine A1-Abkürzung und kein Neum-Transit. Der Brückenanker liegt direkt auf der Fahrbahn. Wind und Brückenfreigabe bei HAK vor Abfahrt prüfen. Das Ziel ist vorläufig ein Ortsanker ausserhalb der Altstadt; die genaue Zufahrt zur gewählten Aussenbasis folgt mit der Unterkunftsentscheidung.\n\nOSCAR Suite: Die öffentliche Gebäudeadresse ist geprüft; Garageneinfahrt nach der Buchung bestätigen.\n\nOrientierungspunkt Makarska: INA Makarska-Ratac, Vukovarska 135 (43.306819, 17.007086). Ankunft und nächste Abfahrt verwenden diesen festen Punkt. Die Adresse von «Der Blick» wird erst nach Buchung bekannt; zur tatsächlich gewählten Unterkunft am jeweiligen Tag separat navigieren. Diese letzte Strecke ist nicht in Kilometer und Fahrzeit enthalten.",
+      "note": "Start am gebuchten West Apartment, Biokovska ulica 14 in Makarska. Von dort über die Stadtstraßen auf die D8/Jadranska Magistrala und südwärts entlang der Makarska-Riviera. Kurzer Küstenstopp am Wegpunkt in Drvenik direkt an der D8; für die Einfahrt nur die asphaltierte Hafenzufahrt von der Hauptstraße nutzen, keine ausgeschilderten Macadam-Nebenwege.\n\nWeiter auf der D8 über Ploče zur Pelješac-Brücke, über den Pelješki most und die neue, gut ausgebaute Anschlussstrecke nach Pelješac. Abzweig über die Zufahrtsstraße und Put Braće Mihanović zum Wegpunkt in Ston, danach zurück auf die D8 und über die Ston-Umfahrung Richtung Dubrovnik. Kein Neum-Transit und keine A1-Abkürzung; die bestehenden Wegpunkte (Drvenik, Pelješac-Brücke, Ston) bleiben unverändert.\n\nAnnäherung an Dubrovnik über die Jadranska Magistrala/Jadranska cesta und den Stadtteil Gruž (Batahovina · Obala Ivana Pavla II · Obala Stjepana Radića/Nikole Tesle) bis Hrvatskog Crvenog Kriza 10 als vorläufiges Ziel für die Aussenbasis mit später zu bestätigender Garageneinfahrt. Diese Route bleibt bewusst ausserhalb der engen Altstadt und vermeidet die streng reglementierte ZTL rund um die Stadtmauer.\n\nWind- und Brückenlage vor Abfahrt bei HAK prüfen: Auf der D8 und insbesondere auf dem Pelješki most kann bei Bura oder Starkwind die Geschwindigkeit reduziert, der Verkehr einspurig mit Ampelregelung geführt oder im Extremfall kurzzeitig gesperrt werden. Laut aktuellem Stand ist ab Oktober 2026 eine Sanierung der Pelješac-Brücke mit Spurverengungen und möglichen Staus, aber ohne vollständige Sperre vorgesehen; daher ist mit Verzögerungen zu rechnen, die reine Fahrzeit von ca. 3 h 09 bleibt aber als Etappenplanung konservativ. Zusätzlich lokale Hinweise der Stadt Dubrovnik zu temporären Sperren bei Veranstaltungen im Bere",
+      "travelNote": "Reine Fahrzeit laut aktueller Routenberechnung ca. 3 h 09 bei etwa 161 km, damit im entspannten Rahmen. Ausreichend Reserven für kurze Stopps in Drvenik, am Pelješki most und in Ston einplanen.\n\nVor Abfahrt den HAK-Verkehrsservice auf der D8 (Abschnitt Makarska – Ploče – Pelješac-Brücke – Dubrovnik) auf Windwarnungen, Baustellen und aktuelle Verkehrsführung an der Pelješac-Brücke prüfen sowie einen Wettercheck (DHMZ) auf mögliche Bura-Lagen durchführen. In Dubrovnik können Veranstaltungen (z.B. ",
       "rest": false,
-      "origin": "43.3068190,17.0070860",
+      "origin": "Biokovska ulica 14, 21300 Makarska, Croatia",
       "destination": "Hrvatskog Crvenog Kriza 10, Dubrovnik",
       "waypoints": [
         "43.155031,17.250212",
         "42.885330,17.579727",
         "Parking Ston, Croatia"
       ],
-      "status": "planned",
+      "status": "changed",
       "routeStyle": "scenic",
-      "main": "https://www.google.com/maps/dir/?api=1&origin=43.3068190%2C17.0070860&destination=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&travelmode=driving&waypoints=43.155031%2C17.250212%7C42.885330%2C17.579727%7CParking+Ston%2C+Croatia"
+      "main": "https://www.google.com/maps/dir/?api=1&origin=Biokovska+ulica+14%2C+21300+Makarska%2C+Croatia&destination=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&travelmode=driving&waypoints=43.155031%2C17.250212%7C42.885330%2C17.579727%7CParking+Ston%2C+Croatia"
     },
     {
       "id": "adria-14",
@@ -2106,7 +2107,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-27T18:31:36.203Z",
+    "dataVersion": "2026-09-27T18:33:26.219Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
