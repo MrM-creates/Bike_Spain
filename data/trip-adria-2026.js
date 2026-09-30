@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-27T18:33:26.219Z",
+  "publishedVersion": "2026-09-30T08:08:53.651Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1663,7 +1663,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "name": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
           "url": "https://www.airbnb.ch/rooms/648206203313909249?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
           "note": "OSCAR Suite: Küche, eigene kostenlose Waschmaschine und ein Garagenstellplatz ausdrücklich im Inserat. Ruhige Wohnlage ausserhalb der Altstadt. Am 03.09. für 06.–09.10. und zwei Erwachsene angezeigt: CHF 352 insgesamt, kostenlos stornierbar vor 01.10. Beide Motorräder müssen auf den zugesagten Platz passen.",
-          "booking": "open",
+          "booking": "booked",
           "coordinate": [
             18.08846,
             42.65196
@@ -1683,7 +1683,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "title": "Dubrovnik (Aussenbasis)",
       "startDate": "2026-10-06",
       "endDate": "2026-10-09",
-      "booking": "open",
+      "booking": "booked",
       "currentFirstChoice": "OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz",
       "currentFirstChoiceUrl": "https://www.airbnb.ch/rooms/648206203313909249?adults=2&check_in=2026-10-06&check_out=2026-10-09&locale=de",
       "currentAlternative": "Miss Mia · Apartment mit Meerblick und Balkon",
@@ -2107,7 +2107,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-27T18:33:26.219Z",
+    "dataVersion": "2026-09-30T08:08:53.651Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
