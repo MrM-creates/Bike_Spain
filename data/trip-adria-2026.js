@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-09-30T09:24:02.441Z",
+  "publishedVersion": "2026-09-30T09:29:44.371Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -923,7 +923,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "time": "ca. 2 h 07",
       "roads": "D8 · Karasovići/Debeli Brijeg · M1 · E65/E80",
       "points": "Karasovici Border Crossing · 42.454424,18.531573 · 42.486779,18.699843",
-      "note": "Reine Fahrzeit: ca. 2 h 03.\n\nDie Wartezeit am Grenzübergang Karasovići kann stark schwanken und ist nicht Teil der berechneten Fahrzeit. EES gilt nicht für Schweizer Staatsangehörige und Inhaber gültiger Schengen-Aufenthaltstitel. Reisepass und gegebenenfalls Aufenthaltstitel im Original mitführen; Dokumentenprüfung und Wartezeiten bleiben bestehen. Montenegro hat eigene Einreiseregeln. Die schöne Linie bleibt bewusst rund um die Bucht über Perast statt über die Kamenari-Fähre. In Perast auf der Hauptstrasse bleiben, die historische Uferzone nur zu Fuss besuchen; Maps-Neuberechnung vor Abfahrt prüfen.\n\nGoogle-Maps-Link und Kartenlinie wurden am 04.09.2026 abgeglichen. \n\nDas Ziel ist der öffentliche Strassenanker in Sveti Stasije, nicht die private Haustür. Die genaue Wohnungslage wird von Airbnb erst nach der Buchung mitgeteilt.",
+      "note": "Reine Fahrzeit: ca. 2 h 07.\n\nDie Wartezeit am Grenzübergang Karasovići kann stark schwanken und ist nicht Teil der berechneten Fahrzeit. Reisepass und gegebenenfalls Aufenthaltstitel im Original mitführen; Dokumentenprüfung und Wartezeiten bleiben bestehen. Montenegro hat eigene Einreiseregeln. Die schöne Linie bleibt bewusst rund um die Bucht über Perast statt über die Kamenari-Fähre. In Perast auf der Hauptstrasse bleiben, die historische Uferzone nur zu Fuss besuchen; Maps-Neuberechnung vor Abfahrt prüfen.\n\nZiel ist der exakte Booking-Kartenmarker der gebuchten Unterkunft Viva in Dobrota (42.4458625605701, 18.765737988260973). Die bestehenden Wegpunkte Karasovići, Buchtzufahrt und Perast bleiben unverändert. Bei der letzten Zufahrt der örtlichen Beschilderung zur Unterkunft und zum Privatparkplatz folgen.",
       "rest": false,
       "origin": "Hrvatskog Crvenog Kriza 10, Dubrovnik",
       "destination": "42.4458625605701,18.765737988260973",
@@ -932,7 +932,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "42.454424,18.531573",
         "42.486779,18.699843"
       ],
-      "status": "planned",
+      "status": "changed",
       "routeStyle": "scenic",
       "main": "https://www.google.com/maps/dir/?api=1&origin=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&destination=42.4458625605701%2C18.765737988260973&travelmode=driving&waypoints=Karasovici+Border+Crossing%7C42.454424%2C18.531573%7C42.486779%2C18.699843"
     },
@@ -972,7 +972,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "time": "ca. 3 h 08",
       "roads": "M1/E65/E80 · Vrmac-Tunnel · Budva · Petrovac · Bar · M1/E851 · Ulcinj-Aussenrand · Sukobin–Muriqan · SH41 · SH1 · Rruga Studenti · Rruga Lekë Dukagjini",
       "points": "42.285903,18.811442 · 41.936187,19.220266 · 42.064946,19.508881",
-      "note": "Reine Fahrzeit: ca. 3 h 12.\n\nNach drei Nächten an der Bucht weiter nach Albanien. Über den Vrmac-Tunnel und die Küstenhauptstrasse bei Budva und Petrovac nach Bar, am Rand von Ulcinj auf der M1 zum Grenzübergang Sukobin–Muriqan. Die Zwischenpunkte halten die Route auf der Hauptstrasse und vermeiden Topliški Put sowie die Abkürzung über Kamenički most. Keine Lovćen-Bergstrecke und keine Altstadtzufahrt in Ulcinj. Pause nur an einem legalen Parkplatz, nicht an den Wegpunkten auf der Durchgangsstrasse. Grenzwartezeit ist nicht Teil der Fahrzeit.\n\nTivat–Jaz ist ein Baustellenkorridor: vor Abfahrt AMSCG und lokale Auskunft zu Befahrbarkeit/Belag prüfen. Es liegt keine Freigabe für den 12.10. vor; keine unbefestigte Baustellenumfahrung improvisieren. In Albanien aufmerksam und defensiv fahren. Ziel ist der veröffentlichte Kartenmarker der All Seasons Apartments; genaue Toreinfahrt und zwei Motorradplätze mit der Unterkunft klären. Start bleibt der bisherige öffentliche Strassenanker Sveti Stasije bei der gewünschten Kotor-Unterkunft; die private Hauszufahrt bleibt zu klären.",
+      "note": "Reine Fahrzeit: ca. 3 h 08.\n\nStart ist der exakte Booking-Kartenmarker der gebuchten Unterkunft Viva in Dobrota. Von dort über die Hauptstrasse und den Vrmac-Tunnel zur Küstenhauptstrasse bei Budva und Petrovac, weiter nach Bar und am Rand von Ulcinj auf der M1 zum Grenzübergang Sukobin–Muriqan. Die bestehenden Zwischenpunkte bleiben unverändert und halten die Route auf der Hauptstrasse; Topliški Put und die Abkürzung über Kamenički most werden vermieden. Keine Lovćen-Bergstrecke und keine Altstadtzufahrt in Ulcinj. Pause nur an einem legalen Parkplatz, nicht an den Wegpunkten auf der Durchgangsstrasse. Grenzwartezeit ist nicht Teil der Fahrzeit.\n\nTivat–Jaz ist ein Baustellenkorridor: vor Abfahrt AMSCG und lokale Auskunft zu Befahrbarkeit und Belag prüfen. Keine unbefestigte Baustellenumfahrung improvisieren. In Albanien aufmerksam und defensiv fahren. Ziel bleibt der veröffentlichte Kartenmarker der All Seasons Apartments in Shkodër; genaue Toreinfahrt und zwei Motorradplätze mit der Unterkunft klären.",
       "rest": false,
       "origin": "42.4458625605701,18.765737988260973",
       "destination": "42.07142304764,19.513024609089",
@@ -981,7 +981,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "41.936187,19.220266",
         "42.064946,19.508881"
       ],
-      "status": "planned",
+      "status": "changed",
       "routeStyle": "scenic",
       "main": "https://www.google.com/maps/dir/?api=1&origin=42.4458625605701%2C18.765737988260973&destination=42.07142304764%2C19.513024609089&travelmode=driving&waypoints=42.285903%2C18.811442%7C41.936187%2C19.220266%7C42.064946%2C19.508881"
     },
@@ -2119,7 +2119,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-09-30T09:24:02.441Z",
+    "dataVersion": "2026-09-30T09:29:44.371Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
