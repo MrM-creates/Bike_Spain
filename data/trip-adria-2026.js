@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-10-02T07:58:00.114Z",
+  "publishedVersion": "2026-10-10T09:42:16.836Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -920,13 +920,13 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "type": "Fahrtag",
       "overnight": "Kotor oder Perast",
       "km": "ca. 89 km",
-      "time": "ca. 2 h 07",
+      "time": "ca. 2 h 08",
       "roads": "D8 · Karasovići/Debeli Brijeg · M1 · E65/E80",
       "points": "Karasovici Border Crossing · 42.454424,18.531573 · 42.486779,18.699843",
       "note": "Reine Fahrzeit: ca. 2 h 07.\n\nDie Wartezeit am Grenzübergang Karasovići kann stark schwanken und ist nicht Teil der berechneten Fahrzeit. Reisepass und gegebenenfalls Aufenthaltstitel im Original mitführen; Dokumentenprüfung und Wartezeiten bleiben bestehen. Montenegro hat eigene Einreiseregeln. Die schöne Linie bleibt bewusst rund um die Bucht über Perast statt über die Kamenari-Fähre. In Perast auf der Hauptstrasse bleiben, die historische Uferzone nur zu Fuss besuchen; Maps-Neuberechnung vor Abfahrt prüfen.\n\nZiel ist der exakte Booking-Kartenmarker der gebuchten Unterkunft Viva in Dobrota (42.4458625605701, 18.765737988260973). Die bestehenden Wegpunkte Karasovići, Buchtzufahrt und Perast bleiben unverändert. Bei der letzten Zufahrt der örtlichen Beschilderung zur Unterkunft und zum Privatparkplatz folgen.",
       "rest": false,
       "origin": "Hrvatskog Crvenog Kriza 10, Dubrovnik",
-      "destination": "42.4458625605701,18.765737988260973",
+      "destination": "42.44941,18.768845",
       "waypoints": [
         "Karasovici Border Crossing",
         "42.454424,18.531573",
@@ -934,7 +934,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       ],
       "status": "changed",
       "routeStyle": "scenic",
-      "main": "https://www.google.com/maps/dir/?api=1&origin=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&destination=42.4458625605701%2C18.765737988260973&travelmode=driving&waypoints=Karasovici+Border+Crossing%7C42.454424%2C18.531573%7C42.486779%2C18.699843"
+      "main": "https://www.google.com/maps/dir/?api=1&origin=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&destination=42.44941%2C18.768845&travelmode=driving&waypoints=Karasovici+Border+Crossing%7C42.454424%2C18.531573%7C42.486779%2C18.699843"
     },
     {
       "id": "adria-17",
@@ -968,13 +968,13 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "title": "Kotor – Budva – Bar – Ulcinj – Shkodër",
       "type": "Küstenfahrt / Albanien",
       "overnight": "Shkodër",
-      "km": "ca. 130 km",
-      "time": "ca. 3 h 08",
+      "km": "ca. 131 km",
+      "time": "ca. 3 h 11",
       "roads": "M1/E65/E80 · Vrmac-Tunnel · Budva · Petrovac · Bar · M1/E851 · Ulcinj-Aussenrand · Sukobin–Muriqan · SH41 · SH1 · Rruga Studenti · Rruga Lekë Dukagjini",
       "points": "42.285903,18.811442 · 41.936187,19.220266 · 42.064946,19.508881",
       "note": "Reine Fahrzeit: ca. 3 h 08.\n\nStart ist der exakte Booking-Kartenmarker der gebuchten Unterkunft Viva in Dobrota. Von dort über die Hauptstrasse und den Vrmac-Tunnel zur Küstenhauptstrasse bei Budva und Petrovac, weiter nach Bar und am Rand von Ulcinj auf der M1 zum Grenzübergang Sukobin–Muriqan. Die bestehenden Zwischenpunkte bleiben unverändert und halten die Route auf der Hauptstrasse; Topliški Put und die Abkürzung über Kamenički most werden vermieden. Keine Lovćen-Bergstrecke und keine Altstadtzufahrt in Ulcinj. Pause nur an einem legalen Parkplatz, nicht an den Wegpunkten auf der Durchgangsstrasse. Grenzwartezeit ist nicht Teil der Fahrzeit.\n\nTivat–Jaz ist ein Baustellenkorridor: vor Abfahrt AMSCG und lokale Auskunft zu Befahrbarkeit und Belag prüfen. Keine unbefestigte Baustellenumfahrung improvisieren. In Albanien aufmerksam und defensiv fahren. Ziel bleibt der veröffentlichte Kartenmarker der All Seasons Apartments in Shkodër; genaue Toreinfahrt und zwei Motorradplätze mit der Unterkunft klären.",
       "rest": false,
-      "origin": "42.4458625605701,18.765737988260973",
+      "origin": "42.44941,18.768845",
       "destination": "42.07142304764,19.513024609089",
       "waypoints": [
         "42.285903,18.811442",
@@ -983,7 +983,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       ],
       "status": "changed",
       "routeStyle": "scenic",
-      "main": "https://www.google.com/maps/dir/?api=1&origin=42.4458625605701%2C18.765737988260973&destination=42.07142304764%2C19.513024609089&travelmode=driving&waypoints=42.285903%2C18.811442%7C41.936187%2C19.220266%7C42.064946%2C19.508881"
+      "main": "https://www.google.com/maps/dir/?api=1&origin=42.44941%2C18.768845&destination=42.07142304764%2C19.513024609089&travelmode=driving&waypoints=42.285903%2C18.811442%7C41.936187%2C19.220266%7C42.064946%2C19.508881"
     },
     {
       "id": "adria-20",
@@ -1727,16 +1727,28 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "id": "viva",
           "name": "Viva · Dobrota, Kotor",
           "url": "https://www.booking.com/Share-79yAlW",
-          "note": "Vom Nutzer am 30.09.2026 für 09.–12.10.2026 gebucht. Ganze 60-m²-Ferienwohnung mit Küche, eigener Waschmaschine, Meerblick und kostenlosem Privatparkplatz an der Unterkunft. Direkt am Wasser; Booking-Kartenmarker als Navigationsziel verwenden.",
-          "booking": "booked",
+          "note": "Am 10.10.2026 vom Gastgeber schriftlich kostenfrei storniert; keine Stornierungsgebühr. Nicht mehr gebuchte Unterkunft.",
+          "booking": "unavailable",
           "coordinate": [
             18.765737988260973,
             42.4458625605701
           ],
           "address": "Viva, Dobrota bb, 85330 Kotor, Montenegro"
+        },
+        {
+          "id": "andjela",
+          "name": "Andjela's Place with Sea View · Dobrota, Kotor",
+          "url": "https://www.airbnb.de/rooms/608650667005270053",
+          "note": "Vom Nutzer bestätigt gebucht 11.–13.10.2026. Exaktes Navigationsziel laut Gastgeberin Marija: Parkplatz und Gebäudeeingang hinter dem Credo-Gebäude, https://maps.app.goo.gl/T2giGyrN2D425W1W6 . Zuerst Check-in im Büro Dare to Dream, 42.4492403,18.7657354 (https://goo.gl/maps/LXH6jhJyKaMQ8QJm7), danach zur Unterkunft. Check-in ab 15:00, Checkout bis 10:00. Laut Check-in-Anweisung kostenloser öffentlicher Parkplatz hinter dem Gebäude; kein reservierter Privatparkplatz zugesichert. Wohnung Nr. 24 im zweiten Stock. Schlüssel beim Verlassen mitnehmen: Tür verriegelt automatisch.",
+          "booking": "booked",
+          "coordinate": [
+            18.768845,
+            42.44941
+          ],
+          "address": "42.449410,18.768845"
         }
       ],
-      "activeOptionId": "viva",
+      "activeOptionId": "andjela",
       "id": "kotor-dobrota",
       "title": "Kotor oder Perast",
       "startDate": "2026-10-09",
@@ -2119,7 +2131,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-10-02T07:58:00.114Z",
+    "dataVersion": "2026-10-10T09:42:16.836Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
@@ -36952,7 +36964,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
       "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=43.7055214%2C15.9267338&destination=Biokovska+ulica+14%2C+21300+Makarska%2C+Croatia&travelmode=driving&waypoints=43.589164%2C15.926309%7C43.528071%2C16.267208%7C43.445153%2C16.638084"
     },
     "adria-16": {
-      "key": "[\"[\\\"first\\\",\\\"OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz\\\",[18.08846,42.65196],\\\"Hrvatskog Crvenog Kriza 10, Dubrovnik\\\"]\",\"[\\\"viva\\\",\\\"Viva · Dobrota, Kotor\\\",[18.765737988260973,42.4458625605701],\\\"Viva, Dobrota bb, 85330 Kotor, Montenegro\\\"]\"]",
+      "key": "[\"[\\\"first\\\",\\\"OSCAR Suite · neues Apartment mit abgeschlossenem Stellplatz\\\",[18.08846,42.65196],\\\"Hrvatskog Crvenog Kriza 10, Dubrovnik\\\"]\",\"[\\\"andjela\\\",\\\"Andjela's Place with Sea View · Dobrota, Kotor\\\",[18.768845,42.44941],\\\"42.449410,18.768845\\\"]\"]",
       "state": "ready",
       "message": "Zufahrt aktualisiert · Fahrzeit geschätzt",
       "base": {
@@ -55179,9 +55191,9 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "distance": 86616.3,
         "duration": 7366.1
       },
-      "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&destination=42.4458625605701%2C18.765737988260973&travelmode=driving&waypoints=Karasovici+Border+Crossing%7C42.454424%2C18.531573%7C42.486779%2C18.699843",
-      "distanceMeters": 88992,
-      "durationSeconds": 7596,
+      "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=Hrvatskog+Crvenog+Kriza+10%2C+Dubrovnik&destination=42.44941%2C18.768845&travelmode=driving&waypoints=Karasovici+Border+Crossing%7C42.454424%2C18.531573%7C42.486779%2C18.699843",
+      "distanceMeters": 89053,
+      "durationSeconds": 7653.6,
       "map": {
         "lines": [
           {
@@ -73904,172 +73916,144 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
                 42.449954
               ],
               [
-                18.765452,
-                42.449871
+                18.765986,
+                42.450123
               ],
               [
-                18.765493,
-                42.449796
+                18.766022,
+                42.450146
               ],
               [
-                18.765541,
-                42.449728
+                18.766083,
+                42.450027
               ],
               [
-                18.765644,
-                42.449605
+                18.766282,
+                42.449444
               ],
               [
-                18.76598,
-                42.449206
+                18.766303,
+                42.449418
               ],
               [
-                18.76612,
-                42.449085
+                18.766337,
+                42.449375
               ],
               [
-                18.766163,
-                42.449031
+                18.766415,
+                42.449329
               ],
               [
-                18.766224,
-                42.448907
+                18.76653,
+                42.449296
               ],
               [
-                18.766284,
-                42.448794
+                18.766805,
+                42.449259
               ],
               [
-                18.766328,
-                42.448695
+                18.767052,
+                42.449208
               ],
               [
-                18.766354,
-                42.448629
+                18.767474,
+                42.449048
               ],
               [
-                18.766374,
-                42.44857
+                18.767966,
+                42.448862
               ],
               [
-                18.766396,
-                42.448501
+                18.768014,
+                42.448799
               ],
               [
-                18.766417,
-                42.448425
+                18.768012,
+                42.448834
               ],
               [
-                18.766442,
-                42.448308
+                18.768028,
+                42.448878
               ],
               [
-                18.766457,
-                42.448215
+                18.768097,
+                42.448984
               ],
               [
-                18.766469,
-                42.448106
+                18.768274,
+                42.449251
               ],
               [
-                18.766473,
-                42.448007
+                18.768418,
+                42.449414
               ],
               [
-                18.766472,
-                42.447898
+                18.768493,
+                42.449551
               ],
               [
-                18.766466,
-                42.447796
+                18.768535,
+                42.449629
               ],
               [
-                18.766451,
-                42.447681
+                18.768551,
+                42.449696
               ],
               [
-                18.766431,
-                42.447574
+                18.768551,
+                42.449769
               ],
               [
-                18.76641,
-                42.447487
+                18.768543,
+                42.449846
               ],
               [
-                18.766398,
-                42.447443
+                18.768672,
+                42.449857
               ],
               [
-                18.766388,
-                42.447409
+                18.768812,
+                42.44987
               ],
               [
-                18.766361,
-                42.447326
+                18.769042,
+                42.449891
               ],
               [
-                18.766338,
-                42.44725
+                18.769076,
+                42.449794
               ],
               [
-                18.766272,
-                42.447089
+                18.769096,
+                42.449698
               ],
               [
-                18.76624,
-                42.447011
+                18.769082,
+                42.449515
               ],
               [
-                18.766146,
-                42.446782
+                18.769066,
+                42.449369
               ],
               [
-                18.766084,
-                42.446617
-              ],
-              [
-                18.766027,
-                42.446465
-              ],
-              [
-                18.765991,
-                42.446346
-              ],
-              [
-                18.765964,
-                42.446249
-              ],
-              [
-                18.76594,
-                42.44615
-              ],
-              [
-                18.765917,
-                42.446035
-              ],
-              [
-                18.765896,
-                42.445909
-              ],
-              [
-                18.765888,
-                42.445851
+                18.768845,
+                42.449368
               ]
             ]
           }
         ],
         "stop": {
           "coordinate": [
-            18.765737988260973,
-            42.4458625605701
+            18.768845,
+            42.44941
           ],
-          "label": "Viva · Dobrota, Kotor",
+          "label": "Andjela's Place with Sea View · Dobrota, Kotor",
           "approximate": false
         }
       }
     },
     "adria-19": {
-      "key": "[\"[\\\"viva\\\",\\\"Viva · Dobrota, Kotor\\\",[18.765737988260973,42.4458625605701],\\\"Viva, Dobrota bb, 85330 Kotor, Montenegro\\\"]\",\"[\\\"first\\\",\\\"All Seasons Apartments · 2-Schlafzimmer-Wohnung\\\",[19.513024609089,42.07142304764],\\\"\\\"]\"]",
+      "key": "[\"[\\\"andjela\\\",\\\"Andjela's Place with Sea View · Dobrota, Kotor\\\",[18.768845,42.44941],\\\"42.449410,18.768845\\\"]\",\"[\\\"first\\\",\\\"All Seasons Apartments · 2-Schlafzimmer-Wohnung\\\",[19.513024609089,42.07142304764],\\\"\\\"]\"]",
       "state": "ready",
       "message": "Zufahrt aktualisiert · Fahrzeit geschätzt",
       "base": {
@@ -108944,17 +108928,261 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         "distance": 132806.2,
         "duration": 11497.6
       },
-      "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=42.4458625605701%2C18.765737988260973&destination=42.07142304764%2C19.513024609089&travelmode=driving&waypoints=42.285903%2C18.811442%7C41.936187%2C19.220266%7C42.064946%2C19.508881",
-      "distanceMeters": 130441.71605767518,
-      "durationSeconds": 11293.00710240661,
+      "mapsURL": "https://www.google.com/maps/dir/?api=1&origin=42.44941%2C18.768845&destination=42.07142304764%2C19.513024609089&travelmode=driving&waypoints=42.285903%2C18.811442%7C41.936187%2C19.220266%7C42.064946%2C19.508881",
+      "distanceMeters": 131316.68060036784,
+      "durationSeconds": 11436.135243613237,
       "map": {
         "lines": [
           {
             "kind": "road",
             "coordinates": [
               [
-                18.765888,
-                42.445851
+                18.768845,
+                42.449368
+              ],
+              [
+                18.769066,
+                42.449369
+              ],
+              [
+                18.769082,
+                42.449515
+              ],
+              [
+                18.769096,
+                42.449698
+              ],
+              [
+                18.769076,
+                42.449794
+              ],
+              [
+                18.769042,
+                42.449891
+              ],
+              [
+                18.768812,
+                42.44987
+              ],
+              [
+                18.768672,
+                42.449857
+              ],
+              [
+                18.768543,
+                42.449846
+              ],
+              [
+                18.768551,
+                42.449769
+              ],
+              [
+                18.768551,
+                42.449696
+              ],
+              [
+                18.768535,
+                42.449629
+              ],
+              [
+                18.768493,
+                42.449551
+              ],
+              [
+                18.768418,
+                42.449414
+              ],
+              [
+                18.768274,
+                42.449251
+              ],
+              [
+                18.768097,
+                42.448984
+              ],
+              [
+                18.768028,
+                42.448878
+              ],
+              [
+                18.768012,
+                42.448834
+              ],
+              [
+                18.768014,
+                42.448799
+              ],
+              [
+                18.768015,
+                42.448763
+              ],
+              [
+                18.768073,
+                42.448489
+              ],
+              [
+                18.768071,
+                42.448429
+              ],
+              [
+                18.768025,
+                42.448298
+              ],
+              [
+                18.767943,
+                42.448099
+              ],
+              [
+                18.767917,
+                42.448141
+              ],
+              [
+                18.767828,
+                42.448336
+              ],
+              [
+                18.767699,
+                42.448517
+              ],
+              [
+                18.767499,
+                42.448703
+              ],
+              [
+                18.767233,
+                42.448885
+              ],
+              [
+                18.766954,
+                42.449004
+              ],
+              [
+                18.766731,
+                42.449068
+              ],
+              [
+                18.766446,
+                42.449085
+              ],
+              [
+                18.766163,
+                42.449031
+              ],
+              [
+                18.766224,
+                42.448907
+              ],
+              [
+                18.766284,
+                42.448794
+              ],
+              [
+                18.766328,
+                42.448695
+              ],
+              [
+                18.766354,
+                42.448629
+              ],
+              [
+                18.766374,
+                42.44857
+              ],
+              [
+                18.766396,
+                42.448501
+              ],
+              [
+                18.766417,
+                42.448425
+              ],
+              [
+                18.766442,
+                42.448308
+              ],
+              [
+                18.766457,
+                42.448215
+              ],
+              [
+                18.766469,
+                42.448106
+              ],
+              [
+                18.766473,
+                42.448007
+              ],
+              [
+                18.766472,
+                42.447898
+              ],
+              [
+                18.766466,
+                42.447796
+              ],
+              [
+                18.766451,
+                42.447681
+              ],
+              [
+                18.766431,
+                42.447574
+              ],
+              [
+                18.76641,
+                42.447487
+              ],
+              [
+                18.766398,
+                42.447443
+              ],
+              [
+                18.766388,
+                42.447409
+              ],
+              [
+                18.766361,
+                42.447326
+              ],
+              [
+                18.766338,
+                42.44725
+              ],
+              [
+                18.766272,
+                42.447089
+              ],
+              [
+                18.76624,
+                42.447011
+              ],
+              [
+                18.766146,
+                42.446782
+              ],
+              [
+                18.766084,
+                42.446617
+              ],
+              [
+                18.766027,
+                42.446465
+              ],
+              [
+                18.76599,
+                42.446346
+              ],
+              [
+                18.765964,
+                42.446249
+              ],
+              [
+                18.76594,
+                42.44615
+              ],
+              [
+                18.765917,
+                42.446035
               ],
               [
                 18.765896,
