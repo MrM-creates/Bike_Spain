@@ -1,5 +1,5 @@
 globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
-  "publishedVersion": "2026-10-10T09:42:16.836Z",
+  "publishedVersion": "2026-10-10T09:46:23.169Z",
   "planKind": "adjusted",
   "originalDays": [
     {
@@ -1779,8 +1779,8 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
         {
           "id": "first",
           "name": "All Seasons Apartments · 2-Schlafzimmer-Wohnung",
-          "url": "https://www.booking.com/hotel/al/all-seasons-apartment-1.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF",
-          "note": "Ganze Wohnung 65 m² mit Doppelbett, eigener Küche, Waschmaschine und Balkon. Rruga Lek Dukagjini; ruhige Lage laut Gastgeber, Zentrum zu Fuss. Am 18.09. für 12.–14.10. / 2 Erwachsene: CHF 162 insgesamt inkl. Steuern, kostenlos stornierbar vor 11.10. (günstigerer CHF 139-Tarif nur vor 28.09.). Vorauszahlung innerhalb 24 h vor Anreise; Abwicklung direkt klären, Hausregeln nennen Barzahlung. Check-in 14:00–23:30, Checkout bis 10:00. 9, 9/453 Bewertungen. Nicht gebucht.",
+          "url": "https://www.booking.com/hotel/al/all-seasons-apartment-1.de.html?checkin=2026-10-13&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=EUR",
+          "note": "Vom Nutzer am 10.10.2026 bestätigt: Buchung in Booking.com auf eine Nacht 13.–14.10.2026 geändert, Gesamtpreis EUR 80. Ganze Wohnung mit Küche und eigener Waschmaschine. Check-in 14:00–23:30, Checkout bis 10:00 laut bisheriger Beschreibung. Bestehender Navigationsmarker unverändert; genaue Toreinfahrt vor Ort bestätigen.",
           "booking": "booked",
           "coordinate": [
             19.513024609089,
@@ -1793,11 +1793,11 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
           "url": "https://www.booking.com/hotel/al/riras-apartment.de.html?checkin=2026-10-12&checkout=2026-10-14&group_adults=2&no_rooms=1&group_children=0&selected_currency=CHF",
           "note": "63 m², Doppelbett, eigene Küche/Waschmaschine, Balkon und kostenloser Privatparkplatz. Dritter Stock, nur Treppen. Am 18.09. für 12.–14.10. / 2 Erwachsene CHF 85 insgesamt inkl. Steuern; kostenlos stornierbar vor 11.10.; keine Vorauszahlung, Zahlung vor Ort.9, 2/5 Bewertungen. Sichere Abstellung nicht bestätigt. Check-in 11:30–21:00, Checkout bis 10:00. Nicht gebucht.",
           "booking": "open",
-          "address": "3GC6+Q72 Shkodër, 4001 Shkodra, Albanien",
           "coordinate": [
             19.51053680614,
             42.0718354642316
-          ]
+          ],
+          "address": "3GC6+Q72 Shkodër, 4001 Shkodra, Albanien"
         }
       ],
       "activeOptionId": "first",
@@ -2131,7 +2131,7 @@ globalThis.__TRIP_ADRIA_DATA__ = Object.freeze({
   "trip": {
     "id": "trip_adria_2026",
     "name": "Adria & Balkan 2026",
-    "dataVersion": "2026-10-10T09:42:16.836Z",
+    "dataVersion": "2026-10-10T09:46:23.169Z",
     "characterTitle": "Adriawind, Küstenkurven und stille Buchten",
     "characterText": "Über Österreich und Slowenien an die dalmatinische Küste, drei Nächte an der Bucht von Kotor und zwei Nächte in Shkodër. Von Durrës führt die Nachtfähre nach Ancona; direkt weiter nach Urbino und auf der bestehenden Route durch Norditalien heim.",
     "startDate": "2026-09-24",
